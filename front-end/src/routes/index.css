@@ -1,0 +1,123 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  //padding: 1rem 0.8rem;
+}
+
+.activity {
+  display: flex;
+  width: 100%;
+}
+
+.activity__main {
+  width: 100%;
+
+  /* padding: 0.4rem 0rem 0.6rem 0.8rem; */
+  padding: 0.4rem 0 0.6rem 0;
+  padding: 0.8rem 0 0.8rem 0;
+  /* border-bottom: 1px solid #eaeaea; */
+}
+
+.activity__accept {
+  width: 100px;
+  border-left: 2px solid #fff;
+  background: #ffffffcc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.activity__category {
+  margin-left: 1rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 8px;
+  font-size: 11px;
+  color: #fff;
+  /* font-weight: bold; */
+  border: 1px solid var(--bg-color);
+  background: color-mix(in srgb, var(--bg-color) 10%, transparent);
+  color: var(--bg-color);
+}
+
+.activity__details {
+  opacity: 0.7;
+}
+
+.activity__title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0.8rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.activity__title .late_notice {
+  color: blue
+}
+
+.activity__bar {
+  width: 100%;
+
+  /* background: #0061FF; */
+  height: 24px;
+  border-radius: 2px 0 0 2px;
+  background: #efefef;
+  /* border: 1px solid #eaeaea; */
+  background: linear-gradient(to right, #0072ff11, #00c6ff55);
+
+}
+.activity .activity__bar_background {
+  height: 100%;
+  --margin-l: calc((100% / 7 * var(--delay)) + 0.8rem);
+  margin-left: var(--margin-l);
+  width: calc(100% - var(--margin-l));
+
+  /* background: #7C59DE; */
+  /* background: linear-gradient(to right, #0061FF 90%, #0061FF00 100%); */
+  /* background-image: linear-gradient(to right, #00c6ff 0%, #0072ff 51%, #00c6ff 100%); */
+  /* background-size: 200%; */
+  /* background-position: right; */
+  /* Blue */
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+  /* background: linear-gradient(to right, #0072ff, #00c6ff 80%, #fff); */
+  /* Yellow: background: linear-gradient(315deg, #F9F698, #F0F719); */
+  /* background-image: linear-gradient(to right, #ff0844 0%, #ffb199 100%); */
+  /* background-image: linear-gradient(to right, #F40009 0%, #F08080 100%); */
+  /* Green */
+  /* background-image: linear-gradient(to right, #b3ffab 0%, #12fff7 100%); */
+  /* background-image: linear-gradient(to right, #00FA9A 0%, #00FA9A44 100%); */
+}
+.activity--selected {
+  /* background: linear-gradient(to right, #00c6ff33 0%, #0072ff11 51%, #00c6ff55 90%); */
+  /* background-size: 200%; */
+  /* background-position: right; */
+  background: linear-gradient(to right, #0072ff11, #00c6ff55);
+}
+.activity--selected .activity__bar {
+  background: transparent;
+}
+
+.floating_add_button {
+  cursor: pointer;
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  height: 3.5rem;
+  width: 3.5rem;
+  padding-bottom: 4px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--blue);
+  color: #fff;
+  font-size: 2rem;
+}
+
+.modal_button {
+  margin: 0 0.2rem;
+}

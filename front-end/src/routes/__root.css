@@ -1,0 +1,73 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+:root {
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --blue: #0061ff;
+  --blue: #0072ff;
+  --green: #9ef01a;
+  --green: #70e000;
+  --green: #3bceac;
+  --grey: #5a5a5a;
+}
+
+html {
+  font-family: 'Rubik';
+  font-family: "Rubik", sans-serif;
+  font-family: 'Noto Sans';
+  font-family: 'Raleway';
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 18px;
+
+  /* background: linear-gradient(to right, #7384EB, #7384EBcc); */
+  //background-image: radial-gradient( circle 703px at 15.9% 53.4%,  rgba(80,15,85,1) 0%, rgba(11,83,149,1) 100.2% );
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: linear-gradient(-20deg, #2b5876 0%, #4e4376 100%);
+  background-image: linear-gradient(to top, #4481eb 0%, #04befe 100%);
+  background-image: linear-gradient(to top, #1e3c72 0%, #1e3c72 1%, #2a5298 100%);
+  background: #F9F9FB;
+  /* background: #0061FF; */
+
+  height: 100%;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+
+.site-header {
+  padding: 1.1rem 0.8rem;
+  font-weight: 400;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  font-size: 22px;
+}
+
+.site-header .app-name {
+  /* color: #7C59DE; */
+  color: var(--blue);
+  font-weight: 300;
+}
+
+.site-header .app-name span {
+  color: #000;
+}
+
+.font-header {
+  /* font-family: 'Montserrat'; */
+}

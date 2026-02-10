@@ -1,0 +1,33 @@
+.add_category_modal .input_row:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.add_category_modal input {
+  width: 100%;
+}
+.add_category_modal .modal__buttons {
+  margin-top: 1.5rem;
+}
+
+/** Remove the outline of the color input **/
+.add_category_modal input[type="color"]::-moz-color-swatch {
+  border: none;
+}
+
+.add_category_modal input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 0;
+}
+
+.add_category_modal input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
+
+.add_category_modal .color_input {
+  display: block;
+  height: 35px;
+  width: 35px;
+  border: 0px;
+  border-radius: 100%;
+  padding: 0;
+}

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
 import NewActivityOverlay from '../components/NewActivityOverlay';
+import { useAuth } from '../Layouts/AuthContext';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -23,6 +24,7 @@ interface IActivity {
 }
 
 function Index() {
+  const authContext = useAuth();
   const [activeActivityId, setActiveActivityId] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showNewActivityOverlay, setShowNewActivityOverlay] = useState(false);
@@ -130,6 +132,7 @@ function Index() {
 
   return (
     <div className="container">
+      AuthContext: {JSON.stringify(authContext, null, 2)}
       <div className="">
         {activities.map((activity) => (
           <div

@@ -1,4 +1,16 @@
 import * as bcrypt from 'bcryptjs';
+import ServerError from 'src/shared/ServerError';
+
+class PasswordMissingError extends ServerError {
+  constructor() {
+    super('PASSWORD_MISSING', 'Password must not be blank', 422);
+  }
+}
+class PasswordTooShortError extends ServerError {
+  constructor(message: string) {
+    super('PASSWORD_TOO_SHORT', message, 422);
+  }
+}
 
 export default class UserPassword {
   _value: string;
@@ -27,11 +39,11 @@ export default class UserPassword {
 
   public static create(password: string): UserPassword {
     if (!password) {
-      throw new Error('Password must not be missing');
+      throw new PasswordMissingError();
     }
 
     if (!this.isValidLength(password)) {
-      throw new Error('Password must be at least 8 characters');
+      throw new PasswordTooShortError('Password must be at least 8 characters');
     }
 
     return new UserPassword(password);

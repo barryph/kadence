@@ -20,6 +20,6 @@ export class UsersController {
 
   @Get('/current')
   getCurrent(@Req() req: Request) {
-    return { user: req.user };
+    return { data: { user: req.user } };
   }
 }

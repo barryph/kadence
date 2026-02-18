@@ -15,6 +15,8 @@ import type { UserDTO } from '../users/mappers/userMap';
 import passport from 'passport';
 import type { NextFunction, Request, Response } from 'express';
 import LoginDTO from './dtos/login.dto';
+import { InvalidCredentialsError } from './authentication.errors';
+import ServerError from 'src/shared/ServerError';
 
 @Controller('auth')
 export class AuthenticationController {
@@ -39,26 +41,22 @@ export class AuthenticationController {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     passport.authenticate('local', (err, user: UserDTO) => {
       if (err) {
-        this.logger.error(
-          err instanceof Error ? err.stack : String(err),
-          'Login authentication error',
-        );
-        return res.status(500).send(err);
+        this.logger.error('Login authentication error', err);
+        next(err);
+        return;
       }
       if (!user) {
-        console.log('not user');
-        return res.status(401).send({ message: 'Invalid credentials' });
+        next(new InvalidCredentialsError());
+        return;
       }
 
       req.logIn(user, (loginErr) => {
         if (loginErr) {
-          this.logger.error(
-            loginErr instanceof Error ? loginErr.stack : String(loginErr),
-            'Session login error',
-          );
-          return res.status(500).send(loginErr);
+          this.logger.error(loginErr, 'Session login error');
+          next(new ServerError('SESSION_LOGIN_ERROR', 'Session login error'));
+          return;
         }
-        return res.send({ user });
+        return res.send({ data: { user } });
       });
     })(req, res, next);
   }
@@ -92,16 +90,21 @@ export class AuthenticationController {
     },
   })
   async create(
-    @Req() req,
+    @Req() req: Request,
     @Res() res: Response,
     @Body() createUserDto: CreateUserDTO,
+    @Next() next: NextFunction,
   ) {
     const user = await this.authenticationService.register(createUserDto);
 
     // Login the user automatically after creating their account
     req.login(user, (err) => {
-      if (err) return res.status(500).send(err);
-      return res.send(user);
+      if (err) next(err);
+      return res.send({
+        data: {
+          user,
+        },
+      });
     });
   }
 }

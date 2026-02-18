@@ -4,7 +4,6 @@ import { AuthenticationService } from './authentication.service';
 import * as UserMap from '../users/mappers/userMap';
 import { UserDTO } from '../users/mappers/userMap';
 import UsersRepo from '../users/domain/user.repository';
-import { InvalidCredentialsError } from './authentication.errors';
 
 export function configurePassport(
   authenticationService: AuthenticationService,
@@ -43,9 +42,6 @@ export function configurePassport(
             email,
             password,
           );
-          if (!user) {
-            throw new InvalidCredentialsError();
-          }
           const userDto = UserMap.toDTO(user);
           done(null, userDto);
         } catch (err) {

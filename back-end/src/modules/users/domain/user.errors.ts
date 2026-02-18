@@ -1,17 +1,13 @@
-export class InvalidEmailError extends Error {
+import ServerError from 'src/shared/ServerError';
+
+export class PasswordsDontMatchError extends ServerError {
   constructor() {
-    super('Email is invalid');
+    super('PASSWORDS_DONT_MATCH', "Passwords don't match");
   }
 }
 
-export class PasswordsDontMatchError extends Error {
+export class EmailTakenError extends ServerError {
   constructor() {
-    super("Passwords don't match");
-  }
-}
-
-export class EmailTakenError extends Error {
-  constructor() {
-    super('Email is already taken');
+    super('EMAIL_TAKEN', 'Email is already taken');
   }
 }

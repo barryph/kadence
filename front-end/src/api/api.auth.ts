@@ -32,4 +32,4 @@ export const authAPI = {
   register(body: RegisterDTO) {
     return apiClient.post<RegisterResponse>('/auth/register', body);
   },
-}
+};

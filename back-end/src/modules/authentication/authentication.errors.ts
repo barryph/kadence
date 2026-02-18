@@ -1,5 +1,7 @@
-export class InvalidCredentialsError extends Error {
+import ServerError from 'src/shared/ServerError';
+
+export class InvalidCredentialsError extends ServerError {
   constructor() {
-    super('Invalid Credentials');
+    super('INVALID_CREDENTIALS', 'Invalid Credentials', 401);
   }
 }

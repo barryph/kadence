@@ -7,14 +7,15 @@ import * as UserMap from '../mappers/userMap';
 
 export interface IUsersRepo {
   exists(email: UserEmail): Promise<boolean>;
-  getByUserId(id: string): Promise<User>;
+  getById(id: string): Promise<User | null>;
+  getByEmail(id: UserEmail): Promise<User | null>;
   create(user: User): Promise<User>;
-  update(user: User): Promise<User>;
+  // update(user: User): Promise<User | null>;
 }
 
 @Injectable()
 // export default class UsersRepo implements IUsersRepo {
-export default class UsersRepo {
+export default class UsersRepo implements IUsersRepo {
   constructor(private readonly knexService: KnexService) { }
 
   async exists(email: UserEmail) {

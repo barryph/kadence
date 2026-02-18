@@ -1,4 +1,10 @@
-import { InvalidEmailError } from '../user.errors';
+import ServerError from 'src/shared/ServerError';
+
+class InvalidEmailError extends ServerError {
+  constructor() {
+    super('INVALID_EMAIL', 'Email is invalid', 422);
+  }
+}
 
 export default class UserEmail {
   _value: string;

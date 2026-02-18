@@ -11,13 +11,10 @@ export class AuthenticationService {
 
   async validateUser(email: string, pass: string): Promise<User> {
     const user = await this.usersService.getByEmail(email);
-    console.log('got by email', user);
     if (!user) {
-      console.log('not email');
       throw new InvalidCredentialsError();
     }
 
-    console.log(pass);
     const doPasswordsMatch = await user.password.comparePasswords(pass);
     if (!doPasswordsMatch) {
       throw new InvalidCredentialsError();

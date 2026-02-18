@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { authAPI, type LoginResponse } from "../api/api.auth";
 import type { ApiResponse } from "../api/api.types";
+import { usersAPI } from "../api/api.users";
 
 export interface IUser {
   id: string;
@@ -28,12 +29,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const resp = await fetch('http://localhost:3000/users/current', {
-          credentials: "include",
-        });
-        const json = await resp.json();
-        if (json.user) {
-          setUser(json.user);
+        const response = await usersAPI.getCurrentUser();
+        if (response.data?.user) {
+          setUser(response.data.user);
           setIsAuthenticated(true)
         }
       } catch (err) {
@@ -62,13 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function logout() {
     try {
-      const resp = await fetch('http://localhost:3000/auth/logout', {
-        method: 'DELETE',
-        credentials: "include",
-      });
-      if (resp.status !== 200) {
-        console.warn('Logout didnt return 200');
-      }
+      await authAPI.logout();
     } catch (err) {
       console.error('Error logging out', err);
       throw err;

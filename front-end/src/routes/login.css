@@ -1,0 +1,5 @@
+.login_form .input_row:not(:last-child) {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+

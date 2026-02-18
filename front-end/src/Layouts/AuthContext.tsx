@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { authAPI, type LoginResponse } from "../api/api.auth";
+import type { ApiResponse } from "../api/api.types";
 
-interface IUser {
+export interface IUser {
   id: string;
   email: string;
 }
@@ -8,7 +10,7 @@ interface IUser {
 interface AuthState {
   isAuthenticated: boolean;
   user: IUser | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<ApiResponse<LoginResponse>>;
   logout: () => Promise<void>;
 }
 
@@ -30,7 +32,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           credentials: "include",
         });
         const json = await resp.json();
-        console.log('json', json);
         if (json.user) {
           setUser(json.user);
           setIsAuthenticated(true)
@@ -45,43 +46,35 @@ export function AuthProvider({ children }: AuthProviderProps) {
     fetchUser();
   }, [])
 
-  async function login(email: string, password: string): Promise<boolean> {
-    try {
-      const resp = await fetch('http://localhost:3000/auth/login', {
-        headers: new Headers({ "Content-Type": "application/json", }),
-        method: 'POST',
-        credentials: "include",
-        body: JSON.stringify({
-          email,
-          password,
-        })
-      });
-      if (!(resp.status === 201 || resp.status === 200)) {
-        console.error('Failed to login', resp);
-        throw new Error('Failed to login')
-      }
-      const json = await resp.json();
-      console.log('json', json);
-      console.log('user', json.user);
-      setUser(json.user);
+  async function login(email: string, password: string): Promise<ApiResponse<LoginResponse>> {
+    const response = await authAPI.login({
+      email,
+      password,
+    });
+    if (response.error) {
+      console.error('Error logging in', response.error);
+    } else {
+      setUser(response.data.user);
       setIsAuthenticated(true);
-    } catch (err) {
-      console.log('Error logging in', err);
-      throw err;
     }
-    return true;
+    return response;
   }
 
   async function logout() {
-    const resp = await fetch('http://localhost:3000/auth/logout', {
-      method: 'DELETE',
-      credentials: "include",
-    });
-    const json = await resp.json();
-    if (resp.status !== 200) {
-      console.warn('Logout didnt return 200');
+    try {
+      const resp = await fetch('http://localhost:3000/auth/logout', {
+        method: 'DELETE',
+        credentials: "include",
+      });
+      if (resp.status !== 200) {
+        console.warn('Logout didnt return 200');
+      }
+    } catch (err) {
+      console.error('Error logging out', err);
+      throw err;
     }
-    console.log('json', json);
+    setUser(null);
+    setIsAuthenticated(false);
   }
 
   if (isLoading) {

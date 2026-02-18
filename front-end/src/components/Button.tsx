@@ -1,16 +1,32 @@
+import type { ButtonHTMLAttributes } from 'react';
 import './Button.css';
 
-export default function Button({ children, className, variant, color, ...props }) {
-  const variantClasses = {
-    'outline': 'button--outline',
-  };
-  const colorClasses = {
-    'go': 'button--go',
-    'grey': 'button--grey',
-  };
+const variantsMap = {
+  'outline': 'button--outline',
+} as const;
+type TVariantsMap = keyof typeof variantsMap;
+const colorsMap = {
+  'go': 'button--go',
+  'grey': 'button--grey',
+} as const;
+type TColorsMap = keyof typeof colorsMap;
+
+interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  className?: string;
+  variant?: TVariantsMap;
+  color?: TColorsMap;
+  isLoading?: boolean;
+}
+
+export default function Button({ children, className, variant, color, isLoading, ...props }: IButtonProps) {
   return (
-    <div {...props} className={`button ${variantClasses[variant] || ''} ${colorClasses[color] || ''} ${className}`}>
+    <button
+      {...props}
+      className={`button ${variant ? variantsMap[variant] : ''} ${color ? colorsMap[color] : ''} ${isLoading ? 'button--loading' : ''} ${className}`}
+      disabled={isLoading}
+    >
       {children}
-    </div >
+    </button>
   );
 };

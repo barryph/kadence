@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
 import NewActivityOverlay from '../components/NewActivityOverlay';
-import { useAuth } from '../Layouts/AuthContext';
+import LayoutProtected from '../Layouts/Protected'
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -24,7 +24,6 @@ interface IActivity {
 }
 
 function Index() {
-  const authContext = useAuth();
   const [activeActivityId, setActiveActivityId] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showNewActivityOverlay, setShowNewActivityOverlay] = useState(false);
@@ -131,57 +130,58 @@ function Index() {
   }
 
   return (
-    <div className="container">
-      AuthContext: {JSON.stringify(authContext, null, 2)}
-      <div className="">
-        {activities.map((activity) => (
-          <div
-            className={`
-              activity
-              ${activity.queued ? 'activity--selected' : ''}
-            `}
-            style={{ '--delay': activity.daysUntil }}
-            onClick={() => handleActivityClick(activity)}
-          >
-            <div className="activity__main">
-              <div className="activity__title" >
-                <div>
-                  <span>{activity.name}</span>
-                  <span className="activity__category" style={{ '--bg-color': activity.categoryColor }}>{activity.category}</span>
+    <LayoutProtected>
+      <div className="index__container">
+        <div className="">
+          {activities.map((activity) => (
+            <div
+              className={`
+                activity
+                ${activity.queued ? 'activity--selected' : ''}
+              `}
+              style={{ '--delay': activity.daysUntil }}
+              onClick={() => handleActivityClick(activity)}
+            >
+              <div className="activity__main">
+                <div className="activity__title" >
+                  <div>
+                    <span>{activity.name}</span>
+                    <span className="activity__category" style={{ '--bg-color': activity.categoryColor }}>{activity.category}</span>
+                  </div>
+                  <div className="activity__details">&#8624; {activity.daysUntil} &#10227; {activity.interval}</div>
+                  {/* {activity.overdue && ( */}
+                  {/*   <span className="late_notice">{activity.daysLate} Days late</span> */}
+                  {/* )} */}
                 </div>
-                <div className="activity__details">&#8624; {activity.daysUntil} &#10227; {activity.interval}</div>
-                {/* {activity.overdue && ( */}
-                {/*   <span className="late_notice">{activity.daysLate} Days late</span> */}
-                {/* )} */}
+                <div className="activity__bar">
+                  <div className="activity__bar_background" />
+                </div>
               </div>
-              <div className="activity__bar">
-                <div className="activity__bar_background" />
-              </div>
+              {/* {activity.queued && ( */}
+              {/*   <div className="activity__accept">+</div> */}
+              {/* )} */}
             </div>
-            {/* {activity.queued && ( */}
-            {/*   <div className="activity__accept">+</div> */}
-            {/* )} */}
-          </div>
-        ))
-        }
-      </div >
-      <div className="floating_add_button" onClick={() => setShowNewActivityOverlay(true)}>&#43;</div>
+          ))
+          }
+        </div >
+        <div className="floating_add_button" onClick={() => setShowNewActivityOverlay(true)}>&#43;</div>
 
-      {showConfirmModal && (
-        <Modal
-          onFocusOut={handleFocusOut}
-          title="How's it going?"
-          style={{ 'text-align': 'center' }}
-        >
-          <div className="modal__buttons">
-            <Button variant="outline" className="modal_button" onClick={removeFromQueue}>Deque</Button>
-            <Button color="go" className="modal_button" onClick={completeActivity}>Complete</Button>
-          </div>
-        </Modal>
-      )}
-      {showNewActivityOverlay && (
-        <NewActivityOverlay onClose={() => setShowNewActivityOverlay(false)} />
-      )}
-    </div >
+        {showConfirmModal && (
+          <Modal
+            onFocusOut={handleFocusOut}
+            title="How's it going?"
+            style={{ 'text-align': 'center' }}
+          >
+            <div className="modal__buttons">
+              <Button variant="outline" className="modal_button" onClick={removeFromQueue}>Deque</Button>
+              <Button color="go" className="modal_button" onClick={completeActivity}>Complete</Button>
+            </div>
+          </Modal>
+        )}
+        {showNewActivityOverlay && (
+          <NewActivityOverlay onClose={() => setShowNewActivityOverlay(false)} />
+        )}
+      </div>
+    </LayoutProtected>
   )
 }

@@ -5,7 +5,10 @@
   color: #fff;
   min-width: 50px;
   border-radius: 4px;
-  padding: 0.3rem 1.3rem;
+  padding: 0.5rem 1.3rem;
+  outline: none;
+  border: 0;
+  font-size: 16px;
 }
 
 .button--outline {
@@ -17,11 +20,14 @@
 
 .button--go {
   --color: var(--green);
-  /* background: var(--green); */
 }
 
 .button--grey {
   --color: var(--grey);
   border-color: color-mix(in srgb, var(--grey) 20%, transparent);
-  /* background: var(--green); */
+}
+
+.button--loading {
+  opacity: 0.5;
+  cursor: wait;
 }

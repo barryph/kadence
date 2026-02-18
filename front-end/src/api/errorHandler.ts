@@ -1,0 +1,33 @@
+import { ErrorCode, type AppError, type ServerError, type TErrorCode } from "./api.types";
+
+// For now we keep the mapped values as humble strings, we could extend this to include a field property, metadata, etc
+type ErrorMap = Record<TErrorCode, string>;
+
+class ErrorMapper {
+  // TODO: Make this per request
+  private errorMap: ErrorMap = {
+    'INVALID_CREDENTIALS': 'Invalid email or password, please try again.',
+
+    // Generic errors
+    'GENERIC_ERROR': 'Something went wrong, please try again.',
+    'NETWORK_ERROR': 'Something went wrong, please try again.',
+  }
+
+  mapError(serverError: ServerError): AppError {
+    const message = this.errorMap[serverError.code as TErrorCode];
+
+    if (message) {
+      return {
+        code: serverError.code as TErrorCode,
+        message,
+      };
+    }
+
+    return {
+      code: ErrorCode.GENERIC_ERROR,
+      message: 'An unexpected error occured. Please try again.',
+    };
+  }
+}
+
+export const errorMapper = new ErrorMapper();

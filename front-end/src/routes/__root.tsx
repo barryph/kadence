@@ -1,11 +1,17 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
+import { createRootRoute, Link, Outlet, useRouter } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import './__root.css';
 import { useAuth } from '../Layouts/AuthContext';
 
 function RootLayout() {
   const authContext = useAuth();
-  console.log('authContext');
+  const router = useRouter();
+
+  function handleLogout() {
+    authContext.logout();
+    router.navigate({ href: '/login' })
+  }
+
   return (
     <>
       <div className="site-header">
@@ -18,12 +24,16 @@ function RootLayout() {
         <div className="app-name font-header">
           Fit<span>Trick</span>
         </div>
-        IsAuthed: {JSON.stringify(authContext, null, 2)}
-        {authContext.isAuthenticated ? (
-          <div className="app-settings-icon">&#9776;</div>
-        ) : (
-          <Link to="/login" className="[&.active]:font-bold">Login</Link>
-        )}
+        <div className="site_header__right">
+          {authContext.isAuthenticated ? (
+            <>
+              <div className="app-settings-icon">&#9776;</div>
+              <button onClick={handleLogout} className="logout_button">Logout</button>
+            </>
+          ) : (
+            <Link to="/login" className="[&.active]:font-bold">Login</Link>
+          )}
+        </div>
       </div>
       <Outlet />
       <TanStackRouterDevtools />

@@ -71,3 +71,31 @@ body {
 .font-header {
   /* font-family: 'Montserrat'; */
 }
+
+.site_header__right {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logout_button {
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+
+
+/**
+ * Global styles
+ */
+
+.container {
+  padding: 1.5rem;
+}
+
+.mb {
+  margin-bottom: 1rem;
+}

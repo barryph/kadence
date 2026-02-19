@@ -1,7 +1,8 @@
-import { createRootRoute, Link, Outlet, useRouter } from '@tanstack/react-router'
+import { createRootRoute, Outlet, useRouter } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import './__root.css';
 import { useAuth } from '../Layouts/AuthContext';
+import LinkPlain from '../components/LinkPlain';
 
 function RootLayout() {
   const authContext = useAuth();
@@ -15,12 +16,6 @@ function RootLayout() {
   return (
     <>
       <div className="site-header">
-        {/* <Link to="/" className="[&.active]:font-bold"> */}
-        {/*   Home */}
-        {/* </Link>{' '} */}
-        {/* <Link to="/about" className="[&.active]:font-bold"> */}
-        {/*   About */}
-        {/* </Link> */}
         <div className="app-name font-header">
           Fit<span>Trick</span>
         </div>
@@ -31,7 +26,10 @@ function RootLayout() {
               <button onClick={handleLogout} className="logout_button">Logout</button>
             </>
           ) : (
-            <Link to="/login" className="[&.active]:font-bold">Login</Link>
+            <>
+              <LinkPlain to="/login">Login</LinkPlain>
+              <LinkPlain to="/register">Register</LinkPlain>
+            </>
           )}
         </div>
       </div>

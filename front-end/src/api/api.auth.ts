@@ -16,7 +16,7 @@ interface RegisterDTO {
   passwordConfirm: string;
 }
 
-interface RegisterResponse {
+export interface RegisterResponse {
   user: IUser;
 }
 

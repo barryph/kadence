@@ -7,6 +7,7 @@ class ErrorMapper {
   // TODO: Make this per request
   private errorMap: ErrorMap = {
     'INVALID_CREDENTIALS': 'Invalid email or password, please try again.',
+    'EMAIL_TAKEN': 'Email Is already taken.',
 
     // Generic errors
     'GENERIC_ERROR': 'Something went wrong, please try again.',
@@ -25,7 +26,7 @@ class ErrorMapper {
 
     return {
       code: ErrorCode.GENERIC_ERROR,
-      message: 'An unexpected error occured. Please try again.',
+      message: serverError.message || 'An unexpected error occured. Please try again.',
     };
   }
 }

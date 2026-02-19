@@ -75,6 +75,7 @@ body {
 .site_header__right {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .logout_button {
@@ -98,4 +99,9 @@ body {
 
 .mb {
   margin-bottom: 1rem;
+}
+
+.input_row:not(:last-child) {
+  margin-bottom: 1rem;
+  width: 100%;
 }

@@ -21,6 +21,7 @@ export interface ServerError {
 // }
 export const ErrorCode = {
   INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  EMAIL_TAKEN: 'EMAIL_TAKEN',
 
   // Generic errors
   GENERIC_ERROR: 'GENERIC_ERROR',

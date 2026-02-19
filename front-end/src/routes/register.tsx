@@ -6,7 +6,7 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import { ErrorAlert } from '../components/ErrorAlert';
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute('/register')({
   component: RouteComponent,
 })
 
@@ -16,6 +16,7 @@ function RouteComponent() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<null | string>(null)
 
@@ -24,27 +25,29 @@ function RouteComponent() {
 
     setIsLoading(true)
     setErrorMessage(null)
-    const response = await authContext.login(email, password);
+    const response = await authContext.register(email, password, passwordConfirm);
     if (response.error) {
       setErrorMessage(response.error.message)
       setIsLoading(false);
       return;
     }
-    // throw redirect({ to: search.redirect })
     router.navigate({ href: '/' })
   }
 
   return (
     <LayoutEnsureNotAuthed>
       <div className="container">
-        <form className="login_form" onSubmit={(event) => handleSubmit(event)}>
-          <h1>Login!</h1>
+        <form onSubmit={(event) => handleSubmit(event)}>
+          <h1>Sign Up!</h1>
           {errorMessage && <ErrorAlert className="mb" message={errorMessage} />}
           <div className="input_row">
             <Input placeholder="Email" label="Email" onChange={event => setEmail(event.target.value)} />
           </div>
           <div className="input_row">
             <Input placeholder="Password" label="Password" onChange={event => setPassword(event.target.value)} type="password" />
+          </div>
+          <div className="input_row">
+            <Input placeholder="Password Confirm" label="Password Confirm" onChange={event => setPasswordConfirm(event.target.value)} type="password" />
           </div>
           <div className="input_row">
             <Button isLoading={isLoading} type="submit">Enter</Button>

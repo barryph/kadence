@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { authAPI, type LoginResponse } from "../api/api.auth";
+import { authAPI, type LoginResponse, type RegisterResponse } from "../api/api.auth";
 import type { ApiResponse } from "../api/api.types";
 import { usersAPI } from "../api/api.users";
 
@@ -13,6 +13,7 @@ interface AuthState {
   user: IUser | null;
   login: (email: string, password: string) => Promise<ApiResponse<LoginResponse>>;
   logout: () => Promise<void>;
+  register: (email: string, password: string, passwordConfirm: string) => Promise<ApiResponse<RegisterResponse>>;
 }
 
 interface AuthProviderProps {
@@ -69,6 +70,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsAuthenticated(false);
   }
 
+  async function register(email: string, password: string, passwordConfirm: string): Promise<ApiResponse<RegisterResponse>> {
+    const response = await authAPI.register({
+      email,
+      password,
+      passwordConfirm,
+    });
+    if (response.error) {
+      console.error('Error registering:', response.error);
+    } else {
+      setUser(response.data.user);
+      setIsAuthenticated(true);
+    }
+    return response;
+  }
+
   if (isLoading) {
     return (
       <div>Loading user...</div>
@@ -76,7 +92,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   )

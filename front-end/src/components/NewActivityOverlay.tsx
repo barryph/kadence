@@ -3,8 +3,19 @@ import './NewActivitOverlay.css';
 import Input from './Input';
 import Select from './Select';
 import Button from './Button';
+import { activitiesAPI, type IActivity } from '../api/api.activity';
 
-export default function NewActivity({ onClose }) {
+interface NewActivitOverlayProps {
+  onClose: (activity?: IActivity) => void;
+}
+
+export default function NewActivity({ onClose }: NewActivitOverlayProps) {
+  const [name, setName] = useState<string>('');
+  const [ticker, setTicker] = useState<string>('');
+  const [interval, setInterval] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<null | string>(null)
+
   const [categories, setCategories] = useState([
     {
       name: 'Sprint',
@@ -22,20 +33,39 @@ export default function NewActivity({ onClose }) {
   function addCategory(category) {
     setCategories([...categories, category]);
   }
+
+  async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setIsLoading(true)
+    setErrorMessage(null)
+    const response = await activitiesAPI.createActivity({
+      name,
+      ticker,
+      interval,
+    })
+    if (response.error) {
+      setErrorMessage(response.error.message)
+      setIsLoading(false);
+      return;
+    }
+    onClose(response.data.activity);
+  }
+
   return (
     <div className="overlay_new_activity">
       <div className="overlay_new_activity_content">
-        <div className="close_button" onClick={onClose}>&#10540;</div>
+        <div className="close_button" onClick={() => onClose()}>&#10540;</div>
         <h1 className="title">New activity</h1>
-        <form>
+        <form onSubmit={(event) => handleSubmit(event)}>
           <div className="input_row">
-            <Input label="Name" placeholder="Name" className="input" />
+            <Input label="Name" placeholder="Name" className="input" onChange={(event) => setName(event.target.value)} />
           </div>
           <div className="input_row">
-            <Input label="Ticker (optional)" placeholder="Ticker" className="input" />
+            <Input label="Ticker (optional)" placeholder="Ticker" className="input" onChange={(event) => setTicker(event.target.value)} />
           </div>
           <div className="input_row">
-            <Input label="Interval (days)" placeholder="Interval (days)" type="number" className="input" />
+            <Input label="Interval (days)" placeholder="Interval (days)" type="number" className="input" onChange={(event) => setInterval(parseInt(event.target.value, 10))} />
           </div>
           <div className="input_row">
             <Select
@@ -50,7 +80,7 @@ export default function NewActivity({ onClose }) {
             <Input label="Last Done (optional)" placeholder="Last Done" type="date" className="input" />
           </div>
 
-          <Button className="add_button" type="submit">Create</Button>
+          <Button isLoading={isLoading} className="add_button" type="submit">Create</Button>
         </form>
       </div>
     </div>

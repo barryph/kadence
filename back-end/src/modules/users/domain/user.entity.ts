@@ -1,3 +1,4 @@
+import isNullOrUndefined from 'src/shared/lib/isNullOrUndefined';
 import UserEmail from './value-objects/UserEmail';
 import UserPassword from './value-objects/UserPassword';
 
@@ -17,7 +18,7 @@ export default class User {
   }
 
   get id(): string | undefined {
-    if (!this.props.id) {
+    if (isNullOrUndefined(this.props.id)) {
       throw new Error('User has not been persisted yet');
     }
     return this.props.id;
@@ -32,11 +33,11 @@ export default class User {
   }
 
   public isPersisted(): this is IUser & { id: string } {
-    return !!this.props.id;
+    return !isNullOrUndefined(this.props.id);
   }
 
   public ensurePersisted(): asserts this is IUser & { id: string } {
-    if (!this.props.id) {
+    if (isNullOrUndefined(this.props.id)) {
       throw new Error('User must be persisted before this operation');
     }
   }

@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import ServerError from './shared/ServerError';
@@ -28,7 +29,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return;
     }
 
-    this.logger.error('Unexpected exception occured:', exception);
+    if (!(exception instanceof UnauthorizedException)) {
+      this.logger.error('Unexpected exception occured:', exception);
+    }
+
     const httpStatus =
       exception instanceof HttpException
         ? exception.getStatus()

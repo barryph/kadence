@@ -1,6 +1,10 @@
 import { ErrorCode, type ApiResponse, type ServerResponse } from "./api.types";
 import { errorMapper } from "./errorHandler";
 
+export interface OptionalOptions {
+  signal?: AbortSignal;
+}
+
 class APIClient {
   // TODO: Make a config for different environments
   private baseUrl = 'http://localhost:3000';
@@ -43,26 +47,28 @@ class APIClient {
     }
   }
 
-  async get<T>(url: string): Promise<ApiResponse<T>> {
-    return this.request<T>(url, { method: "GET" });
+  async get<T>(url: string, options: OptionalOptions = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(url, { method: "GET", ...options });
   }
 
-  async post<T>(url: string, body: Record<string, any>): Promise<ApiResponse<T>> {
+  async post<T>(url: string, body: Record<string, any>, options: OptionalOptions = {}): Promise<ApiResponse<T>> {
     return this.request<T>(url, {
       method: "POST",
       body: JSON.stringify(body),
+      ...options,
     });
   }
 
-  async put<T>(url: string, body: Record<string, any>): Promise<ApiResponse<T>> {
+  async put<T>(url: string, body: Record<string, any>, options: OptionalOptions = {}): Promise<ApiResponse<T>> {
     return this.request<T>(url, {
       method: "PUT",
       body: JSON.stringify(body),
+      ...options,
     });
   }
 
-  async delete<T>(url: string): Promise<ApiResponse<T>> {
-    return this.request<T>(url, { method: "DELETE" });
+  async delete<T>(url: string, options: OptionalOptions = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(url, { method: "DELETE", ...options });
   }
 }
 

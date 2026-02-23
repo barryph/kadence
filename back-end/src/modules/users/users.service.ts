@@ -29,6 +29,7 @@ export class UsersService {
   }
 
   async create(body: CreateUserDTO) {
+    // TODO: Move valueobject creation into user.createNew
     const email = UserEmail.create(body.email);
     const password = UserPassword.create(body.password);
     const user = User.createNew({

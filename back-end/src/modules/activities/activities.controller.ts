@@ -1,0 +1,56 @@
+import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
+import type { Request } from 'express';
+import { IsAuthedGuard } from '../authentication/is-authed.guard';
+import { ActivitiesService } from './activities.service';
+import CreateActivityDTO from './dtos/createActivity.dto';
+import { UserDTO } from '../users/mappers/userMap';
+import { ApiBody } from '@nestjs/swagger';
+
+@Controller('activities')
+export class ActivitiesController {
+  constructor(private readonly activitiesService: ActivitiesService) { }
+
+  @Post('/')
+  @UseGuards(IsAuthedGuard)
+  @ApiBody({
+    type: CreateActivityDTO,
+    examples: {
+      userExample1: {
+        summary: 'Create a new activity',
+        value: {
+          name: 'Back Squat',
+          ticker: 'SQUT',
+          interval: 3,
+        } as CreateActivityDTO,
+      },
+    },
+  })
+  async create(
+    @Req() req: Request,
+    @Body() createActivityDto: CreateActivityDTO,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    const activity = await this.activitiesService.create(
+      createActivityDto,
+      userId,
+    );
+
+    return {
+      data: {
+        activity,
+      },
+    };
+  }
+
+  @Get('/')
+  @UseGuards(IsAuthedGuard)
+  async getAllByUserId(@Req() req: Request) {
+    const userId = (req.user as UserDTO).id;
+    const activities = await this.activitiesService.getAllByUserId(userId);
+    return {
+      data: {
+        activities,
+      },
+    };
+  }
+}

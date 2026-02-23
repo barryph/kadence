@@ -1,12 +1,12 @@
 import type { IUser } from "../Layouts/AuthContext";
-import { apiClient } from "./api.client";
+import { apiClient, type OptionalOptions } from "./api.client";
 
 interface FetchUserResponse {
   user: IUser;
 }
 
 export const usersAPI = {
-  getCurrentUser() {
-    return apiClient.get<FetchUserResponse>('/users/current');
+  getCurrentUser(options?: OptionalOptions) {
+    return apiClient.get<FetchUserResponse>('/users/current', options);
   },
 };

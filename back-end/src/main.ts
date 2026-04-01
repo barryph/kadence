@@ -7,8 +7,8 @@ import passport from 'passport';
 import cors from 'cors';
 import { ConnectSessionKnexStore } from 'connect-session-knex';
 import { configurePassport } from './modules/authentication/passport';
-import { AuthenticationService } from './modules/authentication/authentication.service';
-import UsersRepo from './modules/users/domain/user.repository';
+import { AuthenticationService } from './modules/authentication/services/authentication.service';
+import UsersRepo from './modules/users/repos/user.repository';
 import { AllExceptionsFilter } from './ExceptionFilter';
 import { KnexService } from './shared/knex/knex.service';
 
@@ -54,7 +54,7 @@ async function bootstrap() {
   app.use(
     session({
       // - there is an any type somewhere in here
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+
       store: new ConnectSessionKnexStore({
         knex: knexService.connection,
         tableName: 'user_sessions',

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { KnexService } from 'src/shared/knex/knex.service';
-import Activity from './domain/activity.entity';
-import * as ActivityMap from './mappers/activityMap';
-import { IActivityPersistence } from './mappers/activityMap';
+import Activity from '../domain/activity.entity';
+import * as ActivityMap from '../mappers/activityMap';
+import { IActivityPersistence } from '../mappers/activityMap';
 
 interface IActivitiesRepo {
   create(activity: Activity): Promise<Activity>;

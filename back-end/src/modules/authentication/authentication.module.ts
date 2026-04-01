@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from '../users/users.module';
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationService } from './services/authentication.service';
 import { PassportModule } from '@nestjs/passport';
 import { AuthenticationController } from './authentication.controller';
 
@@ -9,4 +9,4 @@ import { AuthenticationController } from './authentication.controller';
   controllers: [AuthenticationController],
   providers: [AuthenticationService],
 })
-export class AuthenticaitonModule { }
+export class AuthenticaitonModule {}

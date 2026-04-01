@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import Activity from './domain/activity.entity';
-import ActivityTicker from './domain/activityTicker.vo';
-import CreateActivityDTO from './dtos/createActivity.dto';
-import ActivitiesRepo from './activities.repository';
-import * as ActivityMap from './mappers/activityMap';
-import type { ActivityDTO } from './mappers/activityMap';
+import Activity from '../domain/activity.entity';
+import ActivityTicker from '../domain/activityTicker.vo';
+import CreateActivityDTO from '../dtos/createActivity.dto';
+import ActivitiesRepo from '../repos/activities.repository';
+import * as ActivityMap from '../mappers/activityMap';
+import type { ActivityDTO } from '../mappers/activityMap';
 
 @Injectable()
 export class ActivitiesService {
-  constructor(private readonly activitiesRepo: ActivitiesRepo) { }
+  constructor(private readonly activitiesRepo: ActivitiesRepo) {}
 
   async create(
     createActivityDto: CreateActivityDTO,

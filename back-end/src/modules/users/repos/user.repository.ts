@@ -1,6 +1,6 @@
 import { KnexService } from 'src/shared/knex/knex.service';
-import User from './user.entity';
-import UserEmail from './value-objects/UserEmail';
+import User from '../domain/user.entity';
+import UserEmail from '../domain/value-objects/UserEmail';
 import { Injectable } from '@nestjs/common';
 import type { IUserPersistence } from '../mappers/userMap';
 import * as UserMap from '../mappers/userMap';

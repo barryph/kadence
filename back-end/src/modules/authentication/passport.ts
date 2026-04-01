@@ -1,9 +1,9 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationService } from './services/authentication.service';
 import * as UserMap from '../users/mappers/userMap';
 import { UserDTO } from '../users/mappers/userMap';
-import UsersRepo from '../users/domain/user.repository';
+import UsersRepo from '../users/repos/user.repository';
 
 export function configurePassport(
   authenticationService: AuthenticationService,

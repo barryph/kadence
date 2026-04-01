@@ -1,14 +1,14 @@
 import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
 import type { Request } from 'express';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
-import { ActivitiesService } from './activities.service';
+import { ActivitiesService } from './services/activities.service';
 import CreateActivityDTO from './dtos/createActivity.dto';
 import { UserDTO } from '../users/mappers/userMap';
 import { ApiBody } from '@nestjs/swagger';
 
 @Controller('activities')
 export class ActivitiesController {
-  constructor(private readonly activitiesService: ActivitiesService) { }
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Post('/')
   @UseGuards(IsAuthedGuard)

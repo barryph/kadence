@@ -1,11 +1,11 @@
 import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersService } from './services/users.service';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
 import type { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('/')
   findOne(@Query('id') id: string) {

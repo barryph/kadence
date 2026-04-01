@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import User from './domain/user.entity';
-import UserEmail from './domain/value-objects/UserEmail';
-import CreateUserDTO from '../authentication/dtos/createUser.dto';
-import UserPassword from './domain/value-objects/UserPassword';
-import * as UserMap from './mappers/userMap';
-import { PasswordsDontMatchError, EmailTakenError } from './domain/user.errors';
-import UsersRepo from './domain/user.repository';
+import User from '../domain/user.entity';
+import UserEmail from '../domain/value-objects/UserEmail';
+import CreateUserDTO from '../../authentication/dtos/createUser.dto';
+import UserPassword from '../domain/value-objects/UserPassword';
+import * as UserMap from '../mappers/userMap';
+import {
+  PasswordsDontMatchError,
+  EmailTakenError,
+} from '../domain/user.errors';
+import UsersRepo from '../repos/user.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepo: UsersRepo) { }
+  constructor(private readonly usersRepo: UsersRepo) {}
 
   async findOne(id: string) {
     const email = UserEmail.create('test@mail.com');

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import CreateUserDTO from '../authentication/dtos/createUser.dto';
-import { AuthenticationService } from './authentication.service';
+import { AuthenticationService } from './services/authentication.service';
 import type { UserDTO } from '../users/mappers/userMap';
 import passport from 'passport';
 import type { NextFunction, Request, Response } from 'express';
@@ -22,7 +22,7 @@ import ServerError from 'src/shared/ServerError';
 export class AuthenticationController {
   private readonly logger = new Logger(AuthenticationController.name);
 
-  constructor(private readonly authenticationService: AuthenticationService) { }
+  constructor(private readonly authenticationService: AuthenticationService) {}
 
   @Post('login')
   @ApiBody({

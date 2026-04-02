@@ -1,7 +1,6 @@
-
-import { useEffect, useRef, useState } from 'react';
-import './Select.css';
-import AddCategoryModal from './AddCategoryModal.tsx';
+import { useEffect, useRef, useState } from "react";
+import "./Select.css";
+import AddCategoryModal from "./AddCategoryModal.tsx";
 
 // TODO: Add scroll area
 // TODO: Rename from Select
@@ -14,7 +13,14 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   placeholder?: string;
 }
 
-export default function Select({ onCreate, options, placeholder, className, label, ...props }: SelectProps) {
+export default function Select({
+  onCreate,
+  options,
+  placeholder,
+  className,
+  label,
+  ...props
+}: SelectProps) {
   const dropdownRef = useRef(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -27,12 +33,12 @@ export default function Select({ onCreate, options, placeholder, className, labe
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   function handleClickAddNew() {
     setShowCreateCategoryModal(true);
@@ -56,26 +62,37 @@ export default function Select({ onCreate, options, placeholder, className, labe
       <div className="base_select_wrapper" ref={dropdownRef}>
         <label>{label}</label>
         <div
-          onClick={() => { setShowDropdown(!showDropdown) }}
-          className={`base_select ${className} ${!selectedCategory ? 'faint' : ''}`}
+          onClick={() => {
+            setShowDropdown(!showDropdown);
+          }}
+          className={`base_select ${className} ${!selectedCategory ? "faint" : ""}`}
           {...props}
         >
           {selectedCategory ? (
             <>
               {selectedCategory.name}
-              <span className="item_dot" style={{ background: selectedCategory.color }} />
+              <span
+                className="item_dot"
+                style={{ background: selectedCategory.color }}
+              />
             </>
           ) : (
-            placeholder || 'Choose a category'
+            placeholder || "Choose a category"
           )}
           <span className="dropdown_arrow">&#10148;</span>
         </div>
         {showDropdown && (
           <div className="base_select_dropdown">
             {options.map((option) => (
-              <div onClick={() => selectCategory(option)} className="dropdown_item">
+              <div
+                onClick={() => selectCategory(option)}
+                className="dropdown_item"
+              >
                 {option.name}
-                <span className="item_dot" style={{ background: option.color }} />
+                <span
+                  className="item_dot"
+                  style={{ background: option.color }}
+                />
               </div>
             ))}
             <div className="dropdown_item" onClick={handleClickAddNew}>

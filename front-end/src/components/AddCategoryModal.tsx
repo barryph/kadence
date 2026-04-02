@@ -1,18 +1,17 @@
-import { useState } from 'react';
-import Modal from './Modal';
-import Input from './Input';
-import Button from './Button';
-import './AddCategoryModal.css';
+import { useState } from "react";
+import Modal from "./Modal";
+import Input from "./Input";
+import Button from "./Button";
+import "./AddCategoryModal.css";
 
 export default function AddCategoryModal({ onSave, onClose }) {
-  const [name, setName] = useState('');
-  const [color, setColor] = useState('');
+  const [name, setName] = useState("");
+  const [color, setColor] = useState("");
   function save() {
-    const category = {
+    onSave({
       name,
       color,
-    };
-    onSave(category);
+    });
   }
   return (
     <Modal
@@ -39,8 +38,17 @@ export default function AddCategoryModal({ onSave, onClose }) {
         />
       </div>
       <div className="modal__buttons">
-        <Button variant="outline" color="grey" className="modal_button" onClick={onClose}>Cancel</Button>
-        <Button color="go" className="modal_button" onClick={save}>Save</Button>
+        <Button
+          variant="outline"
+          color="grey"
+          className="modal_button"
+          onClick={onClose}
+        >
+          Cancel
+        </Button>
+        <Button color="go" className="modal_button" onClick={save}>
+          Save
+        </Button>
       </div>
     </Modal>
   );

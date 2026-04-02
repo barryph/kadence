@@ -4,11 +4,15 @@ import ActivityTicker from '../domain/activityTicker.vo';
 import CreateActivityDTO from '../dtos/createActivity.dto';
 import ActivitiesRepo from '../repos/activities.repository';
 import * as ActivityMap from '../mappers/activityMap';
-import type { ActivityDTO } from '../mappers/activityMap';
+import { GetActivitiesByUserIdQuery } from '../queries/getActivitiesByUserId.query';
+import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 @Injectable()
 export class ActivitiesService {
-  constructor(private readonly activitiesRepo: ActivitiesRepo) {}
+  constructor(
+    private readonly activitiesRepo: ActivitiesRepo,
+    private readonly getActivitiesByUserIdQuery: GetActivitiesByUserIdQuery,
+  ) {}
 
   async create(
     createActivityDto: CreateActivityDTO,
@@ -29,8 +33,7 @@ export class ActivitiesService {
     return ActivityMap.toDTO(created);
   }
 
-  async getAllByUserId(userId: string): Promise<ActivityDTO[]> {
-    const activities = await this.activitiesRepo.getAllByUserId(userId);
-    return activities.map((activity) => ActivityMap.toDTO(activity));
+  async getAllByUserId(userId: string): Promise<ActivityWithCategoryDTO[]> {
+    return this.getActivitiesByUserIdQuery.execute(userId);
   }
 }

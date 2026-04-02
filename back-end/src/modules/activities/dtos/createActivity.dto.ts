@@ -1,4 +1,4 @@
-import { IsNotEmpty, MaxLength } from 'class-validator';
+import { IsNotEmpty, MaxLength, IsOptional, IsString } from 'class-validator';
 
 export default class CreateActivityDTO {
   @IsNotEmpty()
@@ -8,4 +8,7 @@ export default class CreateActivityDTO {
   ticker?: string;
   @IsNotEmpty()
   interval: number;
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
 }

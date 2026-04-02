@@ -1,5 +1,6 @@
 import Activity from '../domain/activity.entity';
 import ActivityTicker from '../domain/activityTicker.vo';
+import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 export interface ActivityDTO {
   id: string;
@@ -7,11 +8,13 @@ export interface ActivityDTO {
   name: string;
   ticker?: string;
   interval: number;
+  categoryId?: string;
 }
 
 export interface IActivityPersistence {
   id?: string;
   user_id: string;
+  category_id?: string;
   name: string;
   ticker?: string;
   interval: string; // Postgres INTERVAL type e.g. '2 DAYS'
@@ -22,6 +25,7 @@ export function toDTO(activity: Activity): ActivityDTO {
   return {
     id: activity.id,
     userId: activity.userId,
+    categoryId: activity.categoryId,
     name: activity.name,
     ticker: activity.ticker?.value,
     interval: activity.interval,
@@ -31,9 +35,10 @@ export function toDTO(activity: Activity): ActivityDTO {
 export function toPersistence(activity: Activity): IActivityPersistence {
   return {
     user_id: activity.userId,
+    category_id: activity.categoryId,
     name: activity.name,
     ticker: activity.ticker?.value,
-    interval: `${activity.interval} DAYS`, // Inserting into the database default to seconds
+    interval: `${activity.interval} DAYS`,
   };
 }
 
@@ -42,12 +47,33 @@ export function persistenceToDomain(activity: IActivityPersistence): Activity {
   if (activity.ticker) {
     ticker = ActivityTicker.create(activity.ticker);
   }
-  console.log('activity', activity.interval);
+
   return Activity.createNew({
     id: activity.id,
     userId: activity.user_id,
+    categoryId: activity.category_id,
     name: activity.name,
     ticker,
     interval: parseInt(activity.interval.split(' ')[0], 10),
   });
 }
+
+export function rawToActivityWithCategoryDTO(row: any): ActivityWithCategoryDTO {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    name: row.name,
+    ticker: row.ticker,
+    interval: parseInt(row.interval_days, 10),
+    categoryId: row.category_id,
+    category: row.category_id
+      ? {
+          id: row.category_id,
+          userId: row.category_user_id,
+          name: row.category_name,
+          color: row.category_color,
+        }
+      : undefined,
+  };
+}
+

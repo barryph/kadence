@@ -10,6 +10,7 @@ interface IActivity {
   interval: number;
   createdAt?: Date;
   updatedAt?: Date;
+  daysUntil?: number;
 }
 
 export default class Activity {
@@ -44,6 +45,10 @@ export default class Activity {
 
   get interval(): number {
     return this.props.interval;
+  }
+
+  get daysUntil(): number | undefined {
+    return this.props.daysUntil;
   }
 
   public isPersisted(): this is IActivity & { id: string } {

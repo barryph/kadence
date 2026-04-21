@@ -8,4 +8,5 @@ export interface ActivityWithCategoryDTO {
   interval: number;
   categoryId?: string;
   category?: CategoryDTO;
+  daysUntil: number;
 }

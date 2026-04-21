@@ -140,7 +140,9 @@ export default function Dashboard() {
     setActiveActivityId(null);
     setShowConfirmModal(false);
   }
-  function completeActivity() {
+  async function completeActivity() {
+    if (!activeActivityId) return;
+    const updatedActivity = await activitiesAPI.complete(activeActivityId)
     const activity = activities.find(activity => activity.id === activeActivityId);
     if (!activity) throw new Error('Could not find activity to complete');
     activity.daysUntil = activity.interval;

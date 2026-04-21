@@ -18,6 +18,10 @@ interface GetAllActivitiesByUserResponse {
   activities: IActivity[];
 }
 
+interface CompleteActivityResponse {
+  activity: IActivity;
+}
+
 export const activitiesAPI = {
   createActivity(body: CreateActivityDTO, options?: OptionalOptions) {
     return apiClient.post<CreateActivityResponse>("/activities", body, options);
@@ -26,6 +30,14 @@ export const activitiesAPI = {
   getAllByUser(options?: OptionalOptions) {
     return apiClient.get<GetAllActivitiesByUserResponse>(
       "/activities",
+      options,
+    );
+  },
+
+  complete(activityId: string, options?: OptionalOptions) {
+    return apiClient.post<CompleteActivityResponse>(
+      `/activities/${activityId}/complete`,
+      {},
       options,
     );
   },

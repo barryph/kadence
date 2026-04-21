@@ -13,12 +13,19 @@ export class GetActivitiesByUserIdQuery {
       rows: any[];
     }>(
       `
-        SELECT 
-          activities.*, 
-          EXTRACT(DAY FROM activities.interval) AS interval_days, 
+        SELECT
+          activities.*,
+          EXTRACT(DAY FROM activities.interval) AS interval_days,
           categories.name AS category_name,
           categories.color AS category_color,
-          categories.user_id AS category_user_id
+          categories.user_id AS category_user_id,
+          COALESCE(
+            GREATEST(
+              0,
+              (CURRENT_DATE - (SELECT MAX(date) FROM activity_events WHERE activity_id = activities.id)) - EXTRACT(DAY FROM activities.interval)
+            ),
+            0
+          ) AS days_until
         FROM activities
         LEFT JOIN categories ON activities.category_id = categories.id
         WHERE activities.user_id = :userId
@@ -28,6 +35,8 @@ export class GetActivitiesByUserIdQuery {
       },
     );
 
-    return result.rows.map((row) => ActivityMap.rawToActivityWithCategoryDTO(row));
+    return result.rows.map((row) =>
+      ActivityMap.rawToActivityWithCategoryDTO(row),
+    );
   }
 }

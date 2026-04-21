@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, Get, Param } from '@nestjs/common';
 import type { Request } from 'express';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
 import { ActivitiesService } from './services/activities.service';
@@ -8,7 +8,7 @@ import { ApiBody } from '@nestjs/swagger';
 
 @Controller('activities')
 export class ActivitiesController {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(private readonly activitiesService: ActivitiesService) { }
 
   @Post('/')
   @UseGuards(IsAuthedGuard)
@@ -50,6 +50,25 @@ export class ActivitiesController {
     return {
       data: {
         activities,
+      },
+    };
+  }
+
+  @Post('/:activityId/complete')
+  @UseGuards(IsAuthedGuard)
+  async complete(
+    @Req() req: Request,
+    @Param('activityId') activityId: string,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    const activity = await this.activitiesService.completeActivity(
+      activityId,
+      userId,
+    );
+
+    return {
+      data: {
+        activity,
       },
     };
   }

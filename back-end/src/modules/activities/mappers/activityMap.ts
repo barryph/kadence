@@ -9,6 +9,7 @@ export interface ActivityDTO {
   ticker?: string;
   interval: number;
   categoryId?: string;
+  daysUntil?: number;
 }
 
 export interface IActivityPersistence {
@@ -18,6 +19,7 @@ export interface IActivityPersistence {
   name: string;
   ticker?: string;
   interval: string; // Postgres INTERVAL type e.g. '2 DAYS'
+  days_until?: number;
 }
 
 export function toDTO(activity: Activity): ActivityDTO {
@@ -29,6 +31,7 @@ export function toDTO(activity: Activity): ActivityDTO {
     name: activity.name,
     ticker: activity.ticker?.value,
     interval: activity.interval,
+    daysUntil: activity.daysUntil,
   };
 }
 
@@ -39,6 +42,7 @@ export function toPersistence(activity: Activity): IActivityPersistence {
     name: activity.name,
     ticker: activity.ticker?.value,
     interval: `${activity.interval} DAYS`,
+    days_until: activity.daysUntil,
   };
 }
 
@@ -55,6 +59,7 @@ export function persistenceToDomain(activity: IActivityPersistence): Activity {
     name: activity.name,
     ticker,
     interval: parseInt(activity.interval.split(' ')[0], 10),
+    daysUntil: activity.days_until ? Number(activity.days_until) : undefined,
   });
 }
 
@@ -66,6 +71,7 @@ export function rawToActivityWithCategoryDTO(row: any): ActivityWithCategoryDTO 
     ticker: row.ticker,
     interval: parseInt(row.interval_days, 10),
     categoryId: row.category_id,
+    daysUntil: Number(row.days_until),
     category: row.category_id
       ? {
           id: row.category_id,

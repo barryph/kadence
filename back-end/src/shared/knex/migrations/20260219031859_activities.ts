@@ -13,6 +13,7 @@ export async function up(knex: Knex): Promise<void> {
   });
 
   await knex.schema.createTable('activity_events', (table) => {
+    table.increments('id').primary();
     table.date('date');
     table
       .integer('activity_id')

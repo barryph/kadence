@@ -8,7 +8,9 @@ export interface IActivity {
   interval: number;
 }
 
-type CreateActivityDTO = Omit<Omit<IActivity, "id">, "userId">;
+interface CreateActivityDTO extends Omit<Omit<IActivity, "id">, "userId"> {
+  lastDone?: string;
+};
 
 interface CreateActivityResponse {
   activity: IActivity;

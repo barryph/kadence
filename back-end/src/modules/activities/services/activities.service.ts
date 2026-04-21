@@ -16,7 +16,7 @@ export class ActivitiesService {
     private readonly activitiesRepo: ActivitiesRepo,
     private readonly activityEventRepo: ActivityEventRepo,
     private readonly getActivitiesByUserIdQuery: GetActivitiesByUserIdQuery,
-  ) {}
+  ) { }
 
   async create(
     createActivityDto: CreateActivityDTO,
@@ -33,15 +33,40 @@ export class ActivitiesService {
       interval: createActivityDto.interval,
     });
 
-    const created = await this.activitiesRepo.create(activity);
-    return ActivityMap.toDTO(created);
+    const createdActivity: Activity =
+      await this.activitiesRepo.create(activity);
+
+    if (!createActivityDto.lastDone) {
+      return ActivityMap.toDTO(createdActivity);
+    }
+
+    createdActivity.ensurePersisted();
+    const event = ActivityEvent.createNew({
+      activityId: createdActivity.id,
+      date: new Date(createActivityDto.lastDone),
+    });
+    await this.activityEventRepo.create(event);
+    const updatedActivity = await this.activitiesRepo.getById(
+      createdActivity.id,
+    );
+
+    if (!updatedActivity) {
+      throw new Error(
+        'Something has gone wrong. The created activity does not exist.',
+      );
+    }
+
+    return ActivityMap.toDTO(updatedActivity);
   }
 
   async getAllByUserId(userId: string): Promise<ActivityWithCategoryDTO[]> {
     return this.getActivitiesByUserIdQuery.execute(userId);
   }
 
-  async completeActivity(activityId: string, userId: string): Promise<ActivityDTO> {
+  async completeActivity(
+    activityId: string,
+    userId: string,
+  ): Promise<ActivityDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
     if (!activity) {
       throw new Error('Activity not found');

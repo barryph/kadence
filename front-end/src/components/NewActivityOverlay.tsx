@@ -13,6 +13,7 @@ export default function NewActivity({ onClose }: NewActivitOverlayProps) {
   const [name, setName] = useState<string>("");
   const [ticker, setTicker] = useState<string>("");
   const [interval, setInterval] = useState<number>(1);
+  const [lastDone, setLastDone] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
@@ -43,6 +44,7 @@ export default function NewActivity({ onClose }: NewActivitOverlayProps) {
       name,
       ticker,
       interval,
+      lastDone,
     });
     if (response.error) {
       setErrorMessage(response.error.message);
@@ -51,6 +53,8 @@ export default function NewActivity({ onClose }: NewActivitOverlayProps) {
     }
     onClose(response.data.activity);
   }
+
+  const today = new Date().toISOString().split('T')[0]; // String formatted as: YYYY-MM-DD
 
   return (
     <div className="overlay_new_activity">
@@ -97,11 +101,16 @@ export default function NewActivity({ onClose }: NewActivitOverlayProps) {
             />
           </div>
           <div className="input_row">
+            {lastDone}
             <Input
               label="Last Done (optional)"
               placeholder="Last Done"
               type="date"
               className="input"
+              onChange={(event) =>
+                setLastDone(event.target.value)
+              }
+              max={today}
             />
           </div>
 

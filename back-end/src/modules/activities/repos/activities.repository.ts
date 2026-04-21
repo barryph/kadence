@@ -13,7 +13,7 @@ interface IActivitiesRepo {
 export default class ActivitiesRepo implements IActivitiesRepo {
   constructor(private readonly knexService: KnexService) { }
 
-  async create(activityDomain: Activity) {
+  async create(activityDomain: Activity): Promise<Activity> {
     const activity = ActivityMap.toPersistence(activityDomain);
     const result = await this.knexService.connection.raw<{
       rows: IActivityPersistence[];

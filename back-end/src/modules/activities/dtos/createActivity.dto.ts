@@ -11,4 +11,7 @@ export default class CreateActivityDTO {
   @IsOptional()
   @IsString()
   categoryId?: string;
+  @IsOptional()
+  @IsString()
+  lastDone?: string; // YYYY-MM-DD
 }

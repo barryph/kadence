@@ -11,7 +11,7 @@ interface IActivitiesRepo {
 
 @Injectable()
 export default class ActivitiesRepo implements IActivitiesRepo {
-  constructor(private readonly knexService: KnexService) {}
+  constructor(private readonly knexService: KnexService) { }
 
   async create(activityDomain: Activity) {
     const activity = ActivityMap.toPersistence(activityDomain);
@@ -43,11 +43,8 @@ export default class ActivitiesRepo implements IActivitiesRepo {
         SELECT
           activities.*,
           EXTRACT(DAY FROM activities.interval) || ' DAYS' AS interval,
-          COALESCE(
-            GREATEST(
-              0,
-              (CURRENT_DATE - (SELECT MAX(date) FROM activity_events WHERE activity_id = activities.id)) - EXTRACT(DAY FROM activities.interval)
-            ),
+          GREATEST(
+            EXTRACT(DAY FROM activities.interval) - (CURRENT_DATE - (SELECT MAX(date) FROM activity_events WHERE activity_id = activities.id)),
             0
           ) AS days_until
         FROM activities

@@ -6,7 +6,7 @@ import * as ActivityMap from '../mappers/activityMap';
 
 @Injectable()
 export class GetActivitiesByUserIdQuery {
-  constructor(private readonly knexService: KnexService) {}
+  constructor(private readonly knexService: KnexService) { }
 
   async execute(userId: string): Promise<ActivityWithCategoryDTO[]> {
     const result = await this.knexService.connection.raw<{
@@ -19,11 +19,8 @@ export class GetActivitiesByUserIdQuery {
           categories.name AS category_name,
           categories.color AS category_color,
           categories.user_id AS category_user_id,
-          COALESCE(
-            GREATEST(
-              0,
-              (CURRENT_DATE - (SELECT MAX(date) FROM activity_events WHERE activity_id = activities.id)) - EXTRACT(DAY FROM activities.interval)
-            ),
+          GREATEST(
+            EXTRACT(DAY FROM activities.interval) - (CURRENT_DATE - (SELECT MAX(date) FROM activity_events WHERE activity_id = activities.id)),
             0
           ) AS days_until
         FROM activities

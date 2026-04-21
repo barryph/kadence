@@ -117,25 +117,26 @@ export default function Dashboard() {
   //   // ])
   // });
 
-  function handleActivityClick(activity: IActivity) {
+  function handleActivityClick(event: Event, activity: IActivity) {
     if (activity.queued) {
       setActiveActivityId(activity.id);
       setShowConfirmModal(true);
     } else {
-      activity.queued = true;
-      setActivities([...sortActivities(activities)]);
+      const activitiesTemp = activities.map((a) => a.id === activity.id ? { ...a, queued: true } : a);
+      setActivities([...sortActivities(activitiesTemp)]);
     }
   }
 
   function handleFocusOut() {
+    if (!showConfirmModal) return;
     setActiveActivityId(null);
     setShowConfirmModal(false);
   }
   function removeFromQueue() {
     const activity = activities.find(activity => activity.id === activeActivityId);
     if (!activity) throw new Error('Could not find activity to remove from queue');
-    activity.queued = false;
-    setActivities([...sortActivities(activities)]);
+    const activitiesTemp = activities.map((a) => a.id === activity.id ? { ...a, queued: false } : a);
+    setActivities([...sortActivities(activitiesTemp)]);
 
     setActiveActivityId(null);
     setShowConfirmModal(false);
@@ -146,8 +147,8 @@ export default function Dashboard() {
     const activity = activities.find(activity => activity.id === activeActivityId);
     if (!activity) throw new Error('Could not find activity to complete');
     activity.daysUntil = activity.interval;
-    activity.queued = false;
-    setActivities([...sortActivities(activities)]);
+    const activitiesTemp = activities.map((a) => a.id === activity.id ? { ...a, queued: false } : a);
+    setActivities([...sortActivities(activitiesTemp)]);
 
     setActiveActivityId(null);
     setShowConfirmModal(false);
@@ -177,7 +178,7 @@ export default function Dashboard() {
                 ${activity.queued ? 'activity--selected' : ''}
               `}
               style={{ '--delay': activity.daysUntil }}
-              onClick={() => handleActivityClick(activity)}
+              onClick={(event) => handleActivityClick(event, activity)}
             >
               <div className="activity__main">
                 <div className="activity__title" >

@@ -3,10 +3,11 @@ import './LinkPlain.css';
 
 interface LinkPlainProps extends LinkComponent<"a", string> {
   children: React.ReactNode;
+  className?: string;
 }
 
-export default function LinkPlain({ children, to, ...props }: LinkPlainProps) {
+export default function LinkPlain({ children, to, className, ...props }: LinkPlainProps) {
   return (
-    <Link to={to} className="link--plain [&.active]:font-bold" {...props}>{children}</Link>
+    <Link to={to} className={`link--plain [&.active]:font-bold ${className ? className : ''}`} {...props}>{children}</Link>
   )
 }

@@ -1,18 +1,15 @@
 import React from "react";
 import LayoutBase from "./Base";
 
-interface LayoutProtectedProps {
+interface LayoutDefaultProps {
   children: React.ReactNode;
 }
 
-/**
- * Does not require user to be authed
- **/
-function LayoutProtected({ children }: LayoutProtectedProps) {
+function LayoutDefault({ children }: LayoutDefaultProps) {
   return (
     <LayoutBase>
       {children}
     </LayoutBase>
   )
 }
-export default React.memo(LayoutProtected);
+export default React.memo(LayoutDefault);

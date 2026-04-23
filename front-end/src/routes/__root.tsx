@@ -45,8 +45,8 @@ function RootLayout() {
   const router = useRouter();
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
-  function handleLogout() {
-    authContext.logout();
+  async function handleLogout() {
+    await authContext.logout();
     router.navigate({ href: '/login' })
   }
 

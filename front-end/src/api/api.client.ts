@@ -6,12 +6,9 @@ export interface OptionalOptions {
 }
 
 class APIClient {
-  // TODO: Make a config for different environments
-  private baseUrl = 'http://localhost:3000';
-
   async request<T>(url: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${url}`, {
+      const response = await fetch(url, {
         // Set your default options here
         ...options,
         credentials: "include",
@@ -20,6 +17,10 @@ class APIClient {
           ...options.headers,
         }),
       });
+
+      if (options.method === 'DELETE') {
+        return { data: undefined as T };
+      }
 
       const json: ServerResponse<T> = await response.json();
       if (json.error) {

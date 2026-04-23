@@ -14,18 +14,23 @@ export default defineConfig({
   ],
   server: {
     allowedHosts: ['.ngrok-free.app'],
-    // proxy: {
-    //   '/auth': {
-    //     target: 'http://localhost:3000',
-    //     changeOrigin: true,
-    //     secure: false,
-    //   },
-    //   '/users': {
-    //     target: 'http://localhost:3000',
-    //     changeOrigin: true,
-    //     secure: false,
-    //   },
-    // },
+    proxy: {
+      '/auth': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/users': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/activities': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 })
 

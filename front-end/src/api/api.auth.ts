@@ -26,7 +26,7 @@ export const authAPI = {
   },
 
   logout() {
-    return apiClient.delete<LoginResponse>('/auth/logout');
+    return apiClient.delete<undefined>('/auth/logout');
   },
 
   register(body: RegisterDTO) {

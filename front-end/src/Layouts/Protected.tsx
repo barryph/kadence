@@ -11,9 +11,7 @@ function LayoutProtected({ children }: LayoutProtectedProps) {
   const router = useRouter();
   const authContext = useAuth()
 
-  console.log('protected layout herheeherhehrehre')
   useEffect(() => {
-    console.log('layout protec', authContext.isAuthenticated);
     if (!authContext.isAuthenticated) {
       // TODO: redirect with current url as redirect query param
       router.navigate({ href: '/login' })

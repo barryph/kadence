@@ -4,7 +4,6 @@ import Modal from '../Modal';
 import Button from '../Button';
 import NewActivityOverlay from '../NewActivityOverlay';
 import LayoutProtected from '../../Layouts/Protected'
-import { useAuth } from '../../Layouts/AuthContext';
 import { activitiesAPI } from '../../api/api.activity';
 
 // TODO: Add grid with number of days
@@ -22,7 +21,6 @@ interface IActivity {
 }
 
 export default function Dashboard() {
-  const authContext = useAuth();
   const [activities, setActivities] = useState<IActivity[] | undefined>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeActivityId, setActiveActivityId] = useState<string | null>(null);
@@ -45,7 +43,6 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    if (!authContext.user?.id) return;
     const abortController = new AbortController();
 
     async function fetchActivities() {
@@ -64,7 +61,7 @@ export default function Dashboard() {
 
     fetchActivities();
     return () => abortController.abort();
-  }, [authContext.user?.id]);
+  }, []);
 
   // const [activities, setActivities] = useState<IActivity[]>(() => {
   //   return [];
@@ -179,6 +176,7 @@ export default function Dashboard() {
               `}
               style={{ '--delay': activity.daysUntil }}
               onClick={(event) => handleActivityClick(event, activity)}
+              key={activity.id}
             >
               <div className="activity__main">
                 <div className="activity__title" >

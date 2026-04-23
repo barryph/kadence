@@ -5,6 +5,7 @@ import ActivitiesRepo from './repos/activities.repository';
 import ActivityEventRepo from './repos/activityEvent.repository';
 import { KnexService } from 'src/shared/knex/knex.service';
 import { GetActivitiesByUserIdQuery } from './queries/getActivitiesByUserId.query';
+import { GetActivityTimelineQuery } from '../queries/getActivityTimeline.query';
 
 @Module({
   controllers: [ActivitiesController],
@@ -14,6 +15,7 @@ import { GetActivitiesByUserIdQuery } from './queries/getActivitiesByUserId.quer
     ActivityEventRepo,
     KnexService,
     GetActivitiesByUserIdQuery,
+    GetActivityTimelineQuery,
   ],
 })
-export class ActivitiesModule {}
+export class ActivitiesModule { }

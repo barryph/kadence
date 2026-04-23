@@ -8,7 +8,9 @@ import * as ActivityMap from '../mappers/activityMap';
 import ActivityEvent from '../domain/activityEvent.entity';
 import { ActivityDTO } from '../mappers/activityMap';
 import { GetActivitiesByUserIdQuery } from '../queries/getActivitiesByUserId.query';
+import { GetActivityTimelineQuery } from '../queries/getActivityTimeline.query';
 import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
+import { ActivityTimelineDTO } from '../dtos/timeline.dto';
 
 @Injectable()
 export class ActivitiesService {
@@ -16,6 +18,7 @@ export class ActivitiesService {
     private readonly activitiesRepo: ActivitiesRepo,
     private readonly activityEventRepo: ActivityEventRepo,
     private readonly getActivitiesByUserIdQuery: GetActivitiesByUserIdQuery,
+    private readonly getActivityTimelineQuery: GetActivityTimelineQuery,
   ) { }
 
   async create(
@@ -83,5 +86,9 @@ export class ActivitiesService {
 
     const updatedActivity = await this.activitiesRepo.getById(activityId);
     return ActivityMap.toDTO(updatedActivity!);
+  }
+
+  async getActivityTimeline(month: string): Promise<ActivityTimelineDTO> {
+    return this.getActivityTimelineQuery.execute(month);
   }
 }

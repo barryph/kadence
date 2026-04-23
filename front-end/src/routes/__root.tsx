@@ -30,10 +30,10 @@ function NavDrawer({ onLogout, isOpen, onClose }: { onLogout: () => void, isOpen
 
   return (
     <div ref={navRef} className={`nav-sidebar ${isOpen ? 'open' : ''}`}>
-      <div onClick={() => onClose()} className="nav-close-icon">&#9776;</div>
+      <div onClick={() => onClose()} className="nav-close-icon">&#10540;</div>
       <div className='nav-items'>
         <LinkPlain to="/" className="nav-item">Home</LinkPlain>
-        <LinkPlain to="/events" className="nav-item">Activity Hub</LinkPlain>
+        <LinkPlain to="/timeline" className="nav-item">Activity Hub</LinkPlain>
         <button onClick={onLogout} className="logout_button nav-item">Logout</button>
       </div>
     </div >

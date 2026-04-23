@@ -79,7 +79,7 @@ export class ActivitiesController {
     };
   }
 
-  @Get('/')
+  @Get('/timeline')
   @UseGuards(IsAuthedGuard)
   async getActivityTimeline(
     @Req() req: Request,

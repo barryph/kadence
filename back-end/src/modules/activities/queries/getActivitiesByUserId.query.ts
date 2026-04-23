@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { KnexService } from 'src/shared/knex/knex.service';
-import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 import * as ActivityMap from '../mappers/activityMap';
+import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 @Injectable()
 export class GetActivitiesByUserIdQuery {

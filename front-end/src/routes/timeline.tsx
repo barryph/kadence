@@ -10,11 +10,10 @@ export const Route = createFileRoute('/timeline')({
 function Timeline() {
   const [activities, setActivities] = useState<IActivity[] | undefined>();
   const [timeline, setTimeline] = useState<ITimeline | undefined>();
-  const [isLoadingActivities, setIsLoadingActivities] = useState(false);
+  const [isLoadingInitData, setIsLoadInitData] = useState(true);
   const [isLoadingTimeline, setIsLoadingTimeline] = useState(false);
 
   useEffect(() => {
-    if (!authContext.user?.id) return;
     const abortController = new AbortController();
 
     async function fetchData() {
@@ -27,12 +26,11 @@ function Timeline() {
         ]);
         if (activitiesRes.data?.activities) {
           setActivities(activitiesRes.data.activities);
-          setIsLoadingActivities(false);
         }
         if (timelineRes.data?.timeline) {
           setTimeline(timelineRes.data.timeline);
-          setIsLoadingTimeline(false);
         }
+        setIsLoadInitData(false);
       } catch (err) {
         console.error('Error fetching init timeline data', err);
       }
@@ -42,7 +40,7 @@ function Timeline() {
     return () => {
       abortController.abort();
     }
-  }, [authContext.user?.id]);
+  }, []);
 
   function mergeTimelines(timeline: ITimeline, timeline2: ITimeline): ITimeline {
     const allKeys = new Set([...Object.keys(timeline), ...Object.keys(timeline2)]);
@@ -57,6 +55,7 @@ function Timeline() {
 
   async function fetchMoreTimeline(month: string) {
     try {
+      setIsLoadingTimeline(true);
       const response = await timelineAPI.getTimeline(month);
       console.log('tl response', response);
       if (response.data?.timeline) {
@@ -71,6 +70,7 @@ function Timeline() {
 
   return (
     <div>
+      IS LOADING: {isLoadingInitData ? 'TRUE' : 'FALSE'}
     </div>
   );
 }

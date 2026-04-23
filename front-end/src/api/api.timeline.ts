@@ -12,7 +12,7 @@ export interface ITimeline {
 export const timelineAPI = {
   getTimeline(month: string, options?: OptionalOptions) {
     return apiClient.get<GetTimelineResponse>(
-      `/timeline?month=${month}`,
+      `/activities/timeline?month=${month}`,
       options,
     )
   },

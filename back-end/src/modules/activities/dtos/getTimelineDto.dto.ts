@@ -1,16 +1,3 @@
-// TODO: Define response
-export interface ActivityTimelineDTO { }
-
-// query param month
-// {
-//   "activityId": [
-//     "YYYY-MM-DD",
-//     "YYYY-MM-DD",
-//     "YYYY-MM-DD",
-//     ...
-//   ],
-//     "activityId": [
-//       ...
-//   ],
-//   ...
-// }
+export interface ActivityTimelineDTO {
+  [activityId: string]: string[]; // Value is an array of "YYYY-MM-DD" strings
+}

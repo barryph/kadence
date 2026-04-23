@@ -1,6 +1,14 @@
 import './Modal.css';
 
-export default function Modal({ children, className, style, onFocusOut, title, ...props }) {
+interface IModalProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+  style?: Record<string, string & {}>;
+  onFocusOut?: () => void;
+  title: string;
+}
+
+export default function Modal({ children, className, style, onFocusOut, title }: IModalProps) {
   return (
     <div className={`modal__overlay ${className}`} style={style} onClick={onFocusOut}>
       <div className="modal" onClick={(event) => event.stopPropagation()}>

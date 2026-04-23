@@ -7,28 +7,33 @@ import LayoutProtected from '../../Layouts/Protected'
 import { activitiesAPI } from '../../api/api.activity';
 
 // TODO: Add grid with number of days
+// TODO: Persist queued
 
 // TODO: Resolve this conflicts with IActivity in api.activities.ts
-interface IActivity {
+interface IActivityClient {
   id: string;
+  userId: string;
   name: string;
   ticker?: string;
   interval: number;
   daysUntil: number;
-  category: string;
-  categoryColor: string;
-  queued: boolean;
+  categoryId?: string;
+
+  // Client side only
+  category?: string;
+  categoryColor?: string;
+  queued?: boolean;
 }
 
 export default function Dashboard() {
   const DAYS_IN_WEEK = 7;
-  const [activities, setActivities] = useState<IActivity[] | undefined>(null);
+  const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeActivityId, setActiveActivityId] = useState<string | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showNewActivityOverlay, setShowNewActivityOverlay] = useState(false);
 
-  function sortActivities(activities: IActivity[] = []) {
+  function sortActivities(activities: IActivityClient[] = []) {
     const sortedActivities = activities.sort((a, b) => {
       if (a.queued && b.queued || (!a.queued && !b.queued)) {
         return a.daysUntil - b.daysUntil;
@@ -64,58 +69,7 @@ export default function Dashboard() {
     return () => abortController.abort();
   }, []);
 
-  // const [activities, setActivities] = useState<IActivity[]>(() => {
-  //   return [];
-  //   // return sortActivities([
-  //   //   {
-  //   //     id: '1',
-  //   //     name: 'Sprint',
-  //   //     interval: 2,
-  //   //     daysUntil: 0,
-  //   //     category: 'Sprints',
-  //   //     categoryColor: 'green',
-  //   //     queued: false,
-  //   //   },
-  //   //   {
-  //   //     id: '2',
-  //   //     name: 'Max Jumps',
-  //   //     interval: 4,
-  //   //     daysUntil: 2,
-  //   //     category: 'Jumping',
-  //   //     categoryColor: 'red',
-  //   //     queued: true,
-  //   //   },
-  //   //   {
-  //   //     id: '3',
-  //   //     name: 'Pogos',
-  //   //     interval: 4,
-  //   //     daysUntil: 3,
-  //   //     category: 'Jumping',
-  //   //     categoryColor: 'red',
-  //   //     queued: false,
-  //   //   },
-  //   //   {
-  //   //     id: '4',
-  //   //     name: 'Power Cleans',
-  //   //     interval: 4,
-  //   //     daysUntil: 4,
-  //   //     category: 'Lifting',
-  //   //     categoryColor: 'blue',
-  //   //     queued: false,
-  //   //   },
-  //   //   {
-  //   //     id: '5',
-  //   //     name: 'Power Cleans',
-  //   //     interval: 4,
-  //   //     daysUntil: 6,
-  //   //     category: 'Lifting',
-  //   //     categoryColor: 'blue',
-  //   //     queued: false,
-  //   //   },
-  //   // ])
-  // });
-
-  function handleActivityClick(event: Event, activity: IActivity) {
+  function handleActivityClick(activity: IActivityClient) {
     if (activity.queued) {
       setActiveActivityId(activity.id);
       setShowConfirmModal(true);
@@ -141,18 +95,18 @@ export default function Dashboard() {
   }
   async function completeActivity() {
     if (!activeActivityId) return;
-    const updatedActivity = await activitiesAPI.complete(activeActivityId)
-    const activity = activities.find(activity => activity.id === activeActivityId);
-    if (!activity) throw new Error('Could not find activity to complete');
-    activity.daysUntil = activity.interval;
-    const activitiesTemp = activities.map((a) => a.id === activity.id ? { ...a, queued: false } : a);
+    const today = new Date().toISOString().split('T')[0]; // String formatted as: YYYY-MM-DD
+    const updateRes = await activitiesAPI.complete(activeActivityId, today)
+
+    if (!updateRes?.data?.activity) throw new Error('Error, no updated activity');
+    const activitiesTemp = activities!.map((a) => a.id === activeActivityId ? updateRes.data.activity : a);
     setActivities([...sortActivities(activitiesTemp)]);
 
     setActiveActivityId(null);
     setShowConfirmModal(false);
   }
 
-  function handleNewActivityOverlayClose(activity?: IActivity) {
+  function handleNewActivityOverlayClose(activity?: IActivityClient) {
     if (activity) {
       setActivities(sortActivities([...activities, activity]));
     }
@@ -176,7 +130,7 @@ export default function Dashboard() {
                 ${activity.queued ? 'activity--selected' : ''}
               `}
               style={{ '--delay': activity.daysUntil, '--interval': DAYS_IN_WEEK }}
-              onClick={(event) => handleActivityClick(event, activity)}
+              onClick={() => handleActivityClick(activity)}
               key={activity.id}
             >
               <div className="activity__main">

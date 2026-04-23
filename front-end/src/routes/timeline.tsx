@@ -9,8 +9,6 @@ export const Route = createFileRoute('/timeline')({
   component: Timeline,
 })
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
 type TimelineDateColumn = {
   key: string;
   month: string;
@@ -28,28 +26,32 @@ function toTimelineDateColumn(date: Date): TimelineDateColumn {
   };
 }
 
+function formatMonthKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+}
+
 function buildMonthDateColumns(month: string, endDayInMonth?: number): TimelineDateColumn[] {
   const [year, monthNumber] = month.split('-').map(Number);
   const monthStart = new Date(year, monthNumber - 1, 1);
   const monthEnd = new Date(year, monthNumber, 0);
   const lastDay = endDayInMonth ?? monthEnd.getDate();
   const boundedEndDay = Math.max(1, Math.min(lastDay, monthEnd.getDate()));
-  const endDate = new Date(year, monthNumber - 1, boundedEndDay);
+  const endDate = new Date(year, monthNumber - 1, boundedEndDay, 12);
   const columns: TimelineDateColumn[] = [];
 
-  for (let cursor = endDate.getTime(); cursor >= monthStart.getTime(); cursor -= DAY_MS) {
-    columns.push(toTimelineDateColumn(new Date(cursor)));
+  for (const cursorDate = new Date(endDate); cursorDate >= monthStart; cursorDate.setDate(cursorDate.getDate() - 1)) {
+    columns.push(toTimelineDateColumn(new Date(cursorDate)));
   }
 
   return columns;
 }
 
-function getPreviousMonth(month: string): string {
+function getNextMonthToLoad(month: string): string {
   const [year, monthNumber] = month.split('-').map(Number);
-  const previousMonthDate = new Date(year, monthNumber - 2, 1);
-  const previousYear = previousMonthDate.getFullYear();
-  const previousMonth = String(previousMonthDate.getMonth() + 1).padStart(2, '0');
-  return `${previousYear}-${previousMonth}`;
+  const nextMonthToLoad = new Date(year, monthNumber - 2, 1);
+  return formatMonthKey(nextMonthToLoad);
 }
 
 function timelineToSet(timeline: ITimeline): ITimelineSet {
@@ -81,21 +83,24 @@ function Timeline() {
   const [loadedMonths, setLoadedMonths] = useState<string[]>([]);
   const [isLoadingInitData, setIsLoadInitData] = useState(true);
   const [isLoadingTimeline, setIsLoadingTimeline] = useState(false);
+  const [initError, setInitError] = useState<string | undefined>(undefined);
+  const [loadMoreError, setLoadMoreError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const abortController = new AbortController();
 
     async function fetchData() {
       const today = new Date();
-      const initMonth = today.toISOString().slice(0, 7); // Format is: "YYYY-MM"
+      const initMonth = formatMonthKey(today);
       const shouldAutoLoadNextMonth = getShouldAutoLoadNextMonth(today);
-      const nextMonth = getPreviousMonth(initMonth);
+      const nextMonthToLoad = getNextMonthToLoad(initMonth);
 
       const nextMonthRequest = shouldAutoLoadNextMonth
-        ? timelineAPI.getTimeline(nextMonth, { signal: abortController.signal })
+        ? timelineAPI.getTimeline(nextMonthToLoad, { signal: abortController.signal })
         : Promise.resolve(undefined);
 
       try {
+        setInitError(undefined);
         const [activitiesRes, timelineRes, nextMonthRes] = await Promise.all([
           activitiesAPI.getAllByUser({ signal: abortController.signal }),
           timelineAPI.getTimeline(initMonth, { signal: abortController.signal }),
@@ -111,7 +116,7 @@ function Timeline() {
 
           if (shouldAutoLoadNextMonth) {
             if (nextMonthRes?.data?.timeline) {
-              const nextMonth = getPreviousMonth(initMonth);
+              const nextMonth = getNextMonthToLoad(initMonth);
               mergedTimeline = mergeTimelineSets(mergedTimeline, timelineToSet(nextMonthRes.data.timeline));
               months.push(nextMonth);
               columns.push(...buildMonthDateColumns(nextMonth));
@@ -123,9 +128,13 @@ function Timeline() {
           setDateColumns(columns);
         }
 
-        setIsLoadInitData(false);
       } catch (err) {
-        console.error('Error fetching init timeline data', err);
+        if (!abortController.signal.aborted) {
+          setInitError('Unable to load timeline. Please try again.');
+          console.error('Error fetching init timeline data', err);
+        }
+      } finally {
+        setIsLoadInitData(false);
       }
     }
 
@@ -138,6 +147,7 @@ function Timeline() {
   async function fetchMoreTimeline(month: string) {
     try {
       setIsLoadingTimeline(true);
+      setLoadMoreError(undefined);
       const response = await timelineAPI.getTimeline(month);
       if (response.data?.timeline) {
         const timelineSet = timelineToSet(response.data.timeline);
@@ -146,6 +156,7 @@ function Timeline() {
         setDateColumns((prevDateColumns) => [...prevDateColumns, ...buildMonthDateColumns(month)]);
       }
     } catch (err) {
+      setLoadMoreError('Unable to load more timeline. Please try again.');
       console.error('Error fetching more timeline', err);
     } finally {
       setIsLoadingTimeline(false);
@@ -154,11 +165,19 @@ function Timeline() {
 
   const nextMonthToLoad = useMemo(() => {
     if (!loadedMonths.length) return;
-    return getPreviousMonth(loadedMonths[loadedMonths.length - 1]);
+    return getNextMonthToLoad(loadedMonths[loadedMonths.length - 1]);
   }, [loadedMonths]);
 
-  if (isLoadingInitData || timeline === undefined) {
+  if (isLoadingInitData) {
     return <div className="timeline-loading">Loading timeline...</div>;
+  }
+
+  if (initError) {
+    return <div className="timeline-loading">{initError}</div>;
+  }
+
+  if (timeline === undefined) {
+    return <div className="timeline-loading">No timeline data available.</div>;
   }
 
   if (!activities?.length) {
@@ -232,6 +251,7 @@ function Timeline() {
         </div>
       </div>
       {isLoadingTimeline ? <div className="timeline-loading-more">Loading more timeline...</div> : null}
+      {loadMoreError ? <div className="timeline-loading-more">{loadMoreError}</div> : null}
     </div>
   );
 }

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { KnexService } from 'src/shared/knex/knex.service';
-import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 import * as ActivityMap from '../mappers/activityMap';
+import { ActivityTimelineDTO } from '../dtos/getTimelineDto.dto';
 
 @Injectable()
 export class GetActivityTimelineQuery {
   constructor(private readonly knexService: KnexService) { }
 
-  async execute(month: string): Promise<TimelineDTO[]> {
+  async execute(userId: string, month: string): Promise<ActivityTimelineDTO[]> {
     const result = await this.knexService.connection.raw<{
       rows: any[];
     }>(

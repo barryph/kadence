@@ -1,9 +1,3 @@
-import { IsString } from 'class-validator';
-
-export default class GetActivityTimelineDTO {
-  @IsString()
-  month: string;
-}
 // TODO: Define response
 export interface ActivityTimelineDTO { }
 

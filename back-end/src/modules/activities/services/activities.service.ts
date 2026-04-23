@@ -10,7 +10,7 @@ import { ActivityDTO } from '../mappers/activityMap';
 import { GetActivitiesByUserIdQuery } from '../queries/getActivitiesByUserId.query';
 import { GetActivityTimelineQuery } from '../queries/getActivityTimeline.query';
 import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
-import { ActivityTimelineDTO } from '../dtos/timeline.dto';
+import { ActivityTimelineDTO } from '../dtos/getTimelineDto.dto';
 
 @Injectable()
 export class ActivitiesService {
@@ -88,7 +88,10 @@ export class ActivitiesService {
     return ActivityMap.toDTO(updatedActivity!);
   }
 
-  async getActivityTimeline(month: string): Promise<ActivityTimelineDTO> {
-    return this.getActivityTimelineQuery.execute(month);
+  async getActivityTimeline(
+    userId: string,
+    month: string,
+  ): Promise<ActivityTimelineDTO> {
+    return this.getActivityTimelineQuery.execute(userId, month);
   }
 }

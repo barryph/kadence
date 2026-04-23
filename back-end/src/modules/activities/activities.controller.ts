@@ -3,6 +3,7 @@ import {
   Post,
   Body,
   Req,
+  Query,
   UseGuards,
   Get,
   Param,
@@ -13,7 +14,6 @@ import { ActivitiesService } from './services/activities.service';
 import CreateActivityDTO from './dtos/createActivity.dto';
 import { UserDTO } from '../users/mappers/userMap';
 import { ApiBody } from '@nestjs/swagger';
-import GetActivityTimelineDTO from './dtos/getTimelineDto.dto';
 
 @Controller('activities')
 export class ActivitiesController {
@@ -81,20 +81,15 @@ export class ActivitiesController {
 
   @Get('/')
   @UseGuards(IsAuthedGuard)
-  @ApiBody({
-    type: GetActivityTimelineDTO,
-    examples: {
-      userExample1: {
-        summary: 'Fetch part of the activity timeline',
-        value: {
-          month: '2026-04',
-        } as GetActivityTimelineDTO,
-      },
-    },
-  })
-  async getActivityTimeline(@Body() getTimelineDTO: GetActivityTimelineDTO) {
-    const month = getTimelineDTO.month;
-    const timeline = await this.activitiesService.getActivityTimeline(month);
+  async getActivityTimeline(
+    @Req() req: Request,
+    @Query('month') month: string,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    const timeline = await this.activitiesService.getActivityTimeline(
+      userId,
+      month,
+    );
     return {
       data: {
         timeline,

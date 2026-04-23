@@ -3,6 +3,7 @@ import './Button.css';
 
 const variantsMap = {
   'outline': 'button--outline',
+  'blank': 'button--blank',
 } as const;
 type TVariantsMap = keyof typeof variantsMap;
 const colorsMap = {

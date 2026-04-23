@@ -70,6 +70,28 @@
   flex-direction: column;
 }
 
+.timeline-header-tail-spacer {
+  width: 170px;
+  min-width: 170px;
+  height: var(--row-content-size);
+}
+
+.timeline-body-with-load-more {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.timeline-load-more-column {
+  width: 170px;
+  min-width: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--cell-gap);
+  border-bottom: 1px solid #f0f2f7;
+  box-sizing: border-box;
+}
+
 .timeline-activity-label {
   height: var(--row-height);
   box-sizing: border-box;

@@ -35,6 +35,7 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
+  // TODO: Make env variable
   const corsOrigins = ['*'];
   app.use(
     cors({

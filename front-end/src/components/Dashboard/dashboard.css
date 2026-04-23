@@ -60,20 +60,42 @@
 
 .activity__bar {
   width: 100%;
+  position: relative;
+  overflow: hidden;
 
-  /* background: #0061FF; */
   height: 24px;
   border-radius: 2px 0 0 2px;
-  background: #efefef;
-  /* border: 1px solid #eaeaea; */
-  background: linear-gradient(to right, #0072ff11, #00c6ff55);
+  background: #deecff;
+}
+
+.activity__bar_notches {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--interval), minmax(0, 1fr));
+  z-index: 2;
+  pointer-events: none;
+  align-content: flex-end;
+  border-bottom: 1px solid #707070;
+}
+
+.activity__bar_notch {
+  height: 8px;
+  border-right: 1px solid #707070;
+}
+
+.activity__bar_notch:last-child {
+  border-right: none;
 
 }
 .activity .activity__bar_background {
+  position: absolute;
+  inset: 0;
   height: 100%;
-  --margin-l: calc((100% / 7 * var(--delay)) + 0.8rem);
+  --margin-l: calc(100% / var(--interval) * var(--delay));
   margin-left: var(--margin-l);
   width: calc(100% - var(--margin-l));
+  z-index: 1;
 
   /* background: #7C59DE; */
   /* background: linear-gradient(to right, #0061FF 90%, #0061FF00 100%); */
@@ -94,15 +116,16 @@
   /* background: linear-gradient(to right, #00c6ff33 0%, #0072ff11 51%, #00c6ff55 90%); */
   /* background-size: 200%; */
   /* background-position: right; */
-  background: linear-gradient(to right, #0072ff11, #00c6ff55);
+  background: linear-gradient(to right, #67aeec45, #00c6ff55);
+  /* background: linear-gradient(to right, #00c6ff33 0%, #0072ff11 51%, #00c6ff55 90%); */
 }
 .activity--selected .activity__bar {
   background: transparent;
 }
 
 .floating_add_button {
-  cursor: pointer;
   position: absolute;
+  z-index: 99;
   bottom: 1.5rem;
   right: 1.5rem;
   height: 3.5rem;
@@ -116,6 +139,7 @@
   background: var(--blue);
   color: #fff;
   font-size: 2rem;
+  cursor: pointer;
 }
 
 .modal_button {

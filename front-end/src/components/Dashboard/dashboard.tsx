@@ -21,6 +21,7 @@ interface IActivity {
 }
 
 export default function Dashboard() {
+  const DAYS_IN_WEEK = 7;
   const [activities, setActivities] = useState<IActivity[] | undefined>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeActivityId, setActiveActivityId] = useState<string | null>(null);
@@ -174,7 +175,7 @@ export default function Dashboard() {
                 activity
                 ${activity.queued ? 'activity--selected' : ''}
               `}
-              style={{ '--delay': activity.daysUntil }}
+              style={{ '--delay': activity.daysUntil, '--interval': DAYS_IN_WEEK }}
               onClick={(event) => handleActivityClick(event, activity)}
               key={activity.id}
             >
@@ -190,6 +191,11 @@ export default function Dashboard() {
                   {/* )} */}
                 </div>
                 <div className="activity__bar">
+                  <div className="activity__bar_notches">
+                    {Array.from({ length: DAYS_IN_WEEK }, (_, day) => (
+                      <span className="activity__bar_notch" key={`${activity.id}-notch-${day}`} />
+                    ))}
+                  </div>
                   <div className="activity__bar_background" />
                 </div>
               </div>

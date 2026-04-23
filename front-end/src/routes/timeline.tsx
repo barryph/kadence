@@ -1,8 +1,8 @@
 import './timeline.css';
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { activitiesAPI, type IActivity } from "../api/api.activity";
-import { timelineAPI, type ITimeline } from '../api/api.timeline';
+import { timelineAPI, type ITimeline, type ITimelineSet } from '../api/api.timeline';
 
 export const Route = createFileRoute('/timeline')({
   component: Timeline,
@@ -41,7 +41,7 @@ function toDateLabelParts(dateStr: string): { month: string; day: string } {
 
 function Timeline() {
   const [activities, setActivities] = useState<IActivity[] | undefined>();
-  const [timeline, setTimeline] = useState<ITimeline | undefined>();
+  const [timeline, setTimeline] = useState<ITimelineSet | undefined>();
   const [isLoadingInitData, setIsLoadInitData] = useState(true);
   const [isLoadingTimeline, setIsLoadingTimeline] = useState(false);
 
@@ -59,7 +59,11 @@ function Timeline() {
           setActivities(activitiesRes.data.activities);
         }
         if (timelineRes.data?.timeline) {
-          setTimeline(timelineRes.data.timeline);
+          const timelineSet: ITimelineSet = Object.keys(timelineRes.data.timeline).reduce<ITimelineSet>((acc, key) => {
+            acc[key] = new Set(timelineRes.data.timeline[key]);
+            return acc;
+          }, {});
+          setTimeline(timelineSet);
         }
         setIsLoadInitData(false);
       } catch (err) {
@@ -99,16 +103,9 @@ function Timeline() {
     }
   }
 
-  const dateColumns = getCurrentMonthDateColumns();
-  const timelineLookup = Object.entries(timeline || {}).reduce<Record<string, Set<string>>>(
-    (acc, [activityId, completedDates]) => {
-      acc[activityId] = new Set(completedDates);
-      return acc;
-    },
-    {},
-  );
+  const dateColumns = useMemo(() => getCurrentMonthDateColumns(), []);
 
-  if (isLoadingInitData) {
+  if (isLoadingInitData || timeline === undefined) {
     return <div className="timeline-loading">Loading timeline...</div>;
   }
 
@@ -144,7 +141,7 @@ function Timeline() {
 
             <div className="timeline-body">
               {activities.map((activity) => {
-                const completedDates = timelineLookup[activity.id] || new Set<string>();
+                const completedDates = timeline[activity.id] || new Set<string>();
 
                 return (
                   <div key={activity.id} className="timeline-activity-row">

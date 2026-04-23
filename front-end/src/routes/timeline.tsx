@@ -5,6 +5,9 @@ import { activitiesAPI, type IActivity } from "../api/api.activity";
 import { timelineAPI, type ITimeline, type ITimelineSet } from '../api/api.timeline';
 import Button from '../components/Button';
 
+// TODO: Add borders between weeks and between months
+// TODO: Add dropdown to select a specific month
+
 export const Route = createFileRoute('/timeline')({
   component: Timeline,
 })
@@ -202,8 +205,8 @@ function Timeline() {
               {dateColumns.map((date) => {
                 return (
                   <div key={date.key} className="timeline-date-cell">
-                    <span className="timeline-date-month">{date.month}</span>
                     <span className="timeline-date-day">{date.day}</span>
+                    <span className="timeline-date-month">{date.month}</span>
                   </div>
                 );
               })}

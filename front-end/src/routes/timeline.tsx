@@ -68,7 +68,7 @@ function mergeTimelineSets(currentTimeline: ITimelineSet, nextTimeline: ITimelin
   }, {});
 }
 
-function shouldAutoLoadNextMonth(today: Date): boolean {
+function getShouldAutoLoadNextMonth(today: Date): boolean {
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const daysLeft = daysInMonth - today.getDate();
   return daysLeft < 7;
@@ -97,11 +97,16 @@ function Timeline() {
     async function fetchData() {
       const today = new Date();
       const initMonth = today.toISOString().slice(0, 7); // Format is: "YYYY-MM"
+      const shouldAutoLoadNextMonth = getShouldAutoLoadNextMonth(today);
+      const nextMonth = getPreviousMonth(initMonth);
+
+      const requests: Promise<any>[] = [
+        activitiesAPI.getAllByUser({ signal: abortController.signal }),
+        timelineAPI.getTimeline(initMonth, { signal: abortController.signal }),
+        shouldAutoLoadNextMonth ? timelineAPI.getTimeline(nextMonth, { signal: abortController.signal }) : Promise.resolve(),
+      ];
       try {
-        const [activitiesRes, timelineRes] = await Promise.all([
-          activitiesAPI.getAllByUser({ signal: abortController.signal }),
-          timelineAPI.getTimeline(initMonth, { signal: abortController.signal }),
-        ]);
+        const [activitiesRes, timelineRes, nextMonthRes] = await Promise.all(requests);
         if (activitiesRes.data?.activities) {
           setActivities(activitiesRes.data.activities);
         }
@@ -110,12 +115,9 @@ function Timeline() {
           const months = [initMonth];
           const columns = getCurrentMonthDateColumns();
 
-          if (shouldAutoLoadNextMonth(today)) {
-            const nextMonth = getPreviousMonth(initMonth);
-            // TODO: DO async with the above Promise.all
-            const nextMonthRes = await timelineAPI.getTimeline(nextMonth, { signal: abortController.signal });
-
+          if (shouldAutoLoadNextMonth) {
             if (nextMonthRes.data?.timeline) {
+              const nextMonth = getPreviousMonth(initMonth);
               mergedTimeline = mergeTimelineSets(mergedTimeline, timelineToSet(nextMonthRes.data.timeline));
               months.push(nextMonth);
               columns.push(...getMonthDateColumns(nextMonth));
@@ -126,6 +128,7 @@ function Timeline() {
           setLoadedMonths(months);
           setDateColumns(columns);
         }
+
         setIsLoadInitData(false);
       } catch (err) {
         console.error('Error fetching init timeline data', err);

@@ -3,7 +3,7 @@ import isNullOrUndefined from 'src/shared/lib/isNullOrUndefined';
 interface IActivityEvent {
   id?: string;
   activityId: string;
-  date: Date;
+  date: string;
 }
 export default class ActivityEvent {
   props: IActivityEvent;
@@ -19,7 +19,7 @@ export default class ActivityEvent {
     return this.props.id;
   }
 
-  get date(): Date {
+  get date(): string {
     return this.props.date;
   }
 
@@ -40,6 +40,11 @@ export default class ActivityEvent {
   private static validate(props: IActivityEvent) {
     if (!props.date) {
       throw new Error('Date cant be blank');
+    }
+
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(props.date);
+    if (!match) {
+      throw new Error('Date must be in YYYY-MM-DD format');
     }
   }
 

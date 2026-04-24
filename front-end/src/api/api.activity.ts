@@ -6,6 +6,8 @@ export interface IActivity {
   name: string;
   ticker?: string;
   interval: number;
+  categoryId?: string;
+  daysUntil: number;
 }
 
 interface CreateActivityDTO extends Omit<Omit<IActivity, "id">, "userId"> {
@@ -36,10 +38,18 @@ export const activitiesAPI = {
     );
   },
 
-  complete(activityId: string, options?: OptionalOptions) {
+  complete(activityId: string, date: string, options?: OptionalOptions) {
     return apiClient.post<CompleteActivityResponse>(
       `/activities/${activityId}/complete`,
-      {},
+      { date },
+      options,
+    );
+  },
+
+  undo(activityId: string, date: string, options?: OptionalOptions) {
+    return apiClient.post<CompleteActivityResponse>(
+      `/activities/${activityId}/undo`,
+      { date },
       options,
     );
   },

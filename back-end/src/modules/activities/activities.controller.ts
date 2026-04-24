@@ -12,6 +12,7 @@ import type { Request } from 'express';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
 import { ActivitiesService } from './services/activities.service';
 import CreateActivityDTO from './dtos/createActivity.dto';
+import ActivityDateActionDTO from './dtos/activityDateAction.dto';
 import { UserDTO } from '../users/mappers/userMap';
 import { ApiBody } from '@nestjs/swagger';
 
@@ -65,11 +66,37 @@ export class ActivitiesController {
 
   @Post('/:activityId/complete')
   @UseGuards(IsAuthedGuard)
-  async complete(@Req() req: Request, @Param('activityId') activityId: string) {
+  async complete(
+    @Req() req: Request,
+    @Param('activityId') activityId: string,
+    @Body() body: ActivityDateActionDTO,
+  ) {
     const userId = (req.user as UserDTO).id;
     const activity = await this.activitiesService.completeActivity(
       activityId,
       userId,
+      body.date,
+    );
+
+    return {
+      data: {
+        activity,
+      },
+    };
+  }
+
+  @Post('/:activityId/undo')
+  @UseGuards(IsAuthedGuard)
+  async undo(
+    @Req() req: Request,
+    @Param('activityId') activityId: string,
+    @Body() body: ActivityDateActionDTO,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    const activity = await this.activitiesService.undoActivityEvent(
+      activityId,
+      userId,
+      body.date,
     );
 
     return {

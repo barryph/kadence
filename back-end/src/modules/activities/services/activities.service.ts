@@ -1,9 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import Activity from '../domain/activity.entity';
 import ActivityTicker from '../domain/activityTicker.vo';
 import CreateActivityDTO from '../dtos/createActivity.dto';
 import ActivitiesRepo from '../repos/activities.repository';
 import ActivityEventRepo from '../repos/activityEvent.repository';
+import { DuplicateActivityEventError } from '../activitiyEvent.errors';
 import * as ActivityMap from '../mappers/activityMap';
 import ActivityEvent from '../domain/activityEvent.entity';
 import { ActivityDTO } from '../mappers/activityMap';
@@ -46,7 +52,7 @@ export class ActivitiesService {
     createdActivity.ensurePersisted();
     const event = ActivityEvent.createNew({
       activityId: createdActivity.id,
-      date: new Date(createActivityDto.lastDone),
+      date: createActivityDto.lastDone,
     });
     await this.activityEventRepo.create(event);
     const updatedActivity = await this.activitiesRepo.getById(
@@ -69,20 +75,49 @@ export class ActivitiesService {
   async completeActivity(
     activityId: string,
     userId: string,
+    date: string,
   ): Promise<ActivityDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
     if (!activity) {
-      throw new Error('Activity not found');
+      throw new NotFoundException('Activity not found');
     }
     if (activity.userId !== userId) {
-      throw new Error('Unauthorized');
+      throw new UnauthorizedException('Unauthorized');
     }
 
     const event = ActivityEvent.createNew({
       activityId,
-      date: new Date(),
+      date,
     });
-    await this.activityEventRepo.create(event);
+    try {
+      await this.activityEventRepo.create(event);
+    } catch (error) {
+      if (error instanceof DuplicateActivityEventError) {
+        throw new ConflictException(
+          'Activity already completed on the provided date',
+        );
+      }
+      throw error;
+    }
+
+    const updatedActivity = await this.activitiesRepo.getById(activityId);
+    return ActivityMap.toDTO(updatedActivity!);
+  }
+
+  async undoActivityEvent(
+    activityId: string,
+    userId: string,
+    date: string,
+  ): Promise<ActivityDTO> {
+    const activity = await this.activitiesRepo.getById(activityId);
+    if (!activity) {
+      throw new NotFoundException('Activity not found');
+    }
+    if (activity.userId !== userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    await this.activityEventRepo.removeByActivityIdAndDate(activityId, date);
 
     const updatedActivity = await this.activitiesRepo.getById(activityId);
     return ActivityMap.toDTO(updatedActivity!);

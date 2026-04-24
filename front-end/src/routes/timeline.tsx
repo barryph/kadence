@@ -13,7 +13,7 @@ export const Route = createFileRoute('/timeline')({
 })
 
 type TimelineDateColumn = {
-  key: string;
+  full: string;
   month: string;
   day: string;
 };
@@ -23,7 +23,7 @@ function toTimelineDateColumn(date: Date): TimelineDateColumn {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return {
-    key: `${year}-${month}-${day}`,
+    full: `${year}-${month}-${day}`,
     month: date.toLocaleDateString(undefined, { month: 'short' }),
     day: date.toLocaleDateString(undefined, { day: 'numeric' }),
   };
@@ -84,10 +84,13 @@ function Timeline() {
   const [timeline, setTimeline] = useState<ITimelineSet | undefined>();
   const [dateColumns, setDateColumns] = useState<TimelineDateColumn[]>([]);
   const [loadedMonths, setLoadedMonths] = useState<string[]>([]);
+  // Lists cells which are actively updating their state
+  const [togglingCells, setTogglingCells] = useState<Set<string>>(new Set());
   const [isLoadingInitData, setIsLoadInitData] = useState(true);
   const [isLoadingTimeline, setIsLoadingTimeline] = useState(false);
   const [initError, setInitError] = useState<string | undefined>(undefined);
   const [loadMoreError, setLoadMoreError] = useState<string | undefined>(undefined);
+  const [toggleError, setToggleError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -166,6 +169,54 @@ function Timeline() {
     }
   }
 
+  async function handleTimelineCellClick(cellKey: string, activityId: string, dateKey: string, isCompleted: boolean) {
+    // If toggle already in process
+    if (togglingCells.has(cellKey)) return;
+
+    try {
+      setToggleError(undefined);
+      setTogglingCells((prev) => {
+        const next = new Set(prev);
+        next.add(cellKey);
+        return next;
+      });
+      const isCompleting = !isCompleted;
+
+      const response = isCompleting
+        ? await activitiesAPI.complete(activityId, dateKey)
+        : await activitiesAPI.undo(activityId, dateKey);
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      setTimeline((prevTimeline) => {
+        if (!prevTimeline) return prevTimeline;
+
+        const nextTimeline = { ...prevTimeline };
+        const nextCompletedDates = new Set(nextTimeline[activityId] ?? []);
+
+        if (isCompleting) {
+          nextCompletedDates.add(dateKey);
+        } else {
+          nextCompletedDates.delete(dateKey);
+        }
+
+        nextTimeline[activityId] = nextCompletedDates;
+        return nextTimeline;
+      });
+    } catch (err) {
+      setToggleError('Unable to update activity status. Please try again.');
+      console.error('Error updating timeline activity status', err);
+    } finally {
+      setTogglingCells((prev) => {
+        const next = new Set(prev);
+        next.delete(cellKey);
+        return next;
+      });
+    }
+  }
+
   const nextMonthToLoad = useMemo(() => {
     if (!loadedMonths.length) return;
     return getNextMonthToLoad(loadedMonths[loadedMonths.length - 1]);
@@ -204,7 +255,7 @@ function Timeline() {
             <div className="timeline-header-row">
               {dateColumns.map((date) => {
                 return (
-                  <div key={date.key} className="timeline-date-cell">
+                  <div key={date.full} className="timeline-date-cell">
                     <span className="timeline-date-day">{date.day}</span>
                     <span className="timeline-date-month">{date.month}</span>
                   </div>
@@ -221,11 +272,18 @@ function Timeline() {
                   return (
                     <div key={activity.id} className="timeline-activity-row">
                       {dateColumns.map((date) => {
-                        const isCompleted = completedDates.has(date.key);
+                        const isCompleted = completedDates.has(date.full);
+                        const cellKey = `${activity.id}-${date.full}`;
+                        const isToggling = togglingCells.has(cellKey);
                         return (
                           <div
-                            key={`${activity.id}-${date.key}`}
+                            key={cellKey}
                             className={`timeline-status-cell ${isCompleted ? 'timeline-status-cell--complete' : 'timeline-status-cell--incomplete'}`}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`${isCompleted ? 'Undo' : 'Complete'} ${activity.ticker || activity.name} on ${date.full}`}
+                            aria-disabled={isToggling}
+                            onClick={() => handleTimelineCellClick(cellKey, activity.id, date.full, isCompleted)}
                           />
                         );
                       })}

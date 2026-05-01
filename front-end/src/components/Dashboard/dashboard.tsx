@@ -5,6 +5,7 @@ import Button from '../Button';
 import NewActivityOverlay from '../NewActivityOverlay';
 import LayoutProtected from '../../Layouts/Protected'
 import { activitiesAPI } from '../../api/api.activity';
+import SwipeRow from '../SwipeRow';
 
 // TODO: Add grid with number of days
 // TODO: Persist queued
@@ -119,40 +120,53 @@ export default function Dashboard() {
     );
   }
 
+  function handleEdit(activity: IActivityClient) {
+    console.log('edited');
+  }
+
   return (
     <LayoutProtected>
       <div className="index__container">
         <div className="">
           {activities.map((activity) => (
             <div
-              className={`
-                activity
-                ${activity.queued ? 'activity--selected' : ''}
-              `}
+              className="activity"
               style={{ '--delay': activity.daysUntil, '--interval': DAYS_IN_WEEK }}
-              onClick={() => handleActivityClick(activity)}
+              onClick={(done) => handleActivityClick(activity, done)}
               key={activity.id}
             >
-              <div className="activity__main">
-                <div className="activity__title" >
-                  <div>
-                    <span>{activity.name}</span>
-                    <span className="activity__category" style={{ '--bg-color': activity.categoryColor }}>{activity.category}</span>
+              <SwipeRow
+                onSwipeLeft={() => handleEdit(activity)}
+                onSwipeRight={() => console.log('complete')}
+                swipeLeftChild={<>Edit</>}
+                swipeLeftColor="#fff"
+                swipeLeftBackground="#4caf50"
+                swipeRightChild={<>Complete</>}
+                swipeRightColor="#fff"
+                swipeRightBackground="#4caf50"
+                queued={activity.queued}
+              >
+                <div className="activity__main">
+                  <div className="activity__title" >
+                    <div>
+                      <span>{activity.name}</span>
+                      <span className="activity__category" style={{ '--bg-color': activity.categoryColor }}>{activity.category}</span>
+                    </div>
+                    <div className="activity__details">&#8624; {activity.daysUntil} &#10227; {activity.interval}</div>
+                    {/* {activity.overdue && ( */}
+                    {/*   <span className="late_notice">{activity.daysLate} Days late</span> */}
+                    {/* )} */}
                   </div>
-                  <div className="activity__details">&#8624; {activity.daysUntil} &#10227; {activity.interval}</div>
-                  {/* {activity.overdue && ( */}
-                  {/*   <span className="late_notice">{activity.daysLate} Days late</span> */}
-                  {/* )} */}
-                </div>
-                <div className="activity__bar">
-                  <div className="activity__bar_notches">
-                    {Array.from({ length: DAYS_IN_WEEK }, (_, day) => (
-                      <span className="activity__bar_notch" key={`${activity.id}-notch-${day}`} />
-                    ))}
+                  <div className="activity__bar">
+                    <div className="activity__bar_notches">
+                      {Array.from({ length: DAYS_IN_WEEK }, (_, day) => (
+                        <span className="activity__bar_notch" key={`${activity.id}-notch-${day}`} />
+                      ))}
+                    </div>
+                    <div className="activity__bar_background" />
                   </div>
-                  <div className="activity__bar_background" />
                 </div>
-              </div>
+              </SwipeRow>
               {/* {activity.queued && ( */}
               {/*   <div className="activity__accept">+</div> */}
               {/* )} */}

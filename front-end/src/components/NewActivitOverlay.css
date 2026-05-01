@@ -1,5 +1,6 @@
 .overlay_new_activity {
   position: fixed;
+  overflow-y: scroll;
   top: 0;
   bottom: 0;
   left: 0;

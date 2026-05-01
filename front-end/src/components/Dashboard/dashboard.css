@@ -63,9 +63,10 @@
   position: relative;
   overflow: hidden;
 
-  height: 24px;
+  --activity_bar_height: 19px;
+  height: var(--activity_bar_height);
   border-radius: 2px 0 0 2px;
-  background: #deecff;
+  background: #111;
 }
 
 .activity__bar_notches {
@@ -76,12 +77,12 @@
   z-index: 2;
   pointer-events: none;
   align-content: flex-end;
-  border-bottom: 1px solid #707070;
+  /* border-bottom: 1px solid #707070; */
 }
 
 .activity__bar_notch {
-  height: 8px;
-  border-right: 1px solid #707070;
+  height: var(--activity_bar_height);
+  border-right: 1px solid #fff;
 }
 
 .activity__bar_notch:last-child {
@@ -112,15 +113,12 @@
   /* background-image: linear-gradient(to right, #b3ffab 0%, #12fff7 100%); */
   /* background-image: linear-gradient(to right, #00FA9A 0%, #00FA9A44 100%); */
 }
-.activity--selected {
+.activity-inner--selected {
   /* background: linear-gradient(to right, #00c6ff33 0%, #0072ff11 51%, #00c6ff55 90%); */
   /* background-size: 200%; */
   /* background-position: right; */
-  background: linear-gradient(to right, #67aeec45, #00c6ff55);
+  background: linear-gradient(to right, #b4d5f4, #84d8fa)
   /* background: linear-gradient(to right, #00c6ff33 0%, #0072ff11 51%, #00c6ff55 90%); */
-}
-.activity--selected .activity__bar {
-  background: transparent;
 }
 
 .floating_add_button {

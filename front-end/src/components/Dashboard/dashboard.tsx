@@ -71,13 +71,9 @@ export default function Dashboard() {
   }, []);
 
   function handleActivityClick(activity: IActivityClient) {
-    if (activity.queued) {
-      setActiveActivityId(activity.id);
-      setShowConfirmModal(true);
-    } else {
-      const activitiesTemp = activities.map((a) => a.id === activity.id ? { ...a, queued: true } : a);
-      setActivities([...sortActivities(activitiesTemp)]);
-    }
+    // Toggle queued property
+    const activitiesTemp = activities.map((a) => a.id === activity.id ? { ...a, queued: !activity.queued } : a);
+    setActivities([...sortActivities(activitiesTemp)]);
   }
 
   function handleFocusOut() {
@@ -85,26 +81,17 @@ export default function Dashboard() {
     setActiveActivityId(null);
     setShowConfirmModal(false);
   }
-  function removeFromQueue() {
-    const activity = activities.find(activity => activity.id === activeActivityId);
-    if (!activity) throw new Error('Could not find activity to remove from queue');
-    const activitiesTemp = activities.map((a) => a.id === activity.id ? { ...a, queued: false } : a);
-    setActivities([...sortActivities(activitiesTemp)]);
-
-    setActiveActivityId(null);
-    setShowConfirmModal(false);
-  }
-  async function completeActivity() {
-    if (!activeActivityId) return;
+  async function handleComplete(activityId: string) {
     const today = new Date().toISOString().split('T')[0]; // String formatted as: YYYY-MM-DD
-    const updateRes = await activitiesAPI.complete(activeActivityId, today)
+    const updateRes = await activitiesAPI.complete(activityId, today)
 
     if (!updateRes?.data?.activity) throw new Error('Error, no updated activity');
-    const activitiesTemp = activities!.map((a) => a.id === activeActivityId ? updateRes.data.activity : a);
+    const activitiesTemp = activities!.map((a) => a.id === activityId ? updateRes.data.activity : a);
     setActivities([...sortActivities(activitiesTemp)]);
+  }
 
-    setActiveActivityId(null);
-    setShowConfirmModal(false);
+  function handleEdit(activity: IActivityClient) {
+    console.log('edited');
   }
 
   function handleNewActivityOverlayClose(activity?: IActivityClient) {
@@ -120,10 +107,6 @@ export default function Dashboard() {
     );
   }
 
-  function handleEdit(activity: IActivityClient) {
-    console.log('edited');
-  }
-
   return (
     <LayoutProtected>
       <div className="index__container">
@@ -132,18 +115,18 @@ export default function Dashboard() {
             <div
               className="activity"
               style={{ '--delay': activity.daysUntil, '--interval': DAYS_IN_WEEK }}
-              onClick={(done) => handleActivityClick(activity, done)}
+              onClick={() => handleActivityClick(activity)}
               key={activity.id}
             >
               <SwipeRow
                 onSwipeLeft={() => handleEdit(activity)}
-                onSwipeRight={() => console.log('complete')}
-                swipeLeftChild={<>Edit</>}
-                swipeLeftColor="#fff"
-                swipeLeftBackground="#4caf50"
-                swipeRightChild={<>Complete</>}
+                onSwipeRight={() => handleComplete(activity.id)}
+                swipeLeftChild={<>&#9881;</>}
+                swipeLeftColor="inherit"
+                swipeLeftBackground="#e9ecf6"
+                swipeRightChild={<>&#10003;</>}
                 swipeRightColor="#fff"
-                swipeRightBackground="#4caf50"
+                swipeRightBackground="#0072ff"
                 queued={activity.queued}
               >
                 <div className="activity__main">
@@ -183,8 +166,8 @@ export default function Dashboard() {
             style={{ 'text-align': 'center' }}
           >
             <div className="modal__buttons">
-              <Button variant="outline" className="modal_button" onClick={removeFromQueue}>Deque</Button>
-              <Button color="go" className="modal_button" onClick={completeActivity}>Complete</Button>
+              {/* <Button variant="outline" className="modal_button" onClick={removeFromQueue}>Deque</Button> */}
+              {/* <Button color="go" className="modal_button" onClick={completeActivity}>Complete</Button> */}
             </div>
           </Modal>
         )}

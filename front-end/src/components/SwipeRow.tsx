@@ -4,7 +4,7 @@ import { useRef, type ReactNode } from "react";
 // TODO: Convert styles to css
 
 const ACTION_THRESHOLD = 110;
-const MAX_SWIPE = 160;
+const MAX_SWIPE = 110;
 
 interface IProps {
   onSwipeLeft: () => void;
@@ -43,6 +43,11 @@ export default function SwipeRow({
     const backToCenter = () => animate(x, 0, { type: "spring", stiffness: 300, damping: 30 });
 
     if (finalX > ACTION_THRESHOLD) {
+      // animate(x, MAX_SWIPE, { type: "spring", stiffness: 1000, damping: 30 })
+      //   .then(() => {
+      //     // animate(x, 0, { type: "spring", stiffness: 1000, damping: 30 });
+      //   });
+      // return;
       // Right swipe
       navigator.vibrate?.(10);
       onSwipeRight();
@@ -80,6 +85,8 @@ export default function SwipeRow({
           alignItems: "center",
           paddingRight: 20,
           opacity: leftOpacity,
+          fontSize: '30px',
+          marginTop: '-2px',
         }}
       >
         {swipeLeftChild}
@@ -96,6 +103,8 @@ export default function SwipeRow({
           alignItems: "center",
           paddingLeft: 20,
           opacity: rightOpacity,
+          fontSize: '30px',
+          marginTop: '-0px',
         }}
       >
         {swipeRightChild}
@@ -111,7 +120,7 @@ export default function SwipeRow({
           position: "relative",
           zIndex: 1,
         }}
-        className={`${queued ? 'activity-inner--selected' : ''}`}
+        className={`activity-inner ${queued ? 'activity-inner--selected' : ''}`}
         onDragEnd={handleDragEnd}
       >
         {children}

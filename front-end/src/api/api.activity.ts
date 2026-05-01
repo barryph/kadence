@@ -26,7 +26,36 @@ interface CompleteActivityResponse {
   activity: IActivity;
 }
 
+interface GetActivityByIdResponse {
+  activity: IActivity;
+}
+
+interface EditActivityDTO {
+  name: string;
+  ticker?: string;
+  interval: number;
+}
+
+interface EditActivityResponse {
+  activity: IActivity;
+}
+
 export const activitiesAPI = {
+  getById(activityId: string, options?: OptionalOptions) {
+    return apiClient.get<GetActivityByIdResponse>(
+      `/activities/edit/${activityId}`,
+      options,
+    );
+  },
+
+  editActivity(activityId: string, body: EditActivityDTO, options?: OptionalOptions) {
+    return apiClient.post<EditActivityResponse>(
+      `/activities/edit/${activityId}`,
+      body,
+      options,
+    );
+  },
+
   createActivity(body: CreateActivityDTO, options?: OptionalOptions) {
     return apiClient.post<CreateActivityResponse>("/activities", body, options);
   },

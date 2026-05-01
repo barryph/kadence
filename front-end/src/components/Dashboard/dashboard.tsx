@@ -1,7 +1,9 @@
 import './dashboard.css';
+import { useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react';
 import Modal from '../Modal';
 import Button from '../Button';
+import ActivityEdit from '../ActivityEdit/ActivityEdit';
 import NewActivityOverlay from '../NewActivityOverlay';
 import LayoutProtected from '../../Layouts/Protected'
 import { activitiesAPI } from '../../api/api.activity';
@@ -25,14 +27,15 @@ interface IActivityClient {
   categoryColor?: string;
   queued?: boolean;
 }
-
 export default function Dashboard() {
+  const navigate = useNavigate()
   const DAYS_IN_WEEK = 7;
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeActivityId, setActiveActivityId] = useState<string | null>(null);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [activeActivity, setActiveActivity] = useState<IActivityClient | null>(null);
+  const [showEditPage, setShowEditPage] = useState(false);
   const [showNewActivityOverlay, setShowNewActivityOverlay] = useState(false);
+
 
   function sortActivities(activities: IActivityClient[] = []) {
     const sortedActivities = activities.sort((a, b) => {
@@ -76,11 +79,6 @@ export default function Dashboard() {
     setActivities([...sortActivities(activitiesTemp)]);
   }
 
-  function handleFocusOut() {
-    if (!showConfirmModal) return;
-    setActiveActivityId(null);
-    setShowConfirmModal(false);
-  }
   async function handleComplete(activityId: string) {
     const today = new Date().toISOString().split('T')[0]; // String formatted as: YYYY-MM-DD
     const updateRes = await activitiesAPI.complete(activityId, today)
@@ -91,7 +89,8 @@ export default function Dashboard() {
   }
 
   function handleEdit(activity: IActivityClient) {
-    console.log('edited');
+    console.log('handling edit trigger');
+    navigate({ to: `/activity/edit/${activity.id}` })
   }
 
   function handleNewActivityOverlayClose(activity?: IActivityClient) {
@@ -159,18 +158,6 @@ export default function Dashboard() {
         </div >
         <div className="floating_add_button" onClick={() => setShowNewActivityOverlay(true)}>&#43;</div>
 
-        {showConfirmModal && (
-          <Modal
-            onFocusOut={handleFocusOut}
-            title="How's it going?"
-            style={{ 'text-align': 'center' }}
-          >
-            <div className="modal__buttons">
-              {/* <Button variant="outline" className="modal_button" onClick={removeFromQueue}>Deque</Button> */}
-              {/* <Button color="go" className="modal_button" onClick={completeActivity}>Complete</Button> */}
-            </div>
-          </Modal>
-        )}
         {showNewActivityOverlay && (
           <NewActivityOverlay onClose={(activity) => handleNewActivityOverlayClose(activity)} />
         )}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./NewActivitOverlay.css";
+import "./NewActivityOverlay.css";
 import Input from "./Input";
 import Select from "./Select";
 import Button from "./Button";

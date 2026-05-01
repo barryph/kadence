@@ -113,6 +113,7 @@ export default function SwipeRow({
       {/* FOREGROUND */}
       <motion.div
         drag="x"
+        dragDirectionLock
         dragConstraints={{ left: -MAX_SWIPE, right: MAX_SWIPE }}
         dragElastic={0.2} // Resistance feel
         style={{

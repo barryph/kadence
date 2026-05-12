@@ -156,7 +156,7 @@ export default function Dashboard() {
           ))
           }
         </div >
-        <div className="floating_add_button" onClick={() => setShowNewActivityOverlay(true)}>&#43;</div>
+        <div className="floating_add_button" onClick={() => setShowNewActivityOverlay(true)}><span>Add Activity</span></div>
 
         {showNewActivityOverlay && (
           <NewActivityOverlay onClose={(activity) => handleNewActivityOverlayClose(activity)} />

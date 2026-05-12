@@ -17,10 +17,13 @@ html {
 
   --blue: #0061ff;
   --blue: #0072ff;
+  --new-blue: #0073ff;
   --green: #9ef01a;
   --green: #70e000;
   --green: #3bceac;
   --grey: #5a5a5a;
+  --color-font-light: #302f2f;
+  --font-main: 'Noto Sans';
 }
 
 html {
@@ -50,22 +53,24 @@ body {
 
 
 .site-header {
+  --color-faint: #ffffff82;
   padding: 1.1rem 0.8rem;
-  font-weight: 400;
   border-bottom: 1px solid #eaeaea;
+  border-bottom: 3px solid #dfdfdf99;
   display: flex;
   justify-content: space-between;
   font-size: 22px;
+  background: var(--new-blue);
 }
 
 .site-header .app-name {
   /* color: #7C59DE; */
-  color: var(--blue);
-  font-weight: 300;
+  color: #fff;
+  font-weight: 600;
 }
 
 .site-header .app-name span {
-  color: #000;
+  color: var(--color-faint);
 }
 
 .font-header {
@@ -76,6 +81,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.app-settings-icon {
+  color: var(--color-faint);
 }
 
 .logout_button {
@@ -119,7 +128,7 @@ body {
   top: 0;
   bottom: 0;
   right: 0;
-  background: #fff;
+  background: var(--new-blue);
   z-index: 9999;
   padding: 1rem;
   display: none;
@@ -129,13 +138,18 @@ body {
 }
 .nav-close-icon {
   text-align: right;
+  color: #fff;
 }
 .nav-items {
   display: flex;
   flex-direction: column;
   padding: 1rem 0;
   text-align: right;
+  color: #fff;
 }
 .nav-item {
   padding: 0.5rem 0;
+  color: inherit;
+  font-weight: 600;
+  font-size: 1.125rem;
 }

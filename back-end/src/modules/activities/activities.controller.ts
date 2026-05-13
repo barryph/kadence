@@ -12,6 +12,7 @@ import type { Request } from 'express';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
 import { ActivitiesService } from './services/activities.service';
 import CreateActivityDTO from './dtos/createActivity.dto';
+import EditActivityDTO from './dtos/editActivity.dto';
 import ActivityDateActionDTO from './dtos/activityDateAction.dto';
 import { UserDTO } from '../users/mappers/userMap';
 import { ApiBody } from '@nestjs/swagger';
@@ -60,6 +61,39 @@ export class ActivitiesController {
     return {
       data: {
         activities,
+      },
+    };
+  }
+
+  @Get('/:activityId')
+  @UseGuards(IsAuthedGuard)
+  async getById(@Req() req: Request, @Param('activityId') activityId: string) {
+    const userId = (req.user as UserDTO).id;
+    const activity = await this.activitiesService.getById(activityId, userId);
+    return {
+      data: {
+        activity,
+      },
+    };
+  }
+
+  @Post('/edit/:activityId')
+  @UseGuards(IsAuthedGuard)
+  async edit(
+    @Req() req: Request,
+    @Param('activityId') activityId: string,
+    @Body() editActivityDto: EditActivityDTO,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    const activity = await this.activitiesService.editActivity(
+      activityId,
+      editActivityDto,
+      userId,
+    );
+
+    return {
+      data: {
+        activity,
       },
     };
   }

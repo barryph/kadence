@@ -7,6 +7,7 @@ import { IActivityPersistence } from '../mappers/activityMap';
 interface IActivitiesRepo {
   create(activity: Activity): Promise<Activity>;
   getById(id: string): Promise<Activity | null>;
+  update(activity: Activity): Promise<Activity>;
 }
 
 @Injectable()
@@ -56,5 +57,27 @@ export default class ActivitiesRepo implements IActivitiesRepo {
       return null;
     }
     return ActivityMap.persistenceToDomain(result.rows[0]);
+  }
+
+  async update(activityDomain: Activity): Promise<Activity> {
+    const activity = ActivityMap.toPersistence(activityDomain);
+    const result = await this.knexService.connection.raw<{
+      rows: IActivityPersistence[];
+    }>(
+      `
+        UPDATE activities
+        SET name = :name, ticker = :ticker, interval = :interval
+        WHERE id = :id
+        RETURNING *, EXTRACT(DAY FROM interval) || ' DAYS' AS interval, 0 AS days_until
+      `,
+      {
+        id: activity.id,
+        name: activity.name,
+        ticker: activity.ticker || null,
+        interval: activity.interval,
+      },
+    );
+    const updatedActivity = result.rows[0];
+    return ActivityMap.persistenceToDomain(updatedActivity);
   }
 }

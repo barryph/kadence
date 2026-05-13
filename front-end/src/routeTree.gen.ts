@@ -14,7 +14,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProtecRouteImport } from './routes/protec'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ActivityEditRouteImport } from './routes/activity/edit'
+import { Route as ActivityEditActivityIdRouteImport } from './routes/activity/edit.$activityId'
 
 const TimelineRoute = TimelineRouteImport.update({
   id: '/timeline',
@@ -41,9 +41,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ActivityEditRoute = ActivityEditRouteImport.update({
-  id: '/activity/edit',
-  path: '/activity/edit',
+const ActivityEditActivityIdRoute = ActivityEditActivityIdRouteImport.update({
+  id: '/activity/edit/$activityId',
+  path: '/activity/edit/$activityId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -53,7 +53,7 @@ export interface FileRoutesByFullPath {
   '/protec': typeof ProtecRoute
   '/register': typeof RegisterRoute
   '/timeline': typeof TimelineRoute
-  '/activity/edit': typeof ActivityEditRoute
+  '/activity/edit/$activityId': typeof ActivityEditActivityIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -61,7 +61,7 @@ export interface FileRoutesByTo {
   '/protec': typeof ProtecRoute
   '/register': typeof RegisterRoute
   '/timeline': typeof TimelineRoute
-  '/activity/edit': typeof ActivityEditRoute
+  '/activity/edit/$activityId': typeof ActivityEditActivityIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,7 +70,7 @@ export interface FileRoutesById {
   '/protec': typeof ProtecRoute
   '/register': typeof RegisterRoute
   '/timeline': typeof TimelineRoute
-  '/activity/edit': typeof ActivityEditRoute
+  '/activity/edit/$activityId': typeof ActivityEditActivityIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,9 +80,15 @@ export interface FileRouteTypes {
     | '/protec'
     | '/register'
     | '/timeline'
-    | '/activity/edit'
+    | '/activity/edit/$activityId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/protec' | '/register' | '/timeline' | '/activity/edit'
+  to:
+    | '/'
+    | '/login'
+    | '/protec'
+    | '/register'
+    | '/timeline'
+    | '/activity/edit/$activityId'
   id:
     | '__root__'
     | '/'
@@ -90,7 +96,7 @@ export interface FileRouteTypes {
     | '/protec'
     | '/register'
     | '/timeline'
-    | '/activity/edit'
+    | '/activity/edit/$activityId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -99,7 +105,7 @@ export interface RootRouteChildren {
   ProtecRoute: typeof ProtecRoute
   RegisterRoute: typeof RegisterRoute
   TimelineRoute: typeof TimelineRoute
-  ActivityEditRoute: typeof ActivityEditRoute
+  ActivityEditActivityIdRoute: typeof ActivityEditActivityIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -139,11 +145,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/activity/edit': {
-      id: '/activity/edit'
-      path: '/activity/edit'
-      fullPath: '/activity/edit'
-      preLoaderRoute: typeof ActivityEditRouteImport
+    '/activity/edit/$activityId': {
+      id: '/activity/edit/$activityId'
+      path: '/activity/edit/$activityId'
+      fullPath: '/activity/edit/$activityId'
+      preLoaderRoute: typeof ActivityEditActivityIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -155,7 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProtecRoute: ProtecRoute,
   RegisterRoute: RegisterRoute,
   TimelineRoute: TimelineRoute,
-  ActivityEditRoute: ActivityEditRoute,
+  ActivityEditActivityIdRoute: ActivityEditActivityIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -14,7 +14,9 @@ import * as ActivityMap from '../mappers/activityMap';
 import ActivityEvent from '../domain/activityEvent.entity';
 import { ActivityDTO } from '../mappers/activityMap';
 import { GetActivitiesByUserIdQuery } from '../queries/getActivitiesByUserId.query';
+import { GetActivityByIdQuery } from '../queries/getActivityById.query';
 import { GetActivityTimelineQuery } from '../queries/getActivityTimeline.query';
+import EditActivityDTO from '../dtos/editActivity.dto';
 import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 import { ActivityTimelineDTO } from '../dtos/getTimelineDto.dto';
 
@@ -24,6 +26,7 @@ export class ActivitiesService {
     private readonly activitiesRepo: ActivitiesRepo,
     private readonly activityEventRepo: ActivityEventRepo,
     private readonly getActivitiesByUserIdQuery: GetActivitiesByUserIdQuery,
+    private readonly getActivityByIdQuery: GetActivityByIdQuery,
     private readonly getActivityTimelineQuery: GetActivityTimelineQuery,
   ) { }
 
@@ -70,6 +73,36 @@ export class ActivitiesService {
 
   async getAllByUserId(userId: string): Promise<ActivityWithCategoryDTO[]> {
     return this.getActivitiesByUserIdQuery.execute(userId);
+  }
+
+  async getById(activityId: string, userId: string): Promise<ActivityDTO> {
+    return this.getActivityByIdQuery.execute(activityId, userId);
+  }
+
+  async editActivity(
+    activityId: string,
+    editActivityDto: EditActivityDTO,
+    userId: string,
+  ): Promise<ActivityDTO> {
+    const activity = await this.activitiesRepo.getById(activityId);
+    if (!activity) {
+      throw new NotFoundException('Activity not found');
+    }
+    if (activity.userId !== userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    let ticker: ActivityTicker | undefined;
+    if (editActivityDto.ticker) {
+      ticker = ActivityTicker.create(editActivityDto.ticker);
+      activity.changeTicker(ticker);
+    }
+
+    activity.changeName(editActivityDto.name);
+    activity.changeInterval(editActivityDto.interval);
+
+    const updatedActivity = await this.activitiesRepo.update(activity);
+    return ActivityMap.toDTO(updatedActivity);
   }
 
   async completeActivity(

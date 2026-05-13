@@ -61,6 +61,27 @@ export default class Activity {
     }
   }
 
+  public changeName(name: string) {
+    if (isNullOrUndefined(name)) {
+      throw new Error('Activity Failed Validation');
+    }
+    this.props.name = name;
+  }
+
+  public changeTicker(ticker: ActivityTicker) {
+    if (isNullOrUndefined(ticker)) {
+      throw new Error('Activity Failed Validation');
+    }
+    this.props.ticker = ticker;
+  }
+
+  public changeInterval(interval: number) {
+    if (isNullOrUndefined(interval)) {
+      throw new Error('Activity Failed Validation');
+    }
+    this.props.interval = interval;
+  }
+
   private static validate(props: IActivity) {
     if (
       isNullOrUndefined(props.userId) ||

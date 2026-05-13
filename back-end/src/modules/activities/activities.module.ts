@@ -5,6 +5,7 @@ import ActivitiesRepo from './repos/activities.repository';
 import ActivityEventRepo from './repos/activityEvent.repository';
 import { KnexService } from 'src/shared/knex/knex.service';
 import { GetActivitiesByUserIdQuery } from './queries/getActivitiesByUserId.query';
+import { GetActivityByIdQuery } from './queries/getActivityById.query';
 import { GetActivityTimelineQuery } from './queries/getActivityTimeline.query';
 
 @Module({
@@ -15,6 +16,7 @@ import { GetActivityTimelineQuery } from './queries/getActivityTimeline.query';
     ActivityEventRepo,
     KnexService,
     GetActivitiesByUserIdQuery,
+    GetActivityByIdQuery,
     GetActivityTimelineQuery,
   ],
 })

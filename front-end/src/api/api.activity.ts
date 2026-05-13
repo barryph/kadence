@@ -43,7 +43,7 @@ interface EditActivityResponse {
 export const activitiesAPI = {
   getById(activityId: string, options?: OptionalOptions) {
     return apiClient.get<GetActivityByIdResponse>(
-      `/activities/edit/${activityId}`,
+      `/activities/${activityId}`,
       options,
     );
   },

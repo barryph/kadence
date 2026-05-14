@@ -85,6 +85,7 @@ export class ActivitiesService {
     userId: string,
   ): Promise<ActivityDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
+    // Authorize the request
     if (!activity) {
       throw new NotFoundException('Activity not found');
     }
@@ -92,14 +93,18 @@ export class ActivitiesService {
       throw new UnauthorizedException('Unauthorized');
     }
 
+    // Update values
     let ticker: ActivityTicker | undefined;
     if (editActivityDto.ticker) {
       ticker = ActivityTicker.create(editActivityDto.ticker);
       activity.changeTicker(ticker);
     }
-
-    activity.changeName(editActivityDto.name);
-    activity.changeInterval(editActivityDto.interval);
+    if (editActivityDto.name) {
+      activity.changeName(editActivityDto.name);
+    }
+    if (editActivityDto.interval) {
+      activity.changeInterval(editActivityDto.interval);
+    }
 
     const updatedActivity = await this.activitiesRepo.update(activity);
     return ActivityMap.toDTO(updatedActivity);

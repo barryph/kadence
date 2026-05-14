@@ -6,7 +6,7 @@
   left: 0;
   right: 0;
   z-index: 999;
-  padding: 4rem 2rem;
+  padding-top: 3rem;
   background: #fff;
 }
 
@@ -21,15 +21,17 @@
 
 .overlay_new_activity .close_button {
   position: fixed;
-  top: 1.0rem;
+  top: 4rem;
   right: 1.5rem;
-  font-size: 3rem;
+  font-size: 2rem;
   opacity: 0.4;
+  line-height: 1rem;
 }
 
 .overlay_new_activity .title {
-  margin-bottom: 2rem;
+  margin: 0;
+  margin-bottom: 1rem;
 }
-.overlay_new_activity .add_button {
+.overlay_new_activity .submit_button {
   margin-top: 1rem;
 }

@@ -37,6 +37,7 @@ export function toDTO(activity: Activity): ActivityDTO {
 
 export function toPersistence(activity: Activity): IActivityPersistence {
   return {
+    id: activity.id,
     user_id: activity.userId,
     category_id: activity.categoryId,
     name: activity.name,
@@ -59,11 +60,13 @@ export function persistenceToDomain(activity: IActivityPersistence): Activity {
     name: activity.name,
     ticker,
     interval: parseInt(activity.interval.split(' ')[0], 10),
-    daysUntil: activity.days_until ? Number(activity.days_until) : undefined,
+    daysUntil: Number(activity.days_until ?? 0),
   });
 }
 
-export function rawToActivityWithCategoryDTO(row: any): ActivityWithCategoryDTO {
+export function rawToActivityWithCategoryDTO(
+  row: any,
+): ActivityWithCategoryDTO {
   return {
     id: row.id,
     userId: row.user_id,
@@ -74,12 +77,11 @@ export function rawToActivityWithCategoryDTO(row: any): ActivityWithCategoryDTO 
     daysUntil: Number(row.days_until),
     category: row.category_id
       ? {
-          id: row.category_id,
-          userId: row.category_user_id,
-          name: row.category_name,
-          color: row.category_color,
-        }
+        id: row.category_id,
+        userId: row.category_user_id,
+        name: row.category_name,
+        color: row.category_color,
+      }
       : undefined,
   };
 }
-

@@ -40,7 +40,7 @@ export default function Dashboard() {
   function sortActivities(activities: IActivityClient[] = []) {
     const sortedActivities = activities.sort((a, b) => {
       if (a.queued && b.queued || (!a.queued && !b.queued)) {
-        return a.daysUntil - b.daysUntil;
+        return (a.daysUntil || 0) - (b.daysUntil || 0);
       }
       if (a.queued) {
         return -1;

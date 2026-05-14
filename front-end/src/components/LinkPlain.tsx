@@ -2,6 +2,7 @@ import { Link, type LinkComponent } from '@tanstack/react-router'
 import './LinkPlain.css';
 
 interface LinkPlainProps extends LinkComponent<"a", string> {
+  to: string;
   children: React.ReactNode;
   className?: string;
 }

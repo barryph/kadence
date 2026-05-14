@@ -3,8 +3,14 @@ import Modal from "./Modal";
 import Input from "./Input";
 import Button from "./Button";
 import "./AddCategoryModal.css";
+import type { ICategory } from "../api/api.activity";
 
-export default function AddCategoryModal({ onSave, onClose }) {
+interface IProps {
+  onSave: (category: ICategory) => void;
+  onClose: () => void;
+}
+
+export default function AddCategoryModal({ onSave, onClose }: IProps) {
   const [name, setName] = useState("");
   const [color, setColor] = useState("");
   function save() {

@@ -10,7 +10,7 @@ export interface IActivity {
   daysUntil: number;
 }
 
-interface CreateActivityDTO extends Omit<Omit<IActivity, "id">, "userId"> {
+interface CreateActivityDTO extends Omit<Omit<Omit<IActivity, "id">, "userId">, "daysUntil"> {
   lastDone?: string;
 };
 
@@ -38,6 +38,11 @@ interface EditActivityDTO {
 
 interface EditActivityResponse {
   activity: IActivity;
+}
+
+export interface ICategory {
+  name: string,
+  color: string,
 }
 
 export const activitiesAPI = {

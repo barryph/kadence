@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "./NewActivityOverlay.css";
 import Input from "./Input";
-import Select from "./Select";
+import CategorySelect from "./CategorySelect";
 import Button from "./Button";
-import { activitiesAPI, type IActivity } from "../api/api.activity";
+import { activitiesAPI, type IActivity, type ICategory } from "../api/api.activity";
 
 interface NewActivitOverlayProps {
   onClose: (activity?: IActivity) => void;
@@ -17,7 +17,8 @@ export default function NewActivity({ onClose }: NewActivitOverlayProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
-  const [categories, setCategories] = useState([
+  // TODO: Fetch categories list from server
+  const [categories, setCategories] = useState<ICategory[]>([
     {
       name: "Sprint",
       color: "green",
@@ -31,7 +32,7 @@ export default function NewActivity({ onClose }: NewActivitOverlayProps) {
       color: "blue",
     },
   ]);
-  function addCategory(category) {
+  function addCategory(category: ICategory) {
     setCategories([...categories, category]);
   }
 
@@ -92,7 +93,7 @@ export default function NewActivity({ onClose }: NewActivitOverlayProps) {
             />
           </div>
           <div className="input_row">
-            <Select
+            <CategorySelect
               label="Category (optional)"
               placeholder="Choose a Category"
               className="input"
@@ -114,6 +115,9 @@ export default function NewActivity({ onClose }: NewActivitOverlayProps) {
             />
           </div>
 
+          {errorMessage && (
+            <div>{errorMessage}</div>
+          )}
           <Button isLoading={isLoading} className="add_button" type="submit">
             Create
           </Button>

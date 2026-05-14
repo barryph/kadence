@@ -6,7 +6,7 @@ import LinkPlain from '../components/LinkPlain';
 import { useEffect, useRef, useState } from 'react';
 
 function NavDrawer({ onLogout, isOpen, onClose }: { onLogout: () => void, isOpen: boolean, onClose: () => void }) {
-  const navRef = useRef(null);
+  const navRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
   // Close the nav drawer on route change
@@ -16,7 +16,8 @@ function NavDrawer({ onLogout, isOpen, onClose }: { onLogout: () => void, isOpen
 
   useEffect(() => {
     function handleClickOutside(event: PointerEvent) {
-      if (navRef.current && !navRef.current.contains(event.target)) {
+      const target = event.target as Node;
+      if (navRef.current && !navRef.current.contains(target)) {
         onClose();
       }
     }

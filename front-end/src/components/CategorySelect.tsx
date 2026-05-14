@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import "./Select.css";
+import "./CategorySelect.css";
 import AddCategoryModal from "./AddCategoryModal.tsx";
+import type { ICategory } from "../api/api.activity.ts";
 
 // TODO: Add scroll area
-// TODO: Rename from Select
 // TODO: Add deselect selected category
 // TODO: Add dropdown icon
 
@@ -11,9 +11,11 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   className?: string;
   label?: string;
   placeholder?: string;
+  options: ICategory[];
+  onCreate: (category: ICategory) => void;
 }
 
-export default function Select({
+export default function CategorySelect({
   onCreate,
   options,
   placeholder,
@@ -21,14 +23,15 @@ export default function Select({
   label,
   ...props
 }: SelectProps) {
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setShowDropdown(false);
       }
     }
@@ -45,14 +48,14 @@ export default function Select({
     setShowDropdown(false);
   }
 
-  function handleSave(category) {
+  function handleSave(category: ICategory) {
     setSelectedCategory(category);
     setShowCreateCategoryModal(false);
     setShowDropdown(false);
     onCreate(category);
   }
 
-  function selectCategory(category) {
+  function selectCategory(category: ICategory) {
     setSelectedCategory(category);
     setShowDropdown(false);
   }

@@ -10,11 +10,10 @@ export const Route = createFileRoute('/activity/edit/$activityId')({
 })
 
 function RouteComponent() {
+  const { activityId } = Route.useParams();
   const [activity, setActivity] = useState<IActivity | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
-  const { activityId } = Route.useParams();
-  console.log('activityId:', activityId);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -24,30 +23,39 @@ function RouteComponent() {
       setErrorMessage(null);
       try {
         const response = await activitiesAPI.getById(activityId, { signal: abortController.signal });
-        console.log('response', response);
         if (response.error) {
           setErrorMessage(response.error.message);
-          setIsLoading(false);
-          return;
         }
         if (response.data?.activity) {
           setActivity(response.data.activity);
-          setIsLoading(false);
         }
       } catch (err) {
         console.error('Error fetching activity', err);
+      } finally {
+        setIsLoading(false);
       }
     }
     fetchActivity();
   }, [activityId]);
 
-  if (!activity) {
+  if (isLoading) {
     return (
       <>Loading...</>
     )
   }
 
-  // TODO: Show Error message
+  if (errorMessage) {
+    return (
+      <>Oops, something went wrong, please try refreshing the page</>
+    )
+  }
+
+  if (!activity) {
+    return (
+      <>Could not find your activity</>
+    )
+  }
+
   return (
     <LayoutProtected>
       <ActivityEdit activity={activity} />

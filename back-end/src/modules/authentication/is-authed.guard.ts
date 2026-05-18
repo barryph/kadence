@@ -19,6 +19,7 @@ import {
 @Injectable()
 export class IsAuthedGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
+    console.log('is AUTH GUARRDRD!!!!!!!!!!!!!!!!!!!!$@#$');
     const request = context.switchToHttp().getRequest();
     if (request.isAuthenticated && request.isAuthenticated()) {
       return true;

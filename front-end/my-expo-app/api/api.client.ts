@@ -1,25 +1,35 @@
 import { ErrorCode, type ApiResponse, type ServerResponse } from "./api.types";
 import { errorMapper } from "./errorHandler";
+import { Platform } from "react-native";
 
 export interface OptionalOptions {
   signal?: AbortSignal;
 }
 
-class APIClient {
-  // TODO: Make a config for different environments
-  private baseUrl = 'http://localhost:3000';
+// const BASE_URL = 'https://yummy-cooks-train.loca.lt';
+// const BASE_URL = Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
+// const BASE_URL = Platform.OS === 'android' ? 'https://9d68-203-211-79-9.ngrok-free.app' : 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3000';
 
+class APIClient {
   async request<T>(url: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${url}`, {
+      const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
+      console.log('Full URL', fullUrl);
+      const response = await fetch(fullUrl, {
         // Set your default options here
         ...options,
         credentials: "include",
         headers: new Headers({
           "Content-Type": "application/json",
+          "bypass-tunnel-reminder": "true",
           ...options.headers,
         }),
       });
+
+      if (options.method === 'DELETE') {
+        return { data: undefined as T };
+      }
 
       const json: ServerResponse<T> = await response.json();
       if (json.error) {

@@ -1,9 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { View, Text } from "react-native";
 import { authAPI, type LoginResponse, type RegisterResponse } from "../api/api.auth";
 import type { ApiResponse, IUser } from "../api/api.types";
 import { usersAPI } from "../api/api.users";
-import { ThemedText } from "@/components/themed-text";
+import LoaderScreen from "@/components/LoaderScreen";
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -78,9 +77,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   if (isLoading) {
     return (
-      <View>
-        <ThemedText>Loading activities...</ThemedText>
-      </View>
+      <LoaderScreen text="Loading user..." />
     );
   }
 

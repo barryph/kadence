@@ -5,6 +5,7 @@ import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import SwipeRow from '@/components/SwipeRow';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/themed-text';
+import LoaderScreen from '@/components/LoaderScreen';
 
 // Extend IActivity for client-side properties
 interface IActivityClient extends IActivity {
@@ -81,9 +82,7 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ThemedText>Loading activities...</ThemedText>
-      </View>
+      <LoaderScreen text="Loading activities..." />
     );
   }
 
@@ -181,11 +180,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   scrollContent: {
     paddingBottom: 100,

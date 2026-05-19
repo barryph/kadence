@@ -12,13 +12,7 @@ import UsersRepo from '../repos/user.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepo: UsersRepo) {}
-
-  async findOne(id: string) {
-    const email = UserEmail.create('test@mail.com');
-    const exists = await this.usersRepo.exists(email);
-    return { id, name: 'John Doe', password: 'Shhhhh...' };
-  }
+  constructor(private readonly usersRepo: UsersRepo) { }
 
   async getById(id: string): Promise<User | null> {
     const user = await this.usersRepo.getById(id);

@@ -54,12 +54,10 @@ export class ActivitiesController {
   }
 
   @Get('/')
-  // @UseGuards(IsAuthedGuard)
+  @UseGuards(IsAuthedGuard)
   async getAllByUserId(@Req() req: Request) {
-    // const userId = (req.user as UserDTO).id;
-    const userId = '2';
+    const userId = (req.user as UserDTO).id;
     const activities = await this.activitiesService.getAllByUserId(userId);
-    console.log('activities', activities);
     return {
       data: {
         activities,

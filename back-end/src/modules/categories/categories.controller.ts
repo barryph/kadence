@@ -8,7 +8,7 @@ import { ApiBody } from '@nestjs/swagger';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(private readonly categoriesService: CategoriesService) { }
 
   @Post('/')
   @UseGuards(IsAuthedGuard)
@@ -20,7 +20,7 @@ export class CategoriesController {
         value: {
           name: 'Health',
           color: '#FF0000',
-        } as CreateCategoryDTO,
+        },
       },
     },
   })

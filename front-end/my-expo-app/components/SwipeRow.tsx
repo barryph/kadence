@@ -24,6 +24,7 @@ interface IProps {
   swipeRightColor: string;
   swipeRightBackground: string;
   children: ReactNode;
+  queued?: boolean;
 }
 
 export default function SwipeRow({

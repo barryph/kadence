@@ -4,6 +4,7 @@ import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
+import { ThemedText } from '@/components/themed-text';
 
 export default function LoginScreen() {
   const authContext = useAuth();
@@ -37,11 +38,11 @@ export default function LoginScreen() {
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Login!</Text>
+          <ThemedText style={styles.title} type="title">Login!</ThemedText>
 
           {errorMessage && (
             <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{errorMessage}</Text>
+              <ThemedText style={styles.errorText} type="defaultSmall">{errorMessage}</ThemedText>
             </View>
           )}
 
@@ -98,8 +99,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
     marginBottom: 24,
     textAlign: 'center',
     color: '#333',

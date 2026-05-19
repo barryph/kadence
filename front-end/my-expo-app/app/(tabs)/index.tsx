@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import SwipeRow from '@/components/SwipeRow';
 import { LinearGradient } from 'expo-linear-gradient';
+import { ThemedText } from '@/components/themed-text';
 
 // Extend IActivity for client-side properties
 interface IActivityClient extends IActivity {
@@ -81,7 +82,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>Loading activities...</Text>
+        <ThemedText>Loading activities...</ThemedText>
       </View>
     );
   }
@@ -113,14 +114,14 @@ export default function Dashboard() {
                     <View style={styles.activityMain}>
                       <View style={styles.activityTitleRow}>
                         <View style={styles.activityNameGroup}>
-                          <Text style={[styles.activityName, activity.queued && styles.activityNameSelected]}>
+                          <ThemedText style={[styles.activityName, activity.queued && styles.activityNameSelected]}>
                             {activity.name}
-                          </Text>
+                          </ThemedText>
                           {activity.category && (
                             <View style={[styles.categoryBadge, { borderColor: activity.categoryColor, backgroundColor: `${activity.categoryColor}1A` }]}>
-                              <Text style={[styles.categoryText, { color: activity.categoryColor }]}>
+                              <ThemedText style={[styles.categoryText, { color: activity.categoryColor }]}>
                                 {activity.category}
-                              </Text>
+                              </ThemedText>
                             </View>
                           )}
                         </View>
@@ -170,7 +171,7 @@ export default function Dashboard() {
           console.log('Open Add Activity');
         }}
       >
-        <Text style={styles.floatingAddButtonText}>Add Activity</Text>
+        <ThemedText style={styles.floatingAddButtonText}>Add Activity</ThemedText>
       </TouchableOpacity>
     </View>
   );
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 100,
-    paddingTop: 50,
+    paddingTop: 3,
   },
   activityWrapper: {
     width: '100%',

@@ -5,7 +5,8 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: 'default' | 'defaultSmall' | 'title' | 'defaultSemiBold' | 'defaultBold' | 'subtitle' | 'link';
+  weight?: '400' | '600' | '700';
 };
 
 export function ThemedText({
@@ -13,6 +14,7 @@ export function ThemedText({
   lightColor,
   darkColor,
   type = 'default',
+  weight,
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
@@ -22,10 +24,15 @@ export function ThemedText({
       style={[
         { color },
         type === 'default' ? styles.default : undefined,
+        type === 'defaultSmall' ? styles.defaultSmall : undefined,
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
+        type === 'defaultBold' ? styles.defaultBold : undefined,
         type === 'subtitle' ? styles.subtitle : undefined,
         type === 'link' ? styles.link : undefined,
+        weight === '400' ? styles.weightRegular : undefined,
+        weight === '600' ? styles.weightSemiBold : undefined,
+        weight === '700' ? styles.weightBold : undefined,
         style,
       ]}
       {...rest}
@@ -33,28 +40,57 @@ export function ThemedText({
   );
 }
 
+const baseStyles = {
+  fontFamily: 'IBMPlexMono_400Regular',
+};
+
 const styles = StyleSheet.create({
   default: {
+    ...baseStyles,
     fontSize: 16,
     lineHeight: 24,
+  },
+  defaultSmall: {
+    ...baseStyles,
+    fontSize: 14,
+    lineHeight: 20,
   },
   defaultSemiBold: {
+    ...baseStyles,
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '600',
+    fontFamily: 'IBMPlexMono_600SemiBold',
+  },
+  defaultBold: {
+    ...baseStyles,
+    fontSize: 16,
+    lineHeight: 24,
+    fontFamily: 'IBMPlexMono_700Bold',
   },
   title: {
+    ...baseStyles,
     fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
+    fontFamily: 'IBMPlexMono_700Bold',
+    lineHeight: 38,
   },
   subtitle: {
+    ...baseStyles,
     fontSize: 20,
     fontWeight: 'bold',
   },
   link: {
+    ...baseStyles,
     lineHeight: 30,
     fontSize: 16,
     color: '#0a7ea4',
+  },
+  weightRegular: {
+    fontFamily: 'IBMPlexMono_400Regular',
+  },
+  weightSemiBold: {
+    fontFamily: 'IBMPlexMono_600SemiBold',
+  },
+  weightBold: {
+    fontFamily: 'IBMPlexMono_700Bold',
   },
 });

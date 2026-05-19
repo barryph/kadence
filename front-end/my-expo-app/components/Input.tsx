@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, TextInput, Text, StyleSheet, type TextInputProps } from 'react-native';
+import { ThemedText } from './themed-text';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -9,13 +10,13 @@ interface InputProps extends TextInputProps {
 export default function Input({ label, errorMessage, style, ...props }: InputProps) {
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <ThemedText style={styles.label} type="defaultSemiBold">{label}</ThemedText>}
       <TextInput
         style={[styles.input, errorMessage ? styles.inputError : null, style]}
         placeholderTextColor="#999"
         {...props}
       />
-      {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+      {errorMessage && <ThemedText style={styles.errorText}>{errorMessage}</ThemedText>}
     </View>
   );
 }
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontSize: 14,
-    fontWeight: '600',
+    lineHeight: 22,
     color: '#333',
   },
   input: {
@@ -48,5 +49,6 @@ const styles = StyleSheet.create({
     color: '#ff3333',
     fontSize: 12,
     marginTop: 4,
+    lineHeight: 14,
   },
 });

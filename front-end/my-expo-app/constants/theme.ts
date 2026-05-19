@@ -16,6 +16,7 @@ export const Colors = {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    faint: '#ffffff82',
   },
   dark: {
     text: '#ECEDEE',
@@ -25,6 +26,9 @@ export const Colors = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
   },
+  blue: {
+    new: '#0073ff',
+  }
 };
 
 export const Fonts = Platform.select({

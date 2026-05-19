@@ -3,6 +3,7 @@ import { View, Text } from "react-native";
 import { authAPI, type LoginResponse, type RegisterResponse } from "../api/api.auth";
 import type { ApiResponse, IUser } from "../api/api.types";
 import { usersAPI } from "../api/api.users";
+import { ThemedText } from "@/components/themed-text";
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -78,7 +79,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   if (isLoading) {
     return (
       <View>
-        <Text>Loading activities...</Text>
+        <ThemedText>Loading activities...</ThemedText>
       </View>
     );
   }

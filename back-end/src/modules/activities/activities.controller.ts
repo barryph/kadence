@@ -65,6 +65,24 @@ export class ActivitiesController {
     };
   }
 
+  @Get('/timeline')
+  @UseGuards(IsAuthedGuard)
+  async getActivityTimeline(
+    @Req() req: Request,
+    @Query('month') month: string,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    const timeline = await this.activitiesService.getActivityTimeline(
+      userId,
+      month,
+    );
+    return {
+      data: {
+        timeline,
+      },
+    };
+  }
+
   @Get('/:activityId')
   @UseGuards(IsAuthedGuard)
   async getById(@Req() req: Request, @Param('activityId') activityId: string) {
@@ -136,24 +154,6 @@ export class ActivitiesController {
     return {
       data: {
         activity,
-      },
-    };
-  }
-
-  @Get('/timeline')
-  @UseGuards(IsAuthedGuard)
-  async getActivityTimeline(
-    @Req() req: Request,
-    @Query('month') month: string,
-  ) {
-    const userId = (req.user as UserDTO).id;
-    const timeline = await this.activitiesService.getActivityTimeline(
-      userId,
-      month,
-    );
-    return {
-      data: {
-        timeline,
       },
     };
   }

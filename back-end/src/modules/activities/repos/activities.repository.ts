@@ -61,8 +61,6 @@ export default class ActivitiesRepo implements IActivitiesRepo {
 
   async update(activityDomain: Activity): Promise<Activity> {
     const activity = ActivityMap.toPersistence(activityDomain);
-    console.log('activity', activity);
-    console.log('activityDomain', activityDomain);
     const result = await this.knexService.connection.raw<{
       rows: IActivityPersistence[];
     }>(

@@ -1,7 +1,10 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { KnexService } from 'src/shared/knex/knex.service';
 
-import * as ActivityMap from '../mappers/activityMap';
 import { ActivityDTO } from '../mappers/activityMap';
 
 @Injectable()

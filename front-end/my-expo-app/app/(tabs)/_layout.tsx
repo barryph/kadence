@@ -15,6 +15,37 @@ export default function TabLayout() {
   const { logout } = useAuth();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  const headerOptions = {
+    headerShown: true,
+    headerStyle: {
+      borderBottomWidth: 3,
+      borderBottomColor: '#dfdfdf99',
+      backgroundColor: Colors.blue.new,
+    },
+    headerTitle: () => (
+      <ThemedText
+        type="defaultSemiBold"
+        style={{
+          color: '#fff',
+          fontSize: 22,
+        }}
+      >
+        Fit<ThemedText
+          type="defaultSemiBold"
+          style={{
+            color: Colors.light.faint,
+            fontSize: 22,
+          }}
+        >Trick</ThemedText>
+      </ThemedText>
+    ),
+    headerRight: () => (
+      <TouchableOpacity onPress={() => setIsDrawerOpen(true)} style={{ marginRight: 16 }}>
+        <Text style={{ color: Colors.light.faint, fontSize: 24, fontWeight: 'bold' }}>☰</Text>
+      </TouchableOpacity>
+    ),
+  };
+
   return (
     <>
       <Tabs
@@ -27,36 +58,17 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
+            ...headerOptions,
             title: 'Home',
-            headerShown: true,
-            headerStyle: {
-              borderBottomWidth: 3,
-              borderBottomColor: '#dfdfdf99',
-              backgroundColor: Colors.blue.new,
-            },
-            headerTitle: () => (
-              <ThemedText
-                type="defaultSemiBold"
-                style={{
-                  color: '#fff',
-                  fontSize: 22,
-                }}
-              >
-                Fit<ThemedText
-                  type="defaultSemiBold"
-                  style={{
-                    color: Colors.light.faint,
-                    fontSize: 22,
-                  }}
-                >Trick</ThemedText>
-              </ThemedText>
-            ),
-            headerRight: () => (
-              <TouchableOpacity onPress={() => setIsDrawerOpen(true)} style={{ marginRight: 16 }}>
-                <Text style={{ color: Colors.light.faint, fontSize: 24, fontWeight: 'bold' }}>☰</Text>
-              </TouchableOpacity>
-            ),
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="timeline"
+          options={{
+            ...headerOptions,
+            title: 'Timeline',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
           }}
         />
         <Tabs.Screen

@@ -4,6 +4,7 @@ import { activitiesAPI, type IActivity } from "@/api/api.activity";
 import { timelineAPI, type ITimeline, type ITimelineSet } from '@/api/api.timeline';
 import Button from '@/components/Button';
 import { Colors } from '@/constants/theme';
+import Animated, { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 type TimelineDateColumn = {
   full: string;
@@ -37,7 +38,7 @@ function buildMonthDateColumns(month: string, endDayInMonth?: number): TimelineD
   const endDate = new Date(year, monthNumber - 1, boundedEndDay, 12);
   const columns: TimelineDateColumn[] = [];
 
-  for (const cursorDate = new Date(endDate); cursorDate >= monthStart; cursorDate.setDate(cursorDate.getDate() - 1)) {
+  for (const cursorDate = new Date(monthStart); cursorDate <= endDate; cursorDate.setDate(cursorDate.getDate() + 1)) {
     columns.push(toTimelineDateColumn(new Date(cursorDate)));
   }
 
@@ -73,6 +74,7 @@ function getShouldAutoLoadNextMonth(today: Date): boolean {
 }
 
 export default function TimelineScreen() {
+  // TODO: Start scrolled to the right
   const [activities, setActivities] = useState<IActivity[] | undefined>();
   const [timeline, setTimeline] = useState<ITimelineSet | undefined>();
   const [dateColumns, setDateColumns] = useState<TimelineDateColumn[]>([]);
@@ -119,7 +121,7 @@ export default function TimelineScreen() {
               const nextMonth = getNextMonthToLoad(initMonth);
               mergedTimeline = mergeTimelineSets(mergedTimeline, timelineToSet(nextMonthRes.data.timeline));
               months.push(nextMonth);
-              columns.push(...buildMonthDateColumns(nextMonth));
+              columns.unshift(...buildMonthDateColumns(nextMonth));
             }
           }
 
@@ -152,7 +154,7 @@ export default function TimelineScreen() {
         const timelineSet = timelineToSet(response.data.timeline);
         setTimeline((prevTimeline) => mergeTimelineSets(prevTimeline ?? {}, timelineSet));
         setLoadedMonths((prevLoadedMonths) => [...prevLoadedMonths, month]);
-        setDateColumns((prevDateColumns) => [...prevDateColumns, ...buildMonthDateColumns(month)]);
+        setDateColumns((prevDateColumns) => [...buildMonthDateColumns(month), ...prevDateColumns]);
       }
     } catch (err) {
       setLoadMoreError('Unable to load more timeline. Please try again.');
@@ -214,6 +216,30 @@ export default function TimelineScreen() {
     return getNextMonthToLoad(loadedMonths[loadedMonths.length - 1]);
   }, [loadedMonths]);
 
+  const scrollX = useSharedValue(0);
+  const scrollY = useSharedValue(0);
+
+  // Runs on the UI thread
+  const scrollHandlerX = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollX.value = event.contentOffset.x;
+    },
+  });
+  const scrollHandlerY = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  // Sync the "scroll" position of the date header with the body
+  const colHeaderStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: -scrollX.value }],
+  }));
+  // Sync the "scroll" position of the sports header with the body
+  const rowHeaderStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: -scrollY.value }],
+  }));
+
   if (isLoadingInitData) {
     return (
       <View style={styles.centerContainer}>
@@ -247,80 +273,170 @@ export default function TimelineScreen() {
     );
   }
 
+  // console.log('dc', dateColumns);
+  // console.log('activities', activities);
+  // console.log('timeline', timeline)
+  // console.log('timeline',
+  //   Object.keys(timeline).reduce((obj, x) => {
+  //     obj[x] = Array.from(timeline[x])
+  //     return obj;
+  //   }, {}),
+  // )
+
   return (
     <View style={styles.container}>
-      <ScrollView horizontal bounces={false} style={{ flex: 1 }}>
-        <ScrollView stickyHeaderIndices={[0]} removeClippedSubviews={false} style={styles.bodyVerticalScroll} showsVerticalScrollIndicator={true}>
-          <View style={styles.headerRow}>
-            {/* <View style={styles.dateCell}> */}
-            {/*   <Text style={styles.dateDay}>DDDD</Text> */}
-            {/*   <Text style={styles.dateMonth}>MMMM</Text> */}
-            {/* </View> */}
+      {/* <View style={styles.headerRow}> */}
+      {/* <View style={styles.dateCell}> */}
+      {/*   <Text style={styles.dateDay}>DDDD</Text> */}
+      {/*   <Text style={styles.dateMonth}>MMMM</Text> */}
+      {/* </View> */}
+      {/*   <View style={styles.headerDatesContainer}> */}
+      {/*     <View style={styles.leftColumnHeader}></View> */}
+      {/*     {dateColumns.map((date) => ( */}
+      {/*       <View key={date.full} style={styles.dateCell}> */}
+      {/*         <Text style={styles.dateDay}>{date.day}</Text> */}
+      {/*         <Text style={styles.dateMonth}>{date.month}</Text> */}
+      {/*       </View> */}
+      {/*     ))} */}
+      {/*     <View style={styles.headerTailSpacer} /> */}
+      {/*   </View> */}
+      {/* </View> */}
+      <View style={styles.topRow}>
+        {/* Blank corner cell - top left */}
+        <View style={styles.cornerCell}></View>
+
+        {/* Dates header — clipped so overflow is hidden, translated by scrollX */}
+        <View style={styles.colHeaderClip}>
+          <Animated.View style={[styles.headerRow, colHeaderStyle]}>
             <View style={styles.headerDatesContainer}>
-              <View style={styles.leftColumnHeader}></View>
               {dateColumns.map((date) => (
                 <View key={date.full} style={styles.dateCell}>
                   <Text style={styles.dateDay}>{date.day}</Text>
                   <Text style={styles.dateMonth}>{date.month}</Text>
                 </View>
               ))}
-              <View style={styles.headerTailSpacer} />
             </View>
-          </View>
+          </Animated.View>
+        </View>
+      </View>
 
-          <View style={styles.bodyRow}>
-            <View style={styles.leftColumn}>
-              {activities.map((activity) => (
-                <View key={activity.id} style={styles.activityLabelCell}>
-                  <Text style={styles.activityLabelText} numberOfLines={1}>
-                    {activity.ticker || activity.name}
-                  </Text>
+      <View style={styles.bottomRow}>
+        {/* Sports header — clipped so overflow is hidden, translated by scrollY */}
+        <View style={styles.rowHeaderClip}>
+          <Animated.View style={rowHeaderStyle}>
+            {/* {SPORTS.map((sport) => ( */}
+            {/*   <View key={sport} style={styles.rowHeaderCell}> */}
+            {/*     <Text style={styles.headerText}>{sport}</Text> */}
+            {/*   </View> */}
+            {/* ))} */}
+            {activities.map((activity) => (
+              <View key={activity.id} style={styles.activityLabelCell}>
+                <Text style={styles.activityLabelText} numberOfLines={1}>
+                  {activity.ticker || activity.name}
+                </Text>
+              </View>
+            ))}
+          </Animated.View>
+        </View>
+
+        {/* Content Grid */}
+        <Animated.ScrollView
+          horizontal
+          onScroll={scrollHandlerX}
+        >
+          <Animated.ScrollView
+            onScroll={scrollHandlerY}
+            nestedScrollEnabled={true}
+          >
+            {/* {DATA.map((row, rowIndex) => ( */}
+            {/*   <View key={rowIndex} style={styles.bodyRow}> */}
+            {/*     {row.map((cell, colIndex) => ( */}
+            {/*       <View key={colIndex} style={styles.cell}> */}
+            {/*         <Text style={styles.cellText}>{cell}</Text> */}
+            {/*       </View> */}
+            {/*     ))} */}
+            {/*   </View> */}
+            {/* ))} */}
+            {activities.map((activity) => {
+              const completedDates = timeline[activity.id] || new Set<string>();
+              return (
+                <View key={activity.id} style={styles.activityRow}>
+                  {dateColumns.map((date) => {
+                    const isCompleted = completedDates.has(date.full);
+                    const cellKey = `${activity.id}-${date.full}`;
+                    const isToggling = togglingCells.has(cellKey);
+                    return (
+                      <View key={cellKey} style={styles.statusCellContainer}>
+                        <TouchableOpacity
+                          disabled={isToggling}
+                          onPress={() => handleTimelineCellClick(cellKey, activity.id, date.full, isCompleted)}
+                          style={[
+                            styles.statusCell,
+                            isCompleted ? styles.statusCellComplete : styles.statusCellIncomplete,
+                            isToggling && styles.statusCellToggling
+                          ]}
+                        />
+                      </View>
+                    );
+                  })}
                 </View>
-              ))}
-            </View>
+              );
+            })}
+          </Animated.ScrollView>
+        </Animated.ScrollView>
+      </View>
 
-            <View style={styles.matrixContainer}>
-              <View style={styles.matrix}>
-                {activities.map((activity) => {
-                  const completedDates = timeline[activity.id] || new Set<string>();
-                  return (
-                    <View key={activity.id} style={styles.activityRow}>
-                      {dateColumns.map((date) => {
-                        const isCompleted = completedDates.has(date.full);
-                        const cellKey = `${activity.id}-${date.full}`;
-                        const isToggling = togglingCells.has(cellKey);
-                        return (
-                          <View key={cellKey} style={styles.statusCellContainer}>
-                            <TouchableOpacity
-                              disabled={isToggling}
-                              onPress={() => handleTimelineCellClick(cellKey, activity.id, date.full, isCompleted)}
-                              style={[
-                                styles.statusCell,
-                                isCompleted ? styles.statusCellComplete : styles.statusCellIncomplete,
-                                isToggling && styles.statusCellToggling
-                              ]}
-                            />
-                          </View>
-                        );
-                      })}
-                    </View>
-                  );
-                })}
-              </View>
-
-              <View style={styles.loadMoreColumn}>
-                <Button
-                  onPress={() => nextMonthToLoad && fetchMoreTimeline(nextMonthToLoad)}
-                  isLoading={isLoadingTimeline || !nextMonthToLoad}
-                  style={styles.loadMoreButton}
-                >
-                  {isLoadingTimeline ? 'Loading...' : 'Load more →'}
-                </Button>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </ScrollView>
+      {/* <View style={styles.bodyRow}> */}
+      {/*   <View style={styles.leftColumn}> */}
+      {/*     {activities.map((activity) => ( */}
+      {/*       <View key={activity.id} style={styles.activityLabelCell}> */}
+      {/*         <Text style={styles.activityLabelText} numberOfLines={1}> */}
+      {/*           {activity.ticker || activity.name} */}
+      {/*         </Text> */}
+      {/*       </View> */}
+      {/*     ))} */}
+      {/*   </View> */}
+      {/**/}
+      {/*   <View style={styles.matrixContainer}> */}
+      {/*     <View style={styles.matrix}> */}
+      {/*       {activities.map((activity) => { */}
+      {/*         const completedDates = timeline[activity.id] || new Set<string>(); */}
+      {/*         return ( */}
+      {/*           <View key={activity.id} style={styles.activityRow}> */}
+      {/*             {dateColumns.map((date) => { */}
+      {/*               const isCompleted = completedDates.has(date.full); */}
+      {/*               const cellKey = `${activity.id}-${date.full}`; */}
+      {/*               const isToggling = togglingCells.has(cellKey); */}
+      {/*               return ( */}
+      {/*                 <View key={cellKey} style={styles.statusCellContainer}> */}
+      {/*                   <TouchableOpacity */}
+      {/*                     disabled={isToggling} */}
+      {/*                     onPress={() => handleTimelineCellClick(cellKey, activity.id, date.full, isCompleted)} */}
+      {/*                     style={[ */}
+      {/*                       styles.statusCell, */}
+      {/*                       isCompleted ? styles.statusCellComplete : styles.statusCellIncomplete, */}
+      {/*                       isToggling && styles.statusCellToggling */}
+      {/*                     ]} */}
+      {/*                   /> */}
+      {/*                 </View> */}
+      {/*               ); */}
+      {/*             })} */}
+      {/*           </View> */}
+      {/*         ); */}
+      {/*       })} */}
+      {/*     </View> */}
+      {/**/}
+      {/*     <View style={styles.loadMoreColumn}> */}
+      {/*       <Button */}
+      {/*         onPress={() => nextMonthToLoad && fetchMoreTimeline(nextMonthToLoad)} */}
+      {/*         isLoading={isLoadingTimeline || !nextMonthToLoad} */}
+      {/*         style={styles.loadMoreButton} */}
+      {/*       > */}
+      {/*         {isLoadingTimeline ? 'Loading...' : 'Load more →'} */}
+      {/*       </Button> */}
+      {/*     </View> */}
+      {/*   </View> */}
+      {/* </View> */}
 
       {(isLoadingTimeline || loadMoreError || toggleError) ? (
         <View style={styles.footerOverlay}>
@@ -361,13 +477,44 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  headerRow: {
+  topRow: {
     flexDirection: 'row',
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    flex: 1,
+  },
+  cornerCell: {
+    width: LEFT_COLUMN_WIDTH,
     height: ROW_HEIGHT,
     borderBottomWidth: 1,
     borderBottomColor: '#e5e8ef',
+    borderRightWidth: 1,
+    borderRightColor: '#e5e8ef',
+  },
+  cornerText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  colHeaderClip: {
+    flex: 1,
+    overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e8ef',
+    height: ROW_HEIGHT,
+  },
+  rowHeaderClip: {
+    width: LEFT_COLUMN_WIDTH,
+    overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
+    borderRightWidth: 1,
+    borderRightColor: '#e5e8ef',
+  },
+  headerRow: {
+    height: ROW_HEIGHT,
+    width: '100%',
     backgroundColor: '#fff',
-    zIndex: 10,
+    zIndex: 20,
   },
   leftColumnHeader: {
     height: '100%',
@@ -410,6 +557,7 @@ const styles = StyleSheet.create({
   },
   bodyRow: {
     flexDirection: 'row',
+    color: 'red',
   },
   leftColumn: {
     width: LEFT_COLUMN_WIDTH,
@@ -432,6 +580,7 @@ const styles = StyleSheet.create({
   },
   matrixContainer: {
     flexDirection: 'row',
+    color: 'green',
   },
   matrix: {
     flexDirection: 'column',

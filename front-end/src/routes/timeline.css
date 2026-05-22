@@ -8,13 +8,19 @@
   --row-content-size: max(var(--cell-size), var(--date-content-height));
   --row-height: calc(var(--row-content-size) + (var(--cell-gap) * 2));
 
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  overflow: hidden;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .timeline-left-column {
   border-right: 1px solid #e5e8ef;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background-color: #ffffff;
+  flex-shrink: 0;
+  min-width: max-content;
 }
 
 .timeline-header-spacer {
@@ -24,8 +30,7 @@
 }
 
 .timeline-right-scroll {
-  overflow-x: auto;
-  overflow-y: hidden;
+  display: flex;
 }
 
 .timeline-scroll-content {

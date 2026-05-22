@@ -64,6 +64,22 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="dual-sticky"
+          options={{
+            ...headerOptions,
+            title: 'Scrll',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="dual-demo"
+          options={{
+            ...headerOptions,
+            title: 'Scrll DM',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          }}
+        />
+        <Tabs.Screen
           name="timeline"
           options={{
             ...headerOptions,

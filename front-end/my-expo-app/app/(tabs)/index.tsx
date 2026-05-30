@@ -6,6 +6,7 @@ import SwipeRow from '@/components/SwipeRow';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/themed-text';
 import LoaderScreen from '@/components/LoaderScreen';
+import NewActivityOverlay from '@/components/NewActivityOverlay';
 
 // Extend IActivity for client-side properties
 interface IActivityClient extends IActivity {
@@ -19,6 +20,7 @@ export default function Dashboard() {
   const DAYS_IN_WEEK = 7;
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showNewActivityOverlay, setShowNewActivityOverlay] = useState(false);
 
   const sortActivities = (acts: IActivityClient[] = []) => {
     return [...acts].sort((a, b) => {
@@ -79,6 +81,13 @@ export default function Dashboard() {
     console.log('handling edit trigger');
     // router.push(`/activity/edit/${activity.id}`);
   };
+
+  function handleNewActivityOverlayClose(activity?: IActivityClient) {
+    if (activity) {
+      setActivities(sortActivities([...activities, activity]));
+    }
+    setShowNewActivityOverlay(false);
+  }
 
   if (isLoading) {
     return (
@@ -165,13 +174,14 @@ export default function Dashboard() {
 
       <TouchableOpacity
         style={styles.floatingAddButton}
-        onPress={() => {
-          // Open new activity overlay
-          console.log('Open Add Activity');
-        }}
+        onPress={() => setShowNewActivityOverlay(true)}
       >
         <ThemedText style={styles.floatingAddButtonText}>Add Activity</ThemedText>
       </TouchableOpacity>
+
+      {showNewActivityOverlay && (
+        <NewActivityOverlay onClose={handleNewActivityOverlayClose} />
+      )}
     </View>
   );
 }

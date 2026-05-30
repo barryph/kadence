@@ -9,10 +9,10 @@ export async function up(knex: Knex): Promise<void> {
   `);
 
   await knex.raw(`
-    DELETE FROM your_table
+    DELETE FROM activity_events
     WHERE id NOT IN (
       SELECT MIN(id)
-      FROM your_table
+      FROM activity_events
       GROUP BY activity_id, date
     );
   `);

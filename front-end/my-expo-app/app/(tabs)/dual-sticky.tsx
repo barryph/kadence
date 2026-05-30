@@ -1,444 +1,316 @@
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import Animated, { useAnimatedRef, useAnimatedScrollHandler, scrollTo, useSharedValue, useAnimatedReaction, useAnimatedStyle } from "react-native-reanimated";
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { activitiesAPI, type IActivity } from "@/api/api.activity";
+import { ITimelineSetItem, timelineAPI, type ITimeline, type ITimelineSet } from '@/api/api.timeline';
+import { Colors } from '@/constants/theme';
+import { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import StickyTable from "./sticky-table";
 
-const dateColumns = [
-  {
-    "full": "2026-05-01",
-  },
-  {
-    "full": "2026-05-02",
-  },
-  {
-    "full": "2026-05-03",
-  },
-  {
-    "full": "2026-05-04",
-  },
-  {
-    "full": "2026-05-05",
-  },
-  {
-    "full": "2026-05-06",
-  },
-  {
-    "full": "2026-05-07",
-  },
-  {
-    "full": "2026-05-08",
-  },
-  {
-    "full": "2026-05-09",
-  },
-  {
-    "full": "2026-05-10",
-  },
-  {
-    "full": "2026-05-11",
-  },
-  {
-    "full": "2026-05-12",
-  },
-  {
-    "full": "2026-05-13",
-  },
-  {
-    "full": "2026-05-14",
-  },
-  {
-    "full": "2026-05-15",
-  },
-  {
-    "full": "2026-05-16",
-  },
-  {
-    "full": "2026-05-17",
-  },
-  {
-    "full": "2026-05-18",
-  },
-  {
-    "full": "2026-05-19",
-  },
-  {
-    "full": "2026-05-20",
-  },
-  {
-    "full": "2026-05-21",
-  }
-]
-
-const activities = [
-  {
-    "id": 1,
-    "name": "Jump",
-  },
-  {
-    "id": 2,
-    "name": "Sprint",
-  },
-  {
-    "id": 3,
-    "name": "Hop",
-  },
-  {
-    "id": 4,
-    "name": "PTL",
-  },
-  {
-    "id": 5,
-    "name": "Leap",
-  },
-  {
-    "id": 6,
-    "name": "Bound",
-  },
-  {
-    "id": 7,
-    "name": "Squat",
-  },
-  {
-    "id": 8,
-    "name": "Reverse",
-  },
-  {
-    "id": 9,
-    "name": "Curl",
-  },
-  {
-    "id": 10,
-    "name": "CMJ",
-  },
-  {
-    "id": 11,
-    "name": "CMJ",
-  },
-  {
-    "id": 12,
-    "name": "CMJ",
-  },
-  {
-    "id": 13,
-    "name": "CMJ",
-  },
-  {
-    "id": 14,
-    "name": "CMJ",
-  },
-  {
-    "id": 15,
-    "name": "CMJ",
-  },
-  {
-    "id": 16,
-    "name": "CMJ",
-  },
-];
-
-const timeline = {
-  "1": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-03",
-    "2026-05-04",
-    "2026-05-05",
-    "2026-05-06",
-    "2026-05-07",
-    "2026-05-08",
-    "2026-05-09",
-    "2026-05-10",
-    "2026-05-11",
-    "2026-05-12",
-    "2026-05-13",
-    "2026-05-14",
-    "2026-05-15",
-    "2026-05-16",
-    "2026-05-17",
-    "2026-05-18",
-    "2026-05-19"
-  ]),
-  "2": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-03",
-    "2026-05-04",
-    "2026-05-05",
-    "2026-05-11",
-    "2026-05-17",
-    "2026-05-18",
-    "2026-05-19"
-  ]),
-  "3": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-03",
-    "2026-05-04",
-    "2026-05-07",
-    "2026-05-08",
-    "2026-05-09",
-    "2026-05-11",
-    "2026-05-13",
-    "2026-05-14",
-    "2026-05-15",
-    "2026-05-18"
-  ]),
-  "4": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-03",
-    "2026-05-06",
-    "2026-05-10",
-    "2026-05-12",
-    "2026-05-16",
-    "2026-05-19"
-  ]),
-  "5": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-03",
-    "2026-05-05",
-    "2026-05-11",
-    "2026-05-17",
-    "2026-05-19"
-  ]),
-  "6": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-03",
-    "2026-05-05",
-    "2026-05-17",
-    "2026-05-19"
-  ]),
-  "7": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-03",
-    "2026-05-06",
-    "2026-05-10",
-    "2026-05-12",
-    "2026-05-16",
-    "2026-05-19"
-  ]),
-  "8": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-04",
-    "2026-05-07",
-    "2026-05-10",
-    "2026-05-11",
-    "2026-05-12",
-    "2026-05-15",
-    "2026-05-18"
-  ]),
-  "9": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-05",
-    "2026-05-08",
-    "2026-05-11",
-    "2026-05-14",
-    "2026-05-17"
-  ]),
-  "10": new Set([
-    "2026-05-01",
-    "2026-05-02",
-    "2026-05-06",
-    "2026-05-09",
-    "2026-05-13",
-    "2026-05-16",
-    "2026-05-19"
-  ]),
-  // "11": new Set([
-  //   "2026-05-01",
-  //   "2026-05-07",
-  //   "2026-05-10",
-  //   "2026-05-12",
-  //   "2026-05-15"
-  // ]),
-  // "44": new Set([
-  //   "2026-05-01",
-  //   "2026-05-04",
-  //   "2026-05-05",
-  //   "2026-05-06",
-  //   "2026-05-08",
-  //   "2026-05-11",
-  //   "2026-05-14",
-  //   "2026-05-16",
-  //   "2026-05-17",
-  //   "2026-05-18"
-  // ]),
-  // "45": new Set([
-  //   "2026-05-01",
-  //   "2026-05-03",
-  //   "2026-05-06",
-  //   "2026-05-09",
-  //   "2026-05-13",
-  //   "2026-05-17",
-  //   "2026-05-19"
-  // ]),
-  // "46": new Set([
-  //   "2026-05-01",
-  //   "2026-05-03",
-  //   "2026-05-04",
-  //   "2026-05-05",
-  //   "2026-05-06",
-  //   "2026-05-10",
-  //   "2026-05-11",
-  //   "2026-05-12",
-  //   "2026-05-17"
-  // ]),
-  // "47": new Set([
-  //   "2026-05-01"
-  // ]),
-  // "48": new Set([
-  //   "2026-05-01",
-  //   "2026-05-03",
-  //   "2026-05-06",
-  //   "2026-05-17"
-  // ]),
-  // "49": new Set([
-  //   "2026-05-01",
-  //   "2026-05-04",
-  //   "2026-05-05",
-  //   "2026-05-06",
-  //   "2026-05-16",
-  //   "2026-05-17",
-  //   "2026-05-18"
-  // ]),
+type TimelineDateColumn = {
+  full: string;
+  month: string;
+  day: string;
 };
 
+function toTimelineDateColumn(date: Date): TimelineDateColumn {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return {
+    full: `${year}-${month}-${day}`,
+    month: date.toLocaleDateString(undefined, { month: 'short' }),
+    day: date.toLocaleDateString(undefined, { day: 'numeric' }),
+  };
+}
+
+function formatMonthKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+}
+
+function buildMonthDateColumns(month: string, endDayInMonth?: number): TimelineDateColumn[] {
+  const [year, monthNumber] = month.split('-').map(Number);
+  const monthStart = new Date(year, monthNumber - 1, 1);
+  const monthEnd = new Date(year, monthNumber, 0);
+  const lastDay = endDayInMonth ?? monthEnd.getDate();
+  const boundedEndDay = Math.max(1, Math.min(lastDay, monthEnd.getDate()));
+  const endDate = new Date(year, monthNumber - 1, boundedEndDay, 12);
+  const columns: TimelineDateColumn[] = [];
+
+  for (const cursorDate = new Date(monthStart); cursorDate <= endDate; cursorDate.setDate(cursorDate.getDate() + 1)) {
+    columns.push(toTimelineDateColumn(new Date(cursorDate)));
+  }
+
+  return columns;
+}
+
+function getNextMonthToLoad(month: string): string {
+  const [year, monthNumber] = month.split('-').map(Number);
+  const nextMonthToLoad = new Date(year, monthNumber - 2, 1);
+  return formatMonthKey(nextMonthToLoad);
+}
+
+function timelineToSet(timeline: ITimeline): ITimelineSet {
+  return Object.keys(timeline).reduce<ITimelineSet>((acc, key) => {
+    acc[key] = new Set(timeline[key]);
+    return acc;
+  }, {});
+}
+
+function mergeTimelineSets(currentTimeline: ITimelineSet, nextTimeline: ITimelineSet): ITimelineSet {
+  const allKeys = new Set([...Object.keys(currentTimeline), ...Object.keys(nextTimeline)]);
+
+  return Array.from(allKeys).reduce<ITimelineSet>((acc, key) => {
+    acc[key] = new Set([...(currentTimeline[key] ?? []), ...(nextTimeline[key] ?? [])]);
+    return acc;
+  }, {});
+}
+
+function getShouldAutoLoadNextMonth(today: Date): boolean {
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const daysLeft = daysInMonth - today.getDate();
+  return daysLeft < 7;
+}
+
 export default function DualStickyScreen() {
-  const scrollX = useSharedValue(0);
-  const scrollY = useSharedValue(0);
+  // TODO: Start scrolled to the right
+  const [activities, setActivities] = useState<IActivity[] | undefined>();
+  const [timeline, setTimeline] = useState<ITimelineSet | undefined>();
+  const [dateColumns, setDateColumns] = useState<TimelineDateColumn[]>([]);
+  const [loadedMonths, setLoadedMonths] = useState<string[]>([]);
+  const [togglingCells, setTogglingCells] = useState<Set<string>>(new Set());
+  const [isLoadingInitData, setIsLoadInitData] = useState(true);
+  const [isLoadingTimeline, setIsLoadingTimeline] = useState(false);
+  const [initError, setInitError] = useState<string | undefined>(undefined);
+  const [loadMoreError, setLoadMoreError] = useState<string | undefined>(undefined);
+  const [toggleError, setToggleError] = useState<string | undefined>(undefined);
 
-  // Runs on the UI thread
-  const scrollHandlerX = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollX.value = event.contentOffset.x;
-    },
-  });
-  const scrollHandlerY = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
+  // Removed Animated scrollX and headerScrollRef
 
-  // Sync the "scroll" position of the date header with the body
-  const colHeaderStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: -scrollX.value }],
-  }));
-  // Sync the "scroll" position of the sports header with the body
-  const rowHeaderStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: -scrollY.value }],
-  }));
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    async function fetchData() {
+      const today = new Date();
+      const initMonth = formatMonthKey(today);
+      const shouldAutoLoadNextMonth = getShouldAutoLoadNextMonth(today);
+      const nextMonthToLoad = getNextMonthToLoad(initMonth);
+
+      const nextMonthRequest = shouldAutoLoadNextMonth
+        ? timelineAPI.getTimeline(nextMonthToLoad, { signal: abortController.signal })
+        : Promise.resolve(undefined);
+
+      try {
+        setInitError(undefined);
+        const [activitiesRes, timelineRes, nextMonthRes] = await Promise.all([
+          activitiesAPI.getAllByUser({ signal: abortController.signal }),
+          timelineAPI.getTimeline(initMonth, { signal: abortController.signal }),
+          nextMonthRequest,
+        ]);
+        if (activitiesRes.data?.activities) {
+          setActivities(activitiesRes.data.activities);
+        }
+        if (timelineRes.data?.timeline) {
+          let mergedTimeline = timelineToSet(timelineRes.data.timeline);
+          const months = [initMonth];
+          const columns = buildMonthDateColumns(initMonth, today.getDate());
+
+          if (shouldAutoLoadNextMonth) {
+            if (nextMonthRes?.data?.timeline) {
+              const nextMonth = getNextMonthToLoad(initMonth);
+              mergedTimeline = mergeTimelineSets(mergedTimeline, timelineToSet(nextMonthRes.data.timeline));
+              months.push(nextMonth);
+              columns.unshift(...buildMonthDateColumns(nextMonth));
+            }
+          }
+
+          setTimeline(mergedTimeline);
+          setLoadedMonths(months);
+          setDateColumns(columns);
+        }
+      } catch (err) {
+        if (!abortController.signal.aborted) {
+          setInitError('Unable to load timeline. Please try again.');
+          console.error('Error fetching init timeline data', err);
+        }
+      } finally {
+        setIsLoadInitData(false);
+      }
+    }
+
+    fetchData();
+    return () => {
+      abortController.abort();
+    }
+  }, []);
+
+  async function fetchMoreTimeline(month: string) {
+    try {
+      setIsLoadingTimeline(true);
+      setLoadMoreError(undefined);
+      const response = await timelineAPI.getTimeline(month);
+      if (response.data?.timeline) {
+        const timelineSet = timelineToSet(response.data.timeline);
+        setTimeline((prevTimeline) => mergeTimelineSets(prevTimeline ?? {}, timelineSet));
+        setLoadedMonths((prevLoadedMonths) => [...prevLoadedMonths, month]);
+        setDateColumns((prevDateColumns) => [...buildMonthDateColumns(month), ...prevDateColumns]);
+      }
+    } catch (err) {
+      setLoadMoreError('Unable to load more timeline. Please try again.');
+      console.error('Error fetching more timeline', err);
+    } finally {
+      setIsLoadingTimeline(false);
+    }
+  }
+
+  async function handleTimelineCellClick(cellKey: string, activityId: string, dateKey: string, isCompleted: boolean) {
+    if (togglingCells.has(cellKey)) return;
+
+    try {
+      setToggleError(undefined);
+      setTogglingCells((prev) => {
+        const next = new Set(prev);
+        next.add(cellKey);
+        return next;
+      });
+      const isCompleting = !isCompleted;
+
+      const response = isCompleting
+        ? await activitiesAPI.complete(activityId, dateKey)
+        : await activitiesAPI.undo(activityId, dateKey);
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      setTimeline((prevTimeline) => {
+        if (!prevTimeline) return prevTimeline;
+
+        const nextTimeline = { ...prevTimeline };
+        const nextCompletedDates = new Set(nextTimeline[activityId] ?? []);
+
+        if (isCompleting) {
+          nextCompletedDates.add(dateKey);
+        } else {
+          nextCompletedDates.delete(dateKey);
+        }
+
+        nextTimeline[activityId] = nextCompletedDates;
+        return nextTimeline;
+      });
+    } catch (err) {
+      setToggleError('Unable to update activity status. Please try again.');
+      console.error('Error updating timeline activity status', err);
+    } finally {
+      setTogglingCells((prev) => {
+        const next = new Set(prev);
+        next.delete(cellKey);
+        return next;
+      });
+    }
+  }
+
+  const nextMonthToLoad = useMemo(() => {
+    if (!loadedMonths.length) return;
+    return getNextMonthToLoad(loadedMonths[loadedMonths.length - 1]);
+  }, [loadedMonths]);
+
+  if (isLoadingInitData) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color={Colors.blue.new} />
+        <Text style={styles.loadingText}>Loading timeline...</Text>
+      </View>
+    );
+  }
+
+  if (initError) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>{initError}</Text>
+      </View>
+    );
+  }
+
+  if (timeline === undefined) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.loadingText}>No timeline data available.</Text>
+      </View>
+    );
+  }
+
+  if (!activities?.length) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.loadingText}>No activities yet.</Text>
+      </View>
+    );
+  }
+
+  const tableData = activities.map((activity) => {
+    const completedDates = timeline[activity.id];
+    return dateColumns.map((date) => {
+      const isCompleted = completedDates && completedDates.has(date.full);
+      const cellKey = `${activity.id}-${date.full}`;
+      const isToggling = togglingCells.has(cellKey);
+      const onPress = () => handleTimelineCellClick(cellKey, activity.id, date.full, isCompleted)
+      return { cellKey, isCompleted, isToggling, onPress };
+    });
+  });
 
   return (
-    <>
-      <View style={styles.container}>
-        {/* <Animated.ScrollView */}
-        {/*   onScroll={headerScrollHandler} */}
-        {/*   style={styles.header} */}
-        {/*   overScrollMode="never" */}
-        {/*   bounces={false} */}
-        {/* > */}
-        {/*   <View style={styles.leftColumn}> */}
-        {/*     {activities.map((activity) => ( */}
-        {/*       <View key={activity.id} style={styles.activityLabelCell}> */}
-        {/*         <Text style={styles.activityLabelText}> */}
-        {/*           {activity.name} */}
-        {/*         </Text> */}
-        {/*       </View> */}
-        {/*     ))} */}
-        {/*   </View> */}
-        {/* </Animated.ScrollView> */}
-
-        <View style={styles.topRow}>
-          {/* Blank corner cell - top left */}
-          <View style={styles.cornerCell}></View>
-
-          {/* Dates header — clipped so overflow is hidden, translated by scrollX */}
-          <View style={styles.colHeaderClip}>
-            <Animated.View style={[styles.headerRow, colHeaderStyle]}>
-
-              {dateColumns.map((date) => (
-                <View key={date.full} style={styles.dateCell}>
-                  <Text>{date.full.substring(8, 10)}</Text>
-                </View>
-              ))}
-            </Animated.View>
-          </View>
-        </View>
-        <View style={styles.bottomRow}>
-          <View style={styles.rowHeaderClip}>
-            <Animated.View style={rowHeaderStyle}>
-              {/* {SPORTS.map((sport) => ( */}
-              {/*   <View key={sport} style={styles.rowHeaderCell}> */}
-              {/*     <Text style={styles.headerText}>{sport}</Text> */}
-              {/*   </View> */}
-              {/* ))} */}
-              {dateColumns.map((date) => (
-                <View key={date.full} style={styles.dateCell}>
-                  <Text>{date.full.substring(8, 10)}</Text>
-                </View>
-              ))}
-            </Animated.View>
-          </View>
-        </View>
-
-
-        <Animated.ScrollView horizontal style={{ flex: 1 }} overScrollMode="never" bounces={false}>
-          {/* Key #1: stickyHeaderIndices */}
-          <Animated.ScrollView
-            stickyHeaderIndices={[0]}
-            removeClippedSubviews={false}
-            showsVerticalScrollIndicator={true}
-            bounces={false}
-            overScrollMode="never"
-          // onScroll={bodyScrollHandler}
-          >
-            <View style={styles.headerRow}>
-              <View style={styles.headerDatesContainer}>
-                <View style={styles.leftColumnHeader}></View>
-                {dateColumns.map((date) => (
-                  <View key={date.full} style={styles.dateCell}>
-                    <Text>{date.full.substring(8, 10)}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-
-            <View style={styles.bodyRow}>
-              <View style={styles.matrixContainer}>
-                <View style={styles.matrix}>
-                  {activities.map((activity) => {
-                    const completedDates = timeline[activity.id] || new Set<string>();
-                    return (
-                      <View key={activity.id} style={styles.activityRow}>
-                        {dateColumns.map((date) => {
-                          const isCompleted = completedDates.has(date.full);
-                          const cellKey = `${activity.id}-${date.full}`;
-                          return (
-                            <View key={cellKey} style={styles.statusCellContainer}>
-                              <TouchableOpacity
-                                style={[
-                                  styles.statusCell,
-                                  isCompleted ? styles.statusCellComplete : styles.statusCellIncomplete,
-                                ]}
-                              />
-                            </View>
-                          );
-                        })}
-                      </View>
-                    );
-                  })}
-                </View>
-              </View>
-            </View>
-
-          </Animated.ScrollView>
-        </Animated.ScrollView>
-      </View>
-    </>
+    <View style={{ backgroundColor: '#fff', flex: 1 }}>
+      <StickyTable
+        columnHeaders={dateColumns}
+        rowHeaders={activities}
+        data={tableData}
+        renderColumnHeader={(date) => <ColumnHeader date={date} />}
+        renderRowHeader={(activity) => <RowHeader activity={activity} />}
+        renderCell={(props) => <Cell {...props} />}
+        cellWidth={100}
+        cellHeight={50}
+        headerWidth={120}
+        headerHeight={50}
+      />
+    </View>
   )
+}
+
+function ColumnHeader({ date }: { date: TimelineDateColumn }) {
+  return (
+    <View key={date.full} style={styles.dateCell}>
+      <Text style={styles.dateDay}>{date.day}</Text>
+      <Text style={styles.dateMonth}>{date.month}</Text>
+    </View>
+  );
+}
+
+function RowHeader({ activity }: { activity: IActivity }) {
+  return (
+    <View key={activity.id} style={styles.activityLabelCell}>
+      <Text style={styles.activityLabelText} numberOfLines={1}>
+        {activity.ticker || activity.name}
+      </Text>
+    </View>
+  );
+}
+
+function Cell({ cellKey, isCompleted, isToggling, onPress }: { cellKey: string, isCompleted: boolean, isToggling: boolean, onPress: () => void }) {
+  return (
+    <View key={cellKey} style={styles.statusCellContainer}>
+      <TouchableOpacity
+        disabled={isToggling}
+        onPress={onPress}
+        style={[
+          styles.statusCell,
+          isCompleted ? styles.statusCellComplete : styles.statusCellIncomplete,
+          isToggling && styles.statusCellToggling
+        ]}
+      />
+    </View>
+  );
 }
 
 const CELL_SIZE = 20;
@@ -449,28 +321,73 @@ const LOAD_MORE_WIDTH = 170;
 const LEFT_COLUMN_WIDTH = 120; // To allow the ticker text to show
 
 const styles = StyleSheet.create({
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    color: '#64748b',
+    fontSize: 14,
+    marginTop: 8,
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+    marginTop: 8,
+  },
   container: {
-    flexDirection: "row", // Position values besides the activity headers
-    flex: 1, // IMPORTANT! Can't scroll Y without it
+    flex: 1,
     backgroundColor: '#fff',
   },
   topRow: {
     flexDirection: 'row',
   },
-  colHeaderClip: {
-    flex: 1,
-    overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
-  },
   bottomRow: {
     flexDirection: 'row',
     flex: 1,
   },
-  rowHeaderClip: {
-    width: ROW_CONTENT_SIZE,
-    overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
+  cornerCell: {
+    width: LEFT_COLUMN_WIDTH,
+    height: ROW_HEIGHT,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e8ef',
+    borderRightWidth: 1,
+    borderRightColor: '#e5e8ef',
   },
-  header: {
-    flexGrow: 0, // Stop from auto growing, lets you keep the column to your chosen width
+  cornerText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  colHeaderClip: {
+    flex: 1,
+    overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e8ef',
+    height: ROW_HEIGHT,
+  },
+  rowHeaderClip: {
+    width: LEFT_COLUMN_WIDTH,
+    overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
+    borderRightWidth: 1,
+    borderRightColor: '#e5e8ef',
+  },
+  headerRow: {
+    height: ROW_HEIGHT,
+    width: '100%',
+    backgroundColor: '#fff',
+    zIndex: 20,
+  },
+  leftColumnHeader: {
+    height: '100%',
+    width: LEFT_COLUMN_WIDTH - CELL_GAP,
+    borderRightWidth: 1,
+    borderRightColor: '#e5e8ef',
+  },
+  headerScroll: {
+    flex: 1,
   },
   headerDatesContainer: {
     flexDirection: 'row',
@@ -479,26 +396,32 @@ const styles = StyleSheet.create({
     gap: CELL_GAP,
     height: '100%',
   },
-  cornerCell: {
-    width: ROW_CONTENT_SIZE,
-    height: ROW_HEIGHT,
-    backgroundColor: '#2c3e50',
-  },
-  // leftColumnHeader: {
-  //   height: '100%',
-  //   width: LEFT_COLUMN_WIDTH - CELL_GAP,
-  //   borderRightWidth: 1,
-  //   borderRightColor: '#e5e8ef',
-  // },
   dateCell: {
     width: CELL_SIZE,
     height: ROW_CONTENT_SIZE,
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
-
+  dateDay: {
+    color: '#5d6778',
+    fontSize: 14,
+    lineHeight: 14,
+  },
+  dateMonth: {
+    color: '#5d6778',
+    fontSize: 13,
+    lineHeight: 14,
+  },
+  headerTailSpacer: {
+    width: LOAD_MORE_WIDTH,
+    height: ROW_CONTENT_SIZE,
+  },
+  bodyVerticalScroll: {
+    flex: 1,
+  },
   bodyRow: {
-    // flexDirection: 'row',
+    flexDirection: 'row',
+    color: 'red',
   },
   leftColumn: {
     width: LEFT_COLUMN_WIDTH,
@@ -518,14 +441,6 @@ const styles = StyleSheet.create({
     color: '#1f2937',
     fontSize: 16,
     fontWeight: '800',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    height: ROW_HEIGHT,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e8ef',
-    backgroundColor: '#fff',
-    zIndex: 10,
   },
   matrixContainer: {
     flexDirection: 'row',
@@ -563,4 +478,43 @@ const styles = StyleSheet.create({
   statusCellToggling: {
     opacity: 0.5,
   },
+  loadMoreColumn: {
+    width: LOAD_MORE_WIDTH,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: CELL_GAP,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f2f7',
+  },
+  loadMoreButton: {
+    width: '100%',
+  },
+  footerOverlay: {
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    padding: 8,
+    borderRadius: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  loadingMoreText: {
+    color: '#64748b',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  errorTextSmall: {
+    color: '#d32f2f',
+    fontSize: 14,
+    textAlign: 'center',
+  }
+});
+
+const exampleStyles = StyleSheet.create({
+  headerText: { color: '#fff', fontWeight: 'bold', fontSize: 13 },
+  cellText: { fontSize: 13, color: '#333' },
 });

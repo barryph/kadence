@@ -4,7 +4,7 @@ import { activitiesAPI, type IActivity } from "@/api/api.activity";
 import { timelineAPI, type ITimeline, type ITimelineSet } from '@/api/api.timeline';
 import Button from '@/components/Button';
 import { Colors } from '@/constants/theme';
-import Animated, { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 
 type TimelineDateColumn = {
   full: string;
@@ -231,14 +231,26 @@ export default function TimelineScreen() {
     },
   });
 
-  // Sync the "scroll" position of the date header with the body
-  const colHeaderStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: -scrollX.value }],
-  }));
-  // Sync the "scroll" position of the sports header with the body
-  const rowHeaderStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: -scrollY.value }],
-  }));
+  const columnHeaderRef = useAnimatedRef();
+  const rowHeaderRef = useAnimatedRef();
+  const bodyRef = useAnimatedRef();
+  const bodyRefHorizontal = useAnimatedRef();
+  // // Sync the "scroll" position of the date header with the body
+  // const colHeaderStyle = useAnimatedStyle(() => ({
+  //   transform: [{ translateX: -scrollX.value }],
+  // }));
+  // // Sync the "scroll" position of the sports header with the body
+  // const rowHeaderStyle = useAnimatedStyle(() => ({
+  //   transform: [{ translateY: -scrollY.value }],
+  // }));
+  useDerivedValue(() => {
+    scrollTo(columnHeaderRef, scrollX.value, 0, false);
+    // scrollTo(bodyRefHorizontal, scrollX.value, 0, false);
+  });
+  useDerivedValue(() => {
+    scrollTo(rowHeaderRef, 0, scrollY.value, false);
+    // scrollTo(bodyRef, 0, scrollY.value, false);
+  });
 
   if (isLoadingInitData) {
     return (
@@ -307,7 +319,7 @@ export default function TimelineScreen() {
 
         {/* Dates header — clipped so overflow is hidden, translated by scrollX */}
         <View style={styles.colHeaderClip}>
-          <Animated.View style={[styles.headerRow, colHeaderStyle]}>
+          <Animated.ScrollView ref={columnHeaderRef} style={[styles.headerRow]} horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
                 <View key={date.full} style={styles.dateCell}>
@@ -316,14 +328,14 @@ export default function TimelineScreen() {
                 </View>
               ))}
             </View>
-          </Animated.View>
+          </Animated.ScrollView>
         </View>
       </View>
 
       <View style={styles.bottomRow}>
         {/* Sports header — clipped so overflow is hidden, translated by scrollY */}
         <View style={styles.rowHeaderClip}>
-          <Animated.View style={rowHeaderStyle}>
+          <Animated.ScrollView ref={rowHeaderRef} showsVerticalScrollIndicator={false}>
             {/* {SPORTS.map((sport) => ( */}
             {/*   <View key={sport} style={styles.rowHeaderCell}> */}
             {/*     <Text style={styles.headerText}>{sport}</Text> */}
@@ -336,7 +348,7 @@ export default function TimelineScreen() {
                 </Text>
               </View>
             ))}
-          </Animated.View>
+          </Animated.ScrollView>
         </View>
 
         {/* Content Grid */}
@@ -454,7 +466,7 @@ const CELL_GAP = 13;
 const ROW_CONTENT_SIZE = 36;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + (CELL_GAP * 2);
 const LOAD_MORE_WIDTH = 170;
-const LEFT_COLUMN_WIDTH = 120; // To allow the ticker text to show
+const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
 
 const styles = StyleSheet.create({
   centerContainer: {

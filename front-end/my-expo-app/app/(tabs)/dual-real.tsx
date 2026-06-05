@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { activitiesAPI, type IActivity } from "@/api/api.activity";
-import { ITimelineSetItem, timelineAPI, type ITimeline, type ITimelineSet } from '@/api/api.timeline';
+import { timelineAPI, type ITimeline, type ITimelineSet } from '@/api/api.timeline';
 import { Colors } from '@/constants/theme';
-import { useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
-import StickyTable from "./sticky-table";
+import StickyTable from '../../components/StickyTable';
 
 type TimelineDateColumn = {
   full: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import StickyTable from './sticky-table';
+import StickyTable from '../../components/StickyTableTwo';
 
 const DATES = [
   'Mon 1', 'Tue 2', 'Wed 3', 'Thu 4', 'Fri 5', 'Sat 6', 'Sun 7', 'Mon 8',
@@ -21,11 +21,11 @@ export default function StickyTableExample() {
         rowHeaders={SPORTS}
         data={DATA}
         renderColumnHeader={(date) => <Text style={exampleStyles.headerText}>{date}</Text>}
-        renderRowHeader={(sport) => <Text style={exampleStyles.headerText}>{sport}</Text>}
+        renderRowHeader={(sport) => <Text style={[exampleStyles.headerText, exampleStyles.rowHeaderText]}>{sport}</Text>}
         renderCell={(value) => <Text style={exampleStyles.cellText}>{value}</Text>}
-        cellWidth={100}
+        cellWidth={70}
         cellHeight={50}
-        headerWidth={120}
+        headerWidth={90}
         headerHeight={50}
       />
     </View>
@@ -34,5 +34,6 @@ export default function StickyTableExample() {
 
 const exampleStyles = StyleSheet.create({
   headerText: { color: '#fff', fontWeight: 'bold', fontSize: 13 },
+  // rowHeaderText: { textAlign: 'left', width: '100%', paddingLeft: 13 },
   cellText: { fontSize: 13, color: '#333' },
 });

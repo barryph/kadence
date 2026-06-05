@@ -64,18 +64,42 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="dual-sticky"
+          name="dual-simple"
           options={{
             ...headerOptions,
-            title: 'Scrll',
+            title: 'Scrll Simple',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
           }}
         />
         <Tabs.Screen
-          name="dual-demo"
+          name="dual-real"
           options={{
             ...headerOptions,
-            title: 'Scrll DM',
+            title: 'Scrll Real',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="dual-two-simple"
+          options={{
+            ...headerOptions,
+            title: 'Scrll Two Simple',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="dual-two"
+          options={{
+            ...headerOptions,
+            title: 'Scrll Two Real',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="timeline-lib"
+          options={{
+            ...headerOptions,
+            title: 'TimelineLib',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
           }}
         />

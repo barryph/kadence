@@ -69,6 +69,7 @@ export default function TabLayout() {
             ...headerOptions,
             title: 'Scrll Simple',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+            href: null,
           }}
         />
         <Tabs.Screen
@@ -77,6 +78,7 @@ export default function TabLayout() {
             ...headerOptions,
             title: 'Scrll Real',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+            href: null,
           }}
         />
         <Tabs.Screen
@@ -85,6 +87,7 @@ export default function TabLayout() {
             ...headerOptions,
             title: 'Scrll Two Simple',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+            href: null,
           }}
         />
         <Tabs.Screen
@@ -93,6 +96,7 @@ export default function TabLayout() {
             ...headerOptions,
             title: 'Scrll Two Real',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+            href: null,
           }}
         />
         <Tabs.Screen

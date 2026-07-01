@@ -98,11 +98,11 @@ export default function Dashboard() {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {activities.map((activity) => {
+        {activities.map((activity, index) => {
           const delayPct = Math.min(Math.max((activity.daysUntil || 0) / DAYS_IN_WEEK, 0), 1);
 
           return (
-            <View style={styles.activityWrapper} key={activity.id}>
+            <View style={[styles.activityWrapper]} key={activity.id}>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => handleActivityClick(activity)}
@@ -119,7 +119,7 @@ export default function Dashboard() {
                   queued={activity.queued}
                 >
                   <View style={[styles.activityInner, activity.queued && styles.activityInnerSelected]}>
-                    <View style={styles.activityMain}>
+                    <View style={[styles.activityMain, index === 0 && styles.activityMainFirst]}>
                       <View style={styles.activityTitleRow}>
                         <View style={styles.activityNameGroup}>
                           <ThemedText style={[styles.activityName, activity.queued && styles.activityNameSelected]}>
@@ -193,17 +193,18 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 100,
-    paddingTop: 3,
   },
   activityWrapper: {
     width: '100%',
-    marginBottom: 2,
   },
   activityInner: {
     backgroundColor: '#fff',
   },
   activityInnerSelected: {
     backgroundColor: '#0072ff', // Simplification of gradient
+  },
+  activityMainFirst: {
+    marginTop: 3,
   },
   activityMain: {
     width: '100%',
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   activityNameGroup: {
     flexDirection: 'row',

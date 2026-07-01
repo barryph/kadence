@@ -100,11 +100,12 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="timeline-lib"
+          name="timeline-manual"
           options={{
             ...headerOptions,
-            title: 'TimelineLib',
+            title: 'TimelineManual',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+            href: null,
           }}
         />
         <Tabs.Screen
@@ -120,6 +121,7 @@ export default function TabLayout() {
           options={{
             title: 'Explore',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+            href: null,
           }}
         />
       </Tabs >

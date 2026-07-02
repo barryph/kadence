@@ -7,7 +7,8 @@ import { Colors } from '@/constants/theme';
 import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 import { ThemedText } from '@/components/themed-text';
 
-// TODO: Set loading state
+// TODO: UI loading state
+// TODO: Clean up dead code
 
 type TimelineDateColumn = {
   full: string;
@@ -274,6 +275,11 @@ export default function TimelineScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={[styles.isLoadingOverlay, !isLoadingTimeline && styles.hide]}>
+        <ActivityIndicator size="large" />
+        <Text style={{ color: '#fff', marginTop: 15, fontWeight: 600 }}>Loading Activities</Text>
+      </View>
+
       <View style={styles.topRow}>
         {/* Blank corner cell - top left */}
         <View style={styles.cornerCell}></View>
@@ -314,6 +320,7 @@ export default function TimelineScreen() {
         {/* Content Grid */}
         <Animated.ScrollView
           horizontal
+          showsHorizontalScrollIndicator={false}
           onScroll={scrollHandlerX}
           ref={scrollViewRef}
           onContentSizeChange={() => {
@@ -333,6 +340,7 @@ export default function TimelineScreen() {
           </View>
 
           <Animated.ScrollView
+            showsVerticalScrollIndicator={false}
             onScroll={scrollHandlerY}
             nestedScrollEnabled={true}
           >
@@ -524,6 +532,20 @@ const styles = StyleSheet.create({
   },
   matrix: {
     flexDirection: 'column',
+  },
+  isLoadingOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000000aa',
+    zIndex: 999,
+  },
+  hide: {
+    display: 'none',
   },
   activityRow: {
     flexDirection: 'row',

@@ -1,10 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { activitiesAPI, type IActivity } from "@/api/api.activity";
 import { timelineAPI, type ITimeline, type ITimelineSet } from '@/api/api.timeline';
 import Button from '@/components/Button';
 import { Colors } from '@/constants/theme';
 import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
+import { ThemedText } from '@/components/themed-text';
+
+// TODO: Set loading state
 
 type TimelineDateColumn = {
   full: string;
@@ -29,11 +32,13 @@ function formatMonthKey(date: Date): string {
   return `${year}-${month}`;
 }
 
-function buildMonthDateColumns(month: string, endDayInMonth?: number): TimelineDateColumn[] {
+function buildMonthDateColumns(month: string): TimelineDateColumn[] {
   const [year, monthNumber] = month.split('-').map(Number);
   const monthStart = new Date(year, monthNumber - 1, 1);
   const monthEnd = new Date(year, monthNumber, 0);
-  const lastDay = endDayInMonth ?? monthEnd.getDate();
+  // const today = new Date();
+  // const lastDay = monthEnd > today ? today.getDate() : monthEnd.getDate();
+  const lastDay = monthEnd.getDate();
   const boundedEndDay = Math.max(1, Math.min(lastDay, monthEnd.getDate()));
   const endDate = new Date(year, monthNumber - 1, boundedEndDay, 12);
   const columns: TimelineDateColumn[] = [];
@@ -45,9 +50,10 @@ function buildMonthDateColumns(month: string, endDayInMonth?: number): TimelineD
   return columns;
 }
 
-function getNextMonthToLoad(month: string): string {
+function getNextMonthToLoad(month: string, direction: 'PREV' | 'NEXT'): string {
   const [year, monthNumber] = month.split('-').map(Number);
-  const nextMonthToLoad = new Date(year, monthNumber - 2, 1);
+  const monthShift = direction === 'PREV' ? -1 : 1;
+  const nextMonthToLoad = new Date(year, monthNumber + monthShift - 1, 1);
   return formatMonthKey(nextMonthToLoad);
 }
 
@@ -58,26 +64,28 @@ function timelineToSet(timeline: ITimeline): ITimelineSet {
   }, {});
 }
 
-function mergeTimelineSets(currentTimeline: ITimelineSet, nextTimeline: ITimelineSet): ITimelineSet {
-  const allKeys = new Set([...Object.keys(currentTimeline), ...Object.keys(nextTimeline)]);
+// function mergeTimelineSets(currentTimeline: ITimelineSet, nextTimeline: ITimelineSet): ITimelineSet {
+//   const allKeys = new Set([...Object.keys(currentTimeline), ...Object.keys(nextTimeline)]);
+//
+//   return Array.from(allKeys).reduce<ITimelineSet>((acc, key) => {
+//     acc[key] = new Set([...(currentTimeline[key] ?? []), ...(nextTimeline[key] ?? [])]);
+//     return acc;
+//   }, {});
+// }
 
-  return Array.from(allKeys).reduce<ITimelineSet>((acc, key) => {
-    acc[key] = new Set([...(currentTimeline[key] ?? []), ...(nextTimeline[key] ?? [])]);
-    return acc;
-  }, {});
-}
-
-function getShouldAutoLoadNextMonth(today: Date): boolean {
-  if (today.getDate() <= 7) return true;
-  const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  const daysLeft = daysInMonth - today.getDate();
-  return daysLeft < 7;
+function getCurrentMonth() {
+  const date = new Date();
+  return formatMonthKey(date);
 }
 
 export default function TimelineScreen() {
   // TODO: Start scrolled to the right
   const [activities, setActivities] = useState<IActivity[] | undefined>();
   const [timeline, setTimeline] = useState<ITimelineSet | undefined>();
+  const [cachedMonths, setCachedMonths] = useState<Record<string, ITimelineSet>>({});
+  const startingMonth = getCurrentMonth();
+  const [currentMonth, setCurrentMonth] = useState<string>(startingMonth);
+  const [monthInView, setMonthInView] = useState<string>(startingMonth);
   const [dateColumns, setDateColumns] = useState<TimelineDateColumn[]>([]);
   const [loadedMonths, setLoadedMonths] = useState<string[]>([]);
   const [togglingCells, setTogglingCells] = useState<Set<string>>(new Set());
@@ -86,6 +94,7 @@ export default function TimelineScreen() {
   const [initError, setInitError] = useState<string | undefined>(undefined);
   const [loadMoreError, setLoadMoreError] = useState<string | undefined>(undefined);
   const [toggleError, setToggleError] = useState<string | undefined>(undefined);
+  const scrollViewRef = useRef(null);
 
   // Removed Animated scrollX and headerScrollRef
 
@@ -93,42 +102,25 @@ export default function TimelineScreen() {
     const abortController = new AbortController();
 
     async function fetchData() {
-      const today = new Date();
-      const initMonth = formatMonthKey(today);
-      const shouldAutoLoadNextMonth = getShouldAutoLoadNextMonth(today);
-      const nextMonthToLoad = getNextMonthToLoad(initMonth);
-
-      const nextMonthRequest = shouldAutoLoadNextMonth
-        ? timelineAPI.getTimeline(nextMonthToLoad, { signal: abortController.signal })
-        : Promise.resolve(undefined);
-
       try {
         setInitError(undefined);
-        const [activitiesRes, timelineRes, nextMonthRes] = await Promise.all([
+        const [activitiesRes, timelineRes] = await Promise.all([
           activitiesAPI.getAllByUser({ signal: abortController.signal }),
-          timelineAPI.getTimeline(initMonth, { signal: abortController.signal }),
-          nextMonthRequest,
+          timelineAPI.getTimeline(monthInView, { signal: abortController.signal }),
         ]);
         if (activitiesRes.data?.activities) {
           setActivities(activitiesRes.data.activities);
         }
         if (timelineRes.data?.timeline) {
-          let mergedTimeline = timelineToSet(timelineRes.data.timeline);
-          const months = [initMonth];
-          const columns = buildMonthDateColumns(initMonth, today.getDate());
+          let timeline = timelineToSet(timelineRes.data.timeline);
+          // const months = [initMonth];
+          const columns = buildMonthDateColumns(monthInView);
 
-          if (shouldAutoLoadNextMonth) {
-            if (nextMonthRes?.data?.timeline) {
-              const nextMonth = getNextMonthToLoad(initMonth);
-              mergedTimeline = mergeTimelineSets(mergedTimeline, timelineToSet(nextMonthRes.data.timeline));
-              months.push(nextMonth);
-              columns.unshift(...buildMonthDateColumns(nextMonth));
-            }
-          }
-
-          setTimeline(mergedTimeline);
-          setLoadedMonths(months);
+          // TODO: Compute date columns property
+          setCachedMonths({ ...cachedMonths, [monthInView]: timeline })
           setDateColumns(columns);
+          // setLoadedMonths(months);
+          // setDateColumns(columns);
         }
       } catch (err) {
         if (!abortController.signal.aborted) {
@@ -146,16 +138,18 @@ export default function TimelineScreen() {
     }
   }, []);
 
-  async function fetchMoreTimeline(month: string) {
+  async function fetchMonth(month: string) {
     try {
       setIsLoadingTimeline(true);
       setLoadMoreError(undefined);
       const response = await timelineAPI.getTimeline(month);
       if (response.data?.timeline) {
-        const timelineSet = timelineToSet(response.data.timeline);
-        setTimeline((prevTimeline) => mergeTimelineSets(prevTimeline ?? {}, timelineSet));
-        setLoadedMonths((prevLoadedMonths) => [...prevLoadedMonths, month]);
-        setDateColumns((prevDateColumns) => [...buildMonthDateColumns(month), ...prevDateColumns]);
+        const timeline = timelineToSet(response.data.timeline);
+        const columns = buildMonthDateColumns(month);
+        // setTimeline((prevTimeline) => mergeTimelineSets(prevTimeline ?? {}, timelineSet));
+        setCachedMonths({ ...cachedMonths, [month]: timeline })
+        setDateColumns(columns)
+        setMonthInView(month);
       }
     } catch (err) {
       setLoadMoreError('Unable to load more timeline. Please try again.');
@@ -212,10 +206,10 @@ export default function TimelineScreen() {
     }
   }
 
-  const nextMonthToLoad = useMemo(() => {
-    if (!loadedMonths.length) return;
-    return getNextMonthToLoad(loadedMonths[loadedMonths.length - 1]);
-  }, [loadedMonths]);
+  // const nextMonthToLoad = useMemo(() => {
+  //   if (!loadedMonths.length) return;
+  //   return getNextMonthToLoad(loadedMonths[loadedMonths.length - 1]);
+  // }, [loadedMonths]);
 
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
@@ -234,8 +228,6 @@ export default function TimelineScreen() {
 
   const columnHeaderRef = useAnimatedRef();
   const rowHeaderRef = useAnimatedRef();
-  const bodyRef = useAnimatedRef();
-  const bodyRefHorizontal = useAnimatedRef();
 
   // Sync the "scroll" position of the headers with the body
   useDerivedValue(() => {
@@ -244,6 +236,8 @@ export default function TimelineScreen() {
   useDerivedValue(() => {
     scrollTo(rowHeaderRef, 0, scrollY.value, false);
   });
+
+  const tableData = cachedMonths[monthInView];
 
   if (isLoadingInitData) {
     return (
@@ -262,7 +256,7 @@ export default function TimelineScreen() {
     );
   }
 
-  if (timeline === undefined) {
+  if (dateColumns === undefined) {
     return (
       <View style={styles.centerContainer}>
         <Text style={styles.loadingText}>No timeline data available.</Text>
@@ -278,16 +272,6 @@ export default function TimelineScreen() {
     );
   }
 
-  // console.log('dc', dateColumns);
-  // console.log('activities', activities);
-  // console.log('timeline', timeline)
-  // console.log('timeline',
-  //   Object.keys(timeline).reduce((obj, x) => {
-  //     obj[x] = Array.from(timeline[x])
-  //     return obj;
-  //   }, {}),
-  // )
-
   return (
     <View style={styles.container}>
       <View style={styles.topRow}>
@@ -297,6 +281,7 @@ export default function TimelineScreen() {
         {/* Dates header — clipped so overflow is hidden */}
         <View style={styles.colHeaderClip}>
           <Animated.ScrollView ref={columnHeaderRef} style={[styles.headerRow]} horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.paddingElementForLoadMoreColumn}></View>
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
                 <View key={date.full} style={[styles.dateCell]}>
@@ -306,7 +291,6 @@ export default function TimelineScreen() {
                 </View>
               ))}
             </View>
-            {/* TODO: Render as last column */}
             <View style={styles.paddingElementForLoadMoreColumn}></View>
           </Animated.ScrollView>
         </View>
@@ -331,13 +315,29 @@ export default function TimelineScreen() {
         <Animated.ScrollView
           horizontal
           onScroll={scrollHandlerX}
+          ref={scrollViewRef}
+          onContentSizeChange={() => {
+            // scrollViewRef.current?.scrollToEnd({ animated: false });
+            scrollViewRef.current?.scrollTo(0);
+          }}
         >
+          <View style={[styles.loadMoreColumn]}>
+            <Button
+              onPress={() => fetchMonth(getNextMonthToLoad(monthInView, 'PREV'))}
+              isLoading={isLoadingTimeline}
+              style={styles.loadMoreButton}
+              textStyle={styles.loadMoreButtonTextStyles}
+            >
+              {isLoadingTimeline ? 'Loading...' : <>&larr;</>}
+            </Button>
+          </View>
+
           <Animated.ScrollView
             onScroll={scrollHandlerY}
             nestedScrollEnabled={true}
           >
             {activities.map((activity) => {
-              const completedDates = timeline[activity.id] || new Set<string>();
+              const completedDates = tableData[activity.id] || new Set<string>();
               return (
                 <View key={activity.id} style={styles.activityRow}>
                   {dateColumns.map((date) => {
@@ -362,71 +362,21 @@ export default function TimelineScreen() {
               );
             })}
           </Animated.ScrollView>
-          {/* <View><Text>AAAAA</Text></View> */}
 
-          <View style={[styles.loadMoreColumn]}>
-            <Button
-              onPress={() => nextMonthToLoad && fetchMoreTimeline(nextMonthToLoad)}
-              isLoading={isLoadingTimeline || !nextMonthToLoad}
-              style={styles.loadMoreButton}
-            >
-              {isLoadingTimeline ? 'Loading...' : 'Load more'}
-            </Button>
-          </View>
+          {monthInView !== currentMonth && (
+            <View style={[styles.loadMoreColumn]}>
+              <Button
+                onPress={() => fetchMonth(getNextMonthToLoad(monthInView, 'NEXT'))}
+                isLoading={isLoadingTimeline}
+                style={styles.loadMoreButton}
+                textStyle={styles.loadMoreButtonTextStyles}
+              >
+                {isLoadingTimeline ? 'Loading...' : <>&rarr;</>}
+              </Button>
+            </View>
+          )}
         </Animated.ScrollView>
       </View>
-
-      {/* <View style={styles.bodyRow}> */}
-      {/*   <View style={styles.leftColumn}> */}
-      {/*     {activities.map((activity) => ( */}
-      {/*       <View key={activity.id} style={styles.activityLabelCell}> */}
-      {/*         <Text style={styles.activityLabelText} numberOfLines={1}> */}
-      {/*           {activity.ticker || activity.name} */}
-      {/*         </Text> */}
-      {/*       </View> */}
-      {/*     ))} */}
-      {/*   </View> */}
-      {/**/}
-      {/*   <View style={styles.matrixContainer}> */}
-      {/*     <View style={styles.matrix}> */}
-      {/*       {activities.map((activity) => { */}
-      {/*         const completedDates = timeline[activity.id] || new Set<string>(); */}
-      {/*         return ( */}
-      {/*           <View key={activity.id} style={styles.activityRow}> */}
-      {/*             {dateColumns.map((date) => { */}
-      {/*               const isCompleted = completedDates.has(date.full); */}
-      {/*               const cellKey = `${activity.id}-${date.full}`; */}
-      {/*               const isToggling = togglingCells.has(cellKey); */}
-      {/*               return ( */}
-      {/*                 <View key={cellKey} style={styles.statusCellContainer}> */}
-      {/*                   <TouchableOpacity */}
-      {/*                     disabled={isToggling} */}
-      {/*                     onPress={() => handleTimelineCellClick(cellKey, activity.id, date.full, isCompleted)} */}
-      {/*                     style={[ */}
-      {/*                       styles.statusCell, */}
-      {/*                       isCompleted ? styles.statusCellComplete : styles.statusCellIncomplete, */}
-      {/*                       isToggling && styles.statusCellToggling */}
-      {/*                     ]} */}
-      {/*                   /> */}
-      {/*                 </View> */}
-      {/*               ); */}
-      {/*             })} */}
-      {/*           </View> */}
-      {/*         ); */}
-      {/*       })} */}
-      {/*     </View> */}
-      {/**/}
-      {/*     <View style={styles.loadMoreColumn}> */}
-      {/*       <Button */}
-      {/*         onPress={() => nextMonthToLoad && fetchMoreTimeline(nextMonthToLoad)} */}
-      {/*         isLoading={isLoadingTimeline || !nextMonthToLoad} */}
-      {/*         style={styles.loadMoreButton} */}
-      {/*       > */}
-      {/*         {isLoadingTimeline ? 'Loading...' : 'Load more →'} */}
-      {/*       </Button> */}
-      {/*     </View> */}
-      {/*   </View> */}
-      {/* </View> */}
 
       {(isLoadingTimeline || loadMoreError || toggleError) ? (
         <View style={styles.footerOverlay}>
@@ -439,11 +389,11 @@ export default function TimelineScreen() {
   );
 }
 
-const CELL_SIZE = 20;
-const CELL_GAP = 13;
-const ROW_CONTENT_SIZE = 36;
+const CELL_SIZE = 18;
+const CELL_GAP = 12;
+const ROW_CONTENT_SIZE = 30;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + (CELL_GAP * 2);
-const LOAD_MORE_WIDTH = 170;
+const LOAD_MORE_WIDTH = 60;
 const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
 
 const styles = StyleSheet.create({
@@ -535,7 +485,7 @@ const styles = StyleSheet.create({
   },
   dateMonth: {
     color: '#5d6778',
-    fontSize: 13,
+    fontSize: 10,
     lineHeight: 14,
   },
   headerTailSpacer: {
@@ -617,10 +567,12 @@ const styles = StyleSheet.create({
   },
   loadMoreButton: {
     flexGrow: 0,
-    fontSize: 14,
     color: '#0072ff',
     backgroundColor: '#fff',
-    textDecorationLine: 'underline',
+    paddingHorizontal: 0,
+  },
+  loadMoreButtonTextStyles: {
+    fontSize: 40,
   },
   footerOverlay: {
     position: 'absolute',

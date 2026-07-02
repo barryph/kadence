@@ -105,7 +105,6 @@ export default function TabLayout() {
             ...headerOptions,
             title: 'TimelineManual',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
-            href: null,
           }}
         />
         <Tabs.Screen

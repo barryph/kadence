@@ -296,10 +296,10 @@ export default function TimelineScreen() {
 
         {/* Dates header — clipped so overflow is hidden */}
         <View style={styles.colHeaderClip}>
-          <Animated.ScrollView ref={columnHeaderRef} style={[styles.headerRow, styles.reverse]} horizontal showsHorizontalScrollIndicator={false}>
+          <Animated.ScrollView ref={columnHeaderRef} style={[styles.headerRow]} horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
-                <View key={date.full} style={[styles.dateCell, styles.reverse]}>
+                <View key={date.full} style={[styles.dateCell]}>
                   {/* TODO: USE as renderColumnHeader */}
                   <Text style={styles.dateDay}>{date.day}</Text>
                   <Text style={styles.dateMonth}>{date.month}</Text>
@@ -331,12 +331,10 @@ export default function TimelineScreen() {
         <Animated.ScrollView
           horizontal
           onScroll={scrollHandlerX}
-          style={styles.reverse}
         >
           <Animated.ScrollView
             onScroll={scrollHandlerY}
             nestedScrollEnabled={true}
-            style={styles.reverse}
           >
             {activities.map((activity) => {
               const completedDates = timeline[activity.id] || new Set<string>();
@@ -366,7 +364,7 @@ export default function TimelineScreen() {
           </Animated.ScrollView>
           {/* <View><Text>AAAAA</Text></View> */}
 
-          <View style={[styles.loadMoreColumn, styles.reverse]}>
+          <View style={[styles.loadMoreColumn]}>
             <Button
               onPress={() => nextMonthToLoad && fetchMoreTimeline(nextMonthToLoad)}
               isLoading={isLoadingTimeline || !nextMonthToLoad}
@@ -449,11 +447,6 @@ const LOAD_MORE_WIDTH = 170;
 const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
 
 const styles = StyleSheet.create({
-  // Used to flip the visual order of the list, to maintain scroll position on load more button click.
-  // Because items are pushed to the start of the list, it by default moves the content the users see at their current scroll position
-  reverse: {
-    transform: [{ scaleX: -1 }],
-  },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',

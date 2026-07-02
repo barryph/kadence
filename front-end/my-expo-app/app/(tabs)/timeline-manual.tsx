@@ -68,6 +68,7 @@ function mergeTimelineSets(currentTimeline: ITimelineSet, nextTimeline: ITimelin
 }
 
 function getShouldAutoLoadNextMonth(today: Date): boolean {
+  if (today.getDate() <= 7) return true;
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const daysLeft = daysInMonth - today.getDate();
   return daysLeft < 7;
@@ -295,10 +296,10 @@ export default function TimelineScreen() {
 
         {/* Dates header — clipped so overflow is hidden */}
         <View style={styles.colHeaderClip}>
-          <Animated.ScrollView ref={columnHeaderRef} style={[styles.headerRow]} horizontal showsHorizontalScrollIndicator={false}>
+          <Animated.ScrollView ref={columnHeaderRef} style={[styles.headerRow, styles.reverse]} horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
-                <View key={date.full} style={styles.dateCell}>
+                <View key={date.full} style={[styles.dateCell, styles.reverse]}>
                   {/* TODO: USE as renderColumnHeader */}
                   <Text style={styles.dateDay}>{date.day}</Text>
                   <Text style={styles.dateMonth}>{date.month}</Text>
@@ -330,10 +331,12 @@ export default function TimelineScreen() {
         <Animated.ScrollView
           horizontal
           onScroll={scrollHandlerX}
+          style={styles.reverse}
         >
           <Animated.ScrollView
             onScroll={scrollHandlerY}
             nestedScrollEnabled={true}
+            style={styles.reverse}
           >
             {activities.map((activity) => {
               const completedDates = timeline[activity.id] || new Set<string>();
@@ -363,13 +366,13 @@ export default function TimelineScreen() {
           </Animated.ScrollView>
           {/* <View><Text>AAAAA</Text></View> */}
 
-          <View style={styles.loadMoreColumn}>
+          <View style={[styles.loadMoreColumn, styles.reverse]}>
             <Button
               onPress={() => nextMonthToLoad && fetchMoreTimeline(nextMonthToLoad)}
               isLoading={isLoadingTimeline || !nextMonthToLoad}
               style={styles.loadMoreButton}
             >
-              {isLoadingTimeline ? 'Loading...' : 'Load more →'}
+              {isLoadingTimeline ? 'Loading...' : 'Load more'}
             </Button>
           </View>
         </Animated.ScrollView>
@@ -446,6 +449,11 @@ const LOAD_MORE_WIDTH = 170;
 const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
 
 const styles = StyleSheet.create({
+  // Used to flip the visual order of the list, to maintain scroll position on load more button click.
+  // Because items are pushed to the start of the list, it by default moves the content the users see at their current scroll position
+  reverse: {
+    transform: [{ scaleX: -1 }],
+  },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -615,7 +623,11 @@ const styles = StyleSheet.create({
     width: LOAD_MORE_WIDTH,
   },
   loadMoreButton: {
-    width: '100%',
+    flexGrow: 0,
+    fontSize: 14,
+    color: '#0072ff',
+    backgroundColor: '#fff',
+    textDecorationLine: 'underline',
   },
   footerOverlay: {
     position: 'absolute',

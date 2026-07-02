@@ -27,6 +27,7 @@ export default function Button({ children, isLoading, style, ...props }: ButtonP
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#0072ff',
+    color: '#fff',
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -38,6 +39,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#80b9ff',
   },
   text: {
-    color: '#fff',
+    color: 'inherit',
+    fontSize: 'inherit',
   },
 });

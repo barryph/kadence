@@ -1,13 +1,14 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, type TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, type TouchableOpacityProps, StyleProp, TextStyle } from 'react-native';
 import { ThemedText } from './themed-text';
 
 interface ButtonProps extends TouchableOpacityProps {
   children: React.ReactNode;
   isLoading?: boolean;
+  textStyle: StyleProp<TextStyle>;
 }
 
-export default function Button({ children, isLoading, style, ...props }: ButtonProps) {
+export default function Button({ children, isLoading, style, textStyle, ...props }: ButtonProps) {
   return (
     <TouchableOpacity
       style={[styles.button, props.disabled || isLoading ? styles.buttonDisabled : null, style]}
@@ -18,7 +19,7 @@ export default function Button({ children, isLoading, style, ...props }: ButtonP
       {isLoading ? (
         <ActivityIndicator color="#fff" />
       ) : (
-        <ThemedText style={styles.text} type="defaultSemiBold">{children}</ThemedText>
+        <ThemedText style={[styles.text, textStyle]} type="defaultSemiBold">{children}</ThemedText>
       )}
     </TouchableOpacity>
   );

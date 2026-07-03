@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import { Colors } from '@/constants/theme';
 import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/hook/commonTypes';
+import UnmountOnBlur from '@/components/router/UnmountOnBlur';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 
@@ -67,7 +68,7 @@ function getCurrentMonth() {
   return formatMonthKey(date);
 }
 
-export default function TimelineScreen() {
+function TimelineScreen() {
   const [activities, setActivities] = useState<IActivity[] | undefined>();
   const [cachedMonths, setCachedMonths] = useState<Record<string, ITimelineSet>>({});
   const currentMonth = getCurrentMonth();
@@ -87,7 +88,7 @@ export default function TimelineScreen() {
   useEffect(() => {
     const abortController = new AbortController();
 
-    async function fetchData() {
+    async function fetchInitData(abortController: AbortController) {
       try {
         setInitError(undefined);
         const [activitiesRes, timelineRes] = await Promise.all([
@@ -114,7 +115,7 @@ export default function TimelineScreen() {
       }
     }
 
-    fetchData();
+    fetchInitData(abortController);
     return () => {
       abortController.abort();
     }
@@ -608,3 +609,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   }
 });
+
+export default function wrapper() {
+  return (
+    <UnmountOnBlur>
+      <TimelineScreen />
+    </UnmountOnBlur>
+  )
+}

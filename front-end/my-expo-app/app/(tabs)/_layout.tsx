@@ -9,6 +9,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/context/AuthContext';
 import NavDrawer from '@/components/NavDrawer';
 import { ThemedText } from '@/components/themed-text';
+import UnmountOnBlur from '@/components/router/UnmountOnBlur';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();

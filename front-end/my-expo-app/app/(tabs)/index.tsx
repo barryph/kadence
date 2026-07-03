@@ -132,9 +132,14 @@ function Dashboard() {
                             </View>
                           )}
                         </View>
-                        <Text style={[styles.activityDetails, activity.queued && styles.activityDetailsSelected]}>
-                          ↩ {activity.daysUntil}  ↻ {activity.interval}
-                        </Text>
+                        <View style={styles.activityDetails}>
+                          <Text style={[styles.activityDetailsText, activity.queued && styles.activityDetailsTextSelected]}>
+                            REMAIN: <Text style={[styles.activityDetailsSpan, activity.queued && styles.activityDetailsSpanSelected]}>{activity.daysUntil}</Text>
+                          </Text>
+                          <Text style={[styles.activityDetailsText, activity.queued && styles.activityDetailsTextSelected]}>
+                            INTRVL: <Text style={[styles.activityDetailsSpan, activity.queued && styles.activityDetailsSpanSelected]}>{activity.interval}</Text>
+                          </Text>
+                        </View>
                       </View>
 
                       <View style={styles.activityBarContainer}>
@@ -169,7 +174,7 @@ function Dashboard() {
             </View>
           );
         })}
-      </ScrollView>
+      </ScrollView >
 
       <TouchableOpacity
         style={styles.floatingAddButton}
@@ -178,10 +183,12 @@ function Dashboard() {
         <ThemedText style={styles.floatingAddButtonText}>Add Activity</ThemedText>
       </TouchableOpacity>
 
-      {showNewActivityOverlay && (
-        <NewActivityOverlay onClose={handleNewActivityOverlayClose} />
-      )}
-    </View>
+      {
+        showNewActivityOverlay && (
+          <NewActivityOverlay onClose={handleNewActivityOverlayClose} />
+        )
+      }
+    </View >
   );
 }
 
@@ -243,11 +250,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   activityDetails: {
-    fontSize: 14,
-    opacity: 0.7,
-    color: '#333',
+    flexDirection: 'row',
+    gap: 8,
   },
-  activityDetailsSelected: {
+  activityDetailsText: {
+    fontSize: 12,
+    color: '#888',
+  },
+  activityDetailsSpan: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#111',
+  },
+  activityDetailsTextSelected: {
+    color: '#eee',
+  },
+  activityDetailsSpanSelected: {
     color: '#fff',
   },
   activityBarContainer: {

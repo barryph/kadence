@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import SwipeRow from '@/components/SwipeRow';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,7 +16,6 @@ interface IActivityClient extends IActivity {
 }
 
 function Dashboard() {
-  const router = useRouter();
   const DAYS_IN_WEEK = 7;
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);

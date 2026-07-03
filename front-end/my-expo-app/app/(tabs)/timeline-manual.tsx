@@ -1,14 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { activitiesAPI, type IActivity } from "@/api/api.activity";
 import { timelineAPI, type ITimeline, type ITimelineSet } from '@/api/api.timeline';
 import Button from '@/components/Button';
 import { Colors } from '@/constants/theme';
-import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useDerivedValue, useSharedValue } from 'react-native-reanimated';
-import { ThemedText } from '@/components/themed-text';
-
-// TODO: UI loading state
-// TODO: Clean up dead code
+import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 
 type TimelineDateColumn = {
   full: string;
@@ -37,8 +33,6 @@ function buildMonthDateColumns(month: string): TimelineDateColumn[] {
   const [year, monthNumber] = month.split('-').map(Number);
   const monthStart = new Date(year, monthNumber - 1, 1);
   const monthEnd = new Date(year, monthNumber, 0);
-  // const today = new Date();
-  // const lastDay = monthEnd > today ? today.getDate() : monthEnd.getDate();
   const lastDay = monthEnd.getDate();
   const boundedEndDay = Math.max(1, Math.min(lastDay, monthEnd.getDate()));
   const endDate = new Date(year, monthNumber - 1, boundedEndDay, 12);
@@ -65,15 +59,6 @@ function timelineToSet(timeline: ITimeline): ITimelineSet {
   }, {});
 }
 
-// function mergeTimelineSets(currentTimeline: ITimelineSet, nextTimeline: ITimelineSet): ITimelineSet {
-//   const allKeys = new Set([...Object.keys(currentTimeline), ...Object.keys(nextTimeline)]);
-//
-//   return Array.from(allKeys).reduce<ITimelineSet>((acc, key) => {
-//     acc[key] = new Set([...(currentTimeline[key] ?? []), ...(nextTimeline[key] ?? [])]);
-//     return acc;
-//   }, {});
-// }
-
 function getCurrentMonth() {
   const date = new Date();
   return formatMonthKey(date);
@@ -82,22 +67,17 @@ function getCurrentMonth() {
 export default function TimelineScreen() {
   // TODO: Start scrolled to the right
   const [activities, setActivities] = useState<IActivity[] | undefined>();
-  const [timeline, setTimeline] = useState<ITimelineSet | undefined>();
   const [cachedMonths, setCachedMonths] = useState<Record<string, ITimelineSet>>({});
-  const startingMonth = getCurrentMonth();
-  const [currentMonth, setCurrentMonth] = useState<string>(startingMonth);
-  const [monthInView, setMonthInView] = useState<string>(startingMonth);
+  const currentMonth = getCurrentMonth();
+  const [monthInView, setMonthInView] = useState<string>(currentMonth);
   const [dateColumns, setDateColumns] = useState<TimelineDateColumn[]>([]);
-  const [loadedMonths, setLoadedMonths] = useState<string[]>([]);
-  const [togglingCells, setTogglingCells] = useState<Set<string>>(new Set());
   const [isLoadingInitData, setIsLoadInitData] = useState(true);
   const [isLoadingTimeline, setIsLoadingTimeline] = useState(false);
   const [initError, setInitError] = useState<string | undefined>(undefined);
   const [loadMoreError, setLoadMoreError] = useState<string | undefined>(undefined);
+  const [togglingCells, setTogglingCells] = useState<Set<string>>(new Set());
   const [toggleError, setToggleError] = useState<string | undefined>(undefined);
   const scrollViewRef = useRef(null);
-
-  // Removed Animated scrollX and headerScrollRef
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -114,14 +94,10 @@ export default function TimelineScreen() {
         }
         if (timelineRes.data?.timeline) {
           let timeline = timelineToSet(timelineRes.data.timeline);
-          // const months = [initMonth];
           const columns = buildMonthDateColumns(monthInView);
 
-          // TODO: Compute date columns property
           setCachedMonths({ ...cachedMonths, [monthInView]: timeline })
           setDateColumns(columns);
-          // setLoadedMonths(months);
-          // setDateColumns(columns);
         }
       } catch (err) {
         if (!abortController.signal.aborted) {
@@ -147,7 +123,6 @@ export default function TimelineScreen() {
       if (response.data?.timeline) {
         const timeline = timelineToSet(response.data.timeline);
         const columns = buildMonthDateColumns(month);
-        // setTimeline((prevTimeline) => mergeTimelineSets(prevTimeline ?? {}, timelineSet));
         setCachedMonths({ ...cachedMonths, [month]: timeline })
         setDateColumns(columns)
         setMonthInView(month);
@@ -160,7 +135,7 @@ export default function TimelineScreen() {
     }
   }
 
-  async function handleTimelineCellClick(cellKey: string, activityId: string, dateKey: string, isCompleted: boolean) {
+  async function handleCellClick(cellKey: string, activityId: string, dateKey: string, isCompleted: boolean) {
     if (togglingCells.has(cellKey)) return;
 
     try {
@@ -180,37 +155,34 @@ export default function TimelineScreen() {
         throw new Error(response.error.message);
       }
 
-      setTimeline((prevTimeline) => {
-        if (!prevTimeline) return prevTimeline;
+      setCachedMonths((prevCachedMonths) => {
+        // if (!prevCachedMonths) return prevCachedMonths;
 
-        const nextTimeline = { ...prevTimeline };
-        const nextCompletedDates = new Set(nextTimeline[activityId] ?? []);
+        // Create new object rather than mutating existing
+        const newCachedMonths = { ...prevCachedMonths };
+        const month = newCachedMonths[monthInView];
+        const completedDates = month[activityId];
 
+        // Update client side toggle value of the cell
         if (isCompleting) {
-          nextCompletedDates.add(dateKey);
+          completedDates.add(dateKey);
         } else {
-          nextCompletedDates.delete(dateKey);
+          completedDates.delete(dateKey);
         }
 
-        nextTimeline[activityId] = nextCompletedDates;
-        return nextTimeline;
-      });
+        return newCachedMonths;
+      })
     } catch (err) {
       setToggleError('Unable to update activity status. Please try again.');
       console.error('Error updating timeline activity status', err);
     } finally {
       setTogglingCells((prev) => {
-        const next = new Set(prev);
-        next.delete(cellKey);
-        return next;
+        const newValue = new Set(prev);
+        newValue.delete(cellKey);
+        return newValue;
       });
     }
   }
-
-  // const nextMonthToLoad = useMemo(() => {
-  //   if (!loadedMonths.length) return;
-  //   return getNextMonthToLoad(loadedMonths[loadedMonths.length - 1]);
-  // }, [loadedMonths]);
 
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
@@ -356,7 +328,7 @@ export default function TimelineScreen() {
                       <View key={cellKey} style={styles.statusCellContainer}>
                         <TouchableOpacity
                           disabled={isToggling}
-                          onPress={() => handleTimelineCellClick(cellKey, activity.id, date.full, isCompleted)}
+                          onPress={() => handleCellClick(cellKey, activity.id, date.full, isCompleted)}
                           style={[
                             styles.statusCell,
                             isCompleted ? styles.statusCellComplete : styles.statusCellIncomplete,

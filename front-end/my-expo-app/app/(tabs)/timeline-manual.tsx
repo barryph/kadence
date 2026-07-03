@@ -5,6 +5,7 @@ import { timelineAPI, type ITimeline, type ITimelineSet } from '@/api/api.timeli
 import Button from '@/components/Button';
 import { Colors } from '@/constants/theme';
 import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from 'react-native-reanimated';
+import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/hook/commonTypes';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 
@@ -199,21 +200,20 @@ export default function TimelineScreen() {
    */
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
+  const columnHeaderRef = useAnimatedRef();
+  const rowHeaderRef = useAnimatedRef();
 
   // Runs on the UI thread
   const scrollHandlerX = useAnimatedScrollHandler({
-    onScroll: (event) => {
+    onScroll: (event: ReanimatedScrollEvent) => {
       scrollX.value = event.contentOffset.x;
     },
   });
   const scrollHandlerY = useAnimatedScrollHandler({
-    onScroll: (event) => {
+    onScroll: (event: ReanimatedScrollEvent) => {
       scrollY.value = event.contentOffset.y;
     },
   });
-
-  const columnHeaderRef = useAnimatedRef();
-  const rowHeaderRef = useAnimatedRef();
 
   // Sync the "scroll" position of the headers with the body
   useDerivedValue(() => {

@@ -41,6 +41,5 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'inherit',
-    fontSize: 'inherit',
   },
 });

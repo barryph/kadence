@@ -6,6 +6,8 @@ import Button from '@/components/Button';
 import { Colors } from '@/constants/theme';
 import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 
+// TODO: Sync changes when completing tasks in main page, and timeline
+
 type TimelineDateColumn = {
   full: string;
   month: string;
@@ -65,7 +67,6 @@ function getCurrentMonth() {
 }
 
 export default function TimelineScreen() {
-  // TODO: Start scrolled to the right
   const [activities, setActivities] = useState<IActivity[] | undefined>();
   const [cachedMonths, setCachedMonths] = useState<Record<string, ITimelineSet>>({});
   const currentMonth = getCurrentMonth();
@@ -79,6 +80,9 @@ export default function TimelineScreen() {
   const [toggleError, setToggleError] = useState<string | undefined>(undefined);
   const scrollViewRef = useRef(null);
 
+  /***
+   * Load initial data
+   */
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -115,6 +119,9 @@ export default function TimelineScreen() {
     }
   }, []);
 
+  /***
+   * Fetch more data
+   */
   async function fetchMonth(month: string) {
     try {
       setIsLoadingTimeline(true);
@@ -135,6 +142,9 @@ export default function TimelineScreen() {
     }
   }
 
+  /***
+   * Toggle cells
+   */
   async function handleCellClick(cellKey: string, activityId: string, dateKey: string, isCompleted: boolean) {
     if (togglingCells.has(cellKey)) return;
 
@@ -184,6 +194,9 @@ export default function TimelineScreen() {
     }
   }
 
+  /*** 
+   * Scrolling
+   */
   const scrollX = useSharedValue(0);
   const scrollY = useSharedValue(0);
 
@@ -209,6 +222,11 @@ export default function TimelineScreen() {
   useDerivedValue(() => {
     scrollTo(rowHeaderRef, 0, scrollY.value, false);
   });
+
+
+  /***
+   * Rendering
+   */
 
   const tableData = cachedMonths[monthInView];
 
@@ -263,7 +281,6 @@ export default function TimelineScreen() {
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
                 <View key={date.full} style={[styles.dateCell]}>
-                  {/* TODO: USE as renderColumnHeader */}
                   <Text style={styles.dateDay}>{date.day}</Text>
                   <Text style={styles.dateMonth}>{date.month}</Text>
                 </View>
@@ -280,7 +297,6 @@ export default function TimelineScreen() {
           <Animated.ScrollView ref={rowHeaderRef} showsVerticalScrollIndicator={false}>
             {activities.map((activity) => (
               <View key={activity.id} style={styles.activityLabelCell}>
-                {/* TODO: USE as renderRowHeader */}
                 <Text style={styles.activityLabelText} numberOfLines={1}>
                   {activity.ticker || activity.name}
                 </Text>

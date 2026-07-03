@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/themed-text';
 import LoaderScreen from '@/components/LoaderScreen';
 import NewActivityOverlay from '@/components/NewActivityOverlay';
+import UnmountOnBlur from '@/components/router/UnmountOnBlur';
 
 // Extend IActivity for client-side properties
 interface IActivityClient extends IActivity {
@@ -15,7 +16,7 @@ interface IActivityClient extends IActivity {
   queued?: boolean;
 }
 
-export default function Dashboard() {
+function Dashboard() {
   const router = useRouter();
   const DAYS_IN_WEEK = 7;
   const [activities, setActivities] = useState<IActivityClient[]>([]);
@@ -293,3 +294,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+export default function wrapper() {
+  return (
+    <UnmountOnBlur>
+      <Dashboard />
+    </UnmountOnBlur>
+  )
+}

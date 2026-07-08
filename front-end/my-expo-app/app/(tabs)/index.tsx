@@ -8,6 +8,8 @@ import { ThemedText } from '@/components/themed-text';
 import LoaderScreen from '@/components/LoaderScreen';
 import NewActivityOverlay from '@/components/NewActivityOverlay';
 import UnmountOnBlur from '@/components/router/UnmountOnBlur';
+import Background from '@/components/Background';
+import ActivityBackground from '@/components/ActivityBackground';
 
 // TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
 // TODO: Add edit activity page
@@ -102,12 +104,16 @@ function Dashboard() {
 
   return (
     <View style={styles.container}>
+      <Background />
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ThemedText type="defaultBold" style={styles.headline}>Activities In Motion</ThemedText>
         {activities.map((activity, index) => {
-          const delayPct = Math.min(Math.max((activity.daysUntil || 0) / DAYS_IN_WEEK, 0), 1);
+          const remainingPercent = Math.min(Math.max((activity.daysUntil || 0) / DAYS_IN_WEEK, 0), 1);
 
           return (
             <View style={[styles.activityWrapper]} key={activity.id}>
+              <ActivityBackground />
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => handleActivityClick(activity)}
@@ -127,7 +133,7 @@ function Dashboard() {
                     <View style={[styles.activityMain, index === 0 && styles.activityMainFirst]}>
                       <View style={styles.activityTitleRow}>
                         <View style={styles.activityNameGroup}>
-                          <ThemedText style={[styles.activityName, activity.queued && styles.activityNameSelected]}>
+                          <ThemedText type="defaultBold" style={[styles.activityName, activity.queued && styles.activityNameSelected]}>
                             {activity.name}
                           </ThemedText>
                           {activity.category && (
@@ -164,13 +170,44 @@ function Dashboard() {
 
                         {/* Progress gradient */}
                         <View style={{ width: '100%', height: '100%', flexDirection: 'row' }}>
-                          <View style={{ flex: delayPct, backgroundColor: 'transparent' }} />
-                          <LinearGradient
-                            colors={activity.queued ? ['#ffffff', '#ffffff'] : ['#0072ff', '#00c6ff']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={{ flex: 1 - delayPct }}
-                          />
+                          {/** This reverses the bars direction **/}
+                          {/* <View style={{ flex: remainingPercent, backgroundColor: 'transparent' }} /> */}
+                          {/** Setting flex to a decimal defines the length of the gradient bar **/}
+                          {activity.queued ? (
+                            <LinearGradient
+                              colors={['#087cff', '#08d8ff', '#52f2a8']}
+                              locations={[0, 0.62, 1]}
+                              start={{ x: 0, y: 0.5 }}
+                              end={{ x: 1, y: 0.5 }}
+                              style={{ flex: 1 - remainingPercent }}
+                            />
+                          ) : activity.daysUntil === 0 ? (
+                            <LinearGradient
+                              colors={['#087cff', '#08d8ff', '#ff3d54']}
+                              locations={[0, 0.5, 1]}
+                              start={{ x: 0, y: 0.5 }}
+                              end={{ x: 1, y: 0.5 }}
+                              style={{ flex: 1 - remainingPercent }}
+                            />
+                          ) : (
+                            <LinearGradient
+                              colors={[
+                                "#087cff",
+                                "#0096ff",
+                                "#08d8ff",
+                              ]}
+                              locations={[0, 0.42, 1]}
+                              start={{ x: 0, y: 0.5 }}
+                              end={{ x: 1, y: 0.5 }}
+                              style={{ flex: 1 - remainingPercent }}
+                            />
+                          )}
+                          {/* <LinearGradient */}
+                          {/*   colors={activity.queued ? ['#ffffff', '#ffffff'] : ['#0072ff', '#00c6ff']} */}
+                          {/*   start={{ x: 0, y: 0 }} */}
+                          {/*   end={{ x: 1, y: 0 }} */}
+                          {/*   style={{ flex: 1 - remainingPercent }} */}
+                          {/* /> */}
                         </View>
                       </View>
                     </View>
@@ -201,36 +238,67 @@ function Dashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    //     backgroundColor: `
+    //         radial-gradient(circle at 20% -10%, rgba(8,124,255,.28), transparent 34rem),
+    //         radial-gradient(circle at 95% 12%, rgba(8,216,255,.16), transparent 26rem),
+    //         radial-gradient(circle at 70% 100%, rgba(255,61,84,.12), transparent 28rem),
+    //         linear-gradient(180deg,#050711 0%,#0b1020 46%,#050711 100%);
+    // `,
+    //     backgroundAttachment: 'fixed',
+  },
+  headline: {
+    paddingHorizontal: 4,
+    fontSize: 24,
+    paddingTop: 10,
+    paddingBottom: 5,
+    color: '#fff',
+    // textTransform: 'uppercase',
+    // letterSpacing: '.08em',
+    letterSpacing: -0.01,
+    fontFamily: 'system-ui',
+    fontWeight: 700,
   },
   scrollContent: {
     paddingBottom: 100,
+    display: 'flex',
+    gap: 8,
+    paddingTop: 14,
+    paddingRight: 12,
+    paddingLeft: 12,
+    // paddingBottom: 18,
   },
   activityWrapper: {
     width: '100%',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: 'rgba(255,255,255,.1)',
+    borderRadius: 22,
+    overflow: 'hidden',
   },
   activityInner: {
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
   },
   activityInnerSelected: {
-    backgroundColor: '#0072ff', // Simplification of gradient
+    // backgroundColor: '#0072ff', // Simplification of gradient
   },
   activityMainFirst: {
     marginTop: 3,
   },
   activityMain: {
     width: '100%',
-    paddingTop: 8,
-    paddingHorizontal: 12,
-    paddingBottom: 12,
-    borderBottomWidth: 3,
-    borderBottomColor: 'rgba(211, 216, 255, 0.4)',
+    paddingTop: 12,
+    paddingHorizontal: 13,
+    paddingBottom: 4,
+    // borderBottomWidth: 3,
+    // borderBottomColor: 'rgba(211, 216, 255, 0.4)',
+    boxShadow: '0 14px 35px rgba(0,0,0,.22)',
+    // TODO: Fix boxShadow doesn't work
   },
   activityTitleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4,
+    // marginBottom: 4,
   },
   activityNameGroup: {
     flexDirection: 'row',
@@ -238,8 +306,7 @@ const styles = StyleSheet.create({
   },
   activityName: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: '400',
+    color: '#fff',
   },
   activityNameSelected: {
     color: '#fff',
@@ -261,12 +328,16 @@ const styles = StyleSheet.create({
   },
   activityDetailsText: {
     fontSize: 12,
-    color: '#888',
+    // fontSize: '.78rem',
+    color: '#8f98aa',
+    // letterSpacing: '-.045em',
+    letterSpacing: -0.45,
+    fontWeight: 500,
   },
   activityDetailsSpan: {
-    fontSize: 14,
-    fontWeight: 600,
-    color: '#111',
+    // fontSize: 14,
+    fontWeight: 700,
+    color: '#fff',
   },
   activityDetailsTextSelected: {
     color: '#eee',
@@ -275,11 +346,16 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   activityBarContainer: {
-    height: 12,
-    backgroundColor: '#d6daea',
+    marginHorizontal: 3,
+    height: 18,
+    // backgroundColor: '#d6daea',
+    backgroundColor: '#4b4b5c',
     position: 'relative',
     overflow: 'hidden',
     transform: [{ skewX: '-24deg' }],
+    marginTop: 6,
+    marginBottom: 13,
+    borderRadius: 4,
   },
   activityBarNotches: {
     ...StyleSheet.absoluteFillObject,
@@ -292,7 +368,7 @@ const styles = StyleSheet.create({
   },
   activityBarNotchBorder: {
     borderRightWidth: 2,
-    borderRightColor: '#fff',
+    borderRightColor: '#00000088',
   },
   floatingAddButton: {
     position: 'absolute',
@@ -309,6 +385,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    boxShadow: '0 18px 38px rgba(0,90,255,.42), 0 8px 18px rgba(0,0,0,.36)',
   },
   floatingAddButtonText: {
     color: '#fff',

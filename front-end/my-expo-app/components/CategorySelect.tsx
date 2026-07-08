@@ -35,7 +35,7 @@ export default function CategorySelect({
 
   return (
     <View style={styles.wrapper}>
-      {label && <ThemedText style={styles.label}>{label}</ThemedText>}
+      {label && <ThemedText style={styles.label} type="defaultSemiBold">{label}</ThemedText>}
       <Pressable
         onPress={() => setShowDropdown((open) => !open)}
         style={[styles.select, !selectedCategory && styles.selectFaint]}
@@ -59,7 +59,7 @@ export default function CategorySelect({
               onPress={() => selectCategory(option)}
               style={styles.dropdownItem}
             >
-              <ThemedText>{option.name}</ThemedText>
+              <ThemedText style={styles.dropDownText}>{option.name}</ThemedText>
               <View style={[styles.dot, { backgroundColor: option.color }]} />
             </Pressable>
           ))}
@@ -70,7 +70,7 @@ export default function CategorySelect({
             }}
             style={styles.dropdownItem}
           >
-            <ThemedText type="defaultSemiBold">+ Create Category</ThemedText>
+            <ThemedText style={styles.dropDownText} type="defaultSemiBold">+ Create Category</ThemedText>
           </Pressable>
         </View>
       )}
@@ -96,8 +96,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 14,
     lineHeight: 22,
-    color: '#333',
-    opacity: 0.7,
+    color: '#fff',
   },
   select: {
     flexDirection: 'row',
@@ -105,10 +104,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 12,
     paddingVertical: 12,
-    backgroundColor: '#f6f6f6',
+    backgroundColor: 'rgba(255,255,255,.055)',
     borderWidth: 1,
-    borderColor: '#eaeaea',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 8,
+    color: '#fff',
   },
   selectFaint: {},
   selectedRow: {
@@ -121,12 +121,12 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     fontSize: 16,
-    color: '#555',
+    color: '#999',
     flex: 1,
   },
   arrow: {
     fontSize: 20,
-    color: '#888',
+    color: '#999',
     transform: [{ rotate: '90deg' }],
   },
   dot: {
@@ -160,5 +160,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#eaeaea',
+  },
+  dropDownText: {
+    color: '#333',
   },
 });

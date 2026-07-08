@@ -14,6 +14,7 @@ import Button from './Button';
 import CategorySelect from './CategorySelect';
 import { ThemedText } from './themed-text';
 import { activitiesAPI, type IActivity, type ICategory } from '@/api/api.activity';
+import Background from './backgrounds/Background';
 
 function formatDateISO(date: Date): string {
   const year = date.getFullYear();
@@ -86,6 +87,7 @@ export default function NewActivityOverlay({ onClose }: NewActivityOverlayProps)
   return (
     <Modal visible animationType="slide" presentationStyle="fullScreen" onRequestClose={() => onClose()}>
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+        <Background showRed={false} />
         <KeyboardAvoidingView
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -126,7 +128,7 @@ export default function NewActivityOverlay({ onClose }: NewActivityOverlayProps)
               options={categories}
               onCreate={addCategory}
             />
-            <ThemedText style={styles.dateLabel}>Last Done (optional)</ThemedText>
+            <ThemedText type="defaultSemiBold" style={styles.dateLabel}>Last Done (optional)</ThemedText>
             <TouchableOpacity
               style={styles.dateField}
               onPress={() => setShowDatePicker(true)}
@@ -177,7 +179,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -210,20 +211,20 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 14,
     lineHeight: 22,
-    color: '#333',
+    color: '#fff',
   },
   dateField: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,.055)',
     paddingHorizontal: 16,
     paddingVertical: 12,
     marginBottom: 8,
-    backgroundColor: '#fff',
   },
   dateValue: {
     fontSize: 16,
-    color: '#333',
+    color: '#fff',
   },
   datePlaceholder: {
     fontSize: 16,
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
   },
   clearDateText: {
     fontSize: 14,
-    color: '#0072ff',
+    color: '#fff',
   },
   datePickerDone: {
     marginBottom: 16,

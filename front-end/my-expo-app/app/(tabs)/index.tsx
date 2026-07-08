@@ -8,8 +8,8 @@ import { ThemedText } from '@/components/themed-text';
 import LoaderScreen from '@/components/LoaderScreen';
 import NewActivityOverlay from '@/components/NewActivityOverlay';
 import UnmountOnBlur from '@/components/router/UnmountOnBlur';
-import Background from '@/components/Background';
-import ActivityBackground from '@/components/ActivityBackground';
+import Background from '@/components/backgrounds/Background';
+import ActivityBackground from '@/components/backgrounds/ActivityBackground';
 
 // TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
 // TODO: Add edit activity page

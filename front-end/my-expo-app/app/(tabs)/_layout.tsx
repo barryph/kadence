@@ -10,7 +10,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/context/AuthContext';
 import NavDrawer from '@/components/NavDrawer';
 import { ThemedText } from '@/components/themed-text';
-import BlueBackground from '@/components/BlueBackground';
+import BlueBackground from '@/components/backgrounds/BlueBackground';
 
 
 export default function TabLayout() {

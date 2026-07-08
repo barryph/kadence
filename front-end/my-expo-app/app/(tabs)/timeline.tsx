@@ -7,7 +7,7 @@ import { Colors } from '@/constants/theme';
 import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/hook/commonTypes';
 import UnmountOnBlur from '@/components/router/UnmountOnBlur';
-import Background from '@/components/Background';
+import Background from '@/components/backgrounds/Background';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 

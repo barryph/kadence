@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-export default function GradientOverlay() {
+export default function ActivityBackground() {
   return (
     <View style={StyleSheet.absoluteFill}>
       {/* linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.034)) */}

@@ -7,6 +7,7 @@ import { Colors } from '@/constants/theme';
 import Animated, { scrollTo, useAnimatedRef, useAnimatedScrollHandler, useDerivedValue, useSharedValue } from 'react-native-reanimated';
 import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/hook/commonTypes';
 import UnmountOnBlur from '@/components/router/UnmountOnBlur';
+import Background from '@/components/Background';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 
@@ -266,6 +267,8 @@ function TimelineScreen() {
 
   return (
     <View style={styles.container}>
+      <Background />
+
       <View style={[styles.isLoadingOverlay, !isLoadingTimeline && styles.hide]}>
         <ActivityIndicator size="large" />
         <Text style={{ color: '#fff', marginTop: 15, fontWeight: 600 }}>Loading Activities</Text>
@@ -388,17 +391,17 @@ function TimelineScreen() {
 
 const CELL_SIZE = 18;
 const CELL_GAP = 12;
-const ROW_CONTENT_SIZE = 30;
+const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + (CELL_GAP * 2);
-const LOAD_MORE_WIDTH = 60;
+const LOAD_MORE_WIDTH = 40;
 const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
+const headersBackground = '#1a4163';
 
 const styles = StyleSheet.create({
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   loadingText: {
     color: '#64748b',
@@ -412,7 +415,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   topRow: {
     flexDirection: 'row',
@@ -425,9 +427,10 @@ const styles = StyleSheet.create({
     width: LEFT_COLUMN_WIDTH,
     height: ROW_HEIGHT,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e8ef',
+    borderBottomColor: 'rgba(255,255,255,.1)',
     borderRightWidth: 1,
-    borderRightColor: '#e5e8ef',
+    borderRightColor: 'rgba(255,255,255,.1)',
+    backgroundColor: headersBackground,
   },
   cornerText: {
     color: '#fff',
@@ -438,26 +441,26 @@ const styles = StyleSheet.create({
     flex: 1,
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e8ef',
+    borderBottomColor: 'rgba(255,255,255,.1)',
     height: ROW_HEIGHT,
   },
   rowHeaderClip: {
     width: LEFT_COLUMN_WIDTH,
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
     borderRightWidth: 1,
-    borderRightColor: '#e5e8ef',
+    borderRightColor: 'rgba(255,255,255,.1)',
   },
   headerRow: {
+    backgroundColor: headersBackground,
     height: ROW_HEIGHT,
     width: '100%',
-    backgroundColor: '#fff',
     zIndex: 20,
   },
   leftColumnHeader: {
     height: '100%',
     width: LEFT_COLUMN_WIDTH - CELL_GAP,
     borderRightWidth: 1,
-    borderRightColor: '#e5e8ef',
+    borderRightColor: 'rgba(255,255,255,.1)',
   },
   headerScroll: {
     flex: 1,
@@ -476,12 +479,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   dateDay: {
-    color: '#5d6778',
+    // color: '#5d6778',
+    color: '#fff',
     fontSize: 14,
     lineHeight: 14,
   },
   dateMonth: {
-    color: '#5d6778',
+    // color: '#5d6778',
+    color: '#fff',
     fontSize: 10,
     lineHeight: 14,
   },
@@ -500,7 +505,8 @@ const styles = StyleSheet.create({
     width: LEFT_COLUMN_WIDTH,
     minWidth: LEFT_COLUMN_WIDTH,
     borderRightWidth: 1,
-    borderRightColor: '#e5e8ef',
+    borderRightColor: 'rgba(255,255,255,.1)',
+    color: '#fff',
     flexShrink: 0,
   },
   activityLabelCell: {
@@ -508,10 +514,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f2f7',
+    borderBottomColor: 'rgba(255,255,255,.1)',
+    backgroundColor: headersBackground,
   },
   activityLabelText: {
-    color: '#1f2937',
+    color: '#fff',
     fontSize: 16,
     fontWeight: '800',
   },
@@ -542,8 +549,8 @@ const styles = StyleSheet.create({
     height: ROW_HEIGHT,
     paddingHorizontal: CELL_GAP,
     gap: CELL_GAP,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f2f7',
+    // borderBottomWidth: 1,
+    // borderBottomColor: 'rgba(255,255,255,.1)',
   },
   statusCellContainer: {
     width: CELL_SIZE,
@@ -557,10 +564,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   statusCellComplete: {
-    backgroundColor: '#2f6dff',
+    backgroundColor: '#ff3d54',
   },
   statusCellIncomplete: {
-    backgroundColor: '#cfd6e2',
+    backgroundColor: 'rgba(155, 155, 155, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,.1)',
   },
   statusCellToggling: {
     opacity: 0.5,
@@ -571,15 +580,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: CELL_GAP,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f2f7',
+    borderBottomColor: 'rgba(255,255,255,.1)',
   },
   paddingElementForLoadMoreColumn: {
     width: LOAD_MORE_WIDTH,
   },
   loadMoreButton: {
     flexGrow: 0,
-    color: '#0072ff',
-    backgroundColor: '#fff',
+    color: '#fff',
+    backgroundColor: 'transparent',
     paddingHorizontal: 0,
   },
   loadMoreButtonTextStyles: {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useRouter } from 'expo-router';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import SwipeRow from '@/components/SwipeRow';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,6 +8,10 @@ import { ThemedText } from '@/components/themed-text';
 import LoaderScreen from '@/components/LoaderScreen';
 import NewActivityOverlay from '@/components/NewActivityOverlay';
 import UnmountOnBlur from '@/components/router/UnmountOnBlur';
+
+// TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
+// TODO: Add edit activity page
+// TODO: Add color categories
 
 // Extend IActivity for client-side properties
 interface IActivityClient extends IActivity {
@@ -16,6 +21,7 @@ interface IActivityClient extends IActivity {
 }
 
 function Dashboard() {
+  const router = useRouter();
   const DAYS_IN_WEEK = 7;
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,7 +84,7 @@ function Dashboard() {
     // In Expo router, we might route to an edit screen
     // For now we'll just log or route to a dummy path
     console.log('handling edit trigger');
-    // router.push(`/activity/edit/${activity.id}`);
+    router.push(`/activity/edit/${activity.id}`);
   };
 
   function handleNewActivityOverlayClose(activity?: IActivityClient) {

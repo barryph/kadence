@@ -1,7 +1,11 @@
 import { StyleSheet, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-export default function GradientBackground() {
+interface IProps {
+  showRed?: boolean,
+}
+
+export default function GradientBackground({ showRed = true }: IProps) {
   return (
     <View style={StyleSheet.absoluteFill}>
       {/* Base background */}
@@ -52,6 +56,7 @@ export default function GradientBackground() {
         style={[
           StyleSheet.absoluteFill,
           styles.redGlow,
+          !showRed && { opacity: 0 },
         ]}
       />
     </View>

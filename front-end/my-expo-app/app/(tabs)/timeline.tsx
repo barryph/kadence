@@ -267,7 +267,7 @@ function TimelineScreen() {
 
   return (
     <View style={styles.container}>
-      <Background />
+      <Background showRed={false} />
 
       <View style={[styles.isLoadingOverlay, !isLoadingTimeline && styles.hide]}>
         <ActivityIndicator size="large" />
@@ -564,7 +564,8 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   statusCellComplete: {
-    backgroundColor: '#ff3d54',
+    //backgroundColor: '#ff3d54',
+    backgroundColor: 'rgb(96, 162, 249)',
   },
   statusCellIncomplete: {
     backgroundColor: 'rgba(155, 155, 155, 0.1)',

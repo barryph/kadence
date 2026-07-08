@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, Animated, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, Modal, TouchableOpacity, Animated, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from './themed-text';
 import { Colors } from '@/constants/theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import BlueBackground from './BlueBackground';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const DRAWER_WIDTH = SCREEN_WIDTH;
@@ -65,26 +67,27 @@ export default function NavDrawer({ isOpen, onClose, onLogout }: NavDrawerProps)
             { transform: [{ translateX: slideAnim }] }
           ]}
         >
-          <View style={styles.header}>
+          <BlueBackground />
+          <SafeAreaView edges={['top']} style={styles.header}>
             <ThemedText
-              type="defaultSemiBold"
+              type="defaultBold"
               style={{
                 color: '#fff',
-                fontSize: 22,
+                fontSize: 32,
               }}
             >
               Fit<ThemedText
-                type="defaultSemiBold"
+                type="defaultBold"
                 style={{
                   color: Colors.light.faint,
-                  fontSize: 22,
+                  fontSize: 32,
                 }}
               >Trick</ThemedText>
             </ThemedText>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <ThemedText style={styles.closeIcon}>✕</ThemedText>
             </TouchableOpacity>
-          </View>
+          </SafeAreaView>
 
           <View style={styles.navItems}>
             <TouchableOpacity
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
   },
   drawerContainer: {
     width: DRAWER_WIDTH,
-    backgroundColor: Colors.blue.new,
+    // backgroundColor: Colors.blue.new,
     height: '100%',
     shadowColor: '#000',
     shadowOffset: {
@@ -136,14 +139,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
+    paddingRight: 25,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 47,
-    paddingBottom: 10,
+    paddingTop: 24,
+    paddingBottom: 14,
   },
   closeButton: {
     paddingVertical: 8,

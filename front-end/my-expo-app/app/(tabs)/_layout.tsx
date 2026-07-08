@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React, { useState } from 'react';
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HapticTab } from '@/components/haptic-tab';
@@ -10,8 +10,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/context/AuthContext';
 import NavDrawer from '@/components/NavDrawer';
 import { ThemedText } from '@/components/themed-text';
-import UnmountOnBlur from '@/components/router/UnmountOnBlur';
-import { LinearGradient } from 'expo-linear-gradient';
+import BlueBackground from '@/components/BlueBackground';
 
 
 export default function TabLayout() {
@@ -30,7 +29,7 @@ export default function TabLayout() {
       <SafeAreaView
         edges={['top']}
         style={{
-          paddingVertical: 14,
+          paddingVertical: 20,
           paddingHorizontal: 15,
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -38,17 +37,7 @@ export default function TabLayout() {
           alignItems: 'center',
         }}
       >
-        <LinearGradient
-          colors={[
-            'rgba(7,124,255,0.98)',
-            'rgba(0,158,255,0.92)',
-            'rgba(11,216,255,0.82)',
-          ]}
-          locations={[0, 0.58, 1]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
+        <BlueBackground />
         <ThemedText
           type="defaultBold"
           style={{
@@ -75,7 +64,7 @@ export default function TabLayout() {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-            <Text style={{ color: '#d8ecff', fontSize: 24, fontWeight: 'bold' }}>☰</Text>
+            <ThemedText style={{ color: '#d8ecff', fontSize: 24 }}>☰</ThemedText>
           </View>
         </TouchableOpacity>
       </SafeAreaView>

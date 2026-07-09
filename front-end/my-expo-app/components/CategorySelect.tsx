@@ -18,7 +18,9 @@ export default function CategorySelect({
   onCreate,
 }: CategorySelectProps) {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
+    null,
+  );
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
 
   function handleSave(category: ICategory) {
@@ -35,15 +37,23 @@ export default function CategorySelect({
 
   return (
     <View style={styles.wrapper}>
-      {label && <ThemedText style={styles.label} type="defaultSemiBold">{label}</ThemedText>}
+      {label && (
+        <ThemedText style={styles.label} type="defaultSemiBold">
+          {label}
+        </ThemedText>
+      )}
       <Pressable
         onPress={() => setShowDropdown((open) => !open)}
         style={[styles.select, !selectedCategory && styles.selectFaint]}
       >
         {selectedCategory ? (
           <View style={styles.selectedRow}>
-            <ThemedText style={styles.selectText}>{selectedCategory.name}</ThemedText>
-            <View style={[styles.dot, { backgroundColor: selectedCategory.color }]} />
+            <ThemedText style={styles.selectText}>
+              {selectedCategory.name}
+            </ThemedText>
+            <View
+              style={[styles.dot, { backgroundColor: selectedCategory.color }]}
+            />
           </View>
         ) : (
           <ThemedText style={styles.placeholderText}>{placeholder}</ThemedText>
@@ -70,7 +80,9 @@ export default function CategorySelect({
             }}
             style={styles.dropdownItem}
           >
-            <ThemedText style={styles.dropDownText} type="defaultSemiBold">+ Create Category</ThemedText>
+            <ThemedText style={styles.dropDownText} type="defaultSemiBold">
+              + Create Category
+            </ThemedText>
           </Pressable>
         </View>
       )}

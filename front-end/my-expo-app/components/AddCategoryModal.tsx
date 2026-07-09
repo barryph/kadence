@@ -17,7 +17,10 @@ interface AddCategoryModalProps {
   onClose: () => void;
 }
 
-export default function AddCategoryModal({ onSave, onClose }: AddCategoryModalProps) {
+export default function AddCategoryModal({
+  onSave,
+  onClose,
+}: AddCategoryModalProps) {
   const [name, setName] = useState('');
   const [color, setColor] = useState('');
 
@@ -32,7 +35,11 @@ export default function AddCategoryModal({ onSave, onClose }: AddCategoryModalPr
         style={styles.backdrop}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <TouchableOpacity style={styles.backdropFill} activeOpacity={1} onPress={onClose} />
+        <TouchableOpacity
+          style={styles.backdropFill}
+          activeOpacity={1}
+          onPress={onClose}
+        />
         <View style={styles.card} onStartShouldSetResponder={() => true}>
           <ThemedText type="subtitle" style={styles.title}>
             Create A Category

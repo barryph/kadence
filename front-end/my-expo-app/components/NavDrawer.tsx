@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity, Animated, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from './themed-text';
 import { Colors } from '@/constants/theme';
@@ -15,7 +23,11 @@ interface NavDrawerProps {
   onLogout: () => void;
 }
 
-export default function NavDrawer({ isOpen, onClose, onLogout }: NavDrawerProps) {
+export default function NavDrawer({
+  isOpen,
+  onClose,
+  onLogout,
+}: NavDrawerProps) {
   const router = useRouter();
   const slideAnim = useRef(new Animated.Value(DRAWER_WIDTH)).current;
   const [isModalVisible, setIsModalVisible] = useState(isOpen);
@@ -64,7 +76,7 @@ export default function NavDrawer({ isOpen, onClose, onLogout }: NavDrawerProps)
         <Animated.View
           style={[
             styles.drawerContainer,
-            { transform: [{ translateX: slideAnim }] }
+            { transform: [{ translateX: slideAnim }] },
           ]}
         >
           <BlueBackground />
@@ -76,13 +88,16 @@ export default function NavDrawer({ isOpen, onClose, onLogout }: NavDrawerProps)
                 fontSize: 32,
               }}
             >
-              Fit<ThemedText
+              Fit
+              <ThemedText
                 type="defaultBold"
                 style={{
                   color: Colors.light.faint,
                   fontSize: 32,
                 }}
-              >Trick</ThemedText>
+              >
+                Trick
+              </ThemedText>
             </ThemedText>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <ThemedText style={styles.closeIcon}>✕</ThemedText>
@@ -104,10 +119,7 @@ export default function NavDrawer({ isOpen, onClose, onLogout }: NavDrawerProps)
               <ThemedText style={styles.navText}>Activity Hub</ThemedText>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.navItem]}
-              onPress={handleLogout}
-            >
+            <TouchableOpacity style={[styles.navItem]} onPress={handleLogout}>
               <ThemedText style={styles.navText}>Logout</ThemedText>
             </TouchableOpacity>
           </View>

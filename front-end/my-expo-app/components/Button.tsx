@@ -1,5 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, type TouchableOpacityProps, StyleProp, TextStyle } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  type TouchableOpacityProps,
+  StyleProp,
+  TextStyle,
+} from 'react-native';
 import { ThemedText } from './themed-text';
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -8,10 +16,20 @@ interface ButtonProps extends TouchableOpacityProps {
   textStyle: StyleProp<TextStyle>;
 }
 
-export default function Button({ children, isLoading, style, textStyle, ...props }: ButtonProps) {
+export default function Button({
+  children,
+  isLoading,
+  style,
+  textStyle,
+  ...props
+}: ButtonProps) {
   return (
     <TouchableOpacity
-      style={[styles.button, props.disabled || isLoading ? styles.buttonDisabled : null, style]}
+      style={[
+        styles.button,
+        props.disabled || isLoading ? styles.buttonDisabled : null,
+        style,
+      ]}
       activeOpacity={0.8}
       disabled={props.disabled || isLoading}
       {...props}
@@ -19,7 +37,9 @@ export default function Button({ children, isLoading, style, textStyle, ...props
       {isLoading ? (
         <ActivityIndicator color="#fff" />
       ) : (
-        <ThemedText style={[styles.text, textStyle]} type="defaultSemiBold">{children}</ThemedText>
+        <ThemedText style={[styles.text, textStyle]} type="defaultSemiBold">
+          {children}
+        </ThemedText>
       )}
     </TouchableOpacity>
   );

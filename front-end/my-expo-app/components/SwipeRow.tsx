@@ -1,6 +1,6 @@
-import React, { ReactNode } from "react";
-import { View, Text, StyleSheet, } from "react-native";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import React, { ReactNode } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
 import Animated, {
   useSharedValue,
@@ -8,7 +8,7 @@ import Animated, {
   withSpring,
   interpolate,
   Extrapolation,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
 const ACTION_THRESHOLD = 110;
@@ -89,7 +89,7 @@ export default function SwipeRow({
         translateX.value,
         [-ACTION_THRESHOLD, 0],
         [1, 0],
-        Extrapolation.CLAMP
+        Extrapolation.CLAMP,
       ),
     };
   });
@@ -100,7 +100,7 @@ export default function SwipeRow({
         translateX.value,
         [0, ACTION_THRESHOLD],
         [0, 1],
-        Extrapolation.CLAMP
+        Extrapolation.CLAMP,
       ),
     };
   });
@@ -113,16 +113,14 @@ export default function SwipeRow({
           styles.backgroundLayer,
           {
             backgroundColor: swipeLeftBackground,
-            justifyContent: "flex-end",
+            justifyContent: 'flex-end',
             paddingRight: 20,
           },
           leftBackgroundOpacity,
         ]}
       >
         <View style={{ opacity: 1 /* children color handled below */ }}>
-          <Text style={{ color: swipeLeftColor }}>
-            {swipeLeftChild}
-          </Text>
+          <Text style={{ color: swipeLeftColor }}>{swipeLeftChild}</Text>
         </View>
       </Animated.View>
 
@@ -132,16 +130,14 @@ export default function SwipeRow({
           styles.backgroundLayer,
           {
             backgroundColor: swipeRightBackground,
-            justifyContent: "flex-start",
+            justifyContent: 'flex-start',
             paddingLeft: 20,
           },
           rightBackgroundOpacity,
         ]}
       >
         <View style={{ opacity: 1 }}>
-          <Text style={{ color: swipeRightColor }}>
-            {swipeRightChild}
-          </Text>
+          <Text style={{ color: swipeRightColor }}>{swipeRightChild}</Text>
         </View>
       </Animated.View>
 
@@ -157,19 +153,19 @@ export default function SwipeRow({
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
-    overflow: "hidden",
-    width: "100%",
+    position: 'relative',
+    overflow: 'hidden',
+    width: '100%',
   },
   backgroundLayer: {
     ...StyleSheet.absoluteFillObject,
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "row",
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
   },
   foregroundLayer: {
-    position: "relative",
+    position: 'relative',
     zIndex: 1,
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
 });

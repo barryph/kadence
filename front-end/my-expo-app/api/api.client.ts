@@ -1,6 +1,6 @@
-import { ErrorCode, type ApiResponse, type ServerResponse } from "./api.types";
-import { errorMapper } from "./errorHandler";
-import { Platform } from "react-native";
+import { ErrorCode, type ApiResponse, type ServerResponse } from './api.types';
+import { errorMapper } from './errorHandler';
+import { Platform } from 'react-native';
 
 export interface OptionalOptions {
   signal?: AbortSignal;
@@ -12,17 +12,20 @@ export interface OptionalOptions {
 const BASE_URL = 'http://localhost:3000';
 
 class APIClient {
-  async request<T>(url: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  async request<T>(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<ApiResponse<T>> {
     try {
       const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
       console.log('Full URL', fullUrl);
       const response = await fetch(fullUrl, {
         // Set your default options here
         ...options,
-        credentials: "include",
+        credentials: 'include',
         headers: new Headers({
-          "Content-Type": "application/json",
-          "bypass-tunnel-reminder": "true",
+          'Content-Type': 'application/json',
+          'bypass-tunnel-reminder': 'true',
           ...options.headers,
         }),
       });
@@ -40,7 +43,7 @@ class APIClient {
 
       return {
         data: json.data!,
-      }
+      };
     } catch (error) {
       // Fetch only throws an error for specific network conditions, or permission/configuration issues
       console.error('Error while making request', error);
@@ -57,28 +60,42 @@ class APIClient {
     }
   }
 
-  async get<T>(url: string, options: OptionalOptions = {}): Promise<ApiResponse<T>> {
-    return this.request<T>(url, { method: "GET", ...options });
+  async get<T>(
+    url: string,
+    options: OptionalOptions = {},
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>(url, { method: 'GET', ...options });
   }
 
-  async post<T>(url: string, body: Record<string, any>, options: OptionalOptions = {}): Promise<ApiResponse<T>> {
+  async post<T>(
+    url: string,
+    body: Record<string, any>,
+    options: OptionalOptions = {},
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(url, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify(body),
       ...options,
     });
   }
 
-  async put<T>(url: string, body: Record<string, any>, options: OptionalOptions = {}): Promise<ApiResponse<T>> {
+  async put<T>(
+    url: string,
+    body: Record<string, any>,
+    options: OptionalOptions = {},
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(url, {
-      method: "PUT",
+      method: 'PUT',
       body: JSON.stringify(body),
       ...options,
     });
   }
 
-  async delete<T>(url: string, options: OptionalOptions = {}): Promise<ApiResponse<T>> {
-    return this.request<T>(url, { method: "DELETE", ...options });
+  async delete<T>(
+    url: string,
+    options: OptionalOptions = {},
+  ): Promise<ApiResponse<T>> {
+    return this.request<T>(url, { method: 'DELETE', ...options });
   }
 }
 

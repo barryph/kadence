@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, TextInput, Text, StyleSheet, type TextInputProps } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  type TextInputProps,
+} from 'react-native';
 import { ThemedText } from './themed-text';
 
 interface InputProps extends TextInputProps {
@@ -7,16 +13,27 @@ interface InputProps extends TextInputProps {
   errorMessage?: string;
 }
 
-export default function Input({ label, errorMessage, style, ...props }: InputProps) {
+export default function Input({
+  label,
+  errorMessage,
+  style,
+  ...props
+}: InputProps) {
   return (
     <View style={styles.container}>
-      {label && <ThemedText style={styles.label} type="defaultSemiBold">{label}</ThemedText>}
+      {label && (
+        <ThemedText style={styles.label} type="defaultSemiBold">
+          {label}
+        </ThemedText>
+      )}
       <TextInput
         style={[styles.input, errorMessage ? styles.inputError : null, style]}
         placeholderTextColor="#999"
         {...props}
       />
-      {errorMessage && <ThemedText style={styles.errorText}>{errorMessage}</ThemedText>}
+      {errorMessage && (
+        <ThemedText style={styles.errorText}>{errorMessage}</ThemedText>
+      )}
     </View>
   );
 }

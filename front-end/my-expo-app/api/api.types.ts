@@ -10,7 +10,10 @@ export interface ServerError {
 }
 
 // All error codes across the app
-export interface IUser { id: string; email: string; }
+export interface IUser {
+  id: string;
+  email: string;
+}
 // export enum ErrorCode {
 //   // Auth errors
 //   INVALID_CREDENTIALS = 'AUTH_INVALID_CREDENTIALS',
@@ -28,7 +31,7 @@ export const ErrorCode = {
   GENERIC_ERROR: 'GENERIC_ERROR',
   NETWORK_ERROR: 'NETWORK_ERROR',
 } as const;
-export type TErrorCode = typeof ErrorCode[keyof typeof ErrorCode]; // This type matches any value of the Error Code object
+export type TErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]; // This type matches any value of the Error Code object
 // Alternatively could define a union? type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
 export interface AppError {
@@ -39,5 +42,4 @@ export interface AppError {
 }
 
 export type ApiResponse<T> =
-  | { data: T, error?: never }
-  | { error: AppError, data?: never };
+  { data: T; error?: never } | { error: AppError; data?: never };

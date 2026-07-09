@@ -12,7 +12,6 @@ import NavDrawer from '@/components/NavDrawer';
 import { ThemedText } from '@/components/themed-text';
 import BlueBackground from '@/components/backgrounds/BlueBackground';
 
-
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { logout } = useAuth();
@@ -24,8 +23,7 @@ export default function TabLayout() {
       paddingVertical: 40,
     },
 
-    header: () =>
-    (
+    header: () => (
       <SafeAreaView
         edges={['top']}
         style={{
@@ -45,26 +43,33 @@ export default function TabLayout() {
             fontSize: 32,
           }}
         >
-          Fit<ThemedText
+          Fit
+          <ThemedText
             type="defaultBold"
             style={{
               color: Colors.light.faint,
               fontSize: 32,
             }}
-          >Trick</ThemedText>
+          >
+            Trick
+          </ThemedText>
         </ThemedText>
 
         <TouchableOpacity onPress={() => setIsDrawerOpen(true)}>
-          <View style={{
-            backgroundColor: 'rgba(255,255,255,.11)',
-            borderRadius: 17,
-            height: 44,
-            width: 45,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-            <ThemedText style={{ color: '#d8ecff', fontSize: 24 }}>☰</ThemedText>
+          <View
+            style={{
+              backgroundColor: 'rgba(255,255,255,.11)',
+              borderRadius: 17,
+              height: 44,
+              width: 45,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <ThemedText style={{ color: '#d8ecff', fontSize: 24 }}>
+              ☰
+            </ThemedText>
           </View>
         </TouchableOpacity>
       </SafeAreaView>
@@ -85,7 +90,9 @@ export default function TabLayout() {
           options={{
             ...headerOptions,
             title: 'Home',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="house.fill" color={color} />
+            ),
           }}
         />
         <Tabs.Screen
@@ -93,18 +100,22 @@ export default function TabLayout() {
           options={{
             ...headerOptions,
             title: 'Timeline',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="calendar" color={color} />
+            ),
           }}
         />
         <Tabs.Screen
           name="explore"
           options={{
             title: 'Explore',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="paperplane.fill" color={color} />
+            ),
             href: null,
           }}
         />
-      </Tabs >
+      </Tabs>
 
       <NavDrawer
         isOpen={isDrawerOpen}

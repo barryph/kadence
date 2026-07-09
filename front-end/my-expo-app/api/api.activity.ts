@@ -1,4 +1,4 @@
-import { apiClient, type OptionalOptions } from "./api.client";
+import { apiClient, type OptionalOptions } from './api.client';
 
 export interface IActivity {
   id: string;
@@ -10,9 +10,12 @@ export interface IActivity {
   daysUntil: number;
 }
 
-interface CreateActivityDTO extends Omit<Omit<Omit<IActivity, "id">, "userId">, "daysUntil"> {
+interface CreateActivityDTO extends Omit<
+  Omit<Omit<IActivity, 'id'>, 'userId'>,
+  'daysUntil'
+> {
   lastDone?: string;
-};
+}
 
 interface CreateActivityResponse {
   activity: IActivity;
@@ -41,8 +44,8 @@ interface EditActivityResponse {
 }
 
 export interface ICategory {
-  name: string,
-  color: string,
+  name: string;
+  color: string;
 }
 
 export const activitiesAPI = {
@@ -53,7 +56,11 @@ export const activitiesAPI = {
     );
   },
 
-  editActivity(activityId: string, body: EditActivityDTO, options?: OptionalOptions) {
+  editActivity(
+    activityId: string,
+    body: EditActivityDTO,
+    options?: OptionalOptions,
+  ) {
     return apiClient.post<EditActivityResponse>(
       `/activities/edit/${activityId}`,
       body,
@@ -62,12 +69,12 @@ export const activitiesAPI = {
   },
 
   createActivity(body: CreateActivityDTO, options?: OptionalOptions) {
-    return apiClient.post<CreateActivityResponse>("/activities", body, options);
+    return apiClient.post<CreateActivityResponse>('/activities', body, options);
   },
 
   getAllByUser(options?: OptionalOptions) {
     return apiClient.get<GetAllActivitiesByUserResponse>(
-      "/activities",
+      '/activities',
       options,
     );
   },

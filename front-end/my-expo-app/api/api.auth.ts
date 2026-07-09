@@ -1,5 +1,5 @@
-import type { IUser } from "./api.types";
-import { apiClient } from "./api.client";
+import type { IUser } from './api.types';
+import { apiClient } from './api.client';
 
 interface LoginDTO {
   email: string;

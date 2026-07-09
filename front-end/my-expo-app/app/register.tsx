@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import Input from '@/components/Input';
@@ -21,7 +28,11 @@ export default function RegisterScreen() {
     setIsLoading(true);
     setErrorMessage(null);
 
-    const response = await authContext.register(email, password, passwordConfirm);
+    const response = await authContext.register(
+      email,
+      password,
+      passwordConfirm,
+    );
     if (response.error) {
       setErrorMessage(response.error.message);
       setIsLoading(false);
@@ -41,10 +52,14 @@ export default function RegisterScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Background />
         <View style={styles.formContainer}>
-          <ThemedText style={styles.title} type="title">Sign Up!</ThemedText>
+          <ThemedText style={styles.title} type="title">
+            Sign Up!
+          </ThemedText>
           {errorMessage && (
             <View style={styles.errorContainer}>
-              <ThemedText style={styles.errorText} type="defaultSmall">{errorMessage}</ThemedText>
+              <ThemedText style={styles.errorText} type="defaultSmall">
+                {errorMessage}
+              </ThemedText>
             </View>
           )}
 
@@ -82,7 +97,10 @@ export default function RegisterScreen() {
           </Button>
 
           <Link href="/login" style={styles.linkContainer}>
-            <Text style={styles.linkText}>Already have an account? <Text style={styles.linkTextBold}>Log In</Text></Text>
+            <Text style={styles.linkText}>
+              Already have an account?{' '}
+              <Text style={styles.linkTextBold}>Log In</Text>
+            </Text>
           </Link>
         </View>
       </ScrollView>

@@ -1,16 +1,27 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { authAPI, type LoginResponse, type RegisterResponse } from "../api/api.auth";
-import type { ApiResponse, IUser } from "../api/api.types";
-import { usersAPI } from "../api/api.users";
-import LoaderScreen from "@/components/LoaderScreen";
+import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  authAPI,
+  type LoginResponse,
+  type RegisterResponse,
+} from '../api/api.auth';
+import type { ApiResponse, IUser } from '../api/api.types';
+import { usersAPI } from '../api/api.users';
+import LoaderScreen from '@/components/LoaderScreen';
 
 interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: IUser | null;
-  login: (email: string, password: string) => Promise<ApiResponse<LoginResponse>>;
+  login: (
+    email: string,
+    password: string,
+  ) => Promise<ApiResponse<LoginResponse>>;
   logout: () => Promise<void>;
-  register: (email: string, password: string, passwordConfirm: string) => Promise<ApiResponse<RegisterResponse>>;
+  register: (
+    email: string,
+    password: string,
+    passwordConfirm: string,
+  ) => Promise<ApiResponse<RegisterResponse>>;
 }
 
 interface AuthProviderProps {
@@ -42,7 +53,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     fetchUser();
   }, []);
 
-  async function login(email: string, password: string): Promise<ApiResponse<LoginResponse>> {
+  async function login(
+    email: string,
+    password: string,
+  ): Promise<ApiResponse<LoginResponse>> {
     const response = await authAPI.login({ email, password });
     if (response.error) {
       console.error('Error logging in', response.error);
@@ -64,8 +78,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsAuthenticated(false);
   }
 
-  async function register(email: string, password: string, passwordConfirm: string): Promise<ApiResponse<RegisterResponse>> {
-    const response = await authAPI.register({ email, password, passwordConfirm });
+  async function register(
+    email: string,
+    password: string,
+    passwordConfirm: string,
+  ): Promise<ApiResponse<RegisterResponse>> {
+    const response = await authAPI.register({
+      email,
+      password,
+      passwordConfirm,
+    });
     if (response.error) {
       console.error('Error registering:', response.error);
     } else {
@@ -76,13 +98,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   if (isLoading) {
-    return (
-      <LoaderScreen text="Loading user..." />
-    );
+    return <LoaderScreen text="Loading user..." />;
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, login, logout, register }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, isLoading, user, login, logout, register }}
+    >
       {children}
     </AuthContext.Provider>
   );

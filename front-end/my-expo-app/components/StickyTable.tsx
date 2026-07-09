@@ -10,10 +10,7 @@ import Animated, {
   useAnimatedRef,
   scrollTo,
 } from 'react-native-reanimated';
-import {
-  Gesture,
-  GestureDetector,
-} from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 type StickyTableProps<TCell, TColumn, TRow> = {
   columnHeaders: TColumn[];
@@ -147,14 +144,29 @@ export default function StickyTable<TCell, TColumn, TRow>({
     <View style={styles.container}>
       {/* Top row: corner + horizontal sticky header */}
       <View style={styles.topRow}>
-        <View style={[styles.cornerCell, { width: headerWidth, height: headerHeight, }]}>
+        <View
+          style={[
+            styles.cornerCell,
+            { width: headerWidth, height: headerHeight },
+          ]}
+        >
           {renderCorner?.()}
         </View>
 
         <View style={styles.clip}>
-          <Animated.ScrollView ref={columnHeaderRef} horizontal style={[styles.row]}>
+          <Animated.ScrollView
+            ref={columnHeaderRef}
+            horizontal
+            style={[styles.row]}
+          >
             {columnHeaders.map((column, index) => (
-              <View key={index} style={[styles.colHeaderCell, { width: cellWidth, height: headerHeight }]}>
+              <View
+                key={index}
+                style={[
+                  styles.colHeaderCell,
+                  { width: cellWidth, height: headerHeight },
+                ]}
+              >
                 {renderColumnHeader(column, index)}
               </View>
             ))}
@@ -167,7 +179,13 @@ export default function StickyTable<TCell, TColumn, TRow>({
         <View style={[styles.clip, { width: headerWidth }]}>
           <Animated.ScrollView ref={rowHeaderRef}>
             {rowHeaders.map((row, index) => (
-              <View key={index} style={[styles.rowHeaderCell, { width: headerWidth, height: cellHeight }]}>
+              <View
+                key={index}
+                style={[
+                  styles.rowHeaderCell,
+                  { width: headerWidth, height: cellHeight },
+                ]}
+              >
                 {renderRowHeader(row, index)}
               </View>
             ))}
@@ -175,16 +193,19 @@ export default function StickyTable<TCell, TColumn, TRow>({
         </View>
 
         {/* Scrollable body */}
-        <View
-          style={[styles.bodyWrapper, styles.clip]}
-          onLayout={onBodyLayout}
-        >
+        <View style={[styles.bodyWrapper, styles.clip]} onLayout={onBodyLayout}>
           <Animated.ScrollView horizontal ref={bodyRefHorizontal}>
             <Animated.ScrollView ref={bodyRef}>
               {data.map((row, rowIndex) => (
                 <View key={rowIndex} style={styles.row}>
                   {row.map((cell, index) => (
-                    <View key={index} style={[styles.cell, { width: cellWidth, height: cellHeight }]}>
+                    <View
+                      key={index}
+                      style={[
+                        styles.cell,
+                        { width: cellWidth, height: cellHeight },
+                      ]}
+                    >
                       {renderCell(cell, rowIndex, index)}
                     </View>
                   ))}

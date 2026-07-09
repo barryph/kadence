@@ -1,8 +1,8 @@
-import { StyleSheet, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface IProps {
-  showRed?: boolean,
+  showRed?: boolean;
 }
 
 export default function Background({ showRed = true }: IProps) {
@@ -10,7 +10,7 @@ export default function Background({ showRed = true }: IProps) {
     <View style={StyleSheet.absoluteFill}>
       {/* Base background */}
       <LinearGradient
-        colors={["#050711", "#0b1020", "#050711"]}
+        colors={['#050711', '#0b1020', '#050711']}
         locations={[0, 0.46, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
@@ -19,38 +19,23 @@ export default function Background({ showRed = true }: IProps) {
 
       {/* Blue top-left glow */}
       <LinearGradient
-        colors={[
-          "rgba(8,124,255,0.28)",
-          "transparent",
-        ]}
+        colors={['rgba(8,124,255,0.28)', 'transparent']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[
-          StyleSheet.absoluteFill,
-          styles.blueGlow,
-        ]}
+        style={[StyleSheet.absoluteFill, styles.blueGlow]}
       />
 
       {/* Cyan top-right glow */}
       <LinearGradient
-        colors={[
-          "rgba(8,216,255,0.16)",
-          "transparent",
-        ]}
+        colors={['rgba(8,216,255,0.16)', 'transparent']}
         start={{ x: 1, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={[
-          StyleSheet.absoluteFill,
-          styles.cyanGlow,
-        ]}
+        style={[StyleSheet.absoluteFill, styles.cyanGlow]}
       />
 
       {/* Red bottom glow */}
       <LinearGradient
-        colors={[
-          "transparent",
-          "rgba(255,61,84,0.12)",
-        ]}
+        colors={['transparent', 'rgba(255,61,84,0.12)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[
@@ -74,8 +59,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
 });
-
-
 
 // react-native-svg version
 // import React from 'react';

@@ -1,5 +1,12 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import Input from '@/components/Input';
@@ -40,11 +47,15 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Background />
         <View style={styles.formContainer}>
-          <ThemedText style={styles.title} type="title">Login!</ThemedText>
+          <ThemedText style={styles.title} type="title">
+            Login!
+          </ThemedText>
 
           {errorMessage && (
             <View style={styles.errorContainer}>
-              <ThemedText style={styles.errorText} type="defaultSmall">{errorMessage}</ThemedText>
+              <ThemedText style={styles.errorText} type="defaultSmall">
+                {errorMessage}
+              </ThemedText>
             </View>
           )}
 
@@ -77,7 +88,10 @@ export default function LoginScreen() {
           </Button>
 
           <Link href="/register" style={styles.linkContainer}>
-            <Text style={styles.linkText}>Don't have an account? <Text style={styles.linkTextBold}>Sign Up</Text></Text>
+            <Text style={styles.linkText}>
+              Don't have an account?{' '}
+              <Text style={styles.linkTextBold}>Sign Up</Text>
+            </Text>
           </Link>
         </View>
       </ScrollView>

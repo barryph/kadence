@@ -1,15 +1,12 @@
-import { StyleSheet, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function ActivityBackground() {
   return (
     <View style={StyleSheet.absoluteFill}>
       {/* linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.034)) */}
       <LinearGradient
-        colors={[
-          "rgba(255,255,255,0.075)",
-          "rgba(255,255,255,0.034)",
-        ]}
+        colors={['rgba(255,255,255,0.075)', 'rgba(255,255,255,0.034)']}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -17,11 +14,7 @@ export default function ActivityBackground() {
 
       {/* linear-gradient(135deg, rgba(8,124,255,.08), transparent 42%) */}
       <LinearGradient
-        colors={[
-          "rgba(8,124,255,0.08)",
-          "transparent",
-          "transparent",
-        ]}
+        colors={['rgba(8,124,255,0.08)', 'transparent', 'transparent']}
         locations={[0, 0.42, 1]}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
@@ -30,8 +23,6 @@ export default function ActivityBackground() {
     </View>
   );
 }
-
-
 
 // react-native-svg version
 // import { StyleSheet, View } from "react-native";

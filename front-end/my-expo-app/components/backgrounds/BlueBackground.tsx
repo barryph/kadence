@@ -4,11 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function BlueBackground() {
   return (
     <LinearGradient
-      colors={[
-        '#087cfb',
-        '#0290ee',
-        '#09b0d4',
-      ]}
+      colors={['#087cfb', '#0290ee', '#09b0d4']}
       locations={[0, 0.58, 1]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}

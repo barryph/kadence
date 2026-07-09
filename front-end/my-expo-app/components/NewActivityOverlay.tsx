@@ -8,12 +8,18 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import DateTimePicker, { type DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DateTimePicker, {
+  type DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import Input from './Input';
 import Button from './Button';
 import CategorySelect from './CategorySelect';
 import { ThemedText } from './themed-text';
-import { activitiesAPI, type IActivity, type ICategory } from '@/api/api.activity';
+import {
+  activitiesAPI,
+  type IActivity,
+  type ICategory,
+} from '@/api/api.activity';
 import Background from './backgrounds/Background';
 
 function formatDateISO(date: Date): string {
@@ -27,7 +33,9 @@ interface NewActivityOverlayProps {
   onClose: (activity?: IActivity) => void;
 }
 
-export default function NewActivityOverlay({ onClose }: NewActivityOverlayProps) {
+export default function NewActivityOverlay({
+  onClose,
+}: NewActivityOverlayProps) {
   const [name, setName] = useState('');
   const [ticker, setTicker] = useState('');
   const [interval, setInterval] = useState('');
@@ -85,7 +93,12 @@ export default function NewActivityOverlay({ onClose }: NewActivityOverlayProps)
   }
 
   return (
-    <Modal visible animationType="slide" presentationStyle="fullScreen" onRequestClose={() => onClose()}>
+    <Modal
+      visible
+      animationType="slide"
+      presentationStyle="fullScreen"
+      onRequestClose={() => onClose()}
+    >
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Background showRed={false} />
         <KeyboardAvoidingView
@@ -108,7 +121,12 @@ export default function NewActivityOverlay({ onClose }: NewActivityOverlayProps)
               New activity
             </ThemedText>
 
-            <Input label="Name" placeholder="Name" value={name} onChangeText={setName} />
+            <Input
+              label="Name"
+              placeholder="Name"
+              value={name}
+              onChangeText={setName}
+            />
             <Input
               label="Ticker (optional)"
               placeholder="Ticker"
@@ -128,17 +146,24 @@ export default function NewActivityOverlay({ onClose }: NewActivityOverlayProps)
               options={categories}
               onCreate={addCategory}
             />
-            <ThemedText type="defaultSemiBold" style={styles.dateLabel}>Last Done (optional)</ThemedText>
+            <ThemedText type="defaultSemiBold" style={styles.dateLabel}>
+              Last Done (optional)
+            </ThemedText>
             <TouchableOpacity
               style={styles.dateField}
               onPress={() => setShowDatePicker(true)}
             >
-              <ThemedText style={lastDoneDate ? styles.dateValue : styles.datePlaceholder}>
+              <ThemedText
+                style={lastDoneDate ? styles.dateValue : styles.datePlaceholder}
+              >
                 {lastDoneDate ? formatDateISO(lastDoneDate) : 'Select date'}
               </ThemedText>
             </TouchableOpacity>
             {lastDoneDate ? (
-              <TouchableOpacity onPress={clearLastDone} style={styles.clearDateButton}>
+              <TouchableOpacity
+                onPress={clearLastDone}
+                style={styles.clearDateButton}
+              >
                 <ThemedText style={styles.clearDateText}>Clear date</ThemedText>
               </TouchableOpacity>
             ) : null}
@@ -152,7 +177,10 @@ export default function NewActivityOverlay({ onClose }: NewActivityOverlayProps)
                   onChange={handleLastDoneChange}
                 />
                 {Platform.OS === 'ios' ? (
-                  <Button onPress={() => setShowDatePicker(false)} style={styles.datePickerDone}>
+                  <Button
+                    onPress={() => setShowDatePicker(false)}
+                    style={styles.datePickerDone}
+                  >
                     Done
                   </Button>
                 ) : null}
@@ -163,7 +191,11 @@ export default function NewActivityOverlay({ onClose }: NewActivityOverlayProps)
               <ThemedText style={styles.errorText}>{errorMessage}</ThemedText>
             ) : null}
 
-            <Button isLoading={isLoading} style={styles.submitButton} onPress={handleSubmit}>
+            <Button
+              isLoading={isLoading}
+              style={styles.submitButton}
+              onPress={handleSubmit}
+            >
               Create
             </Button>
           </ScrollView>

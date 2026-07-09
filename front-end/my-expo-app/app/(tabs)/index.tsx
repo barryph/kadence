@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import SwipeRow from '@/components/SwipeRow';
@@ -45,9 +51,13 @@ function Dashboard() {
 
     async function fetchActivities() {
       try {
-        const response = await activitiesAPI.getAllByUser({ signal: abortController.signal });
+        const response = await activitiesAPI.getAllByUser({
+          signal: abortController.signal,
+        });
         if (response.data?.activities) {
-          setActivities(sortActivities(response.data.activities as IActivityClient[]));
+          setActivities(
+            sortActivities(response.data.activities as IActivityClient[]),
+          );
           setIsLoading(false);
         }
       } catch (err) {
@@ -62,7 +72,7 @@ function Dashboard() {
 
   const handleActivityClick = (activity: IActivityClient) => {
     const updated = activities.map((a) =>
-      a.id === activity.id ? { ...a, queued: !a.queued } : a
+      a.id === activity.id ? { ...a, queued: !a.queued } : a,
     );
     setActivities(sortActivities(updated));
   };
@@ -73,7 +83,9 @@ function Dashboard() {
       const updateRes = await activitiesAPI.complete(activityId, today);
       if (updateRes.data?.activity) {
         const updated = activities.map((a) =>
-          a.id === activityId ? (updateRes.data.activity as IActivityClient) : a
+          a.id === activityId
+            ? (updateRes.data.activity as IActivityClient)
+            : a,
         );
         setActivities(sortActivities(updated));
       }
@@ -97,9 +109,7 @@ function Dashboard() {
   }
 
   if (isLoading) {
-    return (
-      <LoaderScreen text="Loading activities..." />
-    );
+    return <LoaderScreen text="Loading activities..." />;
   }
 
   return (
@@ -107,9 +117,14 @@ function Dashboard() {
       <Background />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ThemedText type="defaultBold" style={styles.headline}>Activities In Motion</ThemedText>
+        <ThemedText type="defaultBold" style={styles.headline}>
+          Activities In Motion
+        </ThemedText>
         {activities.map((activity, index) => {
-          const remainingPercent = Math.min(Math.max((activity.daysUntil || 0) / DAYS_IN_WEEK, 0), 1);
+          const remainingPercent = Math.min(
+            Math.max((activity.daysUntil || 0) / DAYS_IN_WEEK, 0),
+            1,
+          );
 
           return (
             <View style={[styles.activityWrapper]} key={activity.id}>
@@ -121,35 +136,98 @@ function Dashboard() {
                 <SwipeRow
                   onSwipeLeft={() => handleEdit(activity)}
                   onSwipeRight={() => handleComplete(activity.id)}
-                  swipeLeftChild={<Text style={{ fontSize: 24, color: '#000' }}>⚙️</Text>}
+                  swipeLeftChild={
+                    <Text style={{ fontSize: 24, color: '#000' }}>⚙️</Text>
+                  }
                   swipeLeftColor="inherit"
                   swipeLeftBackground="#e9ecf6"
-                  swipeRightChild={<Text style={{ fontSize: 24, color: '#fff' }}>✓</Text>}
+                  swipeRightChild={
+                    <Text style={{ fontSize: 24, color: '#fff' }}>✓</Text>
+                  }
                   swipeRightColor="#fff"
                   swipeRightBackground="#0072ff"
                   queued={activity.queued}
                 >
-                  <View style={[styles.activityInner, activity.queued && styles.activityInnerSelected]}>
-                    <View style={[styles.activityMain, index === 0 && styles.activityMainFirst]}>
+                  <View
+                    style={[
+                      styles.activityInner,
+                      activity.queued && styles.activityInnerSelected,
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.activityMain,
+                        index === 0 && styles.activityMainFirst,
+                      ]}
+                    >
                       <View style={styles.activityTitleRow}>
                         <View style={styles.activityNameGroup}>
-                          <ThemedText type="defaultBold" style={[styles.activityName, activity.queued && styles.activityNameSelected]}>
+                          <ThemedText
+                            type="defaultBold"
+                            style={[
+                              styles.activityName,
+                              activity.queued && styles.activityNameSelected,
+                            ]}
+                          >
                             {activity.name}
                           </ThemedText>
                           {activity.category && (
-                            <View style={[styles.categoryBadge, { borderColor: activity.categoryColor, backgroundColor: `${activity.categoryColor}1A` }]}>
-                              <ThemedText style={[styles.categoryText, { color: activity.categoryColor }]}>
+                            <View
+                              style={[
+                                styles.categoryBadge,
+                                {
+                                  borderColor: activity.categoryColor,
+                                  backgroundColor: `${activity.categoryColor}1A`,
+                                },
+                              ]}
+                            >
+                              <ThemedText
+                                style={[
+                                  styles.categoryText,
+                                  { color: activity.categoryColor },
+                                ]}
+                              >
                                 {activity.category}
                               </ThemedText>
                             </View>
                           )}
                         </View>
                         <View style={styles.activityDetails}>
-                          <Text style={[styles.activityDetailsText, activity.queued && styles.activityDetailsTextSelected]}>
-                            REMAIN: <Text style={[styles.activityDetailsSpan, activity.queued && styles.activityDetailsSpanSelected]}>{activity.daysUntil}</Text>
+                          <Text
+                            style={[
+                              styles.activityDetailsText,
+                              activity.queued &&
+                                styles.activityDetailsTextSelected,
+                            ]}
+                          >
+                            REMAIN:{' '}
+                            <Text
+                              style={[
+                                styles.activityDetailsSpan,
+                                activity.queued &&
+                                  styles.activityDetailsSpanSelected,
+                              ]}
+                            >
+                              {activity.daysUntil}
+                            </Text>
                           </Text>
-                          <Text style={[styles.activityDetailsText, activity.queued && styles.activityDetailsTextSelected]}>
-                            INTRVL: <Text style={[styles.activityDetailsSpan, activity.queued && styles.activityDetailsSpanSelected]}>{activity.interval}</Text>
+                          <Text
+                            style={[
+                              styles.activityDetailsText,
+                              activity.queued &&
+                                styles.activityDetailsTextSelected,
+                            ]}
+                          >
+                            INTRVL:{' '}
+                            <Text
+                              style={[
+                                styles.activityDetailsSpan,
+                                activity.queued &&
+                                  styles.activityDetailsSpanSelected,
+                              ]}
+                            >
+                              {activity.interval}
+                            </Text>
                           </Text>
                         </View>
                       </View>
@@ -162,14 +240,21 @@ function Dashboard() {
                               key={`${activity.id}-notch-${day}`}
                               style={[
                                 styles.activityBarNotch,
-                                day < DAYS_IN_WEEK - 1 && styles.activityBarNotchBorder
+                                day < DAYS_IN_WEEK - 1 &&
+                                  styles.activityBarNotchBorder,
                               ]}
                             />
                           ))}
                         </View>
 
                         {/* Progress gradient */}
-                        <View style={{ width: '100%', height: '100%', flexDirection: 'row' }}>
+                        <View
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            flexDirection: 'row',
+                          }}
+                        >
                           {/** This reverses the bars direction **/}
                           {/* <View style={{ flex: remainingPercent, backgroundColor: 'transparent' }} /> */}
                           {/** Setting flex to a decimal defines the length of the gradient bar **/}
@@ -191,11 +276,7 @@ function Dashboard() {
                             />
                           ) : (
                             <LinearGradient
-                              colors={[
-                                "#087cff",
-                                "#0096ff",
-                                "#08d8ff",
-                              ]}
+                              colors={['#087cff', '#0096ff', '#08d8ff']}
                               locations={[0, 0.42, 1]}
                               start={{ x: 0, y: 0.5 }}
                               end={{ x: 1, y: 0.5 }}
@@ -217,21 +298,21 @@ function Dashboard() {
             </View>
           );
         })}
-      </ScrollView >
+      </ScrollView>
 
       <TouchableOpacity
         style={styles.floatingAddButton}
         onPress={() => setShowNewActivityOverlay(true)}
       >
-        <ThemedText style={styles.floatingAddButtonText}>Add Activity</ThemedText>
+        <ThemedText style={styles.floatingAddButtonText}>
+          Add Activity
+        </ThemedText>
       </TouchableOpacity>
 
-      {
-        showNewActivityOverlay && (
-          <NewActivityOverlay onClose={handleNewActivityOverlayClose} />
-        )
-      }
-    </View >
+      {showNewActivityOverlay && (
+        <NewActivityOverlay onClose={handleNewActivityOverlayClose} />
+      )}
+    </View>
   );
 }
 
@@ -399,5 +480,5 @@ export default function wrapper() {
     <UnmountOnBlur>
       <Dashboard />
     </UnmountOnBlur>
-  )
+  );
 }

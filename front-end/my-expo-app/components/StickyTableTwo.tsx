@@ -69,7 +69,12 @@ export default function StickyTableTwo<TCell, TColumn, TRow>({
     <View style={styles.container}>
       {/* Top row: corner + horizontal sticky header */}
       <View style={styles.topRow}>
-        <View style={[styles.cornerCell, { width: headerWidth, height: headerHeight, }]}>
+        <View
+          style={[
+            styles.cornerCell,
+            { width: headerWidth, height: headerHeight },
+          ]}
+        >
           {renderCorner?.()}
         </View>
 
@@ -83,7 +88,13 @@ export default function StickyTableTwo<TCell, TColumn, TRow>({
             scrollEnabled={false}
           >
             {columnHeaders.map((column, index) => (
-              <View key={index} style={[styles.colHeaderCell, { width: cellWidth, height: headerHeight }]}>
+              <View
+                key={index}
+                style={[
+                  styles.colHeaderCell,
+                  { width: cellWidth, height: headerHeight },
+                ]}
+              >
                 {renderColumnHeader(column, index)}
               </View>
             ))}
@@ -101,7 +112,13 @@ export default function StickyTableTwo<TCell, TColumn, TRow>({
             scrollEnabled={false}
           >
             {rowHeaders.map((row, index) => (
-              <View key={index} style={[styles.rowHeaderCell, { width: headerWidth, height: cellHeight }]}>
+              <View
+                key={index}
+                style={[
+                  styles.rowHeaderCell,
+                  { width: headerWidth, height: cellHeight },
+                ]}
+              >
                 {renderRowHeader(row, index)}
               </View>
             ))}
@@ -109,10 +126,7 @@ export default function StickyTableTwo<TCell, TColumn, TRow>({
         </View>
 
         {/* Scrollable body */}
-        <Animated.ScrollView
-          horizontal
-          onScroll={scrollHandlerX}
-        >
+        <Animated.ScrollView horizontal onScroll={scrollHandlerX}>
           <Animated.ScrollView
             onScroll={scrollHandlerY}
             nestedScrollEnabled={true}
@@ -120,7 +134,13 @@ export default function StickyTableTwo<TCell, TColumn, TRow>({
             {data.map((row, rowIndex) => (
               <View key={rowIndex} style={styles.row}>
                 {row.map((cell, index) => (
-                  <View key={index} style={[styles.cell, { width: cellWidth, height: cellHeight }]}>
+                  <View
+                    key={index}
+                    style={[
+                      styles.cell,
+                      { width: cellWidth, height: cellHeight },
+                    ]}
+                  >
                     {renderCell(cell, rowIndex, index)}
                   </View>
                 ))}

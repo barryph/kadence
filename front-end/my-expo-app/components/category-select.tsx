@@ -3,6 +3,7 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { ThemedText } from './themed-text';
 import AddCategoryModal from './add-category-modal';
 import type { ICategory } from '@/api/api.activity';
+import Background from './backgrounds/background';
 
 interface CategorySelectProps {
   label?: string;
@@ -48,29 +49,34 @@ export default function CategorySelect({
       >
         {selectedCategory ? (
           <View style={styles.selectedRow}>
-            <ThemedText style={styles.selectText}>
-              {selectedCategory.name}
-            </ThemedText>
             <View
               style={[styles.dot, { backgroundColor: selectedCategory.color }]}
             />
+            <ThemedText style={styles.selectText} selectable={false}>
+              {selectedCategory.name}
+            </ThemedText>
           </View>
         ) : (
-          <ThemedText style={styles.placeholderText}>{placeholder}</ThemedText>
+          <ThemedText style={styles.placeholderText} selectable={false}>
+            {placeholder}
+          </ThemedText>
         )}
-        <ThemedText style={styles.arrow}>›</ThemedText>
+        <ThemedText style={styles.arrow} selectable={false}>
+          ›
+        </ThemedText>
       </Pressable>
 
       {showDropdown && (
         <View style={styles.dropdown}>
+          {/* <Background showRed={false} /> */}
           {options.map((option) => (
             <Pressable
               key={option.name}
               onPress={() => selectCategory(option)}
               style={styles.dropdownItem}
             >
-              <ThemedText style={styles.dropDownText}>{option.name}</ThemedText>
               <View style={[styles.dot, { backgroundColor: option.color }]} />
+              <ThemedText style={styles.dropDownText}>{option.name}</ThemedText>
             </Pressable>
           ))}
           <Pressable
@@ -78,11 +84,9 @@ export default function CategorySelect({
               setShowCreateCategoryModal(true);
               setShowDropdown(false);
             }}
-            style={styles.dropdownItem}
+            style={[styles.dropdownItem, styles.dropDownCreateButton]}
           >
-            <ThemedText style={styles.dropDownText} type="defaultSemiBold">
-              + Create Category
-            </ThemedText>
+            <ThemedText type="defaultSemiBold">+ Create Category</ThemedText>
           </Pressable>
         </View>
       )}
@@ -145,7 +149,7 @@ const styles = StyleSheet.create({
     height: 8,
     width: 8,
     borderRadius: 4,
-    marginLeft: 8,
+    marginRight: 8,
   },
   dropdown: {
     position: 'absolute',
@@ -153,9 +157,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     marginTop: 4,
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#eaeaea',
     borderRadius: 8,
     overflow: 'hidden',
     zIndex: 20,
@@ -164,16 +165,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
+    backgroundColor: 'rgb(22, 50, 81)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
   dropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eaeaea',
   },
-  dropDownText: {
-    color: '#333',
+  dropDownCreateButton: {
+    borderTopWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
 });

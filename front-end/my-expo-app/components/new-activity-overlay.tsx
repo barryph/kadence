@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   Modal,
@@ -23,6 +23,7 @@ import {
 } from '@/api/api.activity';
 import Background from './backgrounds/background';
 import AlertError from './alerts/alert-error';
+import { categoriesAPI } from '@/api/api.categories';
 
 function formatDateISO(date: Date): string {
   const year = date.getFullYear();
@@ -48,10 +49,34 @@ export default function NewActivityOverlay({
 
   // TODO: Fetch categories list from server
   const [categories, setCategories] = useState<ICategory[]>([
-    { name: 'Sprint', color: 'green' },
-    { name: 'Jump', color: 'red' },
-    { name: 'BB', color: 'blue' },
+    // { name: 'Sprint', color: 'green' },
+    // { name: 'Jump', color: 'red' },
+    // { name: 'BB', color: 'blue' },
   ]);
+
+  // Fetch categories
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    async function fetchCategories() {
+      console.log('fetching categories');
+      try {
+        const response = await categoriesAPI.getAllByUser({
+          signal: abortController.signal,
+        });
+        if (response.data?.categories) {
+          setCategories(response.data.categories as ICategory[]);
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error('Error fetching activities', err);
+        setIsLoading(false);
+      }
+    }
+
+    fetchCategories();
+    return () => abortController.abort();
+  }, []);
 
   function addCategory(category: ICategory) {
     setCategories((prev) => [...prev, category]);
@@ -237,7 +262,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   submitButton: {
-    marginTop: 8,
+    marginTop: 20,
   },
   dateLabel: {
     marginBottom: 8,

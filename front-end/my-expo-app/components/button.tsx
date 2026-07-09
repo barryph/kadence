@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   TouchableOpacity,
-  Text,
   StyleSheet,
   ActivityIndicator,
   type TouchableOpacityProps,
@@ -13,7 +12,7 @@ import { ThemedText } from './themed-text';
 interface ButtonProps extends TouchableOpacityProps {
   children: React.ReactNode;
   isLoading?: boolean;
-  textStyle: StyleProp<TextStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export default function Button({

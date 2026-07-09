@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import { ThemedText } from '@/components/themed-text';
+import Background from '@/components/backgrounds/Background';
 
 export default function RegisterScreen() {
   const authContext = useAuth();
@@ -38,6 +39,7 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Background />
         <View style={styles.formContainer}>
           <ThemedText style={styles.title} type="title">Sign Up!</ThemedText>
           {errorMessage && (
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 24,
     textAlign: 'center',
-    color: '#333',
+    color: '#fff',
   },
   errorContainer: {
     backgroundColor: '#ffebeb',
@@ -128,7 +130,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   linkText: {
-    color: '#666',
+    color: '#ddd',
     fontSize: 14,
   },
   linkTextBold: {

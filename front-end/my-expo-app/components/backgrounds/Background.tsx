@@ -5,7 +5,7 @@ interface IProps {
   showRed?: boolean,
 }
 
-export default function GradientBackground({ showRed = true }: IProps) {
+export default function Background({ showRed = true }: IProps) {
   return (
     <View style={StyleSheet.absoluteFill}>
       {/* Base background */}

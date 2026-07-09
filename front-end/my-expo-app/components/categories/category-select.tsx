@@ -3,6 +3,7 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import type { ICategory } from '@/api/api.activity';
+import Label from '@/components/base/label';
 
 interface CategorySelectProps {
   label?: string;
@@ -41,11 +42,7 @@ export default function CategorySelect({
 
   return (
     <View style={styles.wrapper}>
-      {label && (
-        <ThemedText style={styles.label} type="defaultSemiBold">
-          {label}
-        </ThemedText>
-      )}
+      {label && <Label>{label}</Label>}
       <Pressable
         onPress={() => setShowDropdown((open) => !open)}
         style={[styles.select, !selectedCategory && styles.selectFaint]}
@@ -110,12 +107,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     width: '100%',
     zIndex: 10,
-  },
-  label: {
-    marginBottom: 8,
-    fontSize: 14,
-    lineHeight: 22,
-    color: '#fff',
   },
   select: {
     flexDirection: 'row',

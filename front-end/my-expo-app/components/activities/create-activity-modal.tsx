@@ -24,6 +24,7 @@ import {
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 import { categoriesAPI } from '@/api/api.categories';
+import Label from '@/components/base/label';
 
 function formatDateISO(date: Date): string {
   const year = date.getFullYear();
@@ -182,9 +183,8 @@ export default function CreateActivityModal({
               onCreate={addCategory}
               onSelect={handleSelectCategory}
             />
-            <ThemedText type="defaultSemiBold" style={styles.dateLabel}>
-              Last Done (optional)
-            </ThemedText>
+
+            <Label>Last Done (optional)</Label>
             <TouchableOpacity
               style={styles.dateField}
               onPress={() => setShowDatePicker(true)}
@@ -195,6 +195,7 @@ export default function CreateActivityModal({
                 {lastDoneDate ? formatDateISO(lastDoneDate) : 'Select date'}
               </ThemedText>
             </TouchableOpacity>
+            {/** Date clear button **/}
             {lastDoneDate ? (
               <TouchableOpacity
                 onPress={clearLastDone}
@@ -203,6 +204,7 @@ export default function CreateActivityModal({
                 <ThemedText style={styles.clearDateText}>Clear date</ThemedText>
               </TouchableOpacity>
             ) : null}
+            {/** Date picker **/}
             {showDatePicker && (
               <>
                 <DateTimePicker
@@ -272,12 +274,6 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 20,
-  },
-  dateLabel: {
-    marginBottom: 8,
-    fontSize: 14,
-    lineHeight: 22,
-    color: '#fff',
   },
   dateField: {
     borderWidth: 1,

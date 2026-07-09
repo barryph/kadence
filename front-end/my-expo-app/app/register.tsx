@@ -8,11 +8,11 @@ import {
   ScrollView,
 } from 'react-native';
 import { useRouter, Link } from 'expo-router';
-import { useAuth } from '@/context/AuthContext';
-import Input from '@/components/Input';
-import Button from '@/components/Button';
+import { useAuth } from '@/context/auth-context';
+import Input from '@/components/input';
+import Button from '@/components/button';
 import { ThemedText } from '@/components/themed-text';
-import Background from '@/components/backgrounds/Background';
+import Background from '@/components/backgrounds/background';
 import { error } from 'node:console';
 import AlertError from '@/components/alerts/alert-error';
 

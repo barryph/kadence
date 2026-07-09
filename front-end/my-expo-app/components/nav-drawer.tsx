@@ -12,7 +12,7 @@ import { useRouter } from 'expo-router';
 import { ThemedText } from './themed-text';
 import { Colors } from '@/constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import BlueBackground from '@/components/backgrounds/BlueBackground';
+import BlueBackground from '@/components/backgrounds/blue-background';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const DRAWER_WIDTH = SCREEN_WIDTH;

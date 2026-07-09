@@ -12,16 +12,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import Input from './Input';
-import Button from './Button';
-import CategorySelect from './CategorySelect';
+import Input from './input';
+import Button from './button';
+import CategorySelect from './category-select';
 import { ThemedText } from './themed-text';
 import {
   activitiesAPI,
   type IActivity,
   type ICategory,
 } from '@/api/api.activity';
-import Background from './backgrounds/Background';
+import Background from './backgrounds/background';
 import AlertError from './alerts/alert-error';
 
 function formatDateISO(date: Date): string {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { ThemedText } from './themed-text';
-import AddCategoryModal from './AddCategoryModal';
+import AddCategoryModal from './add-category-modal';
 import type { ICategory } from '@/api/api.activity';
 
 interface CategorySelectProps {

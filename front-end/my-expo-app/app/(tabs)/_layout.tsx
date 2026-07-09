@@ -7,10 +7,10 @@ import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useAuth } from '@/context/AuthContext';
-import NavDrawer from '@/components/NavDrawer';
+import { useAuth } from '@/context/auth-context';
+import NavDrawer from '@/components/nav-drawer';
 import { ThemedText } from '@/components/themed-text';
-import BlueBackground from '@/components/backgrounds/BlueBackground';
+import BlueBackground from '@/components/backgrounds/blue-background';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();

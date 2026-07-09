@@ -8,14 +8,14 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
-import SwipeRow from '@/components/SwipeRow';
+import SwipeRow from '@/components/swipe-row';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/themed-text';
-import LoaderScreen from '@/components/LoaderScreen';
-import NewActivityOverlay from '@/components/NewActivityOverlay';
-import UnmountOnBlur from '@/components/router/UnmountOnBlur';
-import Background from '@/components/backgrounds/Background';
-import ActivityBackground from '@/components/backgrounds/ActivityBackground';
+import LoaderScreen from '@/components/loader-screen';
+import NewActivityOverlay from '@/components/new-activity-overlay';
+import UnmountOnBlur from '@/components/router/unmount-on-blur';
+import Background from '@/components/backgrounds/background';
+import ActivityBackground from '@/components/backgrounds/activity-background';
 
 // TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
 // TODO: Add edit activity page

@@ -12,7 +12,7 @@ import {
   type ITimeline,
   type ITimelineSet,
 } from '@/api/api.timeline';
-import Button from '@/components/Button';
+import Button from '@/components/button';
 import { Colors } from '@/constants/theme';
 import Animated, {
   scrollTo,
@@ -22,8 +22,8 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/hook/commonTypes';
-import UnmountOnBlur from '@/components/router/UnmountOnBlur';
-import Background from '@/components/backgrounds/Background';
+import UnmountOnBlur from '@/components/router/unmount-on-blur';
+import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
 
 // TODO: Sync changes when completing tasks in main page, and timeline

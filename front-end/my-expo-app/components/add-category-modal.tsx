@@ -7,8 +7,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import Input from './Input';
-import Button from './Button';
+import Input from './input';
+import Button from './button';
 import { ThemedText } from './themed-text';
 import type { ICategory } from '@/api/api.activity';
 

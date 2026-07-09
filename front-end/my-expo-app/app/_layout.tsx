@@ -16,7 +16,7 @@ import {
 } from '@expo-google-fonts/ibm-plex-mono';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { AuthProvider, useAuth } from '@/context/auth-context';
 
 // This prevents SplashScreen from auto hiding while the fonts are in loading state
 SplashScreen.preventAutoHideAsync();

@@ -24,6 +24,7 @@ import Animated, {
 import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/hook/commonTypes';
 import UnmountOnBlur from '@/components/router/UnmountOnBlur';
 import Background from '@/components/backgrounds/Background';
+import Center from '@/components/ui/center';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 
@@ -264,34 +265,34 @@ function TimelineScreen() {
 
   if (isLoadingInitData) {
     return (
-      <View style={styles.centerContainer}>
+      <Center>
         <ActivityIndicator size="large" color={Colors.blue.new} />
         <Text style={styles.loadingText}>Loading timeline...</Text>
-      </View>
+      </Center>
     );
   }
 
   if (initError) {
     return (
-      <View style={styles.centerContainer}>
+      <Center>
         <Text style={styles.errorText}>{initError}</Text>
-      </View>
+      </Center>
     );
   }
 
   if (dateColumns === undefined) {
     return (
-      <View style={styles.centerContainer}>
+      <Center>
         <Text style={styles.loadingText}>No timeline data available.</Text>
-      </View>
+      </Center>
     );
   }
 
   if (!activities?.length) {
     return (
-      <View style={styles.centerContainer}>
+      <Center>
         <Text style={styles.loadingText}>No activities yet.</Text>
-      </View>
+      </Center>
     );
   }
 
@@ -460,11 +461,6 @@ const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
 const headersBackground = '#1a4163';
 
 const styles = StyleSheet.create({
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   loadingText: {
     color: '#64748b',
     fontSize: 14,
@@ -494,11 +490,6 @@ const styles = StyleSheet.create({
     borderRightColor: 'rgba(255,255,255,.1)',
     backgroundColor: headersBackground,
   },
-  cornerText: {
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: 'bold',
-  },
   colHeaderClip: {
     flex: 1,
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
@@ -517,15 +508,6 @@ const styles = StyleSheet.create({
     height: ROW_HEIGHT,
     width: '100%',
     zIndex: 20,
-  },
-  leftColumnHeader: {
-    height: '100%',
-    width: LEFT_COLUMN_WIDTH - CELL_GAP,
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,.1)',
-  },
-  headerScroll: {
-    flex: 1,
   },
   headerDatesContainer: {
     flexDirection: 'row',
@@ -552,25 +534,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 14,
   },
-  headerTailSpacer: {
-    width: LOAD_MORE_WIDTH,
-    height: ROW_CONTENT_SIZE,
-  },
-  bodyVerticalScroll: {
-    flex: 1,
-  },
-  bodyRow: {
-    flexDirection: 'row',
-    color: 'red',
-  },
-  leftColumn: {
-    width: LEFT_COLUMN_WIDTH,
-    minWidth: LEFT_COLUMN_WIDTH,
-    borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,.1)',
-    color: '#fff',
-    flexShrink: 0,
-  },
   activityLabelCell: {
     height: ROW_HEIGHT,
     justifyContent: 'center',
@@ -583,13 +546,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '800',
-  },
-  matrixContainer: {
-    flexDirection: 'row',
-    color: 'green',
-  },
-  matrix: {
-    flexDirection: 'column',
   },
   isLoadingOverlay: {
     position: 'absolute',

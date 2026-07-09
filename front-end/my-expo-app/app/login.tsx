@@ -14,6 +14,7 @@ import Button from '@/components/Button';
 import { ThemedText } from '@/components/themed-text';
 import Background from '@/components/backgrounds/Background';
 import AlertError from '@/components/alerts/alert-error';
+import { HelloWave } from '@/components/hello-wave';
 
 export default function LoginScreen() {
   const authContext = useAuth();

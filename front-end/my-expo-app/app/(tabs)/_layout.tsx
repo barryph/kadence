@@ -105,6 +105,14 @@ export default function TabLayout() {
             ),
           }}
         />
+
+        <Tabs.Screen
+          name="activities/edit/[id]"
+          options={{
+            ...headerOptions,
+            href: null,
+          }}
+        />
       </Tabs>
 
       <NavDrawer

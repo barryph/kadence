@@ -95,8 +95,7 @@ function Dashboard() {
   const handleEdit = (activity: IActivityClient) => {
     // In Expo router, we might route to an edit screen
     // For now we'll just log or route to a dummy path
-    console.log('handling edit trigger');
-    router.push(`/activity/edit/${activity.id}`);
+    router.push(`/activities/edit/${activity.id}`);
   };
 
   function handleNewActivityOverlayClose(activity?: IActivityClient) {

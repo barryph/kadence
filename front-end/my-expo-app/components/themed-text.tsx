@@ -13,6 +13,7 @@ export type ThemedTextProps = TextProps & {
   | 'subtitle'
   | 'link';
   weight?: '400' | '600' | '700';
+  size?: 'small' | 'regular' | 'large' | 'title';
 };
 
 export function ThemedText({
@@ -21,6 +22,7 @@ export function ThemedText({
   darkColor,
   type = 'default',
   weight,
+  size,
   ...rest
 }: ThemedTextProps) {
   // const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
@@ -40,6 +42,10 @@ export function ThemedText({
         weight === '400' ? styles.weightRegular : undefined,
         weight === '600' ? styles.weightSemiBold : undefined,
         weight === '700' ? styles.weightBold : undefined,
+        size === 'small' ? styles.sizeSmall : undefined,
+        size === 'regular' ? styles.sizeRegular : undefined,
+        size === 'large' ? styles.sizeLarge : undefined,
+        size === 'title' ? styles.sizeTitle : undefined,
         style,
       ]}
       {...rest}
@@ -99,5 +105,17 @@ const styles = StyleSheet.create({
   },
   weightBold: {
     fontFamily: 'IBMPlexMono_700Bold',
+  },
+  sizeSmall: {
+    // fontSize: 14,
+  },
+  sizeRegular: {
+    fontSize: 16,
+  },
+  sizeLarge: {
+    // fontSize: 26,
+  },
+  sizeTitle: {
+    fontSize: 32,
   },
 });

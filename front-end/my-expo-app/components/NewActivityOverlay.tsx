@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import {
+  View,
   Modal,
   ScrollView,
   TouchableOpacity,
@@ -21,6 +22,7 @@ import {
   type ICategory,
 } from '@/api/api.activity';
 import Background from './backgrounds/Background';
+import AlertError from './alerts/alert-error';
 
 function formatDateISO(date: Date): string {
   const year = date.getFullYear();
@@ -188,7 +190,9 @@ export default function NewActivityOverlay({
             )}
 
             {errorMessage ? (
-              <ThemedText style={styles.errorText}>{errorMessage}</ThemedText>
+              <View style={{ marginTop: 10 }}>
+                <AlertError>{errorMessage}</AlertError>
+              </View>
             ) : null}
 
             <Button
@@ -231,10 +235,6 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 16,
-  },
-  errorText: {
-    color: '#ff3333',
-    marginBottom: 12,
   },
   submitButton: {
     marginTop: 8,

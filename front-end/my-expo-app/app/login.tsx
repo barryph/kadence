@@ -13,6 +13,7 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import { ThemedText } from '@/components/themed-text';
 import Background from '@/components/backgrounds/Background';
+import AlertError from '@/components/alerts/alert-error';
 
 export default function LoginScreen() {
   const authContext = useAuth();
@@ -51,13 +52,7 @@ export default function LoginScreen() {
             Login!
           </ThemedText>
 
-          {errorMessage && (
-            <View style={styles.errorContainer}>
-              <ThemedText style={styles.errorText} type="defaultSmall">
-                {errorMessage}
-              </ThemedText>
-            </View>
-          )}
+          {errorMessage && <AlertError>{errorMessage}</AlertError>}
 
           <Input
             label="Email"
@@ -118,18 +113,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
     color: '#fff',
-  },
-  errorContainer: {
-    backgroundColor: '#ffebeb',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#ffcaca',
-  },
-  errorText: {
-    color: '#d32f2f',
-    textAlign: 'center',
   },
   submitButton: {
     marginTop: 8,

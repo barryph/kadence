@@ -37,7 +37,7 @@ export function toDTO(activity: Activity): ActivityDTO {
 
 export function toPersistence(activity: Activity): IActivityPersistence {
   return {
-    id: activity.id,
+    ...(activity.isPersisted() && { id: activity.id }),
     user_id: activity.userId,
     category_id: activity.categoryId,
     name: activity.name,

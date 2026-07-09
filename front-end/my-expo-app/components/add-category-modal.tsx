@@ -21,13 +21,14 @@ import { ThemedText } from './themed-text';
 import type { ICategory } from '@/api/api.activity';
 import Background from './backgrounds/background';
 import { categoriesAPI } from '@/api/api.categories';
+import AlertError from './alerts/alert-error';
 
 interface AddCategoryModalProps {
   onSave: (category: ICategory) => void;
   onClose: () => void;
 }
 
-// TODO: Add error alert and error handling
+// TODO: Make both inputs required
 export default function AddCategoryModal({
   onSave,
   onClose,
@@ -35,11 +36,10 @@ export default function AddCategoryModal({
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [name, setName] = useState('');
-  const [color, setColor] = useState('');
+  const [color, setColor] = useState('#fff');
 
   // Note: use `onCompleteJS` and `onChangeJS` for non-worklet functions
   function handleSelectColor({ hex }: ColorFormatsObject) {
-    console.log(hex);
     setColor(hex);
   }
 
@@ -89,7 +89,7 @@ export default function AddCategoryModal({
             Color
           </ThemedText>
           {/** Color picker **/}
-          <ColorPicker onCompleteJS={handleSelectColor}>
+          <ColorPicker onCompleteJS={handleSelectColor} value={color}>
             <Preview
               style={{ marginBottom: 12, height: 30 }}
               hideInitialColor={true}
@@ -110,6 +110,12 @@ export default function AddCategoryModal({
 
             {/* <Swatches style={{ marginTop: 14 }} /> */}
           </ColorPicker>
+
+          {errorMessage ? (
+            <View style={{ marginTop: 10 }}>
+              <AlertError>{errorMessage}</AlertError>
+            </View>
+          ) : null}
 
           <View style={styles.actions}>
             <Button

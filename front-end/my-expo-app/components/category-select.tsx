@@ -3,13 +3,13 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { ThemedText } from './themed-text';
 import AddCategoryModal from './add-category-modal';
 import type { ICategory } from '@/api/api.activity';
-import Background from './backgrounds/background';
 
 interface CategorySelectProps {
   label?: string;
   placeholder?: string;
   options: ICategory[];
   onCreate: (category: ICategory) => void;
+  onSelect: (category: ICategory) => void;
 }
 
 export default function CategorySelect({
@@ -17,6 +17,7 @@ export default function CategorySelect({
   placeholder = 'Choose a category',
   options,
   onCreate,
+  onSelect,
 }: CategorySelectProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
@@ -29,11 +30,13 @@ export default function CategorySelect({
     setShowCreateCategoryModal(false);
     setShowDropdown(false);
     onCreate(category);
+    onSelect(category);
   }
 
   function selectCategory(category: ICategory) {
     setSelectedCategory(category);
     setShowDropdown(false);
+    onSelect(category);
   }
 
   return (
@@ -76,7 +79,7 @@ export default function CategorySelect({
               style={styles.dropdownItem}
             >
               <View style={[styles.dot, { backgroundColor: option.color }]} />
-              <ThemedText style={styles.dropDownText}>{option.name}</ThemedText>
+              <ThemedText>{option.name}</ThemedText>
             </Pressable>
           ))}
           <Pressable

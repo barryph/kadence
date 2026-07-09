@@ -42,12 +42,13 @@ export default function NewActivityOverlay({
   const [name, setName] = useState('');
   const [ticker, setTicker] = useState('');
   const [interval, setInterval] = useState('');
+  const [category, setCategory] = useState<ICategory | null>(null);
   const [lastDoneDate, setLastDoneDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // TODO: Fetch categories list from server
+  // TODO: Add clear category button
   const [categories, setCategories] = useState<ICategory[]>([
     // { name: 'Sprint', color: 'green' },
     // { name: 'Jump', color: 'red' },
@@ -82,6 +83,10 @@ export default function NewActivityOverlay({
     setCategories((prev) => [...prev, category]);
   }
 
+  function handleSelectCategory(category: ICategory) {
+    setCategory(category);
+  }
+
   function handleLastDoneChange(event: DateTimePickerEvent, date?: Date) {
     if (Platform.OS === 'android') {
       setShowDatePicker(false);
@@ -108,6 +113,9 @@ export default function NewActivityOverlay({
       ticker: ticker || undefined,
       interval: Number.parseInt(interval, 10),
       lastDone: lastDoneDate ? formatDateISO(lastDoneDate) : undefined,
+      ...(category && {
+        categoryId: category.id,
+      }),
     });
 
     if (response.error) {
@@ -172,6 +180,7 @@ export default function NewActivityOverlay({
               placeholder="Choose a Category"
               options={categories}
               onCreate={addCategory}
+              onSelect={handleSelectCategory}
             />
             <ThemedText type="defaultSemiBold" style={styles.dateLabel}>
               Last Done (optional)

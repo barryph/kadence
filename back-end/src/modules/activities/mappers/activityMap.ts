@@ -8,14 +8,14 @@ export interface ActivityDTO {
   name: string;
   ticker?: string;
   interval: number;
-  categoryId?: string;
+  categoryId?: number;
   daysUntil?: number;
 }
 
 export interface IActivityPersistence {
   id?: string;
   user_id: string;
-  category_id?: string;
+  category_id?: number;
   name: string;
   ticker?: string;
   interval: string; // Postgres INTERVAL type e.g. '2 DAYS'

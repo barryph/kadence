@@ -6,7 +6,7 @@ export interface ActivityWithCategoryDTO {
   name: string;
   ticker?: string;
   interval: number;
-  categoryId?: string;
+  categoryId?: number;
   category?: CategoryDTO;
   daysUntil: number;
 }

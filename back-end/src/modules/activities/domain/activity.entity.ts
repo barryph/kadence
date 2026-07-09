@@ -4,7 +4,7 @@ import isNullOrUndefined from 'src/shared/lib/isNullOrUndefined';
 interface IActivity {
   id?: string;
   userId: string;
-  categoryId?: string;
+  categoryId?: number;
   name: string;
   ticker?: ActivityTicker;
   interval: number;
@@ -31,7 +31,7 @@ export default class Activity {
     return this.props.userId;
   }
 
-  get categoryId(): string | undefined {
+  get categoryId(): number | undefined {
     return this.props.categoryId;
   }
 

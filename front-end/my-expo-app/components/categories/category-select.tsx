@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
-import { ThemedText } from './themed-text';
-import AddCategoryModal from './add-category-modal';
+import { ThemedText } from '@/components/base/themed-text';
+import CreateCategoryModal from '@/components/categories/create-category-modal';
 import type { ICategory } from '@/api/api.activity';
 
 interface CategorySelectProps {
@@ -95,7 +95,7 @@ export default function CategorySelect({
       )}
 
       {showCreateCategoryModal && (
-        <AddCategoryModal
+        <CreateCategoryModal
           onSave={handleSave}
           onClose={() => setShowCreateCategoryModal(false)}
         />

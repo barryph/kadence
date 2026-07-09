@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedText } from './themed-text';
+import { ThemedText } from '@/components/base/themed-text';
 import { Colors } from '@/constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BlueBackground from '@/components/backgrounds/blue-background';

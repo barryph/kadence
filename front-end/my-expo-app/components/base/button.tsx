@@ -7,7 +7,7 @@ import {
   StyleProp,
   TextStyle,
 } from 'react-native';
-import { ThemedText } from './themed-text';
+import { ThemedText } from '@/components/base/themed-text';
 
 interface ButtonProps extends TouchableOpacityProps {
   children: React.ReactNode;

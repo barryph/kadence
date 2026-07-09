@@ -9,12 +9,11 @@ import {
 } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
-import Input from '@/components/input';
-import Button from '@/components/button';
-import { ThemedText } from '@/components/themed-text';
+import Input from '@/components/base/input';
+import Button from '@/components/base/button';
+import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
-import { HelloWave } from '@/components/hello-wave';
 
 export default function LoginScreen() {
   const authContext = useAuth();

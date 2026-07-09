@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native';
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '@/components/base/themed-text';
 
 interface IProps {
   children: React.ReactNode;

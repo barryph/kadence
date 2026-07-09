@@ -15,24 +15,24 @@ import ColorPicker, {
   HueSlider,
   ColorFormatsObject,
 } from 'reanimated-color-picker';
-import Input from './input';
-import Button from './button';
-import { ThemedText } from './themed-text';
+import Input from '@/components/base/input';
+import Button from '@/components/base/button';
+import { ThemedText } from '@/components/base/themed-text';
 import type { ICategory } from '@/api/api.activity';
-import Background from './backgrounds/background';
+import Background from '@/components/backgrounds/background';
+import AlertError from '@/components/alerts/alert-error';
 import { categoriesAPI } from '@/api/api.categories';
-import AlertError from './alerts/alert-error';
 
-interface AddCategoryModalProps {
+interface CreateCategoryModalProps {
   onSave: (category: ICategory) => void;
   onClose: () => void;
 }
 
 // TODO: Make both inputs required
-export default function AddCategoryModal({
+export default function CreateCategoryModal({
   onSave,
   onClose,
-}: AddCategoryModalProps) {
+}: CreateCategoryModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [name, setName] = useState('');

@@ -12,17 +12,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import Input from './input';
-import Button from './button';
-import CategorySelect from './category-select';
-import { ThemedText } from './themed-text';
+import Input from '@/components/base/input';
+import Button from '@/components/base/button';
+import CategorySelect from '@/components/categories/category-select';
+import { ThemedText } from '@/components/base/themed-text';
 import {
   activitiesAPI,
   type IActivity,
   type ICategory,
 } from '@/api/api.activity';
-import Background from './backgrounds/background';
-import AlertError from './alerts/alert-error';
+import Background from '@/components/backgrounds/background';
+import AlertError from '@/components/alerts/alert-error';
 import { categoriesAPI } from '@/api/api.categories';
 
 function formatDateISO(date: Date): string {
@@ -32,13 +32,13 @@ function formatDateISO(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-interface NewActivityOverlayProps {
+interface CreateActivityModalProps {
   onClose: (activity?: IActivity) => void;
 }
 
-export default function NewActivityOverlay({
+export default function CreateActivityModal({
   onClose,
-}: NewActivityOverlayProps) {
+}: CreateActivityModalProps) {
   const [name, setName] = useState('');
   const [ticker, setTicker] = useState('');
   const [interval, setInterval] = useState('');

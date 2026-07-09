@@ -1,7 +1,7 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
+import { ThemedText } from '@/components/base/themed-text';
+import { ThemedView } from '@/components/base/themed-view';
 
 interface IProps {
   text: string;

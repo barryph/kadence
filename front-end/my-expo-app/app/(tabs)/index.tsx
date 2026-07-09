@@ -10,9 +10,9 @@ import { useRouter } from 'expo-router';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import SwipeRow from '@/components/swipe-row';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ThemedText } from '@/components/themed-text';
-import LoaderScreen from '@/components/loader-screen';
-import NewActivityOverlay from '@/components/new-activity-overlay';
+import { ThemedText } from '@/components/base/themed-text';
+import LoaderScreen from '@/components/base/loader-screen';
+import CreateActivityModal from '@/components/activities/create-activity-modal';
 import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import Background from '@/components/backgrounds/background';
 import ActivityBackground from '@/components/backgrounds/activity-background';
@@ -31,7 +31,7 @@ function Dashboard() {
   const DAYS_IN_WEEK = 7;
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showNewActivityOverlay, setShowNewActivityOverlay] = useState(false);
+  const [showNewActivityModal, setShowNewActivityModal] = useState(false);
 
   const sortActivities = (acts: IActivityClient[] = []) => {
     return [...acts].sort((a, b) => {
@@ -98,11 +98,11 @@ function Dashboard() {
     router.push(`/activities/edit/${activity.id}`);
   };
 
-  function handleNewActivityOverlayClose(activity?: IActivityClient) {
+  function handleNewActivityModalClose(activity?: IActivityClient) {
     if (activity) {
       setActivities(sortActivities([...activities, activity]));
     }
-    setShowNewActivityOverlay(false);
+    setShowNewActivityModal(false);
   }
 
   if (isLoading) {
@@ -299,15 +299,15 @@ function Dashboard() {
 
       <TouchableOpacity
         style={styles.floatingAddButton}
-        onPress={() => setShowNewActivityOverlay(true)}
+        onPress={() => setShowNewActivityModal(true)}
       >
         <ThemedText style={styles.floatingAddButtonText}>
           Add Activity
         </ThemedText>
       </TouchableOpacity>
 
-      {showNewActivityOverlay && (
-        <NewActivityOverlay onClose={handleNewActivityOverlayClose} />
+      {showNewActivityModal && (
+        <CreateActivityModal onClose={handleNewActivityModalClose} />
       )}
     </View>
   );

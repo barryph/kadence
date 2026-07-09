@@ -1,7 +1,6 @@
 import Background from '@/components/backgrounds/background';
-import Input from '@/components/input';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/base/themed-text';
+import { ThemedView } from '@/components/base/themed-view';
 import { useLocalSearchParams } from 'expo-router';
 import {
   KeyboardAvoidingView,

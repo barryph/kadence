@@ -12,7 +12,7 @@ import {
   type ITimeline,
   type ITimelineSet,
 } from '@/api/api.timeline';
-import Button from '@/components/button';
+import Button from '@/components/base/button';
 import { Colors } from '@/constants/theme';
 import Animated, {
   scrollTo,

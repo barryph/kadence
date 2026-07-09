@@ -4,9 +4,9 @@ import {
   type LoginResponse,
   type RegisterResponse,
 } from '../api/api.auth';
-import type { ApiResponse, IUser } from '../api/api.types';
-import { usersAPI } from '../api/api.users';
-import LoaderScreen from '@/components/loader-screen';
+import type { ApiResponse, IUser } from '@/api/api.types';
+import { usersAPI } from '@/api/api.users';
+import LoaderScreen from '@/components/base/loader-screen';
 
 interface AuthState {
   isAuthenticated: boolean;

@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HapticTab } from '@/components/haptic-tab';
+import { HapticTab } from '@/components/base/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/context/auth-context';
 import NavDrawer from '@/components/nav-drawer';
-import { ThemedText } from '@/components/themed-text';
+import { ThemedText } from '@/components/base/themed-text';
 import BlueBackground from '@/components/backgrounds/blue-background';
 
 export default function TabLayout() {

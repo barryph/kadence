@@ -75,13 +75,13 @@ export function rawToActivityWithCategoryDTO(
     interval: parseInt(row.interval_days, 10),
     categoryId: row.category_id,
     daysUntil: Number(row.days_until),
-    category: row.category_id
-      ? {
-        id: row.category_id,
-        userId: row.category_user_id,
-        name: row.category_name,
-        color: row.category_color,
-      }
-      : undefined,
-  };
+    ...(row.category && {
+      category: {
+        id: row.category.id,
+        userId: row.category.user_id,
+        name: row.category.name,
+        color: row.category.color,
+      },
+    }),
+  } as ActivityWithCategoryDTO;
 }

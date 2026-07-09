@@ -7,6 +7,7 @@ export interface IActivity {
   ticker?: string;
   interval: number;
   categoryId?: string;
+  category?: ICategory;
   daysUntil: number;
 }
 
@@ -25,10 +26,6 @@ interface GetAllActivitiesByUserResponse {
   activities: IActivity[];
 }
 
-interface CompleteActivityResponse {
-  activity: IActivity;
-}
-
 interface GetActivityByIdResponse {
   activity: IActivity;
 }
@@ -45,6 +42,7 @@ interface EditActivityResponse {
 
 export interface ICategory {
   id?: string;
+  userId?: string;
   name: string;
   color: string;
 }
@@ -81,7 +79,7 @@ export const activitiesAPI = {
   },
 
   complete(activityId: string, date: string, options?: OptionalOptions) {
-    return apiClient.post<CompleteActivityResponse>(
+    return apiClient.post(
       `/activities/${activityId}/complete`,
       { date },
       options,
@@ -89,10 +87,6 @@ export const activitiesAPI = {
   },
 
   undo(activityId: string, date: string, options?: OptionalOptions) {
-    return apiClient.post<CompleteActivityResponse>(
-      `/activities/${activityId}/undo`,
-      { date },
-      options,
-    );
+    return apiClient.post(`/activities/${activityId}/undo`, { date }, options);
   },
 };

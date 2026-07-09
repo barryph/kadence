@@ -9,10 +9,9 @@ import ActivityTicker from '../domain/activityTicker.vo';
 import CreateActivityDTO from '../dtos/createActivity.dto';
 import ActivitiesRepo from '../repos/activities.repository';
 import ActivityEventRepo from '../repos/activityEvent.repository';
+import CategoriesRepo from '../../categories/repos/categories.repository';
 import { DuplicateActivityEventError } from '../activitiyEvent.errors';
-import * as ActivityMap from '../mappers/activityMap';
 import ActivityEvent from '../domain/activityEvent.entity';
-import { ActivityDTO } from '../mappers/activityMap';
 import { GetActivitiesByUserIdQuery } from '../queries/getActivitiesByUserId.query';
 import { GetActivityByIdQuery } from '../queries/getActivityById.query';
 import { GetActivityTimelineQuery } from '../queries/getActivityTimeline.query';
@@ -25,6 +24,7 @@ export class ActivitiesService {
   constructor(
     private readonly activitiesRepo: ActivitiesRepo,
     private readonly activityEventRepo: ActivityEventRepo,
+    private readonly categoriesRepo: CategoriesRepo,
     private readonly getActivitiesByUserIdQuery: GetActivitiesByUserIdQuery,
     private readonly getActivityByIdQuery: GetActivityByIdQuery,
     private readonly getActivityTimelineQuery: GetActivityTimelineQuery,
@@ -33,7 +33,17 @@ export class ActivitiesService {
   async create(
     createActivityDto: CreateActivityDTO,
     userId: string,
-  ): Promise<CreateActivityDTO> {
+  ): Promise<ActivityWithCategoryDTO> {
+    if (createActivityDto.categoryId !== undefined) {
+      const category = await this.categoriesRepo.getById(
+        createActivityDto.categoryId,
+        userId,
+      );
+      if (!category) {
+        throw new NotFoundException('Category not found');
+      }
+    }
+
     let ticker: ActivityTicker | undefined;
     if (createActivityDto.ticker) {
       ticker = ActivityTicker.create(createActivityDto.ticker);
@@ -43,39 +53,40 @@ export class ActivitiesService {
       name: createActivityDto.name,
       ticker,
       interval: createActivityDto.interval,
+      categoryId: createActivityDto.categoryId,
     });
 
     const createdActivity: Activity =
       await this.activitiesRepo.create(activity);
 
-    if (!createActivityDto.lastDone) {
-      return ActivityMap.toDTO(createdActivity);
+    if (createActivityDto.lastDone) {
+      // Record optional "lastDone" to event db
+      createdActivity.ensurePersisted();
+      const event = ActivityEvent.createNew({
+        activityId: createdActivity.id,
+        date: createActivityDto.lastDone,
+      });
+      await this.activityEventRepo.create(event);
+      await this.activitiesRepo.getById(createdActivity.id);
     }
 
-    createdActivity.ensurePersisted();
-    const event = ActivityEvent.createNew({
-      activityId: createdActivity.id,
-      date: createActivityDto.lastDone,
-    });
-    await this.activityEventRepo.create(event);
-    const updatedActivity = await this.activitiesRepo.getById(
-      createdActivity.id,
-    );
-
-    if (!updatedActivity) {
+    if (!createdActivity.isPersisted()) {
       throw new Error(
         'Something has gone wrong. The created activity does not exist.',
       );
     }
 
-    return ActivityMap.toDTO(updatedActivity);
+    return this.getActivityByIdQuery.execute(createdActivity.id, userId);
   }
 
   async getAllByUserId(userId: string): Promise<ActivityWithCategoryDTO[]> {
     return this.getActivitiesByUserIdQuery.execute(userId);
   }
 
-  async getById(activityId: string, userId: string): Promise<ActivityDTO> {
+  async getById(
+    activityId: string,
+    userId: string,
+  ): Promise<ActivityWithCategoryDTO> {
     return this.getActivityByIdQuery.execute(activityId, userId);
   }
 
@@ -83,7 +94,7 @@ export class ActivitiesService {
     activityId: string,
     editActivityDto: EditActivityDTO,
     userId: string,
-  ): Promise<ActivityDTO> {
+  ): Promise<ActivityWithCategoryDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
     // Authorize the request
     if (!activity) {
@@ -106,15 +117,15 @@ export class ActivitiesService {
       activity.changeInterval(editActivityDto.interval);
     }
 
-    const updatedActivity = await this.activitiesRepo.update(activity);
-    return ActivityMap.toDTO(updatedActivity);
+    await this.activitiesRepo.update(activity);
+    return this.getActivityByIdQuery.execute(activityId, userId);
   }
 
   async completeActivity(
     activityId: string,
     userId: string,
     date: string,
-  ): Promise<ActivityDTO> {
+  ): Promise<void> {
     const activity = await this.activitiesRepo.getById(activityId);
     if (!activity) {
       throw new NotFoundException('Activity not found');
@@ -137,16 +148,13 @@ export class ActivitiesService {
       }
       throw error;
     }
-
-    const updatedActivity = await this.activitiesRepo.getById(activityId);
-    return ActivityMap.toDTO(updatedActivity!);
   }
 
   async undoActivityEvent(
     activityId: string,
     userId: string,
     date: string,
-  ): Promise<ActivityDTO> {
+  ): Promise<void> {
     const activity = await this.activitiesRepo.getById(activityId);
     if (!activity) {
       throw new NotFoundException('Activity not found');
@@ -156,9 +164,6 @@ export class ActivitiesService {
     }
 
     await this.activityEventRepo.removeByActivityIdAndDate(activityId, date);
-
-    const updatedActivity = await this.activitiesRepo.getById(activityId);
-    return ActivityMap.toDTO(updatedActivity!);
   }
 
   async getActivityTimeline(

@@ -6,6 +6,7 @@ import { ICategoryPersistence } from '../mappers/categoryMap';
 
 interface ICategoriesRepo {
   create(category: Category): Promise<Category>;
+  getById(id: number, userId: string): Promise<Category | null>;
   getAllByUserId(userId: string): Promise<Category[]>;
 }
 
@@ -31,6 +32,26 @@ export default class CategoriesRepo implements ICategoriesRepo {
     );
     const newCategory = result.rows[0];
     return CategoryMap.persistenceToDomain(newCategory);
+  }
+
+  async getById(id: number, userId: string): Promise<Category | null> {
+    const result = await this.knexService.connection.raw<{
+      rows: ICategoryPersistence[];
+    }>(
+      `
+        SELECT *
+        FROM categories
+        WHERE id = :id AND user_id = :userId
+      `,
+      {
+        id,
+        userId,
+      },
+    );
+    if (result.rows.length === 0) {
+      return null;
+    }
+    return CategoryMap.persistenceToDomain(result.rows[0]);
   }
 
   async getAllByUserId(userId: string) {

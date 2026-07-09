@@ -5,13 +5,17 @@ import {
 } from '@nestjs/common';
 import { KnexService } from 'src/shared/knex/knex.service';
 
-import { ActivityDTO } from '../mappers/activityMap';
+import * as ActivityMap from '../mappers/activityMap';
+import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 @Injectable()
 export class GetActivityByIdQuery {
   constructor(private readonly knexService: KnexService) { }
 
-  async execute(activityId: string, userId: string): Promise<ActivityDTO> {
+  async execute(
+    activityId: string,
+    userId: string,
+  ): Promise<ActivityWithCategoryDTO> {
     const result = await this.knexService.connection.raw<{
       rows: any[];
     }>(
@@ -19,11 +23,13 @@ export class GetActivityByIdQuery {
         SELECT
           activities.*,
           EXTRACT(DAY FROM activities.interval) AS interval_days,
+          row_to_json(categories) as category,
           GREATEST(
             EXTRACT(DAY FROM activities.interval) - (CURRENT_DATE - (SELECT MAX(date) FROM activity_events WHERE activity_id = activities.id)),
             0
           ) AS days_until
         FROM activities
+        LEFT JOIN categories ON activities.category_id = categories.id
         WHERE activities.id = :activityId
       `,
       {
@@ -39,14 +45,6 @@ export class GetActivityByIdQuery {
       throw new UnauthorizedException('Unauthorized');
     }
 
-    return {
-      id: row.id,
-      userId: row.user_id,
-      name: row.name,
-      ticker: row.ticker,
-      interval: parseInt(row.interval_days, 10),
-      categoryId: row.category_id,
-      daysUntil: Number(row.days_until),
-    };
+    return ActivityMap.rawToActivityWithCategoryDTO(row);
   }
 }

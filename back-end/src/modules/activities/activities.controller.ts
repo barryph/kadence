@@ -124,16 +124,14 @@ export class ActivitiesController {
     @Body() body: ActivityDateActionDTO,
   ) {
     const userId = (req.user as UserDTO).id;
-    const activity = await this.activitiesService.completeActivity(
+    await this.activitiesService.completeActivity(
       activityId,
       userId,
       body.date,
     );
 
     return {
-      data: {
-        activity,
-      },
+      success: true,
     };
   }
 
@@ -145,16 +143,14 @@ export class ActivitiesController {
     @Body() body: ActivityDateActionDTO,
   ) {
     const userId = (req.user as UserDTO).id;
-    const activity = await this.activitiesService.undoActivityEvent(
+    await this.activitiesService.undoActivityEvent(
       activityId,
       userId,
       body.date,
     );
 
     return {
-      data: {
-        activity,
-      },
+      success: true,
     };
   }
 }

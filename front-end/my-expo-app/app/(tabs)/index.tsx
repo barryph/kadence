@@ -23,8 +23,6 @@ import ActivityBackground from '@/components/backgrounds/activity-background';
 
 // Extend IActivity for client-side properties
 interface IActivityClient extends IActivity {
-  category?: string;
-  categoryColor?: string;
   queued?: boolean;
 }
 
@@ -176,18 +174,18 @@ function Dashboard() {
                               style={[
                                 styles.categoryBadge,
                                 {
-                                  borderColor: activity.categoryColor,
-                                  backgroundColor: `${activity.categoryColor}1A`,
+                                  borderColor: activity.category.color,
+                                  backgroundColor: `${activity.category.color}1A`,
                                 },
                               ]}
                             >
                               <ThemedText
                                 style={[
                                   styles.categoryText,
-                                  { color: activity.categoryColor },
+                                  { color: activity.category.color },
                                 ]}
                               >
-                                {activity.category}
+                                {activity.category.color}
                               </ThemedText>
                             </View>
                           )}
@@ -197,7 +195,7 @@ function Dashboard() {
                             style={[
                               styles.activityDetailsText,
                               activity.queued &&
-                                styles.activityDetailsTextSelected,
+                              styles.activityDetailsTextSelected,
                             ]}
                           >
                             REMAIN:{' '}
@@ -205,7 +203,7 @@ function Dashboard() {
                               style={[
                                 styles.activityDetailsSpan,
                                 activity.queued &&
-                                  styles.activityDetailsSpanSelected,
+                                styles.activityDetailsSpanSelected,
                               ]}
                             >
                               {activity.daysUntil}
@@ -215,7 +213,7 @@ function Dashboard() {
                             style={[
                               styles.activityDetailsText,
                               activity.queued &&
-                                styles.activityDetailsTextSelected,
+                              styles.activityDetailsTextSelected,
                             ]}
                           >
                             INTRVL:{' '}
@@ -223,7 +221,7 @@ function Dashboard() {
                               style={[
                                 styles.activityDetailsSpan,
                                 activity.queued &&
-                                  styles.activityDetailsSpanSelected,
+                                styles.activityDetailsSpanSelected,
                               ]}
                             >
                               {activity.interval}
@@ -241,7 +239,7 @@ function Dashboard() {
                               style={[
                                 styles.activityBarNotch,
                                 day < DAYS_IN_WEEK - 1 &&
-                                  styles.activityBarNotchBorder,
+                                styles.activityBarNotchBorder,
                               ]}
                             />
                           ))}

@@ -10,6 +10,8 @@ interface IActivitiesRepo {
   update(activity: Activity): Promise<Activity>;
 }
 
+// TODO: update all queries to return full object of category
+
 @Injectable()
 export default class ActivitiesRepo implements IActivitiesRepo {
   constructor(private readonly knexService: KnexService) { }

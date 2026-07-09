@@ -45,7 +45,6 @@ export class CategoriesController {
   @UseGuards(IsAuthedGuard)
   async getAllByUserId(@Req() req: Request) {
     const userId = (req.user as UserDTO).id;
-    console.log('getting all categories');
     const categories = await this.categoriesService.getAllByUserId(userId);
     return {
       data: {

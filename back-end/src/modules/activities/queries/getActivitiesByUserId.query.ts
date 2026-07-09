@@ -16,9 +16,7 @@ export class GetActivitiesByUserIdQuery {
         SELECT
           activities.*,
           EXTRACT(DAY FROM activities.interval) AS interval_days,
-          categories.name AS category_name,
-          categories.color AS category_color,
-          categories.user_id AS category_user_id,
+          row_to_json(categories) as category,
           GREATEST(
             EXTRACT(DAY FROM activities.interval) - (CURRENT_DATE - (SELECT MAX(date) FROM activity_events WHERE activity_id = activities.id)),
             0

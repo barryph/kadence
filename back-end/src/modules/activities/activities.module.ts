@@ -7,8 +7,10 @@ import { KnexService } from 'src/shared/knex/knex.service';
 import { GetActivitiesByUserIdQuery } from './queries/getActivitiesByUserId.query';
 import { GetActivityByIdQuery } from './queries/getActivityById.query';
 import { GetActivityTimelineQuery } from './queries/getActivityTimeline.query';
+import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
+  imports: [CategoriesModule],
   controllers: [ActivitiesController],
   providers: [
     ActivitiesService,

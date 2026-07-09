@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     fontFamily: 'IBMPlexMono_700Bold',
   },
   sizeSmall: {
-    // fontSize: 14,
+    fontSize: 14,
   },
   sizeRegular: {
     fontSize: 16,

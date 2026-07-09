@@ -9,12 +9,8 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import DateTimePicker, {
-  type DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
-import Input from '@/components/base/input';
+import { FormProvider } from 'react-hook-form';
 import Button from '@/components/base/button';
-import CategorySelect from '@/components/categories/category-select';
 import { ThemedText } from '@/components/base/themed-text';
 import {
   activitiesAPI,
@@ -24,7 +20,14 @@ import {
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 import { categoriesAPI } from '@/api/api.categories';
-import Label from '@/components/base/label';
+
+import ActivityNameField from '@/components/activities/fields/activity-name-field';
+import ActivityTickerField from '@/components/activities/fields/activity-ticker-field';
+import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
+import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
+import ActivityLastDoneField from '@/components/activities/fields/activity-last-done-field';
+import { useActivityForm } from '@/components/activities/use-activity-form';
+import { ActivityFormValues } from '@/components/activities/activity-schema';
 
 function formatDateISO(date: Date): string {
   const year = date.getFullYear();
@@ -40,14 +43,10 @@ interface CreateActivityModalProps {
 export default function CreateActivityModal({
   onClose,
 }: CreateActivityModalProps) {
-  const [name, setName] = useState('');
-  const [ticker, setTicker] = useState('');
-  const [interval, setInterval] = useState('');
-  const [category, setCategory] = useState<ICategory | null>(null);
-  const [lastDoneDate, setLastDoneDate] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const form = useActivityForm();
 
   // TODO: Add clear category button
   const [categories, setCategories] = useState<ICategory[]>([
@@ -80,42 +79,21 @@ export default function CreateActivityModal({
     return () => abortController.abort();
   }, []);
 
-  function addCategory(category: ICategory) {
+  function handleCreatedCategory(category: ICategory) {
     setCategories((prev) => [...prev, category]);
   }
 
-  function handleSelectCategory(category: ICategory) {
-    setCategory(category);
-  }
-
-  function handleLastDoneChange(event: DateTimePickerEvent, date?: Date) {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
-    }
-    if (event.type === 'dismissed') {
-      return;
-    }
-    if (date) {
-      setLastDoneDate(date);
-    }
-  }
-
-  function clearLastDone() {
-    setLastDoneDate(null);
-    setShowDatePicker(false);
-  }
-
-  async function handleSubmit() {
+  async function handleSubmit(values: ActivityFormValues) {
     setIsLoading(true);
     setErrorMessage(null);
 
     const response = await activitiesAPI.createActivity({
-      name,
-      ticker: ticker || undefined,
-      interval: Number.parseInt(interval, 10),
-      lastDone: lastDoneDate ? formatDateISO(lastDoneDate) : undefined,
-      ...(category && {
-        categoryId: category.id,
+      name: values.name,
+      ticker: values.ticker,
+      interval: values.interval,
+      lastDone: values.lastDone ? formatDateISO(values.lastDone) : undefined,
+      ...(values.categoryId && {
+        categoryId: values.categoryId,
       }),
     });
 
@@ -138,92 +116,36 @@ export default function CreateActivityModal({
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Background showRed={false} />
         <KeyboardAvoidingView
-          style={styles.flex}
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={() => onClose()}
-            accessibilityLabel="Close"
-          >
-            <ThemedText style={styles.closeButtonText}>✕</ThemedText>
-          </TouchableOpacity>
-
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
           >
-            <ThemedText type="title" style={styles.title}>
-              New activity
-            </ThemedText>
-
-            <Input
-              label="Name"
-              placeholder="Name"
-              value={name}
-              onChangeText={setName}
-            />
-            <Input
-              label="Ticker (optional)"
-              placeholder="Ticker"
-              value={ticker}
-              onChangeText={setTicker}
-            />
-            <Input
-              label="Interval (days)"
-              placeholder="Interval (days)"
-              value={interval}
-              onChangeText={setInterval}
-              keyboardType="number-pad"
-            />
-            <CategorySelect
-              label="Category (optional)"
-              placeholder="Choose a Category"
-              options={categories}
-              onCreate={addCategory}
-              onSelect={handleSelectCategory}
-            />
-
-            <Label>Last Done (optional)</Label>
-            <TouchableOpacity
-              style={styles.dateField}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <ThemedText
-                style={lastDoneDate ? styles.dateValue : styles.datePlaceholder}
-              >
-                {lastDoneDate ? formatDateISO(lastDoneDate) : 'Select date'}
-              </ThemedText>
-            </TouchableOpacity>
-            {/** Date clear button **/}
-            {lastDoneDate ? (
+            <View style={styles.title}>
+              <ThemedText type="title">New activity</ThemedText>
               <TouchableOpacity
-                onPress={clearLastDone}
-                style={styles.clearDateButton}
+                style={styles.closeButton}
+                onPress={() => onClose()}
+                accessibilityLabel="Close"
               >
-                <ThemedText style={styles.clearDateText}>Clear date</ThemedText>
+                <ThemedText style={styles.closeButtonText}>✕</ThemedText>
               </TouchableOpacity>
-            ) : null}
-            {/** Date picker **/}
-            {showDatePicker && (
-              <>
-                <DateTimePicker
-                  value={lastDoneDate ?? new Date()}
-                  mode="date"
-                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                  maximumDate={new Date()}
-                  onChange={handleLastDoneChange}
-                />
-                {Platform.OS === 'ios' ? (
-                  <Button
-                    onPress={() => setShowDatePicker(false)}
-                    style={styles.datePickerDone}
-                  >
-                    Done
-                  </Button>
-                ) : null}
-              </>
-            )}
+            </View>
+
+            <FormProvider {...form}>
+              <ActivityNameField />
+              <ActivityTickerField />
+              <ActivityIntervalField />
+
+              <ActivityCategoryField
+                categories={categories}
+                onCreate={handleCreatedCategory}
+              />
+
+              <ActivityLastDoneField />
+            </FormProvider>
 
             {errorMessage ? (
               <View style={{ marginTop: 10 }}>
@@ -234,7 +156,7 @@ export default function CreateActivityModal({
             <Button
               isLoading={isLoading}
               style={styles.submitButton}
-              onPress={handleSubmit}
+              onPress={form.handleSubmit(handleSubmit)}
             >
               Create
             </Button>
@@ -246,9 +168,6 @@ export default function CreateActivityModal({
 }
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
   container: {
     flex: 1,
   },
@@ -258,49 +177,21 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   closeButton: {
-    position: 'absolute',
-    top: 12,
-    right: 24,
     zIndex: 10,
     padding: 8,
   },
   closeButtonText: {
     fontSize: 28,
-    opacity: 0.4,
+    opacity: 0.5,
     lineHeight: 28,
   },
   title: {
-    marginBottom: 16,
+    marginBottom: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   submitButton: {
-    marginTop: 20,
-  },
-  dateField: {
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,.055)',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginBottom: 8,
-  },
-  dateValue: {
-    fontSize: 16,
-    color: '#fff',
-  },
-  datePlaceholder: {
-    fontSize: 16,
-    color: '#999',
-  },
-  clearDateButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 16,
-  },
-  clearDateText: {
-    fontSize: 14,
-    color: '#fff',
-  },
-  datePickerDone: {
-    marginBottom: 16,
+    marginTop: 30,
   },
 });

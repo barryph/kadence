@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, type TextInputProps } from 'react-native';
-import { ThemedText } from '@/components/base/themed-text';
 import Label from '@/components/base/label';
+import InputErrorMessage from '@/components/base/input-error-message.tsx';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -22,9 +22,7 @@ export default function Input({
         placeholderTextColor="#999"
         {...props}
       />
-      {errorMessage && (
-        <ThemedText style={styles.errorText}>{errorMessage}</ThemedText>
-      )}
+      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
     </View>
   );
 }
@@ -52,11 +50,5 @@ const styles = StyleSheet.create({
   },
   inputError: {
     borderColor: '#ff3333',
-  },
-  errorText: {
-    color: '#ff3333',
-    fontSize: 12,
-    marginTop: 4,
-    lineHeight: 14,
   },
 });

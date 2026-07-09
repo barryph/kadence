@@ -4,10 +4,12 @@ import { ThemedText } from '@/components/base/themed-text';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import type { ICategory } from '@/api/api.activity';
 import Label from '@/components/base/label';
+import InputErrorMessage from '@/components/base/input-error-message.tsx';
 
 interface CategorySelectProps {
   label?: string;
   placeholder?: string;
+  errorMessage?: string;
   options: ICategory[];
   onCreate: (category: ICategory) => void;
   onSelect: (category: ICategory) => void;
@@ -16,6 +18,7 @@ interface CategorySelectProps {
 export default function CategorySelect({
   label,
   placeholder = 'Choose a category',
+  errorMessage,
   options,
   onCreate,
   onSelect,
@@ -65,6 +68,8 @@ export default function CategorySelect({
           ›
         </ThemedText>
       </Pressable>
+
+      {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
 
       {showDropdown && (
         <View style={styles.dropdown}>

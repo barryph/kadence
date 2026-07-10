@@ -19,10 +19,10 @@ interface IProps {
   onSwipeRight: () => void;
   swipeLeftChild: ReactNode;
   swipeLeftColor: string;
-  swipeLeftBackground: string;
+  swipeLeftBackground?: string;
   swipeRightChild: ReactNode;
   swipeRightColor: string;
-  swipeRightBackground: string;
+  swipeRightBackground?: string;
   children: ReactNode;
   queued?: boolean;
 }
@@ -112,7 +112,9 @@ export default function SwipeRow({
         style={[
           styles.backgroundLayer,
           {
-            backgroundColor: swipeLeftBackground,
+            ...(swipeLeftBackground && {
+              backgroundColor: swipeLeftBackground,
+            }),
             justifyContent: 'flex-end',
             paddingRight: 20,
           },
@@ -129,7 +131,9 @@ export default function SwipeRow({
         style={[
           styles.backgroundLayer,
           {
-            backgroundColor: swipeRightBackground,
+            ...(swipeRightBackground && {
+              backgroundColor: swipeRightBackground,
+            }),
             justifyContent: 'flex-start',
             paddingLeft: 20,
           },

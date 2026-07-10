@@ -145,7 +145,6 @@ function Dashboard() {
                     <Text style={{ fontSize: 24, color: '#000' }}>⚙️</Text>
                   }
                   swipeLeftColor="inherit"
-                  swipeLeftBackground="#e9ecf6"
                   swipeRightChild={
                     <Text style={{ fontSize: 24, color: '#fff' }}>✓</Text>
                   }

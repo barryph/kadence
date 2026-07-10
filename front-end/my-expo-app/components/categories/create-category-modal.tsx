@@ -18,9 +18,9 @@ import ColorPicker, {
 import Input from '@/components/base/input';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import type { ICategory } from '@/api/api.activity';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
+import type { ICategory } from '@/api/api.categories';
 import { categoriesAPI } from '@/api/api.categories';
 
 interface CreateCategoryModalProps {

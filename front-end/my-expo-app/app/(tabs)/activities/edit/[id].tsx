@@ -14,7 +14,8 @@ import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
-import { activitiesAPI, ICategory } from '@/api/api.activity';
+import { activitiesAPI } from '@/api/api.activity';
+import { categoriesAPI, ICategory } from '@/api/api.categories';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
@@ -22,7 +23,6 @@ import ActivityNameField from '@/components/activities/fields/activity-name-fiel
 import ActivityTickerField from '@/components/activities/fields/activity-ticker-field';
 import { ActivityFormValues } from '@/components/activities/activity-schema';
 import Skeleton from '@/components/ui/skeleton';
-import { categoriesAPI } from '@/api/api.categories';
 import AlertSuccess from '@/components/alerts/alert-success';
 
 function isString(val: any): val is string {

@@ -124,7 +124,15 @@ function Dashboard() {
           );
 
           return (
-            <View style={[styles.activityWrapper]} key={activity.id}>
+            <View
+              style={[
+                styles.activityWrapper,
+                activity.category && {
+                  borderColor: `${activity.category?.color}66`,
+                },
+              ]}
+              key={activity.id}
+            >
               <ActivityBackground />
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -351,6 +359,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: 'rgba(255,255,255,.1)',
     borderRadius: 22,
+    boxShadow: '0 14px 35px rgba(0,0,0,.22)',
     overflow: 'hidden',
   },
   activityInner: {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
-import type { ICategory } from '@/api/api.activity';
+import type { ICategory } from '@/api/api.categories';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 

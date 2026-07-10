@@ -40,7 +40,6 @@ export default function CreateActivityModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useActivityForm();
 
-  // TODO: Add clear category button
   const [categories, setCategories] = useState<ICategory[]>([]);
 
   // Fetch categories

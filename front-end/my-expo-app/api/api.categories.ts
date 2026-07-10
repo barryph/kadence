@@ -1,6 +1,11 @@
 import { apiClient, type OptionalOptions } from './api.client';
-// TODO: move to this file
-import { ICategory } from './api.activity';
+
+export interface ICategory {
+  id?: number;
+  userId?: string;
+  name: string;
+  color: string;
+}
 
 interface GetAllCategoriesByUserResponse {
   categories: ICategory[];

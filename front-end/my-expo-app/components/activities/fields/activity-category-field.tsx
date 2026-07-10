@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import CategorySelect from '@/components/categories/category-select';
-import type { ICategory } from '@/api/api.activity';
+import type { ICategory } from '@/api/api.categories';
 import type { ActivityFormValues } from '../activity-schema';
 
 interface Props {

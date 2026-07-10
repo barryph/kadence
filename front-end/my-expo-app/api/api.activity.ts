@@ -1,4 +1,5 @@
 import { apiClient, type OptionalOptions } from './api.client';
+import { ICategory } from './api.categories';
 
 export interface IActivity {
   id: string;
@@ -39,13 +40,6 @@ interface EditActivityDTO {
 
 interface EditActivityResponse {
   activity: IActivity;
-}
-
-export interface ICategory {
-  id?: number;
-  userId?: string;
-  name: string;
-  color: string;
 }
 
 export const activitiesAPI = {

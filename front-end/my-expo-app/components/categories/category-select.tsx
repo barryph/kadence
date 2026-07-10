@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import type { ICategory } from '@/api/api.activity';
@@ -7,25 +7,29 @@ import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 
 interface CategorySelectProps {
+  value?: ICategory;
   label?: string;
   placeholder?: string;
   errorMessage?: string;
-  options: ICategory[];
+  categories: ICategory[];
   onCreate: (category: ICategory) => void;
   onSelect: (category: ICategory) => void;
+  onClear: () => void;
 }
 
 export default function CategorySelect({
+  value,
   label,
   placeholder = 'Choose a category',
   errorMessage,
-  options,
+  categories,
   onCreate,
   onSelect,
+  onClear,
 }: CategorySelectProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
-    null,
+    value || null,
   );
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
 
@@ -41,6 +45,11 @@ export default function CategorySelect({
     setSelectedCategory(category);
     setShowDropdown(false);
     onSelect(category);
+  }
+
+  function clearCategory() {
+    setSelectedCategory(null);
+    onClear();
   }
 
   return (
@@ -69,19 +78,31 @@ export default function CategorySelect({
         </ThemedText>
       </Pressable>
 
+      {/** Clear value button **/}
+      {selectedCategory && (
+        <TouchableOpacity
+          onPress={() => clearCategory()}
+          style={styles.clearCategoryButton}
+        >
+          <ThemedText style={styles.clearCategoryText}>
+            Clear category
+          </ThemedText>
+        </TouchableOpacity>
+      )}
+
       {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
 
       {showDropdown && (
         <View style={styles.dropdown}>
           {/* <Background showRed={false} /> */}
-          {options.map((option) => (
+          {categories.map((category) => (
             <Pressable
-              key={option.name}
-              onPress={() => selectCategory(option)}
+              key={category.name}
+              onPress={() => selectCategory(category)}
               style={styles.dropdownItem}
             >
-              <View style={[styles.dot, { backgroundColor: option.color }]} />
-              <ThemedText>{option.name}</ThemedText>
+              <View style={[styles.dot, { backgroundColor: category.color }]} />
+              <ThemedText>{category.name}</ThemedText>
             </Pressable>
           ))}
           <Pressable
@@ -177,5 +198,13 @@ const styles = StyleSheet.create({
   dropDownCreateButton: {
     borderTopWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  clearCategoryButton: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
+  },
+  clearCategoryText: {
+    fontSize: 14,
+    color: '#fff',
   },
 });

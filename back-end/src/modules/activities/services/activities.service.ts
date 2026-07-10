@@ -116,6 +116,10 @@ export class ActivitiesService {
     if (editActivityDto.interval) {
       activity.changeInterval(editActivityDto.interval);
     }
+    // Allow null value to clear the category
+    if (editActivityDto.categoryId !== undefined) {
+      activity.changeCategoryId(editActivityDto.categoryId);
+    }
 
     await this.activitiesRepo.update(activity);
     return this.getActivityByIdQuery.execute(activityId, userId);

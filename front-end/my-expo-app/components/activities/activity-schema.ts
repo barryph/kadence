@@ -7,7 +7,7 @@ export const activitySchema = z.object({
     .max(30, 'Name must be <= 30 characters'),
   ticker: z.string().max(5, 'Ticker must be 1-5 characters'),
   interval: z.coerce.number().min(1, 'Interval must be greater than 0'),
-  categoryId: z.string().optional(),
+  categoryId: z.number().nullable(),
   lastDone: z.date().nullable().optional(),
 });
 

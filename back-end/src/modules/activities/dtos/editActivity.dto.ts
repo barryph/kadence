@@ -25,4 +25,7 @@ export default class EditActivityDTO {
   @IsNumber()
   @IsOptional()
   interval: number;
+  @IsOptional()
+  @IsNumber()
+  categoryId?: number;
 }

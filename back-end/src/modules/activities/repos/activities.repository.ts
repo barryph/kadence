@@ -68,7 +68,7 @@ export default class ActivitiesRepo implements IActivitiesRepo {
     }>(
       `
         UPDATE activities
-        SET name = :name, ticker = :ticker, interval = :interval
+        SET name = :name, ticker = :ticker, interval = :interval, category_id = :category_id
         WHERE id = :id
         RETURNING *, EXTRACT(DAY FROM interval) || ' DAYS' AS interval, 0 AS days_until
       `,
@@ -77,6 +77,7 @@ export default class ActivitiesRepo implements IActivitiesRepo {
         name: activity.name,
         ticker: activity.ticker || null,
         interval: activity.interval,
+        category_id: activity.category_id || null,
       },
     );
     const updatedActivity = result.rows[0];

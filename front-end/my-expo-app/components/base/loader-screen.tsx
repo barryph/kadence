@@ -1,18 +1,17 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
+import Background from '@/components/backgrounds/background';
 
 interface IProps {
   text: string;
 }
 
 export default function LoaderScreen({ text }: IProps) {
-  const color = useThemeColor({ light: '#000', dark: '#fff' }, 'text');
-
   return (
     <ThemedView style={styles.container}>
-      <ActivityIndicator color={color} />
+      <Background />
+      <ActivityIndicator color="#fff" />
       <ThemedText style={{ marginTop: 10 }}>{text}</ThemedText>
     </ThemedView>
   );

@@ -9,10 +9,11 @@ interface Props {
 }
 
 export default function ActivityCategoryField({ categories, onCreate }: Props) {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext<ActivityFormValues>();
+  const { control, formState, getValues } =
+    useFormContext<ActivityFormValues>();
+
+  const categoryId = getValues('categoryId');
+  const value = categories.find((category) => category.id === categoryId);
 
   return (
     <Controller
@@ -20,12 +21,14 @@ export default function ActivityCategoryField({ categories, onCreate }: Props) {
       name="categoryId"
       render={({ field }) => (
         <CategorySelect
+          value={value}
           label="Category (optional)"
           placeholder="Choose a Category"
-          options={categories}
+          categories={categories}
           onCreate={onCreate}
           onSelect={(category) => field.onChange(category.id)}
-          errorMessage={errors.categoryId?.message}
+          onClear={() => field.onChange(null)}
+          errorMessage={formState.errors.categoryId?.message}
         />
       )}
     />

@@ -20,7 +20,7 @@ import {
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 import { categoriesAPI } from '@/api/api.categories';
-
+import { formatDateISO } from '@/utils/date';
 import ActivityNameField from '@/components/activities/fields/activity-name-field';
 import ActivityTickerField from '@/components/activities/fields/activity-ticker-field';
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
@@ -28,13 +28,6 @@ import ActivityCategoryField from '@/components/activities/fields/activity-categ
 import ActivityLastDoneField from '@/components/activities/fields/activity-last-done-field';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import { ActivityFormValues } from '@/components/activities/activity-schema';
-
-function formatDateISO(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
 
 interface CreateActivityModalProps {
   onClose: (activity?: IActivity) => void;
@@ -45,15 +38,10 @@ export default function CreateActivityModal({
 }: CreateActivityModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   const form = useActivityForm();
 
   // TODO: Add clear category button
-  const [categories, setCategories] = useState<ICategory[]>([
-    // { name: 'Sprint', color: 'green' },
-    // { name: 'Jump', color: 'red' },
-    // { name: 'BB', color: 'blue' },
-  ]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
 
   // Fetch categories
   useEffect(() => {
@@ -147,11 +135,11 @@ export default function CreateActivityModal({
               <ActivityLastDoneField />
             </FormProvider>
 
-            {errorMessage ? (
+            {errorMessage && (
               <View style={{ marginTop: 10 }}>
                 <AlertError>{errorMessage}</AlertError>
               </View>
-            ) : null}
+            )}
 
             <Button
               isLoading={isLoading}

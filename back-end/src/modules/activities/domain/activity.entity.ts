@@ -81,6 +81,9 @@ export default class Activity {
     }
     this.props.interval = interval;
   }
+  public changeCategoryId(categoryId: number) {
+    this.props.categoryId = categoryId;
+  }
 
   private static validate(props: IActivity) {
     if (

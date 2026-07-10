@@ -34,6 +34,7 @@ interface EditActivityDTO {
   name: string;
   ticker?: string;
   interval: number;
+  categoryId: number | null;
 }
 
 interface EditActivityResponse {
@@ -41,7 +42,7 @@ interface EditActivityResponse {
 }
 
 export interface ICategory {
-  id?: string;
+  id?: number;
   userId?: string;
   name: string;
   color: string;

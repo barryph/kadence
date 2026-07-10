@@ -6,6 +6,7 @@ import {
 import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useEffect } from 'react';
 import {
@@ -17,6 +18,7 @@ import {
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '@/context/auth-context';
+import Background from '@/components/backgrounds/background';
 
 // This prevents SplashScreen from auto hiding while the fonts are in loading state
 SplashScreen.preventAutoHideAsync();
@@ -55,7 +57,11 @@ function RootLayoutNav() {
   }, [isAuthenticated, isLoading, segments]);
 
   if (!loaded && !error) {
-    return null;
+    return (
+      <View style={{ flex: 1 }}>
+        <Background />
+      </View>
+    );
   }
 
   return (

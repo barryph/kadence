@@ -8,6 +8,7 @@ interface IActivitiesRepo {
   create(activity: Activity): Promise<Activity>;
   getById(id: string): Promise<Activity | null>;
   update(activity: Activity): Promise<Activity>;
+  delete(id: string): Promise<boolean>;
 }
 
 // TODO: update all queries to return full object of category
@@ -82,5 +83,17 @@ export default class ActivitiesRepo implements IActivitiesRepo {
     );
     const updatedActivity = result.rows[0];
     return ActivityMap.persistenceToDomain(updatedActivity);
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const result = await this.knexService.connection.raw<{ rowCount: number }>(
+      `
+        DELETE FROM activities
+        WHERE id = :id
+      `,
+      { id },
+    );
+
+    return result.rowCount > 0;
   }
 }

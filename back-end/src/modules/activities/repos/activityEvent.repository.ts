@@ -6,6 +6,7 @@ import { DuplicateActivityEventError } from '../activitiyEvent.errors';
 interface IActivityEventRepo {
   create(activityEvent: ActivityEvent): Promise<ActivityEvent>;
   removeByActivityIdAndDate(activityId: string, date: string): Promise<boolean>;
+  removeByActivityId(activityId: string): Promise<void>;
 }
 
 @Injectable()
@@ -60,5 +61,15 @@ export default class ActivityEventRepo implements IActivityEventRepo {
     );
 
     return result.rowCount > 0;
+  }
+
+  async removeByActivityId(activityId: string): Promise<void> {
+    await this.knexService.connection.raw(
+      `
+        DELETE FROM activity_events
+        WHERE activity_id = :activityId
+      `,
+      { activityId },
+    );
   }
 }

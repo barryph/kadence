@@ -176,4 +176,17 @@ export class ActivitiesService {
   ): Promise<ActivityTimelineDTO> {
     return this.getActivityTimelineQuery.execute(userId, month);
   }
+
+  async deleteActivity(activityId: string, userId: string): Promise<void> {
+    const activity = await this.activitiesRepo.getById(activityId);
+    if (!activity) {
+      throw new NotFoundException('Activity not found');
+    }
+    if (activity.userId !== userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    await this.activityEventRepo.removeByActivityId(activityId);
+    await this.activitiesRepo.delete(activityId);
+  }
 }

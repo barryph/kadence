@@ -7,6 +7,7 @@ import {
   UseGuards,
   Get,
   Param,
+  Delete,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
@@ -148,6 +149,20 @@ export class ActivitiesController {
       userId,
       body.date,
     );
+
+    return {
+      success: true,
+    };
+  }
+
+  @Delete('/:activityId')
+  @UseGuards(IsAuthedGuard)
+  async delete(
+    @Req() req: Request,
+    @Param('activityId') activityId: string,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    await this.activitiesService.deleteActivity(activityId, userId);
 
     return {
       success: true,

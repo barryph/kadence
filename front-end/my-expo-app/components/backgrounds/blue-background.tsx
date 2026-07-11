@@ -10,5 +10,6 @@ export default function BlueBackground() {
       end={{ x: 1, y: 1 }}
       style={StyleSheet.absoluteFill}
     />
+    // Alternative / Darker ---- linear-gradient(159.876deg, rgb(11, 84, 164), rgb(19, 93, 143) 58%, rgb(13, 88, 125) 100%)
   );
 }

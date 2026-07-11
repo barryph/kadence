@@ -1,5 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+
 import { ThemedText } from '@/components/base/themed-text';
 import SwipeRow from '@/components/swipe-row';
 import type { IActivityClient } from '@/api/api.activity';
@@ -42,11 +45,15 @@ export default function ActivityListItem({
           onSwipeLeft={() => onEdit(activity)}
           onSwipeRight={() => onComplete(activity.id)}
           swipeLeftChild={
-            <ThemedText style={{ fontSize: 24, color: '#000' }}>⚙️</ThemedText>
+            <ThemedText style={{ fontSize: 24, color: '#eee' }}>
+              <FontAwesome6 name="gear" size={26} />
+            </ThemedText>
           }
           swipeLeftColor="inherit"
           swipeRightChild={
-            <ThemedText style={{ fontSize: 24, color: '#fff' }}>✓</ThemedText>
+            <ThemedText style={{ fontSize: 24, color: '#000' }}>
+              <Ionicons name="checkmark-done" size={24} />
+            </ThemedText>
           }
           swipeRightColor="#fff"
           swipeRightBackground="#0072ff"
@@ -91,7 +98,7 @@ export default function ActivityListItem({
                           { color: activity.category.color },
                         ]}
                       >
-                        {activity.category.color}
+                        {activity.category.name}
                       </ThemedText>
                     </View>
                   )}
@@ -103,7 +110,7 @@ export default function ActivityListItem({
                       activity.queued && styles.activityDetailsTextSelected,
                     ]}
                   >
-                    REMAIN:{' '}
+                    REMAIN:
                     <ThemedText
                       style={[
                         styles.activityDetailsSpan,
@@ -119,7 +126,7 @@ export default function ActivityListItem({
                       activity.queued && styles.activityDetailsTextSelected,
                     ]}
                   >
-                    INTRVL:{' '}
+                    INTRVL:
                     <ThemedText
                       style={[
                         styles.activityDetailsSpan,
@@ -259,15 +266,17 @@ const styles = StyleSheet.create({
   activityDetailsText: {
     fontSize: 12,
     // fontSize: '.78rem',
-    color: '#8f98aa',
+    // color: '#8f98aa',
+    color: '#7e91b6',
     // letterSpacing: '-.045em',
     letterSpacing: -0.45,
     fontWeight: 500,
   },
   activityDetailsSpan: {
-    // fontSize: 14,
+    fontSize: 14,
     fontWeight: 700,
     color: '#fff',
+    marginLeft: 3,
   },
   activityDetailsTextSelected: {
     color: '#eee',

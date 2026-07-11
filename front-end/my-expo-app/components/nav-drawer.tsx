@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BlueBackground from '@/components/backgrounds/blue-background';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const DRAWER_WIDTH = SCREEN_WIDTH;
+const DRAWER_WIDTH = Math.floor((SCREEN_WIDTH / 100) * 75);
 
 interface NavDrawerProps {
   isOpen: boolean;

@@ -7,7 +7,7 @@ export interface IActivity {
   name: string;
   ticker?: string;
   interval: number;
-  categoryId?: string;
+  categoryId?: number;
   category?: ICategory;
   daysUntil: number;
 }

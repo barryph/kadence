@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { activitiesAPI, IActivityClient } from '@/api/api.activity';
 
@@ -21,6 +27,7 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [showNewActivityModal, setShowNewActivityModal] = useState(false);
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
 
   const sortActivities = (acts: IActivityClient[] = []) => {
     return [...acts].sort((a, b) => {
@@ -105,6 +112,19 @@ function Dashboard() {
     setShowNewActivityModal(false);
   }
 
+  function handleCategoryPress(categoryId: number) {
+    setActiveCategoryId((current) =>
+      current === categoryId ? null : categoryId,
+    );
+  }
+
+  const filteredActivities =
+    activeCategoryId === null
+      ? activities
+      : activities.filter(
+        (activity) => activity.categoryId === activeCategoryId,
+      );
+
   if (isLoading) {
     return <LoaderScreen text="Loading activities..." />;
   }
@@ -134,21 +154,31 @@ function Dashboard() {
             Category
           </ThemedText>
           <View style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
-            {categories.map((category) => (
-              <ThemedText
-                key={category.id}
-                size="small"
-                type="defaultSemiBold"
-                style={[
-                  styles.categoryPill,
-                  {
-                    // borderColor: `${category.color}88`,
-                  },
-                ]}
-              >
-                {category.name}
-              </ThemedText>
-            ))}
+            {categories.map((category) => {
+              const isActive = activeCategoryId === category.id;
+              return (
+                <Pressable
+                  key={category.id}
+                  onPress={() => handleCategoryPress(category.id!)}
+                >
+                  <ThemedText
+                    size="small"
+                    type="defaultSemiBold"
+                    style={[
+                      styles.categoryPill,
+                      isActive && {
+                        borderWidth: 1.5,
+                        borderColor: `${category.color}88`,
+                        backgroundColor: `${category.color}1A`,
+                        color: category.color,
+                      },
+                    ]}
+                  >
+                    {category.name}
+                  </ThemedText>
+                </Pressable>
+              );
+            })}
           </View>
         </View>
         {/* <ThemedView style={styles.statsBar}> */}
@@ -157,7 +187,7 @@ function Dashboard() {
         {/**/}
         {/*   </ThemedView> */}
         {/* </ThemedView> */}
-        {activities.map((activity, index) => (
+        {filteredActivities.map((activity, index) => (
           <ActivityListItem
             key={activity.id}
             index={index}

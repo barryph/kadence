@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import React, { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import { HapticTab } from '@/components/base/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -60,15 +61,16 @@ export default function TabLayout() {
             style={{
               backgroundColor: 'rgba(255,255,255,.11)',
               borderRadius: 17,
-              height: 44,
-              width: 45,
+              height: 55,
+              width: 55,
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              backdropFilter: 'blur(12px)',
             }}
           >
             <ThemedText style={{ color: '#d8ecff', fontSize: 24 }}>
-              ☰
+              <FontAwesome6 name="bars-staggered" size={26} />
             </ThemedText>
           </View>
         </TouchableOpacity>

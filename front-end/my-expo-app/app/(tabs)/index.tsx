@@ -10,12 +10,14 @@ import { useRouter } from 'expo-router';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import SwipeRow from '@/components/swipe-row';
 import { LinearGradient } from 'expo-linear-gradient';
+
 import { ThemedText } from '@/components/base/themed-text';
 import LoaderScreen from '@/components/base/loader-screen';
 import CreateActivityModal from '@/components/activities/create-activity-modal';
 import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import Background from '@/components/backgrounds/background';
 import ActivityBackground from '@/components/backgrounds/activity-background';
+import { categoriesAPI, ICategory } from '@/api/api.categories';
 
 // TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
 // TODO: Add edit activity page
@@ -32,6 +34,7 @@ function Dashboard() {
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showNewActivityModal, setShowNewActivityModal] = useState(false);
+  const [categories, setCategories] = useState<ICategory[]>([]);
 
   const sortActivities = (acts: IActivityClient[] = []) => {
     return [...acts].sort((a, b) => {
@@ -47,24 +50,35 @@ function Dashboard() {
   useEffect(() => {
     const abortController = new AbortController();
 
-    async function fetchActivities() {
+    async function fetchData() {
       try {
-        const response = await activitiesAPI.getAllByUser({
-          signal: abortController.signal,
-        });
-        if (response.data?.activities) {
-          setActivities(
-            sortActivities(response.data.activities as IActivityClient[]),
-          );
-          setIsLoading(false);
+        const [activitiesResponse, categoriesResponse] = await Promise.all([
+          activitiesAPI.getAllByUser({
+            signal: abortController.signal,
+          }),
+          categoriesAPI.getAllByUser({
+            signal: abortController.signal,
+          }),
+        ]);
+
+        if (activitiesResponse.data?.activities) {
+          const activities = activitiesResponse.data.activities;
+          setActivities(sortActivities(activities as IActivityClient[]));
+        }
+
+        if (categoriesResponse.data?.categories) {
+          setCategories(categoriesResponse.data.categories as ICategory[]);
         }
       } catch (err) {
-        console.error('Error fetching activities', err);
+        if (!abortController.signal.aborted) {
+          console.error('Error fetching data', err);
+        }
+      } finally {
         setIsLoading(false);
       }
     }
 
-    fetchActivities();
+    fetchData();
     return () => abortController.abort();
   }, []);
 
@@ -114,9 +128,49 @@ function Dashboard() {
       <Background />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ThemedText type="defaultBold" style={styles.headline}>
-          Activities In Motion
-        </ThemedText>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <ThemedText type="defaultBold" style={styles.headline}>
+            Activities In Motion
+          </ThemedText>
+          {/* <Pressable> */}
+          {/*   <FontAwesome6 name="gear" size={24} color="white" /> */}
+          {/* </Pressable> */}
+        </View>
+        <View style={styles.categoriesContainer}>
+          <ThemedText style={styles.categoriesTitle} type="defaultSemiBold">
+            Category
+          </ThemedText>
+          <View style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+            {categories.map((category) => (
+              <ThemedText
+                key={category.id}
+                size="small"
+                type="defaultSemiBold"
+                style={[
+                  styles.categoryPill,
+                  {
+                    // borderColor: `${category.color}88`,
+                  },
+                ]}
+              >
+                {category.name}
+              </ThemedText>
+            ))}
+          </View>
+        </View>
+        {/* <ThemedView style={styles.statsBar}> */}
+        {/*   <ThemedView></ThemedView> */}
+        {/*   <ThemedView> */}
+        {/**/}
+        {/*   </ThemedView> */}
+        {/* </ThemedView> */}
         {activities.map((activity, index) => {
           const remainingPercent = Math.min(
             Math.max((activity.daysUntil || 0) / DAYS_IN_WEEK, 0),
@@ -332,7 +386,7 @@ const styles = StyleSheet.create({
     //     backgroundAttachment: 'fixed',
   },
   headline: {
-    paddingHorizontal: 4,
+    // paddingHorizontal: 4,
     fontSize: 24,
     paddingTop: 10,
     paddingBottom: 5,
@@ -340,7 +394,7 @@ const styles = StyleSheet.create({
     // textTransform: 'uppercase',
     // letterSpacing: '.08em',
     letterSpacing: -0.01,
-    fontFamily: 'system-ui',
+    fontFamily: '"system-ui"',
     fontWeight: 700,
   },
   scrollContent: {
@@ -477,6 +531,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  categoriesContainer: {
+    marginBottom: 3,
+  },
+  categoriesTitle: {
+    opacity: 0.6,
+    marginBottom: 3,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    fontSize: 13,
+  },
+  categoryPill: {
+    backgroundColor: 'rgba(255,255,255,.055)',
+    color: '#f5f7fbcc',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,.1)',
+    paddingHorizontal: 14,
+    paddingVertical: 3,
+    borderRadius: 16,
+    fontSize: 13,
   },
 });
 

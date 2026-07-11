@@ -31,13 +31,31 @@ class APIClient {
       });
 
       if (options.method === 'DELETE') {
+        if (!response.ok) {
+          return {
+            error: {
+              code: ErrorCode.GENERIC_ERROR,
+              message: 'Something went wrong, please try again.',
+            },
+          };
+        }
         return { data: undefined as T };
       }
 
       const json: ServerResponse<T> = await response.json();
+
       if (json.error) {
         return {
           error: errorMapper.mapError(json.error),
+        };
+      }
+
+      if (!response.ok) {
+        return {
+          error: {
+            code: ErrorCode.GENERIC_ERROR,
+            message: 'Something went wrong, please try again.',
+          },
         };
       }
 

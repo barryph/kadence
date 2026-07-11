@@ -93,4 +93,8 @@ export const activitiesAPI = {
   undo(activityId: number | string, date: string, options?: OptionalOptions) {
     return apiClient.post(`/activities/${activityId}/undo`, { date }, options);
   },
+
+  deleteActivity(activityId: number | string, options?: OptionalOptions) {
+    return apiClient.delete<undefined>(`/activities/${activityId}`, options);
+  },
 };

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   View,
@@ -24,6 +25,7 @@ import ActivityTickerField from '@/components/activities/fields/activity-ticker-
 import { ActivityFormValues } from '@/components/activities/activity-schema';
 import Skeleton from '@/components/ui/skeleton';
 import AlertSuccess from '@/components/alerts/alert-success';
+import DeleteActivityModal from '@/components/activities/delete-activity-modal';
 
 function isString(val: any): val is string {
   return typeof val === 'string';
@@ -38,6 +40,7 @@ function EditActivityPage() {
   >(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<boolean>(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const form = useActivityForm();
   const [categories, setCategories] = useState<ICategory[]>([]);
 
@@ -135,9 +138,27 @@ function EditActivityPage() {
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <ThemedText type="title" style={styles.title}>
-            Edit Activity
-          </ThemedText>
+          <View style={styles.titleRow}>
+            <ThemedText type="title" style={styles.title}>
+              Edit Activity
+            </ThemedText>
+            {!isLoading && !initLoadErrorMessage && (
+              <Pressable
+                style={({ pressed }) => [
+                  styles.deleteButton,
+                  pressed ? { opacity: 0.7 } : null,
+                ]}
+                onPress={() => setIsDeleteModalVisible(true)}
+              >
+                <ThemedText
+                  style={styles.deleteButtonText}
+                  type="defaultSemiBold"
+                >
+                  Delete
+                </ThemedText>
+              </Pressable>
+            )}
+          </View>
           {initLoadErrorMessage && (
             <AlertError>{initLoadErrorMessage}</AlertError>
           )}
@@ -186,6 +207,15 @@ function EditActivityPage() {
           )}
         </KeyboardAvoidingView>
       </ScrollView>
+      <DeleteActivityModal
+        visible={isDeleteModalVisible}
+        activityId={isString(activityId) ? activityId : ''}
+        onClose={() => setIsDeleteModalVisible(false)}
+        onDeleted={() => {
+          setIsDeleteModalVisible(false);
+          router.back();
+        }}
+      />
     </ThemedView>
   );
 }
@@ -202,8 +232,30 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     paddingBottom: 32,
   },
-  title: {
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 30,
+  },
+  title: {
+    flex: 1,
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#c6282833',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(211, 40, 40, 0.3)',
+  },
+  deleteButtonText: {
+    color: 'rgba(211, 40, 40, 0.5)',
+    fontSize: 14,
+    fontFamily: '"system-ui"',
   },
   submitButton: {
     marginTop: 30,

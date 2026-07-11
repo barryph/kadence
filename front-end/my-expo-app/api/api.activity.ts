@@ -48,7 +48,7 @@ interface EditActivityResponse {
 }
 
 export const activitiesAPI = {
-  getById(activityId: number, options?: OptionalOptions) {
+  getById(activityId: number | string, options?: OptionalOptions) {
     return apiClient.get<GetActivityByIdResponse>(
       `/activities/${activityId}`,
       options,
@@ -56,7 +56,7 @@ export const activitiesAPI = {
   },
 
   editActivity(
-    activityId: number,
+    activityId: number | string,
     body: EditActivityDTO,
     options?: OptionalOptions,
   ) {
@@ -78,7 +78,11 @@ export const activitiesAPI = {
     );
   },
 
-  complete(activityId: number, date: string, options?: OptionalOptions) {
+  complete(
+    activityId: number | string,
+    date: string,
+    options?: OptionalOptions,
+  ) {
     return apiClient.post(
       `/activities/${activityId}/complete`,
       { date },
@@ -86,7 +90,7 @@ export const activitiesAPI = {
     );
   },
 
-  undo(activityId: number, date: string, options?: OptionalOptions) {
+  undo(activityId: number | string, date: string, options?: OptionalOptions) {
     return apiClient.post(`/activities/${activityId}/undo`, { date }, options);
   },
 };

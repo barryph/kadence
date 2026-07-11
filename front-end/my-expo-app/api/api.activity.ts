@@ -2,7 +2,7 @@ import { apiClient, type OptionalOptions } from './api.client';
 import { ICategory } from './api.categories';
 
 export interface IActivity {
-  id: string;
+  id: number;
   userId: string;
   name: string;
   ticker?: string;
@@ -10,6 +10,11 @@ export interface IActivity {
   categoryId?: string;
   category?: ICategory;
   daysUntil: number;
+}
+
+// Extend IActivity for client-side properties
+export interface IActivityClient extends IActivity {
+  queued?: boolean;
 }
 
 interface CreateActivityDTO extends Omit<
@@ -43,7 +48,7 @@ interface EditActivityResponse {
 }
 
 export const activitiesAPI = {
-  getById(activityId: string, options?: OptionalOptions) {
+  getById(activityId: number, options?: OptionalOptions) {
     return apiClient.get<GetActivityByIdResponse>(
       `/activities/${activityId}`,
       options,
@@ -51,7 +56,7 @@ export const activitiesAPI = {
   },
 
   editActivity(
-    activityId: string,
+    activityId: number,
     body: EditActivityDTO,
     options?: OptionalOptions,
   ) {
@@ -73,7 +78,7 @@ export const activitiesAPI = {
     );
   },
 
-  complete(activityId: string, date: string, options?: OptionalOptions) {
+  complete(activityId: number, date: string, options?: OptionalOptions) {
     return apiClient.post(
       `/activities/${activityId}/complete`,
       { date },
@@ -81,7 +86,7 @@ export const activitiesAPI = {
     );
   },
 
-  undo(activityId: string, date: string, options?: OptionalOptions) {
+  undo(activityId: number, date: string, options?: OptionalOptions) {
     return apiClient.post(`/activities/${activityId}/undo`, { date }, options);
   },
 };

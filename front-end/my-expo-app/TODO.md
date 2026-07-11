@@ -4,3 +4,6 @@
 * Ability to mark activities as auxiliary, easily filtered out, easily showable when looking for ideas
 * Filter options
 * "Pressure" (ascending days until), a-z,
+* Activity delete button
+* Manage categories page
+* Category color swatches

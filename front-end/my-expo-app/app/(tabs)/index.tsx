@@ -122,8 +122,8 @@ function Dashboard() {
     activeCategoryId === null
       ? activities
       : activities.filter(
-        (activity) => activity.categoryId === activeCategoryId,
-      );
+          (activity) => activity.categoryId === activeCategoryId,
+        );
 
   if (isLoading) {
     return <LoaderScreen text="Loading activities..." />;
@@ -142,45 +142,59 @@ function Dashboard() {
             alignItems: 'center',
           }}
         >
-          <ThemedText type="defaultBold" style={styles.headline}>
+          <ThemedText
+            type="defaultBold"
+            style={[
+              styles.headline,
+              !(categories.length > 0) && styles.headlineNoCategories,
+            ]}
+          >
             Activities In Motion
           </ThemedText>
           {/* <Pressable> */}
           {/*   <FontAwesome6 name="gear" size={24} color="white" /> */}
           {/* </Pressable> */}
         </View>
-        <View style={styles.categoriesContainer}>
-          <ThemedText style={styles.categoriesTitle} type="defaultSemiBold">
-            Category
-          </ThemedText>
-          <View style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
-            {categories.map((category) => {
-              const isActive = activeCategoryId === category.id;
-              return (
-                <Pressable
-                  key={category.id}
-                  onPress={() => handleCategoryPress(category.id!)}
-                >
-                  <ThemedText
-                    size="small"
-                    type="defaultSemiBold"
-                    style={[
-                      styles.categoryPill,
-                      isActive && {
-                        borderWidth: 1.5,
-                        borderColor: `${category.color}88`,
-                        backgroundColor: `${category.color}1A`,
-                        color: category.color,
-                      },
-                    ]}
+        {categories.length > 0 && (
+          <View style={styles.categoriesContainer}>
+            <ThemedText
+              style={[
+                styles.categoriesTitle,
+                !(categories.length > 0) && styles.headlineNoCategories,
+              ]}
+              type="defaultSemiBold"
+            >
+              Category
+            </ThemedText>
+            <View style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+              {categories.map((category) => {
+                const isActive = activeCategoryId === category.id;
+                return (
+                  <Pressable
+                    key={category.id}
+                    onPress={() => handleCategoryPress(category.id!)}
                   >
-                    {category.name}
-                  </ThemedText>
-                </Pressable>
-              );
-            })}
+                    <ThemedText
+                      size="small"
+                      type="defaultSemiBold"
+                      style={[
+                        styles.categoryPill,
+                        isActive && {
+                          borderWidth: 1.5,
+                          borderColor: `${category.color}88`,
+                          backgroundColor: `${category.color}1A`,
+                          color: category.color,
+                        },
+                      ]}
+                    >
+                      {category.name}
+                    </ThemedText>
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
-        </View>
+        )}
         {/* <ThemedView style={styles.statsBar}> */}
         {/*   <ThemedView></ThemedView> */}
         {/*   <ThemedView> */}
@@ -238,6 +252,29 @@ const styles = StyleSheet.create({
     fontFamily: '"system-ui"',
     fontWeight: 700,
   },
+  headlineNoCategories: {
+    marginBottom: 3,
+  },
+  categoriesContainer: {
+    marginBottom: 3,
+  },
+  categoriesTitle: {
+    opacity: 0.6,
+    marginBottom: 3,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    fontSize: 13,
+  },
+  categoryPill: {
+    backgroundColor: 'rgba(255,255,255,.055)',
+    color: '#f5f7fbcc',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,.1)',
+    paddingHorizontal: 14,
+    paddingVertical: 3,
+    borderRadius: 16,
+    fontSize: 13,
+  },
   scrollContent: {
     paddingBottom: 100,
     display: 'flex',
@@ -268,26 +305,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  categoriesContainer: {
-    marginBottom: 3,
-  },
-  categoriesTitle: {
-    opacity: 0.6,
-    marginBottom: 3,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontSize: 13,
-  },
-  categoryPill: {
-    backgroundColor: 'rgba(255,255,255,.055)',
-    color: '#f5f7fbcc',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,.1)',
-    paddingHorizontal: 14,
-    paddingVertical: 3,
-    borderRadius: 16,
-    fontSize: 13,
   },
 });
 

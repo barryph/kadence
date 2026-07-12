@@ -6,7 +6,7 @@ import {
 import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useEffect } from 'react';
 import {
@@ -23,15 +23,7 @@ import Background from '@/components/backgrounds/background';
 // This prevents SplashScreen from auto hiding while the fonts are in loading state
 SplashScreen.preventAutoHideAsync();
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
-function RootLayoutNav() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
-
+function FontsProvider({ children }: { children: React.ReactNode }) {
   const [loaded, error] = useFonts({
     IBMPlexMono_400Regular,
     IBMPlexMono_600SemiBold,
@@ -39,10 +31,32 @@ function RootLayoutNav() {
   });
 
   useEffect(() => {
+    if (error) {
+      console.error('Failed to load fonts:', error);
+    }
     if (loaded || error) {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
+
+  // Shows overlay while fonts are loading, but also renders children in the
+  // background to avoid showing text in the wrong fonts without delaying load times of children
+  return (
+    <>
+      {!loaded && (
+        <View style={[StyleSheet.absoluteFillObject, { zIndex: 9999 }]}>
+          <Background />
+        </View>
+      )}
+      {children}
+    </>
+  );
+}
+
+function RootLayoutNav() {
+  const { isAuthenticated, isLoading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
 
   useEffect(() => {
     if (isLoading) return;
@@ -55,14 +69,6 @@ function RootLayoutNav() {
       router.replace('/');
     }
   }, [isAuthenticated, isLoading, segments]);
-
-  if (!loaded && !error) {
-    return (
-      <View style={{ flex: 1 }}>
-        <Background />
-      </View>
-    );
-  }
 
   return (
     <Stack>
@@ -83,9 +89,11 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <AuthProvider>
-          <RootLayoutNav />
-        </AuthProvider>
+        <FontsProvider>
+          <AuthProvider>
+            <RootLayoutNav />
+          </AuthProvider>
+        </FontsProvider>
         <StatusBar style="auto" />
       </ThemeProvider>
     </GestureHandlerRootView>

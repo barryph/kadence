@@ -13,7 +13,6 @@ import {
   type ITimelineSet,
 } from '@/api/api.timeline';
 import Button from '@/components/base/button';
-import { Colors } from '@/constants/theme';
 import Animated, {
   scrollTo,
   useAnimatedRef,
@@ -25,6 +24,8 @@ import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/ho
 import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
+import { ThemedText } from '@/components/base/themed-text';
+import LoaderScreen from '@/components/base/loader-screen';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 
@@ -264,18 +265,14 @@ function TimelineScreen() {
   const tableData = cachedMonths[monthInView];
 
   if (isLoadingInitData) {
-    return (
-      <Center>
-        <ActivityIndicator size="large" color={Colors.blue.new} />
-        <Text style={styles.loadingText}>Loading timeline...</Text>
-      </Center>
-    );
+    return <LoaderScreen text="Loading timeline..." />;
   }
 
   if (initError) {
     return (
       <Center>
-        <Text style={styles.errorText}>{initError}</Text>
+        <Background showRed={false} />
+        <ThemedText style={styles.errorText}>{initError}</ThemedText>
       </Center>
     );
   }
@@ -283,7 +280,10 @@ function TimelineScreen() {
   if (dateColumns === undefined) {
     return (
       <Center>
-        <Text style={styles.loadingText}>No timeline data available.</Text>
+        <Background showRed={false} />
+        <ThemedText style={styles.loadingText}>
+          No timeline data available.
+        </ThemedText>
       </Center>
     );
   }
@@ -291,7 +291,8 @@ function TimelineScreen() {
   if (!activities?.length) {
     return (
       <Center>
-        <Text style={styles.loadingText}>No activities yet.</Text>
+        <Background showRed={false} />
+        <ThemedText style={styles.loadingText}>No activities yet.</ThemedText>
       </Center>
     );
   }
@@ -462,7 +463,6 @@ const headersBackground = '#1a4163';
 
 const styles = StyleSheet.create({
   loadingText: {
-    color: '#64748b',
     fontSize: 14,
     marginTop: 8,
   },

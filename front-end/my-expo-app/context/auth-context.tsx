@@ -98,7 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   if (isLoading) {
-    return <LoaderScreen text="Loading user..." />;
+    return <LoaderScreen text="Loading..." />;
   }
 
   return (

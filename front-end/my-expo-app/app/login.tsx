@@ -84,7 +84,7 @@ export default function LoginScreen() {
 
           <Link href="/register" style={styles.linkContainer}>
             <Text style={styles.linkText}>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Text style={styles.linkTextBold}>Sign Up</Text>
             </Text>
           </Link>

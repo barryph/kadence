@@ -18,9 +18,8 @@ import { categoriesAPI, ICategory } from '@/api/api.categories';
 import ActivityListItem from '@/components/activity-list/activity-list-item';
 import { Colors } from '@/constants/theme';
 
+// TODO: Add toast when task completed, with undo button
 // TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
-// TODO: Add edit activity page
-// TODO: Add color categories
 
 function Dashboard() {
   const router = useRouter();

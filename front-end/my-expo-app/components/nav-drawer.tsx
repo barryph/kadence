@@ -49,7 +49,7 @@ export default function NavDrawer({
         setIsModalVisible(false);
       });
     }
-  }, [isOpen]);
+  }, [isOpen, slideAnim]);
 
   const handleNavigate = (path: any) => {
     onClose();

@@ -15,6 +15,7 @@ import ColorPicker, {
   HueSlider,
   ColorFormatsObject,
 } from 'reanimated-color-picker';
+import Label from '@/components/base/label';
 import Input from '@/components/base/input';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
@@ -84,10 +85,7 @@ export default function CreateCategoryModal({
             onChangeText={setName}
           />
 
-          {/* TODO: replace with reusable label component? */}
-          <ThemedText style={styles.label} type="defaultSemiBold">
-            Color
-          </ThemedText>
+          <Label>Color</Label>
           {/** Color picker **/}
           <ColorPicker onCompleteJS={handleSelectColor} value={color}>
             <Preview
@@ -165,12 +163,6 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-  },
-  label: {
-    marginBottom: 8,
-    fontSize: 14,
-    lineHeight: 22,
-    color: '#fff',
   },
   colorPickerContainer: {
     flex: 1,

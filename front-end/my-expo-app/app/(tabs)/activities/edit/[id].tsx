@@ -100,6 +100,7 @@ function EditActivityPage() {
     fetchData();
 
     return () => abortController.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleCreatedCategory(category: ICategory) {

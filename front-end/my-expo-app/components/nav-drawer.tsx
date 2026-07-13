@@ -109,14 +109,14 @@ export default function NavDrawer({
               style={styles.navItem}
               onPress={() => handleNavigate('/')}
             >
-              <ThemedText style={styles.navText}>Home</ThemedText>
+              <ThemedText style={styles.navText}>Activities</ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.navItem}
-              onPress={() => handleNavigate('/explore')}
+              onPress={() => handleNavigate('/timeline')}
             >
-              <ThemedText style={styles.navText}>Activity Hub</ThemedText>
+              <ThemedText style={styles.navText}>Timeline</ThemedText>
             </TouchableOpacity>
 
             <TouchableOpacity style={[styles.navItem]} onPress={handleLogout}>

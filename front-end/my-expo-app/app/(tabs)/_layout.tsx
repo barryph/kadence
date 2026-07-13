@@ -7,14 +7,12 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { HapticTab } from '@/components/base/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/context/auth-context';
 import NavDrawer from '@/components/nav-drawer';
 import { ThemedText } from '@/components/base/themed-text';
 import BlueBackground from '@/components/backgrounds/blue-background';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const { logout } = useAuth();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -82,11 +80,11 @@ export default function TabLayout() {
     <>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+          tabBarActiveTintColor: '#fff',
           headerShown: false,
           tabBarButton: HapticTab,
           tabBarStyle: {
-            backgroundColor: 'rgb(8, 7, 11)',
+            backgroundColor: Colors.dark.navbar,
             borderTopWidth: 0,
           },
         }}

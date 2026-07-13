@@ -26,9 +26,12 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    navbar: 'rgb(8, 7, 11)',
+    inputBackground: 'rgba(255,255,255,.055)',
   },
   blue: {
     new: '#0073ff',
+    middle: '#038ef0',
   },
 };
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, type TextInputProps } from 'react-native';
+import { Colors } from '@/constants/theme';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    backgroundColor: 'rgba(255,255,255,.055)',
+    backgroundColor: Colors.dark.inputBackground,
     color: '#fff',
   },
   inputError: {

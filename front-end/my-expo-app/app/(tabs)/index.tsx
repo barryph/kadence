@@ -16,6 +16,7 @@ import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import Background from '@/components/backgrounds/background';
 import { categoriesAPI, ICategory } from '@/api/api.categories';
 import ActivityListItem from '@/components/activity-list/activity-list-item';
+import { Colors } from '@/constants/theme';
 
 // TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
 // TODO: Add edit activity page
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
     right: 24,
     height: 48,
     paddingHorizontal: 20,
-    backgroundColor: '#0072ff',
+    backgroundColor: Colors.blue.new,
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',

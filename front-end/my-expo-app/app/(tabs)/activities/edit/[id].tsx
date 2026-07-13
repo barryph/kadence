@@ -1,20 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
+  Dimensions,
   View,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FormProvider } from 'react-hook-form';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import AlertError from '@/components/alerts/alert-error';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import { ThemedView } from '@/components/base/themed-view';
 import { activitiesAPI } from '@/api/api.activity';
 import { categoriesAPI, ICategory } from '@/api/api.categories';
 import { useActivityForm } from '@/components/activities/use-activity-form';
@@ -26,6 +28,8 @@ import { ActivityFormValues } from '@/components/activities/activity-schema';
 import Skeleton from '@/components/ui/skeleton';
 import AlertSuccess from '@/components/alerts/alert-success';
 import DeleteActivityModal from '@/components/activities/delete-activity-modal';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 function isString(val: any): val is string {
   return typeof val === 'string';
@@ -43,6 +47,9 @@ function EditActivityPage() {
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const form = useActivityForm();
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
+  const [dropdownTop, setDropdownTop] = useState(0);
+  const [dropdownRight, setDropdownRight] = useState(0);
 
   const router = useRouter();
 
@@ -127,86 +134,138 @@ function EditActivityPage() {
     router.back();
   }
 
+  const settingsToggleRef = useRef<View>(null);
+  const containerRef = useRef<View>(null);
+
+  function toggleSettingsModal() {
+    if (!settingsToggleRef.current) return;
+    settingsToggleRef.current.measure((x, y, width, height, pageX, pageY) => {
+      if (!containerRef.current) return;
+      containerRef.current.measure(
+        (cX, cY, cWidth, cHeight, cPageX, cPageY) => {
+          if (!showSettingsDropdown) {
+            setDropdownTop(pageY - cPageY + height);
+            setDropdownRight(SCREEN_WIDTH - (pageX + width));
+            setShowSettingsDropdown(true);
+          } else {
+            setShowSettingsDropdown(false);
+          }
+        },
+      );
+    });
+    // const rect = settingsToggleRef.current?.getBoundingClientRect();
+    // const containerRect = containerRef.current?.getBoundingClientRect();
+    // if (!showSettingsDropdown) {
+    //   setDropdownTop(rect.bottom - containerRect.top);
+    //   setDropdownRight(SCREEN_WIDTH - rect.right);
+    //   setShowSettingsDropdown(true);
+    // } else {
+    //   setShowSettingsDropdown(false);
+    // }
+  }
+
   return (
-    <ThemedView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} ref={containerRef}>
       <Background />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="always"
       >
         <KeyboardAvoidingView
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <View style={styles.titleRow}>
-            <ThemedText type="title" style={styles.title}>
-              Edit Activity
-            </ThemedText>
-            {!isLoading && !initLoadErrorMessage && (
-              <Pressable
-                style={({ pressed }) => [
-                  styles.deleteButton,
-                  pressed ? { opacity: 0.7 } : null,
-                ]}
-                onPress={() => setIsDeleteModalVisible(true)}
-              >
-                <ThemedText
-                  style={styles.deleteButtonText}
-                  type="defaultSemiBold"
-                >
-                  Delete
-                </ThemedText>
+          <View style={styles.topRow}>
+            <View style={styles.titleRow}>
+              <Pressable onPress={() => router.back()}>
+                <Ionicons name="arrow-back" size={27} color="white" />
               </Pressable>
+              <ThemedText type="title">Edit Activity</ThemedText>
+            </View>
+            <View style={styles.settingsWrapper} ref={settingsToggleRef}>
+              <Pressable onPress={toggleSettingsModal}>
+                {/* <FontAwesome5 */}
+                {/*   name="trash" */}
+                {/*   size={24} */}
+                {/*   color="white" */}
+                {/*   style={styles.settingsDots} */}
+                {/* /> */}
+                <MaterialCommunityIcons
+                  name="dots-vertical"
+                  size={24}
+                  color="white"
+                  style={styles.settingsDots}
+                />
+              </Pressable>
+            </View>
+          </View>
+          <View style={styles.form}>
+            {initLoadErrorMessage && (
+              <AlertError>{initLoadErrorMessage}</AlertError>
+            )}
+            {isLoading ? (
+              <>
+                <Skeleton
+                  width={200}
+                  height={20}
+                  style={{ marginBottom: 10 }}
+                />
+                <Skeleton height={40} style={{ marginBottom: 20 }} />
+
+                <Skeleton
+                  width={200}
+                  height={20}
+                  style={{ marginBottom: 10 }}
+                />
+                <Skeleton height={40} style={{ marginBottom: 20 }} />
+
+                <Skeleton
+                  width={200}
+                  height={20}
+                  style={{ marginBottom: 10 }}
+                />
+                <Skeleton height={40} style={{ marginBottom: 20 }} />
+
+                <Skeleton
+                  width={200}
+                  height={20}
+                  style={{ marginBottom: 10 }}
+                />
+                <Skeleton height={40} style={{ marginBottom: 20 }} />
+              </>
+            ) : (
+              <>
+                {successMessage && <AlertSuccess>Saved!</AlertSuccess>}
+                <FormProvider {...form}>
+                  <ActivityNameField />
+                  <ActivityTickerField />
+                  <ActivityIntervalField />
+
+                  <ActivityCategoryField
+                    categories={categories}
+                    onCreate={handleCreatedCategory}
+                  />
+                </FormProvider>
+
+                {errorMessage && (
+                  <View style={{ marginTop: 10 }}>
+                    <AlertError>{errorMessage}</AlertError>
+                  </View>
+                )}
+
+                <Button
+                  isLoading={isSubmitting}
+                  style={styles.submitButton}
+                  onPress={form.handleSubmit(handleSubmit)}
+                >
+                  Save
+                </Button>
+              </>
             )}
           </View>
-          {initLoadErrorMessage && (
-            <AlertError>{initLoadErrorMessage}</AlertError>
-          )}
-          {isLoading ? (
-            <>
-              <Skeleton width={200} height={20} style={{ marginBottom: 10 }} />
-              <Skeleton height={40} style={{ marginBottom: 20 }} />
-
-              <Skeleton width={200} height={20} style={{ marginBottom: 10 }} />
-              <Skeleton height={40} style={{ marginBottom: 20 }} />
-
-              <Skeleton width={200} height={20} style={{ marginBottom: 10 }} />
-              <Skeleton height={40} style={{ marginBottom: 20 }} />
-
-              <Skeleton width={200} height={20} style={{ marginBottom: 10 }} />
-              <Skeleton height={40} style={{ marginBottom: 20 }} />
-            </>
-          ) : (
-            <>
-              {successMessage && <AlertSuccess>Saved!</AlertSuccess>}
-              <FormProvider {...form}>
-                <ActivityNameField />
-                <ActivityTickerField />
-                <ActivityIntervalField />
-
-                <ActivityCategoryField
-                  categories={categories}
-                  onCreate={handleCreatedCategory}
-                />
-              </FormProvider>
-
-              {errorMessage && (
-                <View style={{ marginTop: 10 }}>
-                  <AlertError>{errorMessage}</AlertError>
-                </View>
-              )}
-
-              <Button
-                isLoading={isSubmitting}
-                style={styles.submitButton}
-                onPress={form.handleSubmit(handleSubmit)}
-              >
-                Save
-              </Button>
-            </>
-          )}
         </KeyboardAvoidingView>
       </ScrollView>
+
       <DeleteActivityModal
         visible={isDeleteModalVisible}
         activityId={isString(activityId) ? activityId : ''}
@@ -216,7 +275,29 @@ function EditActivityPage() {
           router.back();
         }}
       />
-    </ThemedView>
+
+      {showSettingsDropdown && (
+        <View
+          style={[
+            styles.settingsDropdown,
+            { top: dropdownTop, right: dropdownRight },
+          ]}
+        >
+          <Pressable
+            style={styles.settingsDropdownItem}
+            onPress={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+              setIsDeleteModalVisible(true);
+            }}
+          >
+            <ThemedText style={styles.settingsDeleteButton} type="defaultBold">
+              Delete
+            </ThemedText>
+          </Pressable>
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -232,14 +313,54 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     paddingBottom: 32,
   },
+  form: {
+    zIndex: 0,
+    elevation: 0,
+  },
+  topRow: {
+    zIndex: 1,
+    elevation: 1,
+    marginBottom: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  backRow: {},
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 30,
+    gap: 8,
   },
-  title: {
-    flex: 1,
+  settingsWrapper: {
+    zIndex: 10,
+    elevation: 10,
+  },
+  settingsDots: {
+    paddingHorizontal: 8,
+  },
+  settingsDropdown: {
+    position: 'absolute',
+    width: 150,
+    marginTop: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
+    zIndex: 999999,
+    elevation: 999999,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    backgroundColor: '#193b5c',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  settingsDropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  settingsDeleteButton: {
+    color: 'rgba(211, 40, 40, 1)',
   },
   deleteButton: {
     flexDirection: 'row',

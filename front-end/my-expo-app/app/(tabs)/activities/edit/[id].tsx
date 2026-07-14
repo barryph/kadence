@@ -181,7 +181,9 @@ function EditActivityPage() {
               <Pressable onPress={() => router.back()}>
                 <Ionicons name="arrow-back" size={27} color="white" />
               </Pressable>
-              <ThemedText type="title">Edit Activity</ThemedText>
+              <ThemedText type="title" size="large">
+                Edit Activity
+              </ThemedText>
             </View>
             <View style={styles.settingsWrapper} ref={settingsToggleRef}>
               <Pressable onPress={toggleSettingsModal}>
@@ -310,8 +312,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24,
-    paddingTop: 48,
+    paddingHorizontal: 16,
+    paddingTop: 14,
     paddingBottom: 32,
   },
   form: {
@@ -321,7 +323,8 @@ const styles = StyleSheet.create({
   topRow: {
     zIndex: 1,
     elevation: 1,
-    marginBottom: 30,
+    marginTop: 20,
+    marginBottom: 25,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -331,7 +334,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 8,
+    gap: 12,
   },
   settingsWrapper: {
     zIndex: 10,

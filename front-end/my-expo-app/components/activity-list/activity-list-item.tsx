@@ -6,7 +6,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { ThemedText } from '@/components/base/themed-text';
 import SwipeRow from '@/components/swipe-row';
 import type { IActivityClient } from '@/api/api.activity';
-import ActivityBackground from '@/components/backgrounds/activity-background';
+import ListItemShell from '@/components/list-item-shell';
 
 const DAYS_IN_WEEK = 7;
 
@@ -31,15 +31,13 @@ export default function ActivityListItem({
   );
 
   return (
-    <View
+    <ListItemShell
       style={[
-        styles.activityWrapper,
         activity.category && {
           borderColor: `${activity.category?.color}66`,
         },
       ]}
     >
-      <ActivityBackground />
       <TouchableOpacity activeOpacity={0.8} onPress={() => onClick(activity)}>
         <SwipeRow
           onSwipeLeft={() => onEdit(activity)}
@@ -201,20 +199,11 @@ export default function ActivityListItem({
           </View>
         </SwipeRow>
       </TouchableOpacity>
-    </View>
+    </ListItemShell>
   );
 }
 
 const styles = StyleSheet.create({
-  activityWrapper: {
-    width: '100%',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: 'rgba(255,255,255,.1)',
-    borderRadius: 22,
-    boxShadow: '0 14px 35px rgba(0,0,0,.22)',
-    overflow: 'hidden',
-  },
   activityInner: {
     // backgroundColor: '#fff',
   },
@@ -229,7 +218,6 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingHorizontal: 13,
     paddingBottom: 4,
-    boxShadow: '0 14px 35px rgba(0,0,0,.22)',
   },
   activityTitleRow: {
     flexDirection: 'row',

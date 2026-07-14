@@ -109,6 +109,16 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="categories"
+          options={{
+            ...headerOptions,
+            title: 'Categories',
+            tabBarIcon: ({ color }) => (
+              <IconSymbol size={28} name="category" color={color} />
+            ),
+          }}
+        />
 
         <Tabs.Screen
           name="activities/edit/[id]"

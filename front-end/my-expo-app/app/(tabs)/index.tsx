@@ -23,11 +23,11 @@ import { Colors } from '@/constants/theme';
 
 function Dashboard() {
   const router = useRouter();
-  const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showNewActivityModal, setShowNewActivityModal] = useState(false);
+  const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
+  const [showNewActivityModal, setShowNewActivityModal] = useState(false);
 
   const sortActivities = (acts: IActivityClient[] = []) => {
     return [...acts].sort((a, b) => {
@@ -122,8 +122,8 @@ function Dashboard() {
     activeCategoryId === null
       ? activities
       : activities.filter(
-          (activity) => activity.categoryId === activeCategoryId,
-        );
+        (activity) => activity.categoryId === activeCategoryId,
+      );
 
   if (isLoading) {
     return <LoaderScreen text="Loading activities..." />;

@@ -23,6 +23,7 @@ const MAPPING = {
   calendar: 'calendar-month',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  category: 'category',
 } as IconMapping;
 
 /**

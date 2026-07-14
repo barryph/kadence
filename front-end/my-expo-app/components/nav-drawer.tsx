@@ -114,6 +114,13 @@ export default function NavDrawer({
 
             <TouchableOpacity
               style={styles.navItem}
+              onPress={() => handleNavigate('/categories')}
+            >
+              <ThemedText style={styles.navText}>Categories</ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.navItem}
               onPress={() => handleNavigate('/timeline')}
             >
               <ThemedText style={styles.navText}>Timeline</ThemedText>

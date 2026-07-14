@@ -13,7 +13,7 @@ export type ThemedTextProps = TextProps & {
   | 'subtitle'
   | 'link';
   weight?: '400' | '600' | '700';
-  size?: 'small' | 'regular' | 'large' | 'title';
+  size?: 'extraSmall' | 'small' | 'regular' | 'large' | 'title';
 };
 
 export function ThemedText({
@@ -42,6 +42,7 @@ export function ThemedText({
         weight === '400' ? styles.weightRegular : undefined,
         weight === '600' ? styles.weightSemiBold : undefined,
         weight === '700' ? styles.weightBold : undefined,
+        size === 'extraSmall' ? styles.sizeExtraSmall : undefined,
         size === 'small' ? styles.sizeSmall : undefined,
         size === 'regular' ? styles.sizeRegular : undefined,
         size === 'large' ? styles.sizeLarge : undefined,
@@ -105,6 +106,9 @@ const styles = StyleSheet.create({
   },
   weightBold: {
     fontFamily: 'IBMPlexMono_700Bold',
+  },
+  sizeExtraSmall: {
+    fontSize: 12,
   },
   sizeSmall: {
     fontSize: 14,

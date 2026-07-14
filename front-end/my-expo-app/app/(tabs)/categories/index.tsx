@@ -112,33 +112,34 @@ function Categories() {
 
       <View style={styles.categories}>
         {categories.map((category) => (
-          <ListItemShell key={category.id} style={styles.category}>
-            <View style={styles.leftRow}>
-              <View style={styles.topRow}>
-                <View
-                  style={[styles.dot, { backgroundColor: category.color }]}
+          <Pressable key={category.id} onPress={() => openEditModal(category)}>
+            <ListItemShell style={styles.category}>
+              <View style={styles.leftRow}>
+                <View style={styles.topRow}>
+                  <View
+                    style={[styles.dot, { backgroundColor: category.color }]}
+                  />
+                  <ThemedText>{category.name}</ThemedText>
+                </View>
+                <View style={styles.bottomRow}>
+                  <ThemedText style={styles.bottomRowText} size="small">
+                    Used in{' '}
+                    <strong>
+                      {categoryToActivityCountMap![category.id!] || '0'}
+                    </strong>{' '}
+                    activities
+                  </ThemedText>
+                </View>
+              </View>
+              <View>
+                <FontAwesome6
+                  style={[{ color: '#eee' }, styles.settingsButton]}
+                  name="gear"
+                  size={26}
                 />
-                <ThemedText>{category.name}</ThemedText>
               </View>
-              <View style={styles.bottomRow}>
-                <ThemedText style={styles.bottomRowText} size="small">
-                  Used in{' '}
-                  <strong>
-                    {categoryToActivityCountMap![category.id!] || '0'}
-                  </strong>{' '}
-                  activities
-                </ThemedText>
-              </View>
-            </View>
-            <View>
-              <Pressable
-                onPress={() => openEditModal(category)}
-                style={styles.settingsButton}
-              >
-                <FontAwesome6 style={{ color: '#eee' }} name="gear" size={26} />
-              </Pressable>
-            </View>
-          </ListItemShell>
+            </ListItemShell>
+          </Pressable>
         ))}
       </View>
 
@@ -149,9 +150,11 @@ function Categories() {
             color: selectedCategory.color,
           }}
           title={() => (
-            <ThemedText type="subtitle" style={styles.title}>
-              Edit Category &quot;{selectedCategory.name}&quot;
-            </ThemedText>
+            <View>
+              <ThemedText type="subtitle" style={styles.title}>
+                Edit Category &quot;{selectedCategory.name}&quot;
+              </ThemedText>
+            </View>
           )}
           onClose={() => setShowEditCategoryModal(false)}
           onSubmit={handleSubmit}

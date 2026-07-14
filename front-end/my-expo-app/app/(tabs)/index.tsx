@@ -17,6 +17,7 @@ import Background from '@/components/backgrounds/background';
 import { categoriesAPI, ICategory } from '@/api/api.categories';
 import ActivityListItem from '@/components/activity-list/activity-list-item';
 import { Colors } from '@/constants/theme';
+import ListItemShell from '@/components/list-item-shell';
 
 // TODO: Add toast when task completed, with undo button
 // TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
@@ -202,9 +203,22 @@ function Dashboard() {
         {/*   </ThemedView> */}
         {/* </ThemedView> */}
         {activities.length === 0 && (
-          <ThemedText style={styles.noActivitiesText} type="defaultBold">
-            Add your first activity to get started.
-          </ThemedText>
+          <ListItemShell style={styles.getStartedPill}>
+            {/* TODO: Add dot */}
+            <View
+              style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+            >
+              <View
+                style={[styles.dot, { backgroundColor: 'rgb(0, 255, 52)' }]}
+              />
+              <ThemedText type="defaultBold">
+                Add your first activity
+              </ThemedText>
+            </View>
+            <ThemedText size="extraSmall">
+              Get started by adding your first activity!
+            </ThemedText>
+          </ListItemShell>
         )}
         {filteredActivities.map((activity, index) => (
           <ActivityListItem
@@ -289,8 +303,11 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     // paddingBottom: 18,
   },
-  noActivitiesText: {
-    marginTop: 15,
+  getStartedPill: {
+    paddingTop: 14,
+    paddingHorizontal: 15,
+    paddingBottom: 12,
+    gap: 2,
   },
   floatingAddButton: {
     position: 'absolute',
@@ -313,6 +330,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  dot: {
+    height: 8,
+    width: 8,
+    borderRadius: 4,
+    marginRight: 8,
   },
 });
 

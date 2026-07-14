@@ -122,8 +122,8 @@ function Dashboard() {
     activeCategoryId === null
       ? activities
       : activities.filter(
-          (activity) => activity.categoryId === activeCategoryId,
-        );
+        (activity) => activity.categoryId === activeCategoryId,
+      );
 
   if (isLoading) {
     return <LoaderScreen text="Loading activities..." />;
@@ -201,6 +201,11 @@ function Dashboard() {
         {/**/}
         {/*   </ThemedView> */}
         {/* </ThemedView> */}
+        {activities.length === 0 && (
+          <ThemedText style={styles.noActivitiesText} type="defaultBold">
+            Add your first activity to get started.
+          </ThemedText>
+        )}
         {filteredActivities.map((activity, index) => (
           <ActivityListItem
             key={activity.id}
@@ -283,6 +288,9 @@ const styles = StyleSheet.create({
     paddingRight: 12,
     paddingLeft: 12,
     // paddingBottom: 18,
+  },
+  noActivitiesText: {
+    marginTop: 15,
   },
   floatingAddButton: {
     position: 'absolute',

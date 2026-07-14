@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { useRouter } from 'expo-router';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import Background from '@/components/backgrounds/background';
@@ -12,10 +11,10 @@ import ListItemShell from '@/components/list-item-shell';
 import CategoryModal, {
   CategoryFormValues,
 } from '@/components/categories/category-modal';
+import LoaderScreen from '@/components/base/loader-screen';
 
+// TODO: Sort categories by activities count
 function Categories() {
-  const router = useRouter();
-
   const [isLoading, setIsLoading] = useState(true);
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -23,6 +22,10 @@ function Categories() {
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
     null,
   );
+  // This is kept separate as opposed to adding it as another property of each category,
+  // to avoid polluting the ICategory interface
+  const [categoryToActivityCountMap, setCategoryToActivityCountMap] =
+    useState<Record<number, number> | null>(null);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -38,14 +41,27 @@ function Categories() {
           }),
         ]);
 
-        if (activitiesResponse.data?.activities) {
-          const activities = activitiesResponse.data.activities;
-          setActivities(activities as IActivityClient[]);
-        }
+        const activitiesList = activitiesResponse.data?.activities || [];
+        const categoriesList = categoriesResponse.data?.categories || [];
 
-        if (categoriesResponse.data?.categories) {
-          setCategories(categoriesResponse.data.categories as ICategory[]);
-        }
+        // Count number of activities each category is used by
+        const map: Record<number, number> = {};
+        categoriesList.forEach(
+          (category: ICategory) => (map[category.id!] = 0),
+        );
+        activitiesList.forEach((activity: IActivityClient) => {
+          if (activity.categoryId) {
+            map[activity.categoryId]++;
+          }
+        });
+        setCategoryToActivityCountMap(map);
+
+        setActivities(activitiesList as IActivityClient[]);
+        setCategories(
+          categoriesList.sort(
+            (a: ICategory, b: ICategory) => map[b.id!] - map[a.id!],
+          ) as ICategory[],
+        );
       } catch (err) {
         if (!abortController.signal.aborted) {
           console.error('Error fetching data', err);
@@ -61,7 +77,6 @@ function Categories() {
 
   function openEditModal(category: ICategory) {
     setSelectedCategory(category);
-    // router.push(`/categories/edit/${category.id}`);
     setShowEditCategoryModal(true);
   }
 
@@ -74,16 +89,25 @@ function Categories() {
     return response;
   }
 
-  function handleSave(category: ICategory) {
-    // TODO: Update category in memory
+  function handleSave(updatedCategory: ICategory) {
     setShowEditCategoryModal(false);
+    // Update category in memory
+    const updatedCategories = categories.map((category) => {
+      if (category.id !== selectedCategory!.id) return category;
+      return updatedCategory;
+    });
+    setCategories(updatedCategories);
+  }
+
+  if (isLoading) {
+    return <LoaderScreen text="Loading..." />;
   }
 
   return (
     <View style={[{ flex: 1 }, styles.container]}>
-      <Background />
+      <Background showRed={false} />
       <ThemedText style={styles.title} type="title" size="large">
-        Categories
+        Your Categories
       </ThemedText>
 
       <View style={styles.categories}>
@@ -98,11 +122,15 @@ function Categories() {
               </View>
               <View style={styles.bottomRow}>
                 <ThemedText style={styles.bottomRowText} size="small">
-                  Used in <strong>3</strong> activities
+                  Used in{' '}
+                  <strong>
+                    {categoryToActivityCountMap![category.id!] || '0'}
+                  </strong>{' '}
+                  activities
                 </ThemedText>
               </View>
             </View>
-            <View style={styles.rightRow}>
+            <View>
               <Pressable
                 onPress={() => openEditModal(category)}
                 style={styles.settingsButton}

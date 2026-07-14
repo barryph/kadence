@@ -282,9 +282,7 @@ function TimelineScreen() {
     return (
       <Center>
         <Background showRed={false} />
-        <ThemedText style={styles.loadingText}>
-          No timeline data available.
-        </ThemedText>
+        <ThemedText>No timeline data available.</ThemedText>
       </Center>
     );
   }
@@ -293,7 +291,7 @@ function TimelineScreen() {
     return (
       <Center>
         <Background showRed={false} />
-        <ThemedText style={styles.loadingText}>No activities yet.</ThemedText>
+        <ThemedText>Add an activity to get started.</ThemedText>
       </Center>
     );
   }
@@ -463,10 +461,6 @@ const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
 const headersBackground = '#1a4163';
 
 const styles = StyleSheet.create({
-  loadingText: {
-    fontSize: 14,
-    marginTop: 8,
-  },
   errorText: {
     color: '#d32f2f',
     fontSize: 14,

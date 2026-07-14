@@ -9,8 +9,7 @@ interface Props {
 }
 
 export default function ActivityCategoryField({ categories, onCreate }: Props) {
-  const { control, formState, getValues } =
-    useFormContext<ActivityFormValues>();
+  const { control, getValues } = useFormContext<ActivityFormValues>();
 
   const categoryId = getValues('categoryId');
   const value = categories.find((category) => category.id === categoryId);
@@ -19,7 +18,7 @@ export default function ActivityCategoryField({ categories, onCreate }: Props) {
     <Controller
       control={control}
       name="categoryId"
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <CategorySelect
           value={value}
           label="Category (optional)"
@@ -28,7 +27,7 @@ export default function ActivityCategoryField({ categories, onCreate }: Props) {
           onCreate={onCreate}
           onSelect={(category) => field.onChange(category.id)}
           onClear={() => field.onChange(null)}
-          errorMessage={formState.errors.categoryId?.message}
+          errorMessage={fieldState.error?.message}
         />
       )}
     />

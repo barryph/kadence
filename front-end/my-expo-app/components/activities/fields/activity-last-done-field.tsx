@@ -15,17 +15,14 @@ function formatDateISO(date: Date) {
 }
 
 export default function ActivityLastDoneField() {
-  const {
-    control,
-    formState: { errors },
-  } = useFormContext<ActivityFormValues>();
+  const { control } = useFormContext<ActivityFormValues>();
   const [showPicker, setShowPicker] = useState(false);
 
   return (
     <Controller
       control={control}
       name="lastDone"
-      render={({ field }) => {
+      render={({ field, fieldState }) => {
         function onChange(event: DateTimePickerEvent, date?: Date) {
           if (Platform.OS === 'android') {
             setShowPicker(false);
@@ -63,8 +60,8 @@ export default function ActivityLastDoneField() {
               </TouchableOpacity>
             )}
 
-            {errors.lastDone?.message && (
-              <InputErrorMessage>{errors.lastDone.message}</InputErrorMessage>
+            {fieldState.error?.message && (
+              <InputErrorMessage>{fieldState.error.message}</InputErrorMessage>
             )}
 
             {showPicker && (

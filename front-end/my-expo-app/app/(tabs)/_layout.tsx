@@ -110,7 +110,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="categories"
+          name="categories/index"
           options={{
             ...headerOptions,
             title: 'Categories',

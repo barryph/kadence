@@ -117,7 +117,6 @@ function EditActivityPage() {
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    console.log('value.categoryId', values.categoryId);
     const response = await activitiesAPI.editActivity(activityId, {
       name: values.name,
       ticker: values.ticker,

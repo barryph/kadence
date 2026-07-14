@@ -9,6 +9,9 @@ import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import { activitiesAPI, IActivityClient } from '@/api/api.activity';
 import { categoriesAPI, ICategory } from '@/api/api.categories';
 import ListItemShell from '@/components/list-item-shell';
+import CategoryModal, {
+  CategoryFormValues,
+} from '@/components/categories/category-modal';
 
 function Categories() {
   const router = useRouter();
@@ -16,6 +19,10 @@ function Categories() {
   const [isLoading, setIsLoading] = useState(true);
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
+    null,
+  );
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -52,8 +59,24 @@ function Categories() {
     return () => abortController.abort();
   }, []);
 
-  function goToSettings(categoryId: number) {
-    router.push(`/categories/edit/${categoryId}`);
+  function openEditModal(category: ICategory) {
+    setSelectedCategory(category);
+    // router.push(`/categories/edit/${category.id}`);
+    setShowEditCategoryModal(true);
+  }
+
+  async function handleSubmit(values: CategoryFormValues) {
+    if (!selectedCategory) throw new Error('No selected category');
+    const response = await categoriesAPI.editCategory(selectedCategory.id!, {
+      name: values.name,
+      color: values.color,
+    });
+    return response;
+  }
+
+  function handleSave(category: ICategory) {
+    // TODO: Update category in memory
+    setShowEditCategoryModal(false);
   }
 
   return (
@@ -81,7 +104,7 @@ function Categories() {
             </View>
             <View style={styles.rightRow}>
               <Pressable
-                onPress={() => goToSettings(category.id)}
+                onPress={() => openEditModal(category)}
                 style={styles.settingsButton}
               >
                 <FontAwesome6 style={{ color: '#eee' }} name="gear" size={26} />
@@ -90,6 +113,23 @@ function Categories() {
           </ListItemShell>
         ))}
       </View>
+
+      {showEditCategoryModal && selectedCategory && (
+        <CategoryModal
+          initialValues={{
+            name: selectedCategory.name,
+            color: selectedCategory.color,
+          }}
+          title={() => (
+            <ThemedText type="subtitle" style={styles.title}>
+              Edit Category &quot;{selectedCategory.name}&quot;
+            </ThemedText>
+          )}
+          onClose={() => setShowEditCategoryModal(false)}
+          onSubmit={handleSubmit}
+          onSave={handleSave}
+        />
+      )}
     </View>
   );
 }

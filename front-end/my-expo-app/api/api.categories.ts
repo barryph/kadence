@@ -11,10 +11,19 @@ interface GetAllCategoriesByUserResponse {
   categories: ICategory[];
 }
 
-interface CreateCategoryDTO extends Omit<Omit<ICategory, 'id'>, 'userId'> { }
+interface CreateCategoryDTO extends Omit<Omit<ICategory, 'id'>, 'userId'> {}
 
 interface CreateCategoryResponse {
   category: ICategory;
+}
+
+interface EditCategoryDTO {
+  name: string;
+  color: string;
+}
+
+interface EditCategoryResponse {
+  activity: ICategory;
 }
 
 export const categoriesAPI = {
@@ -25,6 +34,18 @@ export const categoriesAPI = {
   getAllByUser(options?: OptionalOptions) {
     return apiClient.get<GetAllCategoriesByUserResponse>(
       '/categories/',
+      options,
+    );
+  },
+
+  editCategory(
+    categoryId: number | string,
+    body: EditCategoryDTO,
+    options?: OptionalOptions,
+  ) {
+    return apiClient.post<EditCategoryResponse>(
+      `/categories/edit/${categoryId}`,
+      body,
       options,
     );
   },

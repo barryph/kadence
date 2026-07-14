@@ -1,139 +1,38 @@
-import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
-import ColorPicker, {
-  Panel1,
-  Swatches,
-  Preview,
-  OpacitySlider,
-  HueSlider,
-  ColorFormatsObject,
-} from 'reanimated-color-picker';
-import Label from '@/components/base/label';
-import Input from '@/components/base/input';
-import Button from '@/components/base/button';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
-import Background from '@/components/backgrounds/background';
-import AlertError from '@/components/alerts/alert-error';
 import type { ICategory } from '@/api/api.categories';
 import { categoriesAPI } from '@/api/api.categories';
+import CategoryModal, { CategoryFormValues } from './category-modal';
 
 interface CreateCategoryModalProps {
   onSave: (category: ICategory) => void;
   onClose: () => void;
 }
 
-// TODO: Make both inputs required
 export default function CreateCategoryModal({
   onSave,
   onClose,
 }: CreateCategoryModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [color, setColor] = useState('#fff');
-
-  // Note: use `onCompleteJS` and `onChangeJS` for non-worklet functions
-  function handleSelectColor({ hex }: ColorFormatsObject) {
-    setColor(hex);
-  }
-
-  async function handleSubmit() {
-    setIsLoading(true);
-    setErrorMessage(null);
-
+  async function handleSubmit(values: CategoryFormValues) {
     const response = await categoriesAPI.createCategory({
-      name,
-      color,
+      name: values.name,
+      color: values.color,
     });
-
-    if (response.error) {
-      setErrorMessage(response.error.message);
-      setIsLoading(false);
-      return;
-    }
-
-    onSave(response.data?.category);
+    return response;
   }
 
   return (
-    <Modal visible transparent animationType="fade" onRequestClose={onClose}>
-      <KeyboardAvoidingView
-        style={styles.backdrop}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <TouchableOpacity
-          style={styles.backdropFill}
-          activeOpacity={1}
-          onPress={onClose}
-        />
-        <View style={styles.card}>
-          <Background />
-          <ThemedText type="subtitle" style={styles.title}>
-            Create A Category
-          </ThemedText>
-          <Input
-            label="Name"
-            placeholder="Legs..."
-            value={name}
-            onChangeText={setName}
-          />
-
-          <Label>Color</Label>
-          {/** Color picker **/}
-          <ColorPicker onCompleteJS={handleSelectColor} value={color}>
-            <Preview
-              style={{ marginBottom: 12, height: 30 }}
-              hideInitialColor={true}
-            />
-
-            <View>
-              <Panel1 style={{ height: 150 }} />
-              <HueSlider
-                style={{ marginTop: 12 }}
-                sliderThickness={20}
-                thumbSize={25}
-              />
-            </View>
-
-            <View style={{ marginTop: 15, marginBottom: 15 }}>
-              <OpacitySlider sliderThickness={20} thumbSize={25} />
-            </View>
-
-            {/* <Swatches style={{ marginTop: 14 }} /> */}
-          </ColorPicker>
-
-          {errorMessage ? (
-            <View style={{ marginTop: 10 }}>
-              <AlertError>{errorMessage}</AlertError>
-            </View>
-          ) : null}
-
-          <View style={styles.actions}>
-            <Button
-              isLoading={isLoading}
-              onPress={onClose}
-              style={styles.actionButton}
-            >
-              Cancel
-            </Button>
-            <Button
-              isLoading={isLoading}
-              onPress={handleSubmit}
-              style={styles.actionButton}
-            >
-              Save
-            </Button>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </Modal>
+    <CategoryModal
+      title={() => (
+        <ThemedText type="subtitle" style={styles.title}>
+          Create A Category
+        </ThemedText>
+      )}
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      onSave={onSave}
+    />
   );
 }
 

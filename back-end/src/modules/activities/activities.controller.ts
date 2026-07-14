@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Put,
   Body,
   Req,
   Query,
@@ -96,7 +97,7 @@ export class ActivitiesController {
     };
   }
 
-  @Post('/edit/:activityId')
+  @Put('/edit/:activityId')
   @UseGuards(IsAuthedGuard)
   async edit(
     @Req() req: Request,
@@ -157,10 +158,7 @@ export class ActivitiesController {
 
   @Delete('/:activityId')
   @UseGuards(IsAuthedGuard)
-  async delete(
-    @Req() req: Request,
-    @Param('activityId') activityId: string,
-  ) {
+  async delete(@Req() req: Request, @Param('activityId') activityId: string) {
     const userId = (req.user as UserDTO).id;
     await this.activitiesService.deleteActivity(activityId, userId);
 

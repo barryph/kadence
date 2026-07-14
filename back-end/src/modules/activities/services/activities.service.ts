@@ -35,7 +35,7 @@ export class ActivitiesService {
     userId: string,
   ): Promise<ActivityWithCategoryDTO> {
     if (createActivityDto.categoryId !== undefined) {
-      const category = await this.categoriesRepo.getById(
+      const category = await this.categoriesRepo.getByIdAndUser(
         createActivityDto.categoryId,
         userId,
       );

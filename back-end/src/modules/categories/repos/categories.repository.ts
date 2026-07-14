@@ -6,8 +6,10 @@ import { ICategoryPersistence } from '../mappers/categoryMap';
 
 interface ICategoriesRepo {
   create(category: Category): Promise<Category>;
-  getById(id: number, userId: string): Promise<Category | null>;
+  getById(id: string): Promise<Category | null>;
+  getByIdAndUser(id: number, userId: string): Promise<Category | null>;
   getAllByUserId(userId: string): Promise<Category[]>;
+  update(category: Category): Promise<Category>;
 }
 
 @Injectable()
@@ -34,7 +36,24 @@ export default class CategoriesRepo implements ICategoriesRepo {
     return CategoryMap.persistenceToDomain(newCategory);
   }
 
-  async getById(id: number, userId: string): Promise<Category | null> {
+  async getById(id: string): Promise<Category | null> {
+    const result = await this.knexService.connection.raw<{
+      rows: ICategoryPersistence[];
+    }>(
+      `
+        SELECT *
+        FROM categories
+        WHERE id = :id
+      `,
+      { id },
+    );
+    if (result.rows.length === 0) {
+      return null;
+    }
+    return CategoryMap.persistenceToDomain(result.rows[0]);
+  }
+
+  async getByIdAndUser(id: number, userId: string): Promise<Category | null> {
     const result = await this.knexService.connection.raw<{
       rows: ICategoryPersistence[];
     }>(
@@ -51,6 +70,27 @@ export default class CategoriesRepo implements ICategoriesRepo {
     if (result.rows.length === 0) {
       return null;
     }
+    return CategoryMap.persistenceToDomain(result.rows[0]);
+  }
+
+  async update(categoryDomain: Category): Promise<Category> {
+    categoryDomain.ensurePersisted();
+    const category = CategoryMap.toPersistence(categoryDomain);
+    const result = await this.knexService.connection.raw<{
+      rows: ICategoryPersistence[];
+    }>(
+      `
+        UPDATE categories
+        SET name = :name, color = :color
+        WHERE id = :id
+        RETURNING *
+      `,
+      {
+        id: category.id,
+        name: category.name,
+        color: category.color,
+      },
+    );
     return CategoryMap.persistenceToDomain(result.rows[0]);
   }
 

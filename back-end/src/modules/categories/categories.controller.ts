@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Req, UseGuards, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  Get,
+  Put,
+  Param,
+} from '@nestjs/common';
 import type { Request } from 'express';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
 import { CategoriesService } from './services/categories.service';
@@ -30,6 +39,39 @@ export class CategoriesController {
   ) {
     const userId = (req.user as UserDTO).id;
     const category = await this.categoriesService.create(
+      createCategoryDto,
+      userId,
+    );
+
+    return {
+      data: {
+        category,
+      },
+    };
+  }
+
+  @Put('/edit/:categoryId')
+  @UseGuards(IsAuthedGuard)
+  @ApiBody({
+    type: CreateCategoryDTO,
+    examples: {
+      categoryExample: {
+        summary: 'Update an existing category',
+        value: {
+          name: 'Health',
+          color: '#FF0000',
+        },
+      },
+    },
+  })
+  async edit(
+    @Req() req: Request,
+    @Param('categoryId') categoryId: string,
+    @Body() createCategoryDto: CreateCategoryDTO,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    const category = await this.categoriesService.edit(
+      categoryId,
       createCategoryDto,
       userId,
     );

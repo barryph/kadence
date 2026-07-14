@@ -45,6 +45,20 @@ export default class Category {
     }
   }
 
+  public changeName(name: string) {
+    if (isNullOrUndefined(name)) {
+      throw new Error('Category Failed Validation');
+    }
+    this.props.name = name;
+  }
+
+  public changeColor(color: string) {
+    if (isNullOrUndefined(color)) {
+      throw new Error('Category Failed Validation');
+    }
+    this.props.color = color;
+  }
+
   private static validate(props: ICategory) {
     if (
       isNullOrUndefined(props.userId) ||

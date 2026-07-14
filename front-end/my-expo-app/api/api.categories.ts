@@ -11,7 +11,7 @@ interface GetAllCategoriesByUserResponse {
   categories: ICategory[];
 }
 
-interface CreateCategoryDTO extends Omit<Omit<ICategory, 'id'>, 'userId'> {}
+interface CreateCategoryDTO extends Omit<Omit<ICategory, 'id'>, 'userId'> { }
 
 interface CreateCategoryResponse {
   category: ICategory;
@@ -43,7 +43,7 @@ export const categoriesAPI = {
     body: EditCategoryDTO,
     options?: OptionalOptions,
   ) {
-    return apiClient.post<EditCategoryResponse>(
+    return apiClient.put<EditCategoryResponse>(
       `/categories/edit/${categoryId}`,
       body,
       options,

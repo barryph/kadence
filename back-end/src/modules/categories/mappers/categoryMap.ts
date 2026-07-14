@@ -26,6 +26,7 @@ export function toDTO(category: Category): CategoryDTO {
 
 export function toPersistence(category: Category): ICategoryPersistence {
   return {
+    ...(category.isPersisted() && { id: category.id }),
     user_id: category.userId,
     name: category.name,
     color: category.color,

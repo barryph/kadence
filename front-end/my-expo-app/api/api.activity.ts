@@ -60,7 +60,7 @@ export const activitiesAPI = {
     body: EditActivityDTO,
     options?: OptionalOptions,
   ) {
-    return apiClient.post<EditActivityResponse>(
+    return apiClient.put<EditActivityResponse>(
       `/activities/edit/${activityId}`,
       body,
       options,

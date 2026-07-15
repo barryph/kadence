@@ -11,6 +11,7 @@ import ListItemShell from '@/components/list-item-shell';
 import CategoryModal, {
   CategoryFormValues,
 } from '@/components/categories/category-modal';
+import DeleteCategoryModal from '@/components/categories/delete-category-modal';
 import LoaderScreen from '@/components/base/loader-screen';
 
 // TODO: Sort categories by activities count
@@ -19,6 +20,7 @@ function Categories() {
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
     null,
   );
@@ -99,6 +101,14 @@ function Categories() {
     setCategories(updatedCategories);
   }
 
+  function handleDeleted() {
+    setIsDeleteModalVisible(false);
+    setShowEditCategoryModal(false);
+    setCategories(
+      categories.filter((category) => category.id !== selectedCategory!.id),
+    );
+  }
+
   if (isLoading) {
     return <LoaderScreen text="Loading..." />;
   }
@@ -150,15 +160,35 @@ function Categories() {
             color: selectedCategory.color,
           }}
           title={() => (
-            <View>
-              <ThemedText type="subtitle" style={styles.title}>
+            <View style={styles.editModalTitleRow}>
+              <ThemedText type="subtitle" style={styles.editModalTitle}>
                 Edit Category &quot;{selectedCategory.name}&quot;
               </ThemedText>
+              <Pressable onPress={() => setIsDeleteModalVisible(true)}>
+                <FontAwesome6
+                  style={{ padding: 6 }}
+                  name="trash"
+                  size={20}
+                  color="white"
+                />
+              </Pressable>
             </View>
           )}
-          onClose={() => setShowEditCategoryModal(false)}
+          onClose={() => {
+            setShowEditCategoryModal(false);
+            setIsDeleteModalVisible(false);
+          }}
           onSubmit={handleSubmit}
           onSave={handleSave}
+        />
+      )}
+
+      {selectedCategory && (
+        <DeleteCategoryModal
+          visible={isDeleteModalVisible}
+          categoryId={selectedCategory.id!}
+          onClose={() => setIsDeleteModalVisible(false)}
+          onDeleted={handleDeleted}
         />
       )}
     </View>
@@ -174,6 +204,16 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 20,
     marginBottom: 25,
+  },
+  editModalTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  editModalTitle: {
+    flex: 1,
+    marginRight: 12,
   },
   categories: {
     gap: 8,

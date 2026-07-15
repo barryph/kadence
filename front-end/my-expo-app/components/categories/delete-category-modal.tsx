@@ -11,21 +11,21 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
-import { activitiesAPI } from '@/api/api.activity';
+import { categoriesAPI } from '@/api/api.categories';
 
-interface DeleteActivityModalProps {
+interface DeleteCategoryModalProps {
   visible: boolean;
-  activityId: string;
+  categoryId: number | string;
   onClose: () => void;
   onDeleted: () => void;
 }
 
-export default function DeleteActivityModal({
+export default function DeleteCategoryModal({
   visible,
-  activityId,
+  categoryId,
   onClose,
   onDeleted,
-}: DeleteActivityModalProps) {
+}: DeleteCategoryModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -48,7 +48,7 @@ export default function DeleteActivityModal({
     setIsDeleting(true);
     setErrorMessage(null);
 
-    const response = await activitiesAPI.deleteActivity(activityId);
+    const response = await categoriesAPI.deleteCategory(categoryId);
 
     if (response.error) {
       setErrorMessage(response.error.message);
@@ -79,10 +79,14 @@ export default function DeleteActivityModal({
         <View style={styles.card}>
           <Background />
           <ThemedText type="subtitle" style={styles.title}>
-            Delete Activity
+            Delete Category
           </ThemedText>
           <ThemedText style={styles.message}>
-            Deleting this activity is permanent and cannot be undone.
+            Deleting is permanent and cannot be undone.
+          </ThemedText>
+          <ThemedText style={styles.messageTwo}>
+            This category will be removed from activities it&apos;s currently
+            attached to.
           </ThemedText>
 
           {errorMessage ? (
@@ -138,6 +142,11 @@ const styles = StyleSheet.create({
   message: {
     lineHeight: 22,
     color: '#ccc',
+  },
+  messageTwo: {
+    paddingTop: 6,
+    color: '#ccc',
+    lineHeight: 22,
   },
   actions: {
     flexDirection: 'row',

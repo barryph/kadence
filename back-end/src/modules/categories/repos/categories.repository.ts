@@ -10,6 +10,7 @@ interface ICategoriesRepo {
   getByIdAndUser(id: number, userId: string): Promise<Category | null>;
   getAllByUserId(userId: string): Promise<Category[]>;
   update(category: Category): Promise<Category>;
+  delete(id: string): Promise<void>;
 }
 
 @Injectable()
@@ -108,5 +109,26 @@ export default class CategoriesRepo implements ICategoriesRepo {
       },
     );
     return result.rows.map((category) => CategoryMap.persistenceToDomain(category));
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.knexService.connection.transaction(async (trx) => {
+      await trx.raw(
+        `
+          UPDATE activities
+          SET category_id = NULL
+          WHERE category_id = :id
+        `,
+        { id },
+      );
+
+      await trx.raw(
+        `
+          DELETE FROM categories
+          WHERE id = :id
+        `,
+        { id },
+      );
+    });
   }
 }

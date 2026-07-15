@@ -7,6 +7,7 @@ import {
   Get,
   Put,
   Param,
+  Delete,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
@@ -92,6 +93,20 @@ export class CategoriesController {
       data: {
         categories,
       },
+    };
+  }
+
+  @Delete('/:categoryId')
+  @UseGuards(IsAuthedGuard)
+  async delete(
+    @Req() req: Request,
+    @Param('categoryId') categoryId: string,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    await this.categoriesService.delete(categoryId, userId);
+
+    return {
+      success: true,
     };
   }
 }

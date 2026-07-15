@@ -52,4 +52,17 @@ export class CategoriesService {
     const updated = await this.categoriesRepo.update(category);
     return CategoryMap.toDTO(updated);
   }
+
+  async delete(categoryId: string, userId: string): Promise<void> {
+    const category = await this.categoriesRepo.getById(categoryId);
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    if (category.userId !== userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    await this.categoriesRepo.delete(categoryId);
+  }
 }

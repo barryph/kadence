@@ -49,4 +49,8 @@ export const categoriesAPI = {
       options,
     );
   },
+
+  deleteCategory(categoryId: number | string, options?: OptionalOptions) {
+    return apiClient.delete<undefined>(`/categories/${categoryId}`, options);
+  },
 };

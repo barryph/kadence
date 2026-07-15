@@ -7,41 +7,59 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { useRouter, Link } from 'expo-router';
-import { useAuth } from '@/context/auth-context';
+import { Link } from 'expo-router';
+import { authAPI } from '@/api/api.auth';
 import Input from '@/components/base/input';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
+import AlertSuccess from '@/components/alerts/alert-success';
 
-// TODO: Implement OAuth for both google and apple
-//   Expo recommends using separate packages for each provider. They have video guides for both here:
-//   https://docs.expo.dev/develop/authentication/#custom-oauth-with-expo-api-routes
+const SUCCESS_MESSAGE =
+  'If an account with that email exists, a password reset link has been sent. Please check your email.';
 
-export default function LoginScreen() {
-  const authContext = useAuth();
-  const router = useRouter();
+function isValidEmail(email: string): boolean {
+  const trimmed = email.trim();
+  if (!trimmed) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+}
 
+export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<null | string>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   async function handleSubmit() {
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail || typeof trimmedEmail !== 'string') {
+      setEmailError('Email is required');
+      return;
+    }
+
+    if (!isValidEmail(trimmedEmail)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    setEmailError(null);
     setIsLoading(true);
     setErrorMessage(null);
+    setSuccessMessage(null);
 
-    const response = await authContext.login(email, password);
+    const response = await authAPI.forgotPassword({ email: trimmedEmail });
+
     if (response.error) {
       setErrorMessage(response.error.message);
       setIsLoading(false);
       return;
     }
 
-    // AuthContext and RootLayout will handle redirect to tabs,
-    // but we can manually push to root if we want.
-    router.replace('/');
+    setSuccessMessage(SUCCESS_MESSAGE);
+    setIsLoading(false);
   }
 
   return (
@@ -53,49 +71,39 @@ export default function LoginScreen() {
         <Background />
         <View style={styles.formContainer}>
           <ThemedText style={styles.title} type="title">
-            Login!
+            Forgot Password
           </ThemedText>
 
           {errorMessage && <AlertError>{errorMessage}</AlertError>}
+          {successMessage && <AlertSuccess>{successMessage}</AlertSuccess>}
 
           <Input
             label="Email"
             placeholder="Email"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(value) => {
+              setEmail(value);
+              if (emailError) setEmailError(null);
+            }}
             autoCapitalize="none"
             keyboardType="email-address"
-          />
-
-          <Input
-            label="Password"
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoCapitalize="none"
-            autoCorrect={false}
-            textContentType="password"
+            errorMessage={emailError ?? undefined}
+            editable={!isLoading && !successMessage}
           />
 
           <Button
             onPress={handleSubmit}
             isLoading={isLoading}
+            disabled={!!successMessage}
             style={styles.submitButton}
           >
-            Enter
+            Send Reset Link
           </Button>
 
-          <Link href="/forgot-password" style={styles.linkContainer}>
+          <Link href="/login" style={styles.linkContainer}>
             <Text style={styles.linkText}>
-              <Text style={styles.linkTextBold}>Forgot Password?</Text>
-            </Text>
-          </Link>
-
-          <Link href="/register" style={styles.linkContainer}>
-            <Text style={styles.linkText}>
-              Don&apos;t have an account?{' '}
-              <Text style={styles.linkTextBold}>Sign Up</Text>
+              Remember your password?{' '}
+              <Text style={styles.linkTextBold}>Log In</Text>
             </Text>
           </Link>
         </View>

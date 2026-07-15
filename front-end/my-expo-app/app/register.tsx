@@ -15,6 +15,7 @@ import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 
+// TODO: Add validation with react-hook-form
 export default function RegisterScreen() {
   const authContext = useAuth();
   const router = useRouter();

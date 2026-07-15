@@ -26,6 +26,7 @@ export interface IUser {
 export const ErrorCode = {
   INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
   EMAIL_TAKEN: 'EMAIL_TAKEN',
+  INVALID_RESET_TOKEN: 'INVALID_RESET_TOKEN',
 
   // Generic errors
   GENERIC_ERROR: 'GENERIC_ERROR',

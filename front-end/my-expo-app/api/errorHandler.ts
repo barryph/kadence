@@ -13,6 +13,7 @@ class ErrorMapper {
   private errorMap: ErrorMap = {
     INVALID_CREDENTIALS: 'Invalid email or password, please try again.',
     EMAIL_TAKEN: 'Email Is already taken.',
+    INVALID_RESET_TOKEN: 'Reset token is invalid or expired',
 
     // Generic errors
     GENERIC_ERROR: 'Something went wrong, please try again.',

@@ -7,3 +7,5 @@
 * Activity delete button
 * Manage categories page
 * Category color swatches
+
+* Add client side validation with react-hook-form to auth pages

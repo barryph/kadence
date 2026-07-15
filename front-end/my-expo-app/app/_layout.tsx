@@ -61,7 +61,11 @@ function RootLayoutNav() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === 'login' || segments[0] === 'register';
+    const inAuthGroup =
+      segments[0] === 'login' ||
+      segments[0] === 'register' ||
+      segments[0] === 'forgot-password' ||
+      segments[0] === 'reset-password';
 
     if (!isAuthenticated && !inAuthGroup) {
       router.replace('/login');
@@ -79,6 +83,11 @@ function RootLayoutNav() {
       />
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="register" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="forgot-password"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="reset-password" options={{ headerShown: false }} />
     </Stack>
   );
 }

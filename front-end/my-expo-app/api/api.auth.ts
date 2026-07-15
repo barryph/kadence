@@ -20,6 +20,23 @@ export interface RegisterResponse {
   user: IUser;
 }
 
+interface ForgotPasswordDTO {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
+interface ResetPasswordDTO {
+  token: string;
+  password: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
+
 export const authAPI = {
   login(body: LoginDTO) {
     return apiClient.post<LoginResponse>('/auth/login', body);
@@ -31,5 +48,16 @@ export const authAPI = {
 
   register(body: RegisterDTO) {
     return apiClient.post<RegisterResponse>('/auth/register', body);
+  },
+
+  forgotPassword(body: ForgotPasswordDTO) {
+    return apiClient.post<ForgotPasswordResponse>(
+      '/auth/forgot-password',
+      body,
+    );
+  },
+
+  resetPassword(body: ResetPasswordDTO) {
+    return apiClient.post<ResetPasswordResponse>('/auth/reset-password', body);
   },
 };

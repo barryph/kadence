@@ -9,6 +9,12 @@ import {
   EmailTakenError,
 } from '../domain/user.errors';
 import UsersRepo from '../repos/user.repository';
+import { InvalidResetTokenError } from '../../authentication/authentication.errors';
+import {
+  generatePasswordResetToken,
+  hashPasswordResetToken,
+} from '../../authentication/utils/password-reset-token';
+import { PASSWORD_RESET_TOKEN_EXPIRY_MS } from '../../authentication/constants/password-reset.constants';
 
 @Injectable()
 export class UsersService {
@@ -46,5 +52,46 @@ export class UsersService {
     const created = await this.usersRepo.create(user);
 
     return UserMap.toDTO(created);
+  }
+
+  async initiatePasswordReset(
+    rawEmail: string,
+  ): Promise<{ recipientEmail: string; resetToken: string } | null> {
+    const email = UserEmail.create(rawEmail);
+    const user = await this.usersRepo.getByEmail(email);
+
+    // Is no matching user is found, silently return as to not give away if an
+    // account with this email exists
+    if (!user?.isPersisted()) {
+      return null;
+    }
+
+    const { token, hashedToken } = generatePasswordResetToken();
+    const expiresAt = new Date(Date.now() + PASSWORD_RESET_TOKEN_EXPIRY_MS);
+    await this.usersRepo.setPasswordResetToken(user.id, hashedToken, expiresAt);
+
+    return {
+      recipientEmail: user.email.value,
+      resetToken: token,
+    };
+  }
+
+  async resetPassword(rawToken: string, rawPassword: string): Promise<void> {
+    const hashedToken = hashPasswordResetToken(rawToken);
+    const resetRecord =
+      await this.usersRepo.findPasswordResetByToken(hashedToken);
+
+    if (
+      !resetRecord ||
+      resetRecord.passwordResetExpires.getTime() <= Date.now()
+    ) {
+      throw new InvalidResetTokenError();
+    }
+
+    const newPassword = UserPassword.create(rawPassword);
+    const hashedPassword = await newPassword.hashPassword();
+
+    await this.usersRepo.updatePassword(resetRecord.userId, hashedPassword);
+    await this.usersRepo.clearUserSessions(resetRecord.userId);
   }
 }

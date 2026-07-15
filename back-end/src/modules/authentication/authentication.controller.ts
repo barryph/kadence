@@ -7,6 +7,7 @@ import {
   Res,
   Next,
   Logger,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import CreateUserDTO from '../authentication/dtos/createUser.dto';
@@ -15,14 +16,17 @@ import type { UserDTO } from '../users/mappers/userMap';
 import passport from 'passport';
 import type { NextFunction, Request, Response } from 'express';
 import LoginDTO from './dtos/login.dto';
+import ForgotPasswordDTO from './dtos/forgotPassword.dto';
+import ResetPasswordDTO from './dtos/resetPassword.dto';
 import { InvalidCredentialsError } from './authentication.errors';
 import ServerError from 'src/shared/ServerError';
+import { ForgotPasswordRateLimitGuard } from './guards/forgot-password-rate-limit.guard';
 
 @Controller('auth')
 export class AuthenticationController {
   private readonly logger = new Logger(AuthenticationController.name);
 
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(private readonly authenticationService: AuthenticationService) { }
 
   @Post('login')
   @ApiBody({
@@ -33,7 +37,7 @@ export class AuthenticationController {
         value: {
           email: 'andrew@mail.com',
           password: 'asdfasdf',
-        } as LoginDTO,
+        },
       },
     },
   })
@@ -85,7 +89,7 @@ export class AuthenticationController {
           email: 'andrew@mail.com',
           password: 'asdfasdf',
           passwordConfirm: 'asdfasdf',
-        } as CreateUserDTO,
+        },
       },
     },
   })
@@ -106,5 +110,49 @@ export class AuthenticationController {
         },
       });
     });
+  }
+
+  @Post('forgot-password')
+  @UseGuards(ForgotPasswordRateLimitGuard)
+  @ApiBody({
+    type: ForgotPasswordDTO,
+    examples: {
+      forgotPasswordExample: {
+        summary: 'Request a password reset email',
+        value: {
+          email: 'andrew@mail.com',
+        },
+      },
+    },
+  })
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDTO) {
+    await this.authenticationService.forgotPassword(forgotPasswordDto.email);
+    return {
+      data: {
+        message:
+          'If an account with that email exists, a password reset link has been sent.',
+      },
+    };
+  }
+
+  @Post('reset-password')
+  @ApiBody({
+    type: ResetPasswordDTO,
+    examples: {
+      resetPasswordExample: {
+        summary: 'Reset password with token',
+        value: {
+          token: 'a1b2c3d4e5f6789012345678901234567890abcd',
+          password: 'newpassword',
+        },
+      },
+    },
+  })
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDTO) {
+    await this.authenticationService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.password,
+    );
+    return { data: { message: 'Password has been reset successfully.' } };
   }
 }

@@ -29,6 +29,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return;
     }
 
+    if (exception instanceof HttpException) {
+      const httpStatus = exception.getStatus();
+      const exceptionResponse = exception.getResponse();
+      const message =
+        typeof exceptionResponse === 'string'
+          ? exceptionResponse
+          : (exceptionResponse as { message?: string | string[] }).message;
+
+      response.status(httpStatus).json({
+        error: {
+          statusCode: httpStatus,
+          message: Array.isArray(message)
+            ? message[0]
+            : (message ?? 'Request failed'),
+        },
+      });
+      return;
+    }
+
     if (!(exception instanceof UnauthorizedException)) {
       this.logger.error('Unexpected exception occured:', exception);
     }

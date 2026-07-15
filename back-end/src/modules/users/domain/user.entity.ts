@@ -32,11 +32,13 @@ export default class User {
     return this.props.password;
   }
 
-  public isPersisted(): this is IUser & { id: string } {
+  public isPersisted(): this is User & { id: string } {
     return !isNullOrUndefined(this.props.id);
   }
 
-  public ensurePersisted(): asserts this is IUser & { id: string } {
+  public ensurePersisted(): asserts this is User & { props: IUser } & {
+    id: string;
+  } {
     if (isNullOrUndefined(this.props.id)) {
       throw new Error('User must be persisted before this operation');
     }

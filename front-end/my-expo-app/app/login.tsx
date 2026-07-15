@@ -15,6 +15,10 @@ import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 
+// TODO: Implement OAuth for both google and apple
+//   Expo recommends using separate packages for each provider. They have video guides for both here:
+//   https://docs.expo.dev/develop/authentication/#custom-oauth-with-expo-api-routes
+
 export default function LoginScreen() {
   const authContext = useAuth();
   const router = useRouter();

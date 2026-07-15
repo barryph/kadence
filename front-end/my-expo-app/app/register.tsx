@@ -7,6 +7,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
 import Input from '@/components/base/input';
@@ -14,19 +16,32 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
+import {
+  registerSchema,
+  type RegisterFormValues,
+} from '@/components/auth/auth-schemas';
 
-// TODO: Add validation with react-hook-form
 export default function RegisterScreen() {
   const authContext = useAuth();
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
-  async function handleSubmit() {
+  const { control, handleSubmit } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      passwordConfirm: '',
+    },
+  });
+
+  async function onSubmit({
+    email,
+    password,
+    passwordConfirm,
+  }: RegisterFormValues) {
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -59,33 +74,57 @@ export default function RegisterScreen() {
           </ThemedText>
           {errorMessage && <AlertError>{errorMessage}</AlertError>}
 
-          <Input
-            label="Email"
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
+          <Controller
+            control={control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <Input
+                label="Email"
+                placeholder="Email"
+                value={field.value}
+                onChangeText={field.onChange}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                errorMessage={fieldState.error?.message}
+                editable={!isLoading}
+              />
+            )}
           />
 
-          <Input
-            label="Password"
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
+          <Controller
+            control={control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <Input
+                label="Password"
+                placeholder="Password"
+                value={field.value}
+                onChangeText={field.onChange}
+                secureTextEntry
+                errorMessage={fieldState.error?.message}
+                editable={!isLoading}
+              />
+            )}
           />
 
-          <Input
-            label="Password Confirm"
-            placeholder="Password Confirm"
-            value={passwordConfirm}
-            onChangeText={setPasswordConfirm}
-            secureTextEntry
+          <Controller
+            control={control}
+            name="passwordConfirm"
+            render={({ field, fieldState }) => (
+              <Input
+                label="Password Confirm"
+                placeholder="Password Confirm"
+                value={field.value}
+                onChangeText={field.onChange}
+                secureTextEntry
+                errorMessage={fieldState.error?.message}
+                editable={!isLoading}
+              />
+            )}
           />
 
           <Button
-            onPress={handleSubmit}
+            onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
             style={styles.submitButton}
           >

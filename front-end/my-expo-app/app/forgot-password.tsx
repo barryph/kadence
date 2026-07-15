@@ -7,6 +7,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'expo-router';
 import { authAPI } from '@/api/api.auth';
 import Input from '@/components/base/input';
@@ -15,42 +17,32 @@ import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 import AlertSuccess from '@/components/alerts/alert-success';
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordFormValues,
+} from '@/components/auth/auth-schemas';
 
 const SUCCESS_MESSAGE =
   'If an account with that email exists, a password reset link has been sent. Please check your email.';
 
-function isValidEmail(email: string): boolean {
-  const trimmed = email.trim();
-  if (!trimmed) return false;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
-}
-
 export default function ForgotPasswordScreen() {
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  async function handleSubmit() {
-    const trimmedEmail = email.trim();
+  const { control, handleSubmit } = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: '',
+    },
+  });
 
-    if (!trimmedEmail || typeof trimmedEmail !== 'string') {
-      setEmailError('Email is required');
-      return;
-    }
-
-    if (!isValidEmail(trimmedEmail)) {
-      setEmailError('Please enter a valid email address');
-      return;
-    }
-
-    setEmailError(null);
+  async function onSubmit({ email }: ForgotPasswordFormValues) {
     setIsLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    const response = await authAPI.forgotPassword({ email: trimmedEmail });
+    const response = await authAPI.forgotPassword({ email });
 
     if (response.error) {
       setErrorMessage(response.error.message);
@@ -77,22 +69,25 @@ export default function ForgotPasswordScreen() {
           {errorMessage && <AlertError>{errorMessage}</AlertError>}
           {successMessage && <AlertSuccess>{successMessage}</AlertSuccess>}
 
-          <Input
-            label="Email"
-            placeholder="Email"
-            value={email}
-            onChangeText={(value) => {
-              setEmail(value);
-              if (emailError) setEmailError(null);
-            }}
-            autoCapitalize="none"
-            keyboardType="email-address"
-            errorMessage={emailError ?? undefined}
-            editable={!isLoading && !successMessage}
+          <Controller
+            control={control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <Input
+                label="Email"
+                placeholder="Email"
+                value={field.value}
+                onChangeText={field.onChange}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                errorMessage={fieldState.error?.message}
+                editable={!isLoading && !successMessage}
+              />
+            )}
           />
 
           <Button
-            onPress={handleSubmit}
+            onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
             disabled={!!successMessage}
             style={styles.submitButton}

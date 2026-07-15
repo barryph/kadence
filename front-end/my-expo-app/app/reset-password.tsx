@@ -7,6 +7,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { authAPI } from '@/api/api.auth';
 import { ErrorCode } from '@/api/api.types';
@@ -15,6 +17,10 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
+import {
+  resetPasswordSchema,
+  type ResetPasswordFormValues,
+} from '@/components/auth/auth-schemas';
 
 const INVALID_TOKEN_MESSAGE = 'Reset token is invalid or expired';
 
@@ -22,30 +28,28 @@ export default function ResetPasswordScreen() {
   const router = useRouter();
   const { token } = useLocalSearchParams<{ token?: string }>();
 
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  const { control, handleSubmit } = useForm<ResetPasswordFormValues>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      password: '',
+    },
+  });
 
   const resetToken = typeof token === 'string' ? token : undefined;
   const isTokenMissing = !resetToken;
 
-  async function handleSubmit() {
+  async function onSubmit({ password }: ResetPasswordFormValues) {
     if (!resetToken) return;
 
-    const trimmedPassword = password.trim();
-    if (!trimmedPassword) {
-      setPasswordError('Password is required');
-      return;
-    }
-
-    setPasswordError(null);
     setIsLoading(true);
     setErrorMessage(null);
 
     const response = await authAPI.resetPassword({
       token: resetToken,
-      password: trimmedPassword,
+      password,
     });
 
     if (response.error) {
@@ -76,8 +80,7 @@ export default function ResetPasswordScreen() {
             <AlertError>Reset token is missing</AlertError>
             <Link href="/login" style={styles.linkContainer}>
               <Text style={styles.linkText}>
-                Back to{' '}
-                <Text style={styles.linkTextBold}>Log In</Text>
+                Back to <Text style={styles.linkTextBold}>Log In</Text>
               </Text>
             </Link>
           </View>
@@ -100,24 +103,27 @@ export default function ResetPasswordScreen() {
 
           {errorMessage && <AlertError>{errorMessage}</AlertError>}
 
-          <Input
-            label="New Password"
-            placeholder="New Password"
-            value={password}
-            onChangeText={(value) => {
-              setPassword(value);
-              if (passwordError) setPasswordError(null);
-            }}
-            secureTextEntry
-            autoCapitalize="none"
-            autoCorrect={false}
-            textContentType="newPassword"
-            errorMessage={passwordError ?? undefined}
-            editable={!isLoading}
+          <Controller
+            control={control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <Input
+                label="New Password"
+                placeholder="New Password"
+                value={field.value}
+                onChangeText={field.onChange}
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+                textContentType="newPassword"
+                errorMessage={fieldState.error?.message}
+                editable={!isLoading}
+              />
+            )}
           />
 
           <Button
-            onPress={handleSubmit}
+            onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
             style={styles.submitButton}
           >
@@ -126,8 +132,7 @@ export default function ResetPasswordScreen() {
 
           <Link href="/login" style={styles.linkContainer}>
             <Text style={styles.linkText}>
-              Back to{' '}
-              <Text style={styles.linkTextBold}>Log In</Text>
+              Back to <Text style={styles.linkTextBold}>Log In</Text>
             </Text>
           </Link>
         </View>

@@ -7,6 +7,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
 import Input from '@/components/base/input';
@@ -14,6 +16,10 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
+import {
+  loginSchema,
+  type LoginFormValues,
+} from '@/components/auth/auth-schemas';
 
 // TODO: Implement OAuth for both google and apple
 //   Expo recommends using separate packages for each provider. They have video guides for both here:
@@ -23,12 +29,18 @@ export default function LoginScreen() {
   const authContext = useAuth();
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
-  async function handleSubmit() {
+  const { control, handleSubmit } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  async function onSubmit({ email, password }: LoginFormValues) {
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -58,28 +70,44 @@ export default function LoginScreen() {
 
           {errorMessage && <AlertError>{errorMessage}</AlertError>}
 
-          <Input
-            label="Email"
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
+          <Controller
+            control={control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <Input
+                label="Email"
+                placeholder="Email"
+                value={field.value}
+                onChangeText={field.onChange}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                errorMessage={fieldState.error?.message}
+                editable={!isLoading}
+              />
+            )}
           />
 
-          <Input
-            label="Password"
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoCapitalize="none"
-            autoCorrect={false}
-            textContentType="password"
+          <Controller
+            control={control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <Input
+                label="Password"
+                placeholder="Password"
+                value={field.value}
+                onChangeText={field.onChange}
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+                textContentType="password"
+                errorMessage={fieldState.error?.message}
+                editable={!isLoading}
+              />
+            )}
           />
 
           <Button
-            onPress={handleSubmit}
+            onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
             style={styles.submitButton}
           >

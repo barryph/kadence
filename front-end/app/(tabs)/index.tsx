@@ -152,9 +152,6 @@ function Dashboard() {
           >
             Activities In Motion
           </ThemedText>
-          {/* <Pressable> */}
-          {/*   <FontAwesome6 name="gear" size={24} color="white" /> */}
-          {/* </Pressable> */}
         </View>
         {categories.length > 0 && (
           <View style={styles.categoriesContainer}>
@@ -165,35 +162,37 @@ function Dashboard() {
               ]}
               type="defaultSemiBold"
             >
-              Category
+              Categories
             </ThemedText>
-            <View style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
-              {categories.map((category) => {
-                const isActive = activeCategoryId === category.id;
-                return (
-                  <Pressable
-                    key={category.id}
-                    onPress={() => handleCategoryPress(category.id!)}
-                  >
-                    <ThemedText
-                      size="small"
-                      type="defaultSemiBold"
-                      style={[
-                        styles.categoryPill,
-                        isActive && {
-                          borderWidth: 1.5,
-                          borderColor: `${category.color}88`,
-                          backgroundColor: `${category.color}1A`,
-                          color: category.color,
-                        },
-                      ]}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+                {categories.map((category) => {
+                  const isActive = activeCategoryId === category.id;
+                  return (
+                    <Pressable
+                      key={category.id}
+                      onPress={() => handleCategoryPress(category.id!)}
                     >
-                      {category.name}
-                    </ThemedText>
-                  </Pressable>
-                );
-              })}
-            </View>
+                      <ThemedText
+                        size="small"
+                        type="defaultSemiBold"
+                        style={[
+                          styles.categoryPill,
+                          isActive && {
+                            borderWidth: 1.5,
+                            borderColor: `${category.color}88`,
+                            backgroundColor: `${category.color}1A`,
+                            color: category.color,
+                          },
+                        ]}
+                      >
+                        {category.name}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </ScrollView>
           </View>
         )}
         {/* <ThemedView style={styles.statsBar}> */}

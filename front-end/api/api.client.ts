@@ -1,6 +1,5 @@
 import { ErrorCode, type ApiResponse, type ServerResponse } from './api.types';
 import { errorMapper } from './errorHandler';
-import { Platform } from 'react-native';
 
 export interface OptionalOptions {
   signal?: AbortSignal;
@@ -9,7 +8,7 @@ export interface OptionalOptions {
 // const BASE_URL = 'https://yummy-cooks-train.loca.lt';
 // const BASE_URL = Platform.OS === 'android' ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
 // const BASE_URL = Platform.OS === 'android' ? 'https://9d68-203-211-79-9.ngrok-free.app' : 'http://localhost:3000';
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = process.env.EXPO_PUBLIC_SERVER_URL;
 
 class APIClient {
   async request<T>(

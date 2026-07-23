@@ -1,4 +1,4 @@
-# FitTrick
+# Kadence
 
 Hello 👋, this is me experimenting with Domain Driven Design + Clean Architecture in a Nest.js project.
 
@@ -21,7 +21,7 @@ This project uses knex to handle database migrations.
 
 ```bash
 # Run this as the user with postgres permissions
-createdb fit_trick;
+createdb kadence;
 # Run these inside the back-end/ dir
 npm run db:up;
 npm run db:seed;

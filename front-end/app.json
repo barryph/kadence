@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "fit-trick",
-    "slug": "fit-trick",
+    "name": "kadence",
+    "slug": "kadence",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.barryph.fittrick"
+      "bundleIdentifier": "com.barryph.kadence"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,7 +21,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.barryph.fittrick"
+      "package": "com.barryph.kadence"
     },
     "web": {
       "output": "static",

@@ -11,6 +11,7 @@ import { useAuth } from '@/context/auth-context';
 import NavDrawer from '@/components/nav-drawer';
 import { ThemedText } from '@/components/base/themed-text';
 import BlueBackground from '@/components/backgrounds/blue-background';
+import Logo from '@/components/logo';
 
 export default function TabLayout() {
   const { logout } = useAuth();
@@ -35,24 +36,7 @@ export default function TabLayout() {
         }}
       >
         <BlueBackground />
-        <ThemedText
-          type="defaultBold"
-          style={{
-            color: '#fff',
-            fontSize: 32,
-          }}
-        >
-          Fit
-          <ThemedText
-            type="defaultBold"
-            style={{
-              color: Colors.light.faint,
-              fontSize: 32,
-            }}
-          >
-            Trick
-          </ThemedText>
-        </ThemedText>
+        <Logo />
 
         <TouchableOpacity onPress={() => setIsDrawerOpen(true)}>
           <View

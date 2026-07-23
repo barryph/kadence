@@ -9,9 +9,9 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedText } from '@/components/base/themed-text';
+import Logo from '@/components/logo';
 import BlueBackground from '@/components/backgrounds/blue-background';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -81,24 +81,8 @@ export default function NavDrawer({
         >
           <BlueBackground />
           <SafeAreaView edges={['top']} style={styles.header}>
-            <ThemedText
-              type="defaultBold"
-              style={{
-                color: '#fff',
-                fontSize: 32,
-              }}
-            >
-              Fit
-              <ThemedText
-                type="defaultBold"
-                style={{
-                  color: Colors.light.faint,
-                  fontSize: 32,
-                }}
-              >
-                Trick
-              </ThemedText>
-            </ThemedText>
+            <Logo />
+
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <ThemedText style={styles.closeIcon}>✕</ThemedText>
             </TouchableOpacity>

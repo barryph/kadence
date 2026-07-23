@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Feather from '@expo/vector-icons/Feather';
 
 import { HapticTab } from '@/components/base/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -79,7 +81,7 @@ export default function TabLayout() {
             ...headerOptions,
             title: 'Home',
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="house.fill" color={color} />
+              <Feather name="activity" size={24} color={color} />
             ),
           }}
         />
@@ -89,7 +91,7 @@ export default function TabLayout() {
             ...headerOptions,
             title: 'Timeline',
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="calendar" color={color} />
+              <MaterialIcons name="timeline" size={24} color={color} />
             ),
           }}
         />
@@ -99,7 +101,7 @@ export default function TabLayout() {
             ...headerOptions,
             title: 'Categories',
             tabBarIcon: ({ color }) => (
-              <IconSymbol size={28} name="category" color={color} />
+              <FontAwesome6 name="layer-group" size={24} color={color} />
             ),
           }}
         />

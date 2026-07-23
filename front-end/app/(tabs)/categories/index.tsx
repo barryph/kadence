@@ -14,7 +14,9 @@ import CategoryModal, {
 import DeleteCategoryModal from '@/components/categories/delete-category-modal';
 import LoaderScreen from '@/components/base/loader-screen';
 
+// TODO: Add add your first category placeholder
 // TODO: Sort categories by activities count
+
 function Categories() {
   const [isLoading, setIsLoading] = useState(true);
   const [activities, setActivities] = useState<IActivityClient[]>([]);
@@ -121,6 +123,24 @@ function Categories() {
       </ThemedText>
 
       <View style={styles.categories}>
+        {categories.length === 0 && (
+          <ListItemShell style={styles.getStartedPill}>
+            {/* TODO: Add dot */}
+            <View
+              style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+            >
+              <View
+                style={[styles.dot, { backgroundColor: 'rgb(0, 255, 52)' }]}
+              />
+              <ThemedText type="defaultBold">
+                Add your first category
+              </ThemedText>
+            </View>
+            <ThemedText size="extraSmall">
+              Get started by adding your first Category!
+            </ThemedText>
+          </ListItemShell>
+        )}
         {categories.map((category) => (
           <Pressable key={category.id} onPress={() => openEditModal(category)}>
             <ListItemShell style={styles.category}>
@@ -250,6 +270,12 @@ const styles = StyleSheet.create({
   settingsButton: {
     paddingVertical: 9,
     paddingHorizontal: 9,
+  },
+  getStartedPill: {
+    paddingTop: 14,
+    paddingHorizontal: 15,
+    paddingBottom: 12,
+    gap: 2,
   },
 });
 

@@ -24,6 +24,7 @@
       "package": "com.barryph.kadence"
     },
     "androidNavigationBar": {
+      "backgroundColor": "#00000000",
       "enforceContrast": false
     },
     "web": {

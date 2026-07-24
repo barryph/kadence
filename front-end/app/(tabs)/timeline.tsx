@@ -86,13 +86,6 @@ function buildMonthDateColumns(month: string): TimelineDateColumn[] {
   return columns;
 }
 
-function getNextMonthToLoad(month: string, direction: 'PREV' | 'NEXT'): string {
-  const [year, monthNumber] = month.split('-').map(Number);
-  const monthShift = direction === 'PREV' ? -1 : 1;
-  const nextMonthToLoad = new Date(year, monthNumber + monthShift - 1, 1);
-  return formatMonthKey(nextMonthToLoad);
-}
-
 function timelineToSet(timeline: ITimeline): ITimelineSet {
   return Object.keys(timeline).reduce<ITimelineSet>((acc, key) => {
     acc[key] = new Set(timeline[key]);
@@ -125,6 +118,8 @@ function TimelineScreen() {
   const viewportWidthRef = useRef(0);
   const contentWidthRef = useRef(0);
   const hasPositionedInitialScroll = useRef(false);
+  // Month nav: position under the overlay before revealing to avoid a jump
+  const pendingMonthScrollRef = useRef<'start' | 'end' | null>(null);
   const [isInitialScrollReady, setIsInitialScrollReady] = useState(false);
 
   /***
@@ -135,20 +130,53 @@ function TimelineScreen() {
   const columnHeaderRef = useAnimatedRef();
   const rowHeaderRef = useAnimatedRef();
 
-  // Today is always the last column — scroll to the end before revealing
+  function scrollTimelineTo(x: number, animated = true) {
+    scrollX.value = x;
+    scrollViewRef.current?.scrollTo({ x, y: 0, animated });
+  }
+
+  /**
+   * Set scroll position to the current day on first load
+   * Today is always the last column — scroll to the end before revealing
+   */
   function scrollToEndAndReveal() {
     if (hasPositionedInitialScroll.current) return;
     if (contentWidthRef.current <= 0 || viewportWidthRef.current <= 0) return;
 
     hasPositionedInitialScroll.current = true;
-    scrollX.value = Math.max(
-      0,
-      contentWidthRef.current - viewportWidthRef.current,
+    scrollTimelineTo(
+      Math.max(0, contentWidthRef.current - viewportWidthRef.current),
+      false,
     );
-    scrollViewRef.current?.scrollToEnd({ animated: false });
     requestAnimationFrame(() => {
       setIsInitialScrollReady(true);
     });
+  }
+
+  /**
+   * Scroll the the start/end of the month when navigating back and forth
+   *
+   * Apply pending month-nav scroll once layout metrics are ready.
+   * Keeps the loading overlay up until positioned to avoid a visible jump.
+   */
+  function finalizePendingMonthScroll() {
+    const target = pendingMonthScrollRef.current;
+    if (!target) return false;
+    if (contentWidthRef.current <= 0 || viewportWidthRef.current <= 0) {
+      return false;
+    }
+
+    const x =
+      target === 'end'
+        ? Math.max(0, contentWidthRef.current - viewportWidthRef.current)
+        : 0;
+
+    scrollTimelineTo(x);
+    pendingMonthScrollRef.current = null;
+    requestAnimationFrame(() => {
+      setIsLoadingTimeline(false);
+    });
+    return true;
   }
 
   /***
@@ -193,10 +221,24 @@ function TimelineScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function getNextMonthToLoad(
+    month: string,
+    direction: 'PREV' | 'NEXT',
+  ): string {
+    const [year, monthNumber] = month.split('-').map(Number);
+    const monthShift = direction === 'PREV' ? -1 : 1;
+    const nextMonthToLoad = new Date(year, monthNumber + monthShift - 1, 1);
+    return formatMonthKey(nextMonthToLoad);
+  }
+
   /***
    * Fetch more data
    */
-  async function fetchMonth(month: string) {
+  async function fetchMonth(monthInView: string, direction: 'PREV' | 'NEXT') {
+    const month = getNextMonthToLoad(monthInView, direction);
+    // PREV → land at end of month; NEXT → land at start. Applied after layout.
+    pendingMonthScrollRef.current = direction === 'PREV' ? 'end' : 'start';
+
     try {
       setIsLoadingTimeline(true);
       setLoadMoreError(undefined);
@@ -204,17 +246,33 @@ function TimelineScreen() {
       if (response.data?.timeline) {
         const timeline = timelineToSet(response.data.timeline);
         const columns = buildMonthDateColumns(month);
-        setCachedMonths({ ...cachedMonths, [month]: timeline });
+        setCachedMonths((prev) => ({ ...prev, [month]: timeline }));
         setDateColumns(columns);
         setMonthInView(month);
+        // Keep overlay up until finalizePendingMonthScroll positions the view
+      } else {
+        pendingMonthScrollRef.current = null;
+        setIsLoadingTimeline(false);
       }
     } catch (err) {
+      pendingMonthScrollRef.current = null;
       setLoadMoreError('Unable to load more timeline. Please try again.');
       console.error('Error fetching more timeline', err);
-    } finally {
       setIsLoadingTimeline(false);
     }
   }
+
+  // Fallback when onContentSizeChange doesn't fire (same-width months).
+  // Prefer the content-size callback so we don't finalize with a stale width.
+  useEffect(() => {
+    if (!pendingMonthScrollRef.current) return;
+
+    const timeoutId = setTimeout(() => {
+      finalizePendingMonthScroll();
+    }, 50);
+
+    return () => clearTimeout(timeoutId);
+  }, [monthInView, dateColumns]);
 
   /***
    * Toggle cells
@@ -402,17 +460,17 @@ function TimelineScreen() {
           onLayout={(event) => {
             viewportWidthRef.current = event.nativeEvent.layout.width;
             scrollToEndAndReveal();
+            finalizePendingMonthScroll();
           }}
           onContentSizeChange={(contentWidth) => {
             contentWidthRef.current = contentWidth;
             scrollToEndAndReveal();
+            finalizePendingMonthScroll();
           }}
         >
           <View style={[styles.loadMoreColumn]}>
             <Button
-              onPress={() =>
-                fetchMonth(getNextMonthToLoad(monthInView, 'PREV'))
-              }
+              onPress={() => fetchMonth(monthInView, 'PREV')}
               isLoading={isLoadingTimeline}
               style={styles.loadMoreButton}
               textStyle={styles.loadMoreButtonTextStyles}
@@ -466,9 +524,7 @@ function TimelineScreen() {
           {monthInView !== currentMonth && (
             <View style={[styles.loadMoreColumn]}>
               <Button
-                onPress={() =>
-                  fetchMonth(getNextMonthToLoad(monthInView, 'NEXT'))
-                }
+                onPress={() => fetchMonth(monthInView, 'NEXT')}
                 isLoading={isLoadingTimeline}
                 style={styles.loadMoreButton}
                 textStyle={styles.loadMoreButtonTextStyles}

@@ -18,6 +18,7 @@ import { categoriesAPI, ICategory } from '@/api/api.categories';
 import ActivityListItem from '@/components/activity-list/activity-list-item';
 import { Colors } from '@/constants/theme';
 import ListItemShell from '@/components/list-item-shell';
+import Dot from '@/components/dot';
 
 // TODO: Add toast when task completed, with undo button
 // TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
@@ -211,13 +212,10 @@ function Dashboard() {
         {/* </ThemedView> */}
         {activities.length === 0 && (
           <ListItemShell style={styles.getStartedPill}>
-            {/* TODO: Add dot */}
             <View
               style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
             >
-              <View
-                style={[styles.dot, { backgroundColor: 'rgb(0, 255, 52)' }]}
-              />
+              <Dot />
               <ThemedText type="defaultBold">
                 Add your first activity
               </ThemedText>
@@ -337,12 +335,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  dot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    marginRight: 8,
   },
 });
 

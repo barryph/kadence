@@ -13,8 +13,8 @@ import CategoryModal, {
 } from '@/components/categories/category-modal';
 import DeleteCategoryModal from '@/components/categories/delete-category-modal';
 import LoaderScreen from '@/components/base/loader-screen';
+import Dot from '@/components/dot';
 
-// TODO: Add add your first category placeholder
 // TODO: Sort categories by activities count
 
 function Categories() {
@@ -125,13 +125,10 @@ function Categories() {
       <View style={styles.categories}>
         {categories.length === 0 && (
           <ListItemShell style={styles.getStartedPill}>
-            {/* TODO: Add dot */}
             <View
               style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
             >
-              <View
-                style={[styles.dot, { backgroundColor: 'rgb(0, 255, 52)' }]}
-              />
+              <Dot />
               <ThemedText type="defaultBold">
                 Add your first category
               </ThemedText>
@@ -146,9 +143,7 @@ function Categories() {
             <ListItemShell style={styles.category}>
               <View style={styles.leftRow}>
                 <View style={styles.topRow}>
-                  <View
-                    style={[styles.dot, { backgroundColor: category.color }]}
-                  />
+                  <Dot backgroundColor={category.color} />
                   <ThemedText>{category.name}</ThemedText>
                 </View>
                 <View style={styles.bottomRow}>
@@ -251,12 +246,6 @@ const styles = StyleSheet.create({
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  dot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    marginRight: 8,
   },
   bottomRow: {
     flexDirection: 'row',

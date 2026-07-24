@@ -5,6 +5,7 @@ import CreateCategoryModal from '@/components/categories/create-category-modal';
 import type { ICategory } from '@/api/api.categories';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
+import Dot from '../dot';
 
 interface CategorySelectProps {
   value?: ICategory;
@@ -61,9 +62,7 @@ export default function CategorySelect({
       >
         {selectedCategory ? (
           <View style={styles.selectedRow}>
-            <View
-              style={[styles.dot, { backgroundColor: selectedCategory.color }]}
-            />
+            <Dot backgroundColor={selectedCategory.color} />
             <ThemedText style={styles.selectText} selectable={false}>
               {selectedCategory.name}
             </ThemedText>
@@ -101,7 +100,7 @@ export default function CategorySelect({
               onPress={() => selectCategory(category)}
               style={styles.dropdownItem}
             >
-              <View style={[styles.dot, { backgroundColor: category.color }]} />
+              <Dot backgroundColor={category.color} />
               <ThemedText>{category.name}</ThemedText>
             </Pressable>
           ))}
@@ -164,12 +163,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#999',
     transform: [{ rotate: '90deg' }],
-  },
-  dot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    marginRight: 8,
   },
   dropdown: {
     position: 'absolute',

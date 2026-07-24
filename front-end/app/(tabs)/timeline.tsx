@@ -29,6 +29,14 @@ import LoaderScreen from '@/components/base/loader-screen';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 
+const CELL_SIZE = 18;
+const CELL_GAP = 12;
+const ROW_CONTENT_SIZE = 25;
+const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
+const LOAD_MORE_WIDTH = 40;
+const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
+const headersBackground = '#1a4163';
+
 type TimelineDateColumn = {
   full: string;
   month: string;
@@ -56,9 +64,15 @@ function buildMonthDateColumns(month: string): TimelineDateColumn[] {
   const [year, monthNumber] = month.split('-').map(Number);
   const monthStart = new Date(year, monthNumber - 1, 1);
   const monthEnd = new Date(year, monthNumber, 0);
-  const lastDay = monthEnd.getDate();
-  const boundedEndDay = Math.max(1, Math.min(lastDay, monthEnd.getDate()));
-  const endDate = new Date(year, monthNumber - 1, boundedEndDay, 12);
+  const lastDayOfMonth = monthEnd.getDate();
+  const today = new Date();
+  const isCurrentMonth =
+    today.getFullYear() === year && today.getMonth() + 1 === monthNumber;
+  // Never render future dates — cap the current month at today
+  const endDay = isCurrentMonth
+    ? Math.min(lastDayOfMonth, today.getDate())
+    : lastDayOfMonth;
+  const endDate = new Date(year, monthNumber - 1, endDay, 12);
   const columns: TimelineDateColumn[] = [];
 
   for (
@@ -107,7 +121,35 @@ function TimelineScreen() {
   );
   const [togglingCells, setTogglingCells] = useState<Set<string>>(new Set());
   const [toggleError, setToggleError] = useState<string | undefined>(undefined);
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<Animated.ScrollView>(null);
+  const viewportWidthRef = useRef(0);
+  const contentWidthRef = useRef(0);
+  const hasPositionedInitialScroll = useRef(false);
+  const [isInitialScrollReady, setIsInitialScrollReady] = useState(false);
+
+  /***
+   * Scrolling — declared early so initial positioning can sync the sticky header
+   */
+  const scrollX = useSharedValue(0);
+  const scrollY = useSharedValue(0);
+  const columnHeaderRef = useAnimatedRef();
+  const rowHeaderRef = useAnimatedRef();
+
+  // Today is always the last column — scroll to the end before revealing
+  function scrollToEndAndReveal() {
+    if (hasPositionedInitialScroll.current) return;
+    if (contentWidthRef.current <= 0 || viewportWidthRef.current <= 0) return;
+
+    hasPositionedInitialScroll.current = true;
+    scrollX.value = Math.max(
+      0,
+      contentWidthRef.current - viewportWidthRef.current,
+    );
+    scrollViewRef.current?.scrollToEnd({ animated: false });
+    requestAnimationFrame(() => {
+      setIsInitialScrollReady(true);
+    });
+  }
 
   /***
    * Load initial data
@@ -232,13 +274,8 @@ function TimelineScreen() {
   }
 
   /***
-   * Scrolling
+   * Scrolling handlers
    */
-  const scrollX = useSharedValue(0);
-  const scrollY = useSharedValue(0);
-  const columnHeaderRef = useAnimatedRef();
-  const rowHeaderRef = useAnimatedRef();
-
   // Runs on the UI thread
   const scrollHandlerX = useAnimatedScrollHandler({
     onScroll: (event: ReanimatedScrollEvent) => {
@@ -301,12 +338,16 @@ function TimelineScreen() {
       <Background showRed={false} />
 
       <View
-        style={[styles.isLoadingOverlay, !isLoadingTimeline && styles.hide]}
+        style={[
+          styles.isLoadingOverlay,
+          !isLoadingTimeline && isInitialScrollReady && styles.hide,
+        ]}
       >
-        <ActivityIndicator size="large" />
-        <Text style={{ color: '#fff', marginTop: 15, fontWeight: 600 }}>
-          Loading Activities
-        </Text>
+        {!isInitialScrollReady && <Background />}
+        <ActivityIndicator color="#fff" />
+        <ThemedText style={{ color: '#fff', marginTop: 15 }}>
+          Loading timeline...
+        </ThemedText>
       </View>
 
       <View style={styles.topRow}>
@@ -358,9 +399,13 @@ function TimelineScreen() {
           showsHorizontalScrollIndicator={false}
           onScroll={scrollHandlerX}
           ref={scrollViewRef}
-          onContentSizeChange={() => {
-            // scrollViewRef.current?.scrollToEnd({ animated: false });
-            scrollViewRef.current?.scrollTo(0);
+          onLayout={(event) => {
+            viewportWidthRef.current = event.nativeEvent.layout.width;
+            scrollToEndAndReveal();
+          }}
+          onContentSizeChange={(contentWidth) => {
+            contentWidthRef.current = contentWidth;
+            scrollToEndAndReveal();
           }}
         >
           <View style={[styles.loadMoreColumn]}>
@@ -451,14 +496,6 @@ function TimelineScreen() {
     </View>
   );
 }
-
-const CELL_SIZE = 18;
-const CELL_GAP = 12;
-const ROW_CONTENT_SIZE = 25;
-const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
-const LOAD_MORE_WIDTH = 40;
-const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
-const headersBackground = '#1a4163';
 
 const styles = StyleSheet.create({
   errorText: {

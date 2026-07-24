@@ -35,7 +35,7 @@ export default function ActivityLastDoneField() {
 
         return (
           <>
-            <Label>Last Done(optional) </Label>
+            <Label>Last Done</Label>
 
             <TouchableOpacity
               style={styles.dateField}
@@ -44,7 +44,7 @@ export default function ActivityLastDoneField() {
               <ThemedText
                 style={field.value ? styles.dateValue : styles.datePlaceholder}
               >
-                {field.value ? formatDateISO(field.value) : 'Select date'}
+                {field.value ? formatDateISO(field.value) : '2026-07-09'}
               </ThemedText>
             </TouchableOpacity>
 

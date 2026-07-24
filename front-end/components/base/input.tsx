@@ -3,21 +3,31 @@ import { View, TextInput, StyleSheet, type TextInputProps } from 'react-native';
 import { Colors } from '@/constants/theme';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
+import { ThemedText } from './themed-text';
 
 interface InputProps extends TextInputProps {
   label?: string;
   errorMessage?: string;
+  required?: boolean;
 }
 
 export default function Input({
   label,
   errorMessage,
   style,
+  required = false,
   ...props
 }: InputProps) {
   return (
     <View style={styles.container}>
-      {label && <Label>{label}</Label>}
+      {label && (
+        <Label>
+          {label}
+          {required && (
+            <ThemedText style={{ color: Colors.required }}>*</ThemedText>
+          )}
+        </Label>
+      )}
       <TextInput
         style={[styles.input, errorMessage ? styles.inputError : null, style]}
         placeholderTextColor="#999"

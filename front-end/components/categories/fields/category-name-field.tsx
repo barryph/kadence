@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import Input from '@/components/base/input';
-import { CategoryFormValues } from '../create-category-modal';
+import { CategoryFormValues } from '../category-modal';
 
 export default function CategoryNameField() {
   const { control } = useFormContext<CategoryFormValues>();

@@ -33,6 +33,7 @@ export const Colors = {
     new: '#0073ff',
     middle: '#038ef0',
   },
+  required: '#CF2D2DE6',
 };
 
 export const Fonts = Platform.select({

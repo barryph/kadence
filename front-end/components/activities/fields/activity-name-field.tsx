@@ -12,10 +12,11 @@ export default function ActivityNameField() {
       render={({ field, fieldState }) => (
         <Input
           label="Name"
-          placeholder="Name"
+          placeholder="Squat"
           value={field.value}
           onChangeText={field.onChange}
           errorMessage={fieldState.error?.message}
+          required
         />
       )}
     />

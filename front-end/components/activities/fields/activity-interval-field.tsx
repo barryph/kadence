@@ -17,6 +17,7 @@ export default function ActivityIntervalField() {
           value={String(field.value)}
           onChangeText={field.onChange}
           errorMessage={fieldState.error?.message}
+          required
         />
       )}
     />

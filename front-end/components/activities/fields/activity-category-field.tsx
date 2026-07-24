@@ -21,7 +21,7 @@ export default function ActivityCategoryField({ categories, onCreate }: Props) {
       render={({ field, fieldState }) => (
         <CategorySelect
           value={value}
-          label="Category (optional)"
+          label="Category"
           placeholder="Choose a Category"
           categories={categories}
           onCreate={onCreate}

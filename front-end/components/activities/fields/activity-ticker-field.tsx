@@ -2,6 +2,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 import Input from '@/components/base/input';
 import type { ActivityFormValues } from '../activity-schema';
 
+// TODO: Set max length
+
 export default function ActivityTickerField() {
   const { control } = useFormContext<ActivityFormValues>();
 
@@ -11,8 +13,10 @@ export default function ActivityTickerField() {
       name="ticker"
       render={({ field, fieldState }) => (
         <Input
-          label="Ticker (optional)"
-          placeholder="Ticker"
+          label="Ticker"
+          placeholder="TCKR"
+          autoCapitalize="characters"
+          maxLength={5}
           value={field.value}
           onChangeText={field.onChange}
           errorMessage={fieldState.error?.message}

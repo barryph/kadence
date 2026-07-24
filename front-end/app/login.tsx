@@ -1,12 +1,5 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, Link } from 'expo-router';
@@ -16,10 +9,13 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
+import KBAvoidingView from '@/components/kb-avoiding-view';
 import {
   loginSchema,
   type LoginFormValues,
 } from '@/components/auth/auth-schemas';
+
+// FIXME: White bar at bottom of page on staging build
 
 // TODO: Implement OAuth for both google and apple
 //   Expo recommends using separate packages for each provider. They have video guides for both here:
@@ -57,7 +53,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
+    <KBAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
@@ -128,7 +124,7 @@ export default function LoginScreen() {
           </Link>
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KBAvoidingView>
   );
 }
 

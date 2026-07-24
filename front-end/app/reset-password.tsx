@@ -1,12 +1,5 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
@@ -17,6 +10,7 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
+import KBAvoidingView from '@/components/kb-avoiding-view';
 import {
   resetPasswordSchema,
   type ResetPasswordFormValues,
@@ -67,7 +61,7 @@ export default function ResetPasswordScreen() {
 
   if (isTokenMissing) {
     return (
-      <KeyboardAvoidingView
+      <KBAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
@@ -85,12 +79,12 @@ export default function ResetPasswordScreen() {
             </Link>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </KBAvoidingView>
     );
   }
 
   return (
-    <KeyboardAvoidingView
+    <KBAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
@@ -137,7 +131,7 @@ export default function ResetPasswordScreen() {
           </Link>
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </KBAvoidingView>
   );
 }
 

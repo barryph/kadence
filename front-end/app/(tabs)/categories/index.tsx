@@ -154,9 +154,9 @@ function Categories() {
                 <View style={styles.bottomRow}>
                   <ThemedText style={styles.bottomRowText} size="small">
                     Used in{' '}
-                    <strong>
+                    <ThemedText type="defaultBold">
                       {categoryToActivityCountMap![category.id!] || '0'}
-                    </strong>{' '}
+                    </ThemedText>{' '}
                     activities
                   </ThemedText>
                 </View>

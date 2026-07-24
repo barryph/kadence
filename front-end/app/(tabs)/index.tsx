@@ -165,7 +165,15 @@ function Dashboard() {
               Categories
             </ThemedText>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: 4,
+                  // fixes visual bug on android where the bottom border of each category pill is cut off
+                  paddingBottom: 1,
+                }}
+              >
                 {categories.map((category) => {
                   const isActive = activeCategoryId === category.id;
                   return (

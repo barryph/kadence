@@ -160,13 +160,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   navItems: {
-    marginTop: 15,
+    marginTop: 20,
   },
   navItem: {
-    paddingVertical: 15,
+    paddingVertical: 12,
   },
   navText: {
-    fontSize: 24,
+    fontSize: 26,
+    lineHeight: 32,
     color: '#fff',
     fontWeight: '600',
     textAlign: 'right',

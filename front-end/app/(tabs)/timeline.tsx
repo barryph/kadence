@@ -3,7 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   ActivityIndicator,
 } from 'react-native';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
@@ -495,7 +495,7 @@ function TimelineScreen() {
                     const isToggling = togglingCells.has(cellKey);
                     return (
                       <View key={cellKey} style={styles.statusCellContainer}>
-                        <TouchableOpacity
+                        <Pressable
                           disabled={isToggling}
                           onPress={() =>
                             handleCellClick(

@@ -536,11 +536,8 @@ function TimelineScreen() {
         </Animated.ScrollView>
       </View>
 
-      {isLoadingTimeline || loadMoreError || toggleError ? (
+      {loadMoreError || toggleError ? (
         <View style={styles.footerOverlay}>
-          {isLoadingTimeline && (
-            <Text style={styles.loadingMoreText}>Loading more timeline...</Text>
-          )}
           {loadMoreError && (
             <Text style={styles.errorTextSmall}>{loadMoreError}</Text>
           )}

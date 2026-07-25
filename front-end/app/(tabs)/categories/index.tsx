@@ -15,8 +15,6 @@ import DeleteCategoryModal from '@/components/categories/delete-category-modal';
 import LoaderScreen from '@/components/base/loader-screen';
 import Dot from '@/components/dot';
 
-// TODO: Sort categories by activities count
-
 function Categories() {
   const [isLoading, setIsLoading] = useState(true);
   const [activities, setActivities] = useState<IActivityClient[]>([]);
@@ -62,7 +60,7 @@ function Categories() {
 
         setActivities(activitiesList as IActivityClient[]);
         setCategories(
-          categoriesList.sort(
+          categoriesList.toSorted(
             (a: ICategory, b: ICategory) => map[b.id!] - map[a.id!],
           ) as ICategory[],
         );

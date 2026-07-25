@@ -16,7 +16,6 @@ export const Colors = {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
-    // TODO: Add dark equiv
     faint: '#ffffff82',
   },
   dark: {
@@ -28,12 +27,16 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     navbar: 'rgb(8, 7, 11)',
     inputBackground: 'rgba(255,255,255,.055)',
+    // toast: 'rgb(11, 4, 32)',
+    toast: 'rgb(4, 5, 17)',
   },
   blue: {
     new: '#0073ff',
     middle: '#038ef0',
+    toastBorder: 'rgb(37, 147, 242)',
   },
   required: '#CF2D2DE6',
+  toastSuccess: '#2bd155',
 };
 
 export const Fonts = Platform.select({

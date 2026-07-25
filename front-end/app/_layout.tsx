@@ -15,10 +15,16 @@ import {
   IBMPlexMono_700Bold,
   useFonts,
 } from '@expo-google-fonts/ibm-plex-mono';
+import Toast, { BaseToast } from 'react-native-toast-message';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '@/context/auth-context';
 import Background from '@/components/backgrounds/background';
+import { ThemedText } from '@/components/base/themed-text';
+import BlueBackground from '@/components/backgrounds/blue-background';
+import ActivityBackground from '@/components/backgrounds/activity-background';
+import { Colors } from '@/constants/theme';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 // This prevents SplashScreen from auto hiding while the fonts are in loading state
 SplashScreen.preventAutoHideAsync();
@@ -92,12 +98,45 @@ function RootLayoutNav() {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
+  const toastConfig = {
+    // success: (props) => <BaseToast {...props} style={{ background: 'red' }} />,
+    success: ({ text1 }) => (
+      <View
+        style={{
+          paddingVertical: 18,
+          paddingHorizontal: 18,
+          minWidth: '95%',
+          borderRadius: 6,
+          overflow: 'hidden',
+          boxShadow:
+            'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px',
+          backgroundColor: Colors.dark.toast,
+          display: 'flex',
+          alignContent: 'center',
+          alignItems: 'center',
+          gap: 11,
+          flexDirection: 'row',
+        }}
+      >
+        <Ionicons
+          name="checkmark-circle-sharp"
+          size={24}
+          color={Colors.toastSuccess}
+        />
+        <ThemedText size="small" type="defaultBold">
+          {text1}
+        </ThemedText>
+      </View>
+    ),
+  };
+
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <FontsProvider>
           <AuthProvider>
             <RootLayoutNav />
+            <Toast config={toastConfig} />
           </AuthProvider>
         </FontsProvider>
         <StatusBar style="auto" />

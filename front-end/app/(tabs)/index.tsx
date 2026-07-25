@@ -19,9 +19,9 @@ import ActivityListItem from '@/components/activity-list/activity-list-item';
 import { Colors } from '@/constants/theme';
 import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
+import Toast from 'react-native-toast-message';
 
 // TODO: Add toast when task completed, with undo button
-// TODO: Fix being able to drag complete on unqueued items, or actually, allow completin unqueued items
 
 function Dashboard() {
   const router = useRouter();
@@ -95,6 +95,10 @@ function Dashboard() {
             : a,
         );
         setActivities(sortActivities(updated));
+        Toast.show({
+          type: 'success',
+          text1: 'Activity Completed',
+        });
       }
     } catch (error) {
       console.error('Error completing activity', error);

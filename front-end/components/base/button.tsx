@@ -1,17 +1,19 @@
 import React from 'react';
 import {
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
-  type TouchableOpacityProps,
+  type PressableProps,
   StyleProp,
   TextStyle,
+  ViewStyle,
 } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 
-interface ButtonProps extends TouchableOpacityProps {
+interface ButtonProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode;
   isLoading?: boolean;
+  style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
 }
 
@@ -20,18 +22,18 @@ export default function Button({
   isLoading,
   style,
   textStyle,
+  disabled,
   ...props
 }: ButtonProps) {
   return (
-    <TouchableOpacity
+    <Pressable
+      {...props}
       style={[
         styles.button,
-        props.disabled || isLoading ? styles.buttonDisabled : null,
+        disabled || isLoading ? styles.buttonDisabled : null,
         style,
       ]}
-      activeOpacity={0.8}
-      disabled={props.disabled || isLoading}
-      {...props}
+      disabled={disabled || isLoading}
     >
       {isLoading ? (
         <ActivityIndicator color="#fff" />
@@ -40,7 +42,7 @@ export default function Button({
           {children}
         </ThemedText>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 

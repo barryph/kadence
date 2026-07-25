@@ -3,7 +3,7 @@ import {
   View,
   Modal,
   ScrollView,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
@@ -112,13 +112,13 @@ export default function CreateActivityModal({
           >
             <View style={styles.title}>
               <ThemedText type="title">New activity</ThemedText>
-              <TouchableOpacity
+              <Pressable
                 style={styles.closeButton}
                 onPress={() => onClose()}
                 accessibilityLabel="Close"
               >
                 <ThemedText style={styles.closeButtonText}>✕</ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             <FormProvider {...form}>

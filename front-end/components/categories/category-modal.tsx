@@ -3,7 +3,7 @@ import {
   Modal,
   View,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -79,11 +79,7 @@ export default function CategoryModal({
         style={styles.backdrop}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <TouchableOpacity
-          style={styles.backdropFill}
-          activeOpacity={1}
-          onPress={onClose}
-        />
+        <Pressable style={styles.backdropFill} onPress={onClose} />
         <View style={styles.card}>
           <Background />
           {title && title()}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Platform, TouchableOpacity, StyleSheet } from 'react-native';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -37,7 +37,7 @@ export default function ActivityLastDoneField() {
           <>
             <Label>Last Done</Label>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.dateField}
               onPress={() => setShowPicker(true)}
             >
@@ -46,18 +46,18 @@ export default function ActivityLastDoneField() {
               >
                 {field.value ? formatDateISO(field.value) : '2026-07-09'}
               </ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
             {/** Clear value button **/}
             {field.value && (
-              <TouchableOpacity
+              <Pressable
                 onPress={() => field.onChange(null)}
                 style={styles.clearDateButton}
               >
                 <ThemedText style={styles.clearDateText}>
                   Clear date{' '}
                 </ThemedText>
-              </TouchableOpacity>
+              </Pressable>
             )}
 
             {fieldState.error?.message && (

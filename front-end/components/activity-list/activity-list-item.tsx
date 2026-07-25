@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Pressable, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
@@ -38,7 +38,7 @@ export default function ActivityListItem({
         },
       ]}
     >
-      <TouchableOpacity activeOpacity={0.8} onPress={() => onClick(activity)}>
+      <Pressable onPress={() => onClick(activity)}>
         <SwipeRow
           onSwipeLeft={() => onEdit(activity)}
           onSwipeRight={() => onComplete(activity.id)}
@@ -197,7 +197,7 @@ export default function ActivityListItem({
             </View>
           </View>
         </SwipeRow>
-      </TouchableOpacity>
+      </Pressable>
     </ListItemShell>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import type { ICategory } from '@/api/api.categories';
@@ -79,14 +79,14 @@ export default function CategorySelect({
 
       {/** Clear value button **/}
       {selectedCategory && (
-        <TouchableOpacity
+        <Pressable
           onPress={() => clearCategory()}
           style={styles.clearCategoryButton}
         >
           <ThemedText style={styles.clearCategoryText}>
             Clear category
           </ThemedText>
-        </TouchableOpacity>
+        </Pressable>
       )}
 
       {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}

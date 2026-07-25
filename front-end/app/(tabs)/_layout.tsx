@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React, { useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -40,7 +40,7 @@ export default function TabLayout() {
         <BlueBackground />
         <Logo />
 
-        <TouchableOpacity onPress={() => setIsDrawerOpen(true)}>
+        <Pressable onPress={() => setIsDrawerOpen(true)}>
           <View
             style={{
               backgroundColor: 'rgba(255,255,255,.11)',
@@ -57,7 +57,7 @@ export default function TabLayout() {
               <FontAwesome6 name="bars-staggered" size={26} />
             </ThemedText>
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </SafeAreaView>
     ),
   };

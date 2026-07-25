@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   ScrollView,
   Pressable,
 } from 'react-native';
@@ -241,14 +240,14 @@ function Dashboard() {
         ))}
       </ScrollView>
 
-      <TouchableOpacity
+      <Pressable
         style={styles.floatingAddButton}
         onPress={() => setShowNewActivityModal(true)}
       >
         <ThemedText style={styles.floatingAddButtonText}>
           Add Activity
         </ThemedText>
-      </TouchableOpacity>
+      </Pressable>
 
       {showNewActivityModal && (
         <CreateActivityModal onClose={handleNewActivityModalClose} />

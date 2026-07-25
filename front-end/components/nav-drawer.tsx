@@ -3,7 +3,7 @@ import {
   View,
   StyleSheet,
   Modal,
-  TouchableOpacity,
+  Pressable,
   Animated,
   Dimensions,
   TouchableWithoutFeedback,
@@ -83,36 +83,36 @@ export default function NavDrawer({
           <SafeAreaView edges={['top']} style={styles.header}>
             <Logo />
 
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Pressable onPress={onClose} style={styles.closeButton}>
               <ThemedText style={styles.closeIcon}>✕</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           </SafeAreaView>
 
           <View style={styles.navItems}>
-            <TouchableOpacity
+            <Pressable
               style={styles.navItem}
               onPress={() => handleNavigate('/')}
             >
               <ThemedText style={styles.navText}>Activities</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.navItem}
               onPress={() => handleNavigate('/categories')}
             >
               <ThemedText style={styles.navText}>Categories</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={styles.navItem}
               onPress={() => handleNavigate('/timeline')}
             >
               <ThemedText style={styles.navText}>Timeline</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity style={[styles.navItem]} onPress={handleLogout}>
+            <Pressable style={[styles.navItem]} onPress={handleLogout}>
               <ThemedText style={styles.navText}>Logout</ThemedText>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </Animated.View>
       </View>

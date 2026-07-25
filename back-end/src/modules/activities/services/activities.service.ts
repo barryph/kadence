@@ -67,7 +67,6 @@ export class ActivitiesService {
         date: createActivityDto.lastDone,
       });
       await this.activityEventRepo.create(event);
-      await this.activitiesRepo.getById(createdActivity.id);
     }
 
     if (!createdActivity.isPersisted()) {
@@ -129,7 +128,7 @@ export class ActivitiesService {
     activityId: string,
     userId: string,
     date: string,
-  ): Promise<void> {
+  ): Promise<ActivityWithCategoryDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
     if (!activity) {
       throw new NotFoundException('Activity not found');
@@ -152,6 +151,15 @@ export class ActivitiesService {
       }
       throw error;
     }
+
+    const updatedActivity = await this.getActivityByIdQuery.execute(
+      activityId,
+      userId,
+    );
+    if (!updatedActivity) {
+      throw new Error('Activity not found after completing it');
+    }
+    return updatedActivity;
   }
 
   async undoActivityEvent(

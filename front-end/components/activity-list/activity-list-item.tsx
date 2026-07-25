@@ -50,11 +50,10 @@ export default function ActivityListItem({
           swipeLeftColor="inherit"
           swipeRightChild={
             <ThemedText style={{ fontSize: 24, color: '#000' }}>
-              <Ionicons name="checkmark-done" size={24} />
+              <Ionicons name="checkmark-done" size={24} color="#fff" />
             </ThemedText>
           }
           swipeRightColor="#fff"
-          swipeRightBackground="#0072ff"
           queued={activity.queued}
         >
           <View

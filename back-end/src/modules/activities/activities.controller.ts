@@ -126,14 +126,16 @@ export class ActivitiesController {
     @Body() body: ActivityDateActionDTO,
   ) {
     const userId = (req.user as UserDTO).id;
-    await this.activitiesService.completeActivity(
+    const updatedActivity = await this.activitiesService.completeActivity(
       activityId,
       userId,
       body.date,
     );
 
     return {
-      success: true,
+      data: {
+        activity: updatedActivity,
+      },
     };
   }
 

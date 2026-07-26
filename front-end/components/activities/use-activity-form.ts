@@ -9,7 +9,7 @@ export function useActivityForm(initialValues?: Partial<ActivityFormValues>) {
       name: '',
       ticker: '',
       interval: 1,
-      categoryId: undefined,
+      categoryId: null,
       lastDone: null,
       ...initialValues,
     },

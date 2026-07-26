@@ -5,6 +5,18 @@ interface IProps {
   showRed?: boolean;
 }
 
+/**
+ * TODO: The greatest background gradient we MUST convert one day
+ *
+    backgroundColor: `
+        radial-gradient(circle at 20% -10%, rgba(8,124,255,.28), transparent 34rem),
+        radial-gradient(circle at 95% 12%, rgba(8,216,255,.16), transparent 26rem),
+        radial-gradient(circle at 70% 100%, rgba(255,61,84,.12), transparent 28rem),
+        linear-gradient(180deg,#050711 0%,#0b1020 46%,#050711 100%);
+     `,
+    backgroundAttachment: 'fixed',
+ */
+
 export default function Background({ showRed = true }: IProps) {
   return (
     <View style={StyleSheet.absoluteFill}>

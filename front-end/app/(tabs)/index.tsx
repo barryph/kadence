@@ -14,6 +14,7 @@ import { Colors } from '@/constants/theme';
 import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
 import Toast from 'react-native-toast-message';
+import Container from '@/components/base/container';
 
 // TODO: Add toast when task completed, with undo button
 
@@ -137,113 +138,115 @@ function Dashboard() {
     <View style={styles.container}>
       <Background />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <ThemedText
-            type="defaultBold"
-            style={[
-              styles.headline,
-              !(categories.length > 0) && styles.headlineNoCategories,
-            ]}
+      <ScrollView>
+        <Container style={styles.scrollContent}>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
           >
-            Activities In Motion
-          </ThemedText>
-        </View>
-        {categories.length > 0 && (
-          <View style={styles.categoriesContainer}>
             <ThemedText
+              type="defaultBold"
               style={[
-                styles.categoriesTitle,
+                styles.headline,
                 !(categories.length > 0) && styles.headlineNoCategories,
               ]}
-              type="defaultSemiBold"
             >
-              Categories
+              Activities In Motion
             </ThemedText>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  gap: 4,
-                  // fixes visual bug on android where the bottom border of each category pill is cut off
-                  paddingBottom: 1,
-                }}
-              >
-                {categories.map((category) => {
-                  const isActive = activeCategoryId === category.id;
-                  return (
-                    <Pressable
-                      key={category.id}
-                      onPress={() => handleCategoryPress(category.id!)}
-                    >
-                      <ThemedText
-                        size="small"
-                        type="defaultSemiBold"
-                        style={[
-                          styles.categoryPill,
-                          isActive && {
-                            borderWidth: 1.5,
-                            borderColor: `${category.color}88`,
-                            backgroundColor: `${category.color}1A`,
-                            color: category.color,
-                          },
-                        ]}
-                      >
-                        {category.name}
-                      </ThemedText>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </ScrollView>
           </View>
-        )}
-        {/* <ThemedView style={styles.statsBar}> */}
-        {/*   <ThemedView></ThemedView> */}
-        {/*   <ThemedView> */}
-        {/**/}
-        {/*   </ThemedView> */}
-        {/* </ThemedView> */}
-        <View
-          style={{
-            marginTop: 3,
-            display: 'flex',
-            gap: 8,
-          }}
-        >
-          {activities.length === 0 && (
-            <ListItemShell style={styles.getStartedPill}>
-              <View
-                style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+          {categories.length > 0 && (
+            <View style={styles.categoriesContainer}>
+              <ThemedText
+                style={[
+                  styles.categoriesTitle,
+                  !(categories.length > 0) && styles.headlineNoCategories,
+                ]}
+                type="defaultSemiBold"
               >
-                <Dot />
-                <ThemedText type="defaultBold">
-                  Add your first activity
-                </ThemedText>
-              </View>
-              <ThemedText size="extraSmall">
-                Get started by adding your first activity!
+                Categories
               </ThemedText>
-            </ListItemShell>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 4,
+                    // fixes visual bug on android where the bottom border of each category pill is cut off
+                    paddingBottom: 1,
+                  }}
+                >
+                  {categories.map((category) => {
+                    const isActive = activeCategoryId === category.id;
+                    return (
+                      <Pressable
+                        key={category.id}
+                        onPress={() => handleCategoryPress(category.id!)}
+                      >
+                        <ThemedText
+                          size="small"
+                          type="defaultSemiBold"
+                          style={[
+                            styles.categoryPill,
+                            isActive && {
+                              borderWidth: 1.5,
+                              borderColor: `${category.color}88`,
+                              backgroundColor: `${category.color}1A`,
+                              color: category.color,
+                            },
+                          ]}
+                        >
+                          {category.name}
+                        </ThemedText>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </ScrollView>
+            </View>
           )}
-          {filteredActivities.map((activity, index) => (
-            <ActivityListItem
-              key={activity.id}
-              activity={activity}
-              onClick={handleActivityClick}
-              onEdit={handleEdit}
-              onComplete={handleComplete}
-            />
-          ))}
-        </View>
+          {/* <ThemedView style={styles.statsBar}> */}
+          {/*   <ThemedView></ThemedView> */}
+          {/*   <ThemedView> */}
+          {/**/}
+          {/*   </ThemedView> */}
+          {/* </ThemedView> */}
+          <View
+            style={{
+              marginTop: 3,
+              display: 'flex',
+              gap: 8,
+            }}
+          >
+            {activities.length === 0 && (
+              <ListItemShell style={styles.getStartedPill}>
+                <View
+                  style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+                >
+                  <Dot />
+                  <ThemedText type="defaultBold">
+                    Add your first activity
+                  </ThemedText>
+                </View>
+                <ThemedText size="extraSmall">
+                  Get started by adding your first activity!
+                </ThemedText>
+              </ListItemShell>
+            )}
+            {filteredActivities.map((activity, index) => (
+              <ActivityListItem
+                key={activity.id}
+                activity={activity}
+                onClick={handleActivityClick}
+                onEdit={handleEdit}
+                onComplete={handleComplete}
+              />
+            ))}
+          </View>
+        </Container>
       </ScrollView>
 
       <Pressable
@@ -268,20 +271,10 @@ function Dashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //     backgroundColor: `
-    //         radial-gradient(circle at 20% -10%, rgba(8,124,255,.28), transparent 34rem),
-    //         radial-gradient(circle at 95% 12%, rgba(8,216,255,.16), transparent 26rem),
-    //         radial-gradient(circle at 70% 100%, rgba(255,61,84,.12), transparent 28rem),
-    //         linear-gradient(180deg,#050711 0%,#0b1020 46%,#050711 100%);
-    // `,
-    //     backgroundAttachment: 'fixed',
   },
   scrollContent: {
     display: 'flex',
     gap: 8,
-    paddingTop: 14,
-    paddingHorizontal: 16,
-    // paddingBottom: 18,
     paddingBottom: 100,
   },
   headline: {

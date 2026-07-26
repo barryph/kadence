@@ -14,6 +14,7 @@ import CategoryModal, {
 import DeleteCategoryModal from '@/components/categories/delete-category-modal';
 import LoaderScreen from '@/components/base/loader-screen';
 import Dot from '@/components/dot';
+import Container from '@/components/base/container';
 
 function Categories() {
   const [isLoading, setIsLoading] = useState(true);
@@ -117,64 +118,66 @@ function Categories() {
     <View style={[{ flex: 1 }]}>
       <Background showRed={false} />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ThemedText style={styles.title} type="title" size="large">
-          Categories
-        </ThemedText>
+      <ScrollView>
+        <Container style={styles.scrollContent}>
+          <ThemedText style={styles.title} type="title" size="large">
+            Categories
+          </ThemedText>
 
-        <View style={styles.categories}>
-          {categories.length === 0 && (
-            <ListItemShell style={styles.getStartedPill}>
-              <View
-                style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
-              >
-                <Dot />
-                <ThemedText type="defaultBold">
-                  Add your first category
+          <View style={styles.categories}>
+            {categories.length === 0 && (
+              <ListItemShell style={styles.getStartedPill}>
+                <View
+                  style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+                >
+                  <Dot />
+                  <ThemedText type="defaultBold">
+                    Add your first category
+                  </ThemedText>
+                </View>
+                <ThemedText size="extraSmall">
+                  Get started by adding your first Category!
                 </ThemedText>
-              </View>
-              <ThemedText size="extraSmall">
-                Get started by adding your first Category!
-              </ThemedText>
-            </ListItemShell>
-          )}
-          {categories.map((category) => (
-            <Pressable
-              key={category.id}
-              onPress={() => openEditModal(category)}
-            >
-              <ListItemShell style={styles.category}>
-                <View style={styles.leftRow}>
-                  <View style={styles.topRow}>
-                    <Dot backgroundColor={category.color} />
-                    <ThemedText>{category.name}</ThemedText>
-                  </View>
-                  <View style={styles.bottomRow}>
-                    <ThemedText style={styles.bottomRowText} size="small">
-                      Used in{' '}
-                      <ThemedText
-                        style={styles.bottomRowText}
-                        type="defaultBold"
-                      >
-                        {categoryToActivityCountMap![category.id!] || '0'}
-                      </ThemedText>{' '}
-                      {categoryToActivityCountMap![category.id!] > 1
-                        ? 'activities'
-                        : 'activity'}
-                    </ThemedText>
-                  </View>
-                </View>
-                <View>
-                  <FontAwesome6
-                    style={[{ color: '#eee' }, styles.settingsButton]}
-                    name="gear"
-                    size={26}
-                  />
-                </View>
               </ListItemShell>
-            </Pressable>
-          ))}
-        </View>
+            )}
+            {categories.map((category) => (
+              <Pressable
+                key={category.id}
+                onPress={() => openEditModal(category)}
+              >
+                <ListItemShell style={styles.category}>
+                  <View style={styles.leftRow}>
+                    <View style={styles.topRow}>
+                      <Dot backgroundColor={category.color} />
+                      <ThemedText>{category.name}</ThemedText>
+                    </View>
+                    <View style={styles.bottomRow}>
+                      <ThemedText style={styles.bottomRowText} size="small">
+                        Used in{' '}
+                        <ThemedText
+                          style={styles.bottomRowText}
+                          type="defaultBold"
+                        >
+                          {categoryToActivityCountMap![category.id!] || '0'}
+                        </ThemedText>{' '}
+                        {categoryToActivityCountMap![category.id!] > 1
+                          ? 'activities'
+                          : 'activity'}
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <View>
+                    <FontAwesome6
+                      style={[{ color: '#eee' }, styles.settingsButton]}
+                      name="gear"
+                      size={26}
+                    />
+                  </View>
+                </ListItemShell>
+              </Pressable>
+            ))}
+          </View>
+        </Container>
       </ScrollView>
 
       {showEditCategoryModal && selectedCategory && (
@@ -221,8 +224,6 @@ function Categories() {
 
 const styles = StyleSheet.create({
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 14,
     paddingBottom: 32,
   },
   title: {

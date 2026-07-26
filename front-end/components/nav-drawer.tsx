@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 24,
+    paddingTop: 21,
     paddingBottom: 14,
   },
   closeButton: {

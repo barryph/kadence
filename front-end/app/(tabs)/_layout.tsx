@@ -29,7 +29,7 @@ export default function TabLayout() {
       <SafeAreaView
         edges={['top']}
         style={{
-          paddingVertical: 20,
+          paddingVertical: 14,
           paddingHorizontal: 15,
           flexDirection: 'row',
           justifyContent: 'space-between',

@@ -28,9 +28,11 @@ import { ThemedText } from '@/components/base/themed-text';
 import LoaderScreen from '@/components/base/loader-screen';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
+// TODO: Add day of the week name to the date row
 
-const CELL_SIZE = 18;
-const CELL_GAP = 12;
+const CELL_WIDTH = 35;
+const CELL_HEIGHT = 12;
+const CELL_GAP = 8;
 const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
 const LOAD_MORE_WIDTH = 40;
@@ -603,10 +605,10 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   dateCell: {
-    width: CELL_SIZE,
+    width: CELL_WIDTH,
     height: ROW_CONTENT_SIZE,
     justifyContent: 'center',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   dateDay: {
     // color: '#5d6778',
@@ -657,14 +659,14 @@ const styles = StyleSheet.create({
     // borderBottomColor: 'rgba(255,255,255,.1)',
   },
   statusCellContainer: {
-    width: CELL_SIZE,
-    height: CELL_SIZE,
+    width: CELL_WIDTH,
+    height: CELL_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
   },
   statusCell: {
-    width: CELL_SIZE,
-    height: CELL_SIZE,
+    width: CELL_WIDTH,
+    height: CELL_HEIGHT,
     borderRadius: 3,
   },
   statusCellComplete: {

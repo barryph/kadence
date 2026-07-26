@@ -105,6 +105,13 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            ...headerOptions,
+            href: null,
+          }}
+        />
 
         <Tabs.Screen
           name="activities/edit/[id]"

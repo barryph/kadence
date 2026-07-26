@@ -112,9 +112,9 @@ export default function NavDrawer({
 
             <Pressable
               style={styles.navItem}
-              onPress={() => handleNavigate('/account')}
+              onPress={() => handleNavigate('/profile')}
             >
-              <ThemedText style={styles.navText}>Account</ThemedText>
+              <ThemedText style={styles.navText}>Profile</ThemedText>
             </Pressable>
 
             <Pressable

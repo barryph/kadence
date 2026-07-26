@@ -29,6 +29,7 @@ import LoaderScreen from '@/components/base/loader-screen';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 // TODO: Add day of the week name to the date row
+// TODO: Make whole block clickable, not only the colored cell
 
 const CELL_WIDTH = 35;
 const CELL_HEIGHT = 12;

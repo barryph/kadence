@@ -240,9 +240,9 @@ const styles = StyleSheet.create({
   category: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 14,
+    paddingTop: 10,
     paddingBottom: 12,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
   },
   leftRow: {
     flexGrow: 1,

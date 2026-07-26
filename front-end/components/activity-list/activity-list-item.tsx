@@ -71,7 +71,7 @@ export default function ActivityListItem({
               <View style={styles.activityTitleRow}>
                 <View style={styles.activityNameGroup}>
                   <ThemedText
-                    type="defaultBold"
+                    type="defaultSemiBold"
                     style={[
                       styles.activityName,
                       activity.queued && styles.activityNameSelected,
@@ -214,9 +214,9 @@ const styles = StyleSheet.create({
   },
   activityMain: {
     width: '100%',
-    paddingTop: 12,
-    paddingHorizontal: 13,
-    paddingBottom: 4,
+    paddingTop: 9,
+    paddingHorizontal: 15,
+    paddingBottom: 2,
   },
   activityTitleRow: {
     flexDirection: 'row',
@@ -273,13 +273,13 @@ const styles = StyleSheet.create({
   },
   activityBarContainer: {
     marginHorizontal: 3,
-    height: 18,
+    height: 16,
     // backgroundColor: '#d6daea',
     backgroundColor: '#4b4b5c',
     position: 'relative',
     overflow: 'hidden',
     transform: [{ skewX: '-24deg' }],
-    marginTop: 6,
+    marginTop: 3,
     marginBottom: 13,
     borderRadius: 4,
   },

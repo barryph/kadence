@@ -35,7 +35,8 @@ const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
 const LOAD_MORE_WIDTH = 40;
 const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
-const headersBackground = '#1a4163';
+// const headersBackground = '#1a4163';
+const headersBackground = 'rgba(26, 65, 99, 0.30)';
 
 type TimelineDateColumn = {
   full: string;
@@ -668,11 +669,12 @@ const styles = StyleSheet.create({
   },
   statusCellComplete: {
     //backgroundColor: '#ff3d54',
-    backgroundColor: 'rgb(96, 162, 249)',
+    backgroundColor: 'rgb(3,141,240)',
+    boxShadow: '0px 0px 8px 1px rgba(3,141,240,0.20)',
   },
   statusCellIncomplete: {
     backgroundColor: 'rgba(155, 155, 155, 0.1)',
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: 'rgba(255,255,255,.1)',
   },
   statusCellToggling: {

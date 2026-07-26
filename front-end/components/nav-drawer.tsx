@@ -98,6 +98,13 @@ export default function NavDrawer({
 
             <Pressable
               style={styles.navItem}
+              onPress={() => handleNavigate('/timeline')}
+            >
+              <ThemedText style={styles.navText}>Timeline</ThemedText>
+            </Pressable>
+
+            <Pressable
+              style={styles.navItem}
               onPress={() => handleNavigate('/categories')}
             >
               <ThemedText style={styles.navText}>Categories</ThemedText>
@@ -105,12 +112,15 @@ export default function NavDrawer({
 
             <Pressable
               style={styles.navItem}
-              onPress={() => handleNavigate('/timeline')}
+              onPress={() => handleNavigate('/account')}
             >
-              <ThemedText style={styles.navText}>Timeline</ThemedText>
+              <ThemedText style={styles.navText}>Account</ThemedText>
             </Pressable>
 
-            <Pressable style={[styles.navItem]} onPress={handleLogout}>
+            <Pressable
+              style={[styles.navItem, styles.logout]}
+              onPress={handleLogout}
+            >
               <ThemedText style={styles.navText}>Logout</ThemedText>
             </Pressable>
           </View>
@@ -160,6 +170,8 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   navItems: {
+    display: 'flex',
+    alignItems: 'flex-end',
     marginTop: 20,
   },
   navItem: {
@@ -171,5 +183,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     textAlign: 'right',
+  },
+  logout: {
+    borderTopWidth: 1,
+    marginTop: 35,
+    borderTopColor: '#fff',
+    opacity: 0.6,
   },
 });

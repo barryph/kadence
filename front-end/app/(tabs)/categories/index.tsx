@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import Background from '@/components/backgrounds/background';
@@ -114,57 +114,63 @@ function Categories() {
   }
 
   return (
-    <View style={[{ flex: 1 }, styles.container]}>
+    <View style={[{ flex: 1 }]}>
       <Background showRed={false} />
-      <ThemedText style={styles.title} type="title" size="large">
-        Your Categories
-      </ThemedText>
 
-      <View style={styles.categories}>
-        {categories.length === 0 && (
-          <ListItemShell style={styles.getStartedPill}>
-            <View
-              style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
-            >
-              <Dot />
-              <ThemedText type="defaultBold">
-                Add your first category
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ThemedText style={styles.title} type="title" size="large">
+          Your Categories
+        </ThemedText>
+
+        <View style={styles.categories}>
+          {categories.length === 0 && (
+            <ListItemShell style={styles.getStartedPill}>
+              <View
+                style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+              >
+                <Dot />
+                <ThemedText type="defaultBold">
+                  Add your first category
+                </ThemedText>
+              </View>
+              <ThemedText size="extraSmall">
+                Get started by adding your first Category!
               </ThemedText>
-            </View>
-            <ThemedText size="extraSmall">
-              Get started by adding your first Category!
-            </ThemedText>
-          </ListItemShell>
-        )}
-        {categories.map((category) => (
-          <Pressable key={category.id} onPress={() => openEditModal(category)}>
-            <ListItemShell style={styles.category}>
-              <View style={styles.leftRow}>
-                <View style={styles.topRow}>
-                  <Dot backgroundColor={category.color} />
-                  <ThemedText>{category.name}</ThemedText>
-                </View>
-                <View style={styles.bottomRow}>
-                  <ThemedText style={styles.bottomRowText} size="small">
-                    Used in{' '}
-                    <ThemedText type="defaultBold">
-                      {categoryToActivityCountMap![category.id!] || '0'}
-                    </ThemedText>{' '}
-                    activities
-                  </ThemedText>
-                </View>
-              </View>
-              <View>
-                <FontAwesome6
-                  style={[{ color: '#eee' }, styles.settingsButton]}
-                  name="gear"
-                  size={26}
-                />
-              </View>
             </ListItemShell>
-          </Pressable>
-        ))}
-      </View>
+          )}
+          {categories.map((category) => (
+            <Pressable
+              key={category.id}
+              onPress={() => openEditModal(category)}
+            >
+              <ListItemShell style={styles.category}>
+                <View style={styles.leftRow}>
+                  <View style={styles.topRow}>
+                    <Dot backgroundColor={category.color} />
+                    <ThemedText>{category.name}</ThemedText>
+                  </View>
+                  <View style={styles.bottomRow}>
+                    <ThemedText style={styles.bottomRowText} size="small">
+                      Used in{' '}
+                      <ThemedText type="defaultBold">
+                        {categoryToActivityCountMap![category.id!] || '0'}
+                      </ThemedText>{' '}
+                      activities
+                    </ThemedText>
+                  </View>
+                </View>
+                <View>
+                  <FontAwesome6
+                    style={[{ color: '#eee' }, styles.settingsButton]}
+                    name="gear"
+                    size={26}
+                  />
+                </View>
+              </ListItemShell>
+            </Pressable>
+          ))}
+        </View>
+      </ScrollView>
 
       {showEditCategoryModal && selectedCategory && (
         <CategoryModal
@@ -209,7 +215,7 @@ function Categories() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 14,
     paddingBottom: 32,

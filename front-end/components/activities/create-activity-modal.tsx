@@ -12,14 +12,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FormProvider } from 'react-hook-form';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import {
-  activitiesAPI,
-  type IActivity,
-  type ICategory,
-} from '@/api/api.activity';
+import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
-import { categoriesAPI } from '@/api/api.categories';
+import { categoriesAPI, type ICategory } from '@/api/api.categories';
 import { formatDateISO } from '@/utils/date';
 import ActivityNameField from '@/components/activities/fields/activity-name-field';
 import ActivityTickerField from '@/components/activities/fields/activity-ticker-field';
@@ -31,10 +27,12 @@ import { ActivityFormValues } from '@/components/activities/activity-schema';
 
 interface CreateActivityModalProps {
   onClose: (activity?: IActivity) => void;
+  onCreatedCategory: (category: ICategory) => void;
 }
 
 export default function CreateActivityModal({
   onClose,
+  onCreatedCategory,
 }: CreateActivityModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -68,6 +66,7 @@ export default function CreateActivityModal({
 
   function handleCreatedCategory(category: ICategory) {
     setCategories((prev) => [...prev, category]);
+    onCreatedCategory(category);
   }
 
   async function handleSubmit(values: ActivityFormValues) {

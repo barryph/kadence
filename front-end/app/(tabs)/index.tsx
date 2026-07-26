@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Pressable,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { activitiesAPI, IActivityClient } from '@/api/api.activity';
 
@@ -108,6 +103,10 @@ function Dashboard() {
     // In Expo router, we might route to an edit screen
     // For now we'll just log or route to a dummy path
     router.push(`/activities/edit/${activity.id}`);
+  }
+
+  function handleCreatedCategory(category: ICategory) {
+    setCategories((prev) => [...prev, category]);
   }
 
   function handleNewActivityModalClose(activity?: IActivityClient) {
@@ -250,7 +249,10 @@ function Dashboard() {
       </Pressable>
 
       {showNewActivityModal && (
-        <CreateActivityModal onClose={handleNewActivityModalClose} />
+        <CreateActivityModal
+          onClose={handleNewActivityModalClose}
+          onCreatedCategory={handleCreatedCategory}
+        />
       )}
     </View>
   );

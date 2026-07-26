@@ -60,7 +60,7 @@ function Categories() {
 
         setActivities(activitiesList as IActivityClient[]);
         setCategories(
-          categoriesList.toSorted(
+          categoriesList.sort(
             (a: ICategory, b: ICategory) => map[b.id!] - map[a.id!],
           ) as ICategory[],
         );
@@ -119,7 +119,7 @@ function Categories() {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ThemedText style={styles.title} type="title" size="large">
-          Your Categories
+          Categories
         </ThemedText>
 
         <View style={styles.categories}>
@@ -221,8 +221,8 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   title: {
-    marginTop: 20,
-    marginBottom: 25,
+    marginTop: 10,
+    marginBottom: 20,
   },
   editModalTitleRow: {
     flexDirection: 'row',

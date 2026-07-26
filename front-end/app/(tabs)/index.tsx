@@ -212,31 +212,38 @@ function Dashboard() {
         {/**/}
         {/*   </ThemedView> */}
         {/* </ThemedView> */}
-        {activities.length === 0 && (
-          <ListItemShell style={styles.getStartedPill}>
-            <View
-              style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
-            >
-              <Dot />
-              <ThemedText type="defaultBold">
-                Add your first activity
+        <View
+          style={{
+            marginTop: 3,
+            display: 'flex',
+            gap: 8,
+          }}
+        >
+          {activities.length === 0 && (
+            <ListItemShell style={styles.getStartedPill}>
+              <View
+                style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+              >
+                <Dot />
+                <ThemedText type="defaultBold">
+                  Add your first activity
+                </ThemedText>
+              </View>
+              <ThemedText size="extraSmall">
+                Get started by adding your first activity!
               </ThemedText>
-            </View>
-            <ThemedText size="extraSmall">
-              Get started by adding your first activity!
-            </ThemedText>
-          </ListItemShell>
-        )}
-        {filteredActivities.map((activity, index) => (
-          <ActivityListItem
-            key={activity.id}
-            index={index}
-            activity={activity}
-            onClick={handleActivityClick}
-            onEdit={handleEdit}
-            onComplete={handleComplete}
-          />
-        ))}
+            </ListItemShell>
+          )}
+          {filteredActivities.map((activity, index) => (
+            <ActivityListItem
+              key={activity.id}
+              activity={activity}
+              onClick={handleActivityClick}
+              onEdit={handleEdit}
+              onComplete={handleComplete}
+            />
+          ))}
+        </View>
       </ScrollView>
 
       <Pressable

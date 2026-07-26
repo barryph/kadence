@@ -152,10 +152,15 @@ function Categories() {
                   <View style={styles.bottomRow}>
                     <ThemedText style={styles.bottomRowText} size="small">
                       Used in{' '}
-                      <ThemedText type="defaultBold">
+                      <ThemedText
+                        style={styles.bottomRowText}
+                        type="defaultBold"
+                      >
                         {categoryToActivityCountMap![category.id!] || '0'}
                       </ThemedText>{' '}
-                      activities
+                      {categoryToActivityCountMap![category.id!] > 1
+                        ? 'activities'
+                        : 'activity'}
                     </ThemedText>
                   </View>
                 </View>
@@ -240,9 +245,9 @@ const styles = StyleSheet.create({
   category: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 10,
+    paddingTop: 11,
     paddingBottom: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
   },
   leftRow: {
     flexGrow: 1,

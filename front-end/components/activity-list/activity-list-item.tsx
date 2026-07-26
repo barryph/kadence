@@ -12,7 +12,6 @@ const DAYS_IN_WEEK = 7;
 
 interface IProps {
   activity: IActivityClient;
-  index: number;
   onEdit: (activity: IActivityClient) => void;
   onComplete: (id: number) => void;
   onClick: (activity: IActivityClient) => void;
@@ -20,7 +19,6 @@ interface IProps {
 
 export default function ActivityListItem({
   activity,
-  index,
   onEdit,
   onComplete,
   onClick,
@@ -62,12 +60,7 @@ export default function ActivityListItem({
               activity.queued && styles.activityInnerSelected,
             ]}
           >
-            <View
-              style={[
-                styles.activityMain,
-                index === 0 && styles.activityMainFirst,
-              ]}
-            >
+            <View style={[styles.activityMain]}>
               <View style={styles.activityTitleRow}>
                 <View style={styles.activityNameGroup}>
                   <ThemedText
@@ -209,14 +202,11 @@ const styles = StyleSheet.create({
   activityInnerSelected: {
     // backgroundColor: '#0072ff', // Simplification of gradient
   },
-  activityMainFirst: {
-    marginTop: 3,
-  },
   activityMain: {
     width: '100%',
-    paddingTop: 9,
+    paddingTop: 11,
     paddingHorizontal: 15,
-    paddingBottom: 2,
+    paddingBottom: 15,
   },
   activityTitleRow: {
     flexDirection: 'row',
@@ -280,7 +270,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     transform: [{ skewX: '-24deg' }],
     marginTop: 3,
-    marginBottom: 13,
     borderRadius: 4,
   },
   activityBarNotches: {

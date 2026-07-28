@@ -4,3 +4,12 @@ export function formatDateISO(date: Date): string {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+
+/**
+ * Returns the date in YYYY-MM-DD format,
+ * The date is local, aka matches the current devices date.
+ */
+export function YYYYMMDD(date = new Date()): string {
+  // en-CA returns in the format 'YYYY-MM-DD', en-NZ does not
+  return new Intl.DateTimeFormat('en-CA').format(date);
+}

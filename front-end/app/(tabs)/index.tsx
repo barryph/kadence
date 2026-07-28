@@ -15,6 +15,7 @@ import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
 import Toast from 'react-native-toast-message';
 import Container from '@/components/base/container';
+import { YYYYMMDD } from '@/utils/date';
 
 // TODO: Add toast when task completed, with undo button
 
@@ -80,7 +81,7 @@ function Dashboard() {
   }
 
   async function handleComplete(activityId: number) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = YYYYMMDD();
     try {
       const updateRes = await activitiesAPI.complete(activityId, today);
       if (updateRes.data?.activity) {

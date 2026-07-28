@@ -9,10 +9,7 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 import type { ActivityFormValues } from '../activity-schema';
-
-function formatDateISO(date: Date) {
-  return date.toISOString().split('T')[0];
-}
+import { YYYYMMDD } from '@/utils/date';
 
 export default function ActivityLastDoneField() {
   const { control } = useFormContext<ActivityFormValues>();
@@ -44,7 +41,7 @@ export default function ActivityLastDoneField() {
               <ThemedText
                 style={field.value ? styles.dateValue : styles.datePlaceholder}
               >
-                {field.value ? formatDateISO(field.value) : '2026-07-09'}
+                {field.value ? YYYYMMDD(field.value) : '2026-07-09'}
               </ThemedText>
             </Pressable>
 

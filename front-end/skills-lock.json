@@ -6,6 +6,12 @@
       "sourceType": "github",
       "computedHash": "e8118284a6365753790d44bb2758a6032b3af27fa84696428d9233f2be0f4e78"
     },
+    "testing-strategy": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github",
+      "skillPath": "engineering/skills/testing-strategy/SKILL.md",
+      "computedHash": "2fe64e97a596e862cd946bb8cddbbf4e9f1e1f21ca817f586111a25af474d0f8"
+    },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",

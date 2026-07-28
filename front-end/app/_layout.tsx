@@ -3,7 +3,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from '@react-navigation/native';
-import { SplashScreen, Stack, useRouter, useSegments } from 'expo-router';
+import { SplashScreen } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { StyleSheet, View } from 'react-native';
@@ -15,14 +15,13 @@ import {
   IBMPlexMono_700Bold,
   useFonts,
 } from '@expo-google-fonts/ibm-plex-mono';
-import Toast, { BaseToast } from 'react-native-toast-message';
+import Toast from 'react-native-toast-message';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { AuthProvider, useAuth } from '@/context/auth-context';
+import { AuthProvider } from '@/context/auth-context';
+import { RootLayoutNav } from '@/components/root-layout-nav';
 import Background from '@/components/backgrounds/background';
 import { ThemedText } from '@/components/base/themed-text';
-import BlueBackground from '@/components/backgrounds/blue-background';
-import ActivityBackground from '@/components/backgrounds/activity-background';
 import { Colors } from '@/constants/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -56,42 +55,6 @@ function FontsProvider({ children }: { children: React.ReactNode }) {
       )}
       {children}
     </>
-  );
-}
-
-function RootLayoutNav() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    const inAuthGroup =
-      segments[0] === 'login' ||
-      segments[0] === 'register' ||
-      segments[0] === 'forgot-password' ||
-      segments[0] === 'reset-password';
-
-    if (!isAuthenticated && !inAuthGroup) {
-      router.replace('/login');
-    } else if (isAuthenticated && inAuthGroup) {
-      router.replace('/');
-    }
-  }, [isAuthenticated, isLoading, segments, router]);
-
-  return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="modal"
-        options={{ presentation: 'modal', title: 'Modal' }}
-      />
-      <Stack.Screen name="login" options={{ headerShown: false }} />
-      <Stack.Screen name="register" options={{ headerShown: false }} />
-      <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
-      <Stack.Screen name="reset-password" options={{ headerShown: false }} />
-    </Stack>
   );
 }
 

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "jest.unit.config.ts",
+    "knexfile.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

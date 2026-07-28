@@ -1,0 +1,6 @@
+# Maestro E2E defaults for Kadence
+# Override with environment variables when running flows.
+
+env:
+  TEST_EMAIL: test@kadence.dev
+  TEST_PASSWORD: testpassword123

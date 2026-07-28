@@ -1,18 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import knex from 'knex';
 import * as config from '../../../knexfile';
 
 const environment = process.env.NODE_ENV || 'development';
 
+const knexConfig =
+  config[environment as keyof typeof config] ?? config.development;
+
 @Injectable()
-export class KnexService {
+export class KnexService implements OnModuleDestroy {
   private db: knex.Knex;
 
   constructor() {
-    this.db = knex(config[environment]);
+    this.db = knex(knexConfig);
   }
 
   get connection() {
     return this.db;
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.db.destroy();
   }
 }

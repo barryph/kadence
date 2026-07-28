@@ -15,7 +15,7 @@ interface IActivitiesRepo {
 
 @Injectable()
 export default class ActivitiesRepo implements IActivitiesRepo {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async create(activityDomain: Activity): Promise<Activity> {
     const activity = ActivityMap.toPersistence(activityDomain);

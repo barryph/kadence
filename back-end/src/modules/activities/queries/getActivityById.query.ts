@@ -10,7 +10,7 @@ import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 @Injectable()
 export class GetActivityByIdQuery {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async execute(
     activityId: string,

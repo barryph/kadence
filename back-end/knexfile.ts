@@ -22,6 +22,25 @@ export const development: Knex.Config = {
   },
 };
 
+export const test: Knex.Config = {
+  client: 'pg',
+  connection: {
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT
+      ? Number(process.env.DATABASE_PORT)
+      : undefined,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.DATABASE_NAME,
+  },
+  migrations: {
+    directory: path.join(root, '/src/shared/knex/migrations'),
+  },
+  seeds: {
+    directory: path.join(root, '/src/shared/knex/seeds'),
+  },
+};
+
 export const production: Knex.Config = {
   client: 'pg',
   connection: {

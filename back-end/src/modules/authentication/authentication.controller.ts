@@ -26,7 +26,7 @@ import { ForgotPasswordRateLimitGuard } from './guards/forgot-password-rate-limi
 export class AuthenticationController {
   private readonly logger = new Logger(AuthenticationController.name);
 
-  constructor(private readonly authenticationService: AuthenticationService) { }
+  constructor(private readonly authenticationService: AuthenticationService) {}
 
   @Post('login')
   @ApiBody({

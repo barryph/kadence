@@ -1,0 +1,7 @@
+- assertVisible: "Login!"
+- tapOn: "Email"
+- inputText: ${TEST_EMAIL}
+- tapOn: "Password"
+- inputText: ${TEST_PASSWORD}
+- tapOn: "Enter"
+- assertVisible: "Activities In Motion"

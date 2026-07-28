@@ -108,7 +108,9 @@ export default class CategoriesRepo implements ICategoriesRepo {
         userId,
       },
     );
-    return result.rows.map((category) => CategoryMap.persistenceToDomain(category));
+    return result.rows.map((category) =>
+      CategoryMap.persistenceToDomain(category),
+    );
   }
 
   async delete(id: string): Promise<void> {

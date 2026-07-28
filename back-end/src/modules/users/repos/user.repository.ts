@@ -26,7 +26,7 @@ export interface IUsersRepo {
 @Injectable()
 // export default class UsersRepo implements IUsersRepo {
 export default class UsersRepo implements IUsersRepo {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async exists(email: UserEmail) {
     const userResult = await this.knexService.connection.raw<{ rows: User[] }>(

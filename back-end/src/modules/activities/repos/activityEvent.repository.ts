@@ -11,7 +11,7 @@ interface IActivityEventRepo {
 
 @Injectable()
 export default class ActivityEventRepo implements IActivityEventRepo {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async create(activityEventDomain: ActivityEvent): Promise<ActivityEvent> {
     let result: { rows: any[] };

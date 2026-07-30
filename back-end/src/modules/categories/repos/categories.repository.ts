@@ -15,7 +15,7 @@ interface ICategoriesRepo {
 
 @Injectable()
 export default class CategoriesRepo implements ICategoriesRepo {
-  constructor(private readonly knexService: KnexService) {}
+  constructor(private readonly knexService: KnexService) { }
 
   async create(categoryDomain: Category) {
     const category = CategoryMap.toPersistence(categoryDomain);
@@ -103,6 +103,7 @@ export default class CategoriesRepo implements ICategoriesRepo {
         SELECT *
         FROM categories
         WHERE user_id = :userId
+        ORDER BY categories.name ASC
       `,
       {
         userId,

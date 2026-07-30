@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { activitiesAPI, type IActivity } from '@/api/api.activity';
+import { categoriesAPI, type ICategory } from '@/api/api.categories';
 import {
   timelineAPI,
   type ITimeline,
@@ -26,6 +27,11 @@ import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
 import { ThemedText } from '@/components/base/themed-text';
 import LoaderScreen from '@/components/base/loader-screen';
+import FilterList from '@/components/filter-list/filter-list';
+import {
+  filterByCategoryId,
+  toggleCategoryFilter,
+} from '@/components/filter-list/filter-by-category';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
 // TODO: Add day of the week name to the date row
@@ -104,6 +110,8 @@ function getCurrentMonth() {
 
 function TimelineScreen() {
   const [activities, setActivities] = useState<IActivity[] | undefined>();
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
   const [cachedMonths, setCachedMonths] = useState<
     Record<string, ITimelineSet>
   >({});
@@ -192,14 +200,18 @@ function TimelineScreen() {
     async function fetchInitData(abortController: AbortController) {
       try {
         setInitError(undefined);
-        const [activitiesRes, timelineRes] = await Promise.all([
+        const [activitiesRes, timelineRes, categoriesRes] = await Promise.all([
           activitiesAPI.getAllByUser({ signal: abortController.signal }),
           timelineAPI.getTimeline(monthInView, {
             signal: abortController.signal,
           }),
+          categoriesAPI.getAllByUser({ signal: abortController.signal }),
         ]);
         if (activitiesRes.data?.activities) {
           setActivities(activitiesRes.data.activities);
+        }
+        if (categoriesRes.data?.categories) {
+          setCategories(categoriesRes.data.categories as ICategory[]);
         }
         if (timelineRes.data?.timeline) {
           let timeline = timelineToSet(timelineRes.data.timeline);
@@ -363,6 +375,13 @@ function TimelineScreen() {
    */
 
   const tableData = cachedMonths[monthInView];
+  const filteredActivities = activities
+    ? filterByCategoryId(activities, activeCategoryId)
+    : undefined;
+
+  function handleCategoryPress(categoryId: number) {
+    setActiveCategoryId((current) => toggleCategoryFilter(current, categoryId));
+  }
 
   if (isLoadingInitData) {
     return <LoaderScreen text="Loading timeline..." />;
@@ -412,6 +431,13 @@ function TimelineScreen() {
         </ThemedText>
       </View>
 
+      <FilterList
+        categories={categories}
+        activeCategoryId={activeCategoryId}
+        onCategoryPress={handleCategoryPress}
+        style={styles.filterList}
+      />
+
       <View style={styles.topRow}>
         {/* Blank corner cell - top left */}
         <View style={styles.cornerCell}></View>
@@ -445,7 +471,7 @@ function TimelineScreen() {
             ref={rowHeaderRef}
             showsVerticalScrollIndicator={false}
           >
-            {activities.map((activity) => (
+            {filteredActivities?.map((activity) => (
               <View key={activity.id} style={styles.activityLabelCell}>
                 <Text style={styles.activityLabelText} numberOfLines={1}>
                   {activity.ticker || activity.name}
@@ -488,7 +514,7 @@ function TimelineScreen() {
             onScroll={scrollHandlerY}
             nestedScrollEnabled={true}
           >
-            {activities.map((activity) => {
+            {filteredActivities?.map((activity) => {
               const completedDates =
                 tableData[activity.id] || new Set<string>();
               return (
@@ -514,7 +540,8 @@ function TimelineScreen() {
                             isCompleted
                               ? styles.statusCellComplete
                               : styles.statusCellIncomplete,
-                            isCompleted && {
+                            isCompleted &&
+                            activity.category?.color && {
                               backgroundColor: activity.category?.color,
                             },
                             isToggling && styles.statusCellToggling,
@@ -565,6 +592,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  filterList: {
+    paddingHorizontal: 12,
+    paddingTop: 9,
+    paddingBottom: 9,
+    backgroundColor: 'rgba(26, 65, 99, 0.3)',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
   topRow: {
     flexDirection: 'row',

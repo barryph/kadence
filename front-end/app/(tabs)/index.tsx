@@ -15,7 +15,12 @@ import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
 import Toast from 'react-native-toast-message';
 import Container from '@/components/base/container';
+import FilterList from '@/components/filter-list/filter-list';
 import { YYYYMMDD } from '@/utils/date';
+import {
+  filterByCategoryId,
+  toggleCategoryFilter,
+} from '@/components/filter-list/filter-by-category';
 
 // TODO: Add toast when task completed, with undo button
 
@@ -122,17 +127,10 @@ function Dashboard() {
   }
 
   function handleCategoryPress(categoryId: number) {
-    setActiveCategoryId((current) =>
-      current === categoryId ? null : categoryId,
-    );
+    setActiveCategoryId((current) => toggleCategoryFilter(current, categoryId));
   }
 
-  const filteredActivities =
-    activeCategoryId === null
-      ? activities
-      : activities.filter(
-        (activity) => activity.categoryId === activeCategoryId,
-      );
+  const filteredActivities = filterByCategoryId(activities, activeCategoryId);
 
   if (isLoading) {
     return <LoaderScreen text="Loading activities..." />;
@@ -162,65 +160,15 @@ function Dashboard() {
               Activities In Motion
             </ThemedText>
           </View>
-          {categories.length > 0 && (
-            <View style={styles.categoriesContainer}>
-              <ThemedText
-                style={[
-                  styles.categoriesTitle,
-                  !(categories.length > 0) && styles.headlineNoCategories,
-                ]}
-                type="defaultSemiBold"
-              >
-                Categories
-              </ThemedText>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: 4,
-                    // fixes visual bug on android where the bottom border of each category pill is cut off
-                    paddingBottom: 1,
-                  }}
-                >
-                  {categories.map((category) => {
-                    const isActive = activeCategoryId === category.id;
-                    return (
-                      <Pressable
-                        key={category.id}
-                        onPress={() => handleCategoryPress(category.id!)}
-                      >
-                        <ThemedText
-                          size="small"
-                          type="defaultSemiBold"
-                          style={[
-                            styles.categoryPill,
-                            isActive && {
-                              borderWidth: 1.5,
-                              borderColor: `${category.color}88`,
-                              backgroundColor: `${category.color}1A`,
-                              color: category.color,
-                            },
-                          ]}
-                        >
-                          {category.name}
-                        </ThemedText>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-              </ScrollView>
-            </View>
-          )}
-          {/* <ThemedView style={styles.statsBar}> */}
-          {/*   <ThemedView></ThemedView> */}
-          {/*   <ThemedView> */}
-          {/**/}
-          {/*   </ThemedView> */}
-          {/* </ThemedView> */}
+          <FilterList
+            label="Categories"
+            categories={categories}
+            activeCategoryId={activeCategoryId}
+            onCategoryPress={handleCategoryPress}
+          />
           <View
             style={{
-              marginTop: 3,
+              marginTop: 6,
               display: 'flex',
               gap: 8,
             }}
@@ -295,26 +243,6 @@ const styles = StyleSheet.create({
   },
   headlineNoCategories: {
     marginBottom: 3,
-  },
-  categoriesContainer: {
-    marginBottom: 3,
-  },
-  categoriesTitle: {
-    opacity: 0.6,
-    marginBottom: 3,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontSize: 13,
-  },
-  categoryPill: {
-    backgroundColor: 'rgba(255,255,255,.055)',
-    color: '#f5f7fbcc',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,.1)',
-    paddingHorizontal: 14,
-    paddingVertical: 3,
-    borderRadius: 16,
-    fontSize: 13,
   },
   getStartedPill: {
     paddingTop: 14,

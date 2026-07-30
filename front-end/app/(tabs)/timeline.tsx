@@ -514,6 +514,9 @@ function TimelineScreen() {
                             isCompleted
                               ? styles.statusCellComplete
                               : styles.statusCellIncomplete,
+                            isCompleted && {
+                              backgroundColor: activity.category?.color,
+                            },
                             isToggling && styles.statusCellToggling,
                           ]}
                         />

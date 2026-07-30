@@ -32,6 +32,9 @@ export function configureApp(app: INestApplication): void {
   const usersRepo = app.get(UsersRepo);
   configurePassport(authenticationService, usersRepo);
 
+  if (!process.env.SESSION_SECRET) {
+    throw new Error('env.SESSION_SECRET must be set');
+  }
   const knexService = app.get(KnexService);
   app.use(
     session({
@@ -42,7 +45,7 @@ export function configureApp(app: INestApplication): void {
         // Disable periodic cleanup in tests to avoid open handles after Jest exits
         ...(process.env.NODE_ENV === 'test' && { cleanupInterval: 0 }),
       }),
-      secret: process.env.SESSION_SECRET ?? 'my-super-secret-key',
+      secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {

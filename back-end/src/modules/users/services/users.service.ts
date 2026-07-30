@@ -18,7 +18,7 @@ import { PASSWORD_RESET_TOKEN_EXPIRY_MS } from '../../authentication/constants/p
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepo: UsersRepo) { }
+  constructor(private readonly usersRepo: UsersRepo) {}
 
   async getById(id: string): Promise<User | null> {
     const user = await this.usersRepo.getById(id);

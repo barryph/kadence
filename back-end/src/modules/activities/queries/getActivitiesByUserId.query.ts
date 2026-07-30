@@ -6,7 +6,7 @@ import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 @Injectable()
 export class GetActivitiesByUserIdQuery {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async execute(userId: string): Promise<ActivityWithCategoryDTO[]> {
     const result = await this.knexService.connection.raw<{

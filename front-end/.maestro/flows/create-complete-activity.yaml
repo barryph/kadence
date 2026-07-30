@@ -1,0 +1,22 @@
+appId: com.barryph.kadence
+env:
+  TEST_EMAIL: ${TEST_EMAIL || "test@kadence.dev"}
+  TEST_PASSWORD: ${TEST_PASSWORD || "testpassword123"}
+  ACTIVITY_NAME: ${ACTIVITY_NAME || "E2E Test Run"}
+---
+- launchApp
+- runFlow:
+    when:
+      visible: "Login!"
+    file: subflows/login.yaml
+- assertVisible: "Activities In Motion"
+- tapOn: "Add Activity"
+- assertVisible: "New activity"
+- tapOn: "Squat"
+- inputText: ${ACTIVITY_NAME}
+- tapOn: "TCKR"
+- inputText: "E2E"
+- tapOn: "Interval (days)"
+- inputText: "7"
+- tapOn: "Create"
+- assertVisible: ${ACTIVITY_NAME}

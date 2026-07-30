@@ -18,7 +18,7 @@ import { ApiBody } from '@nestjs/swagger';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) { }
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post('/')
   @UseGuards(IsAuthedGuard)
@@ -98,10 +98,7 @@ export class CategoriesController {
 
   @Delete('/:categoryId')
   @UseGuards(IsAuthedGuard)
-  async delete(
-    @Req() req: Request,
-    @Param('categoryId') categoryId: string,
-  ) {
+  async delete(@Req() req: Request, @Param('categoryId') categoryId: string) {
     const userId = (req.user as UserDTO).id;
     await this.categoriesService.delete(categoryId, userId);
 

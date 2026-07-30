@@ -17,13 +17,13 @@ export default class UserEmail {
     return this._value;
   }
 
-  private static isValidEmail(email: string) {
+  private static isValidEmail() {
     // TODO: Validate
     return true;
   }
 
   public static create(email: string): UserEmail {
-    if (!this.isValidEmail(email)) {
+    if (!this.isValidEmail()) {
       throw new InvalidEmailError();
     }
     return new UserEmail(email);

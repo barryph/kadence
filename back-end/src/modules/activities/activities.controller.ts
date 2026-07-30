@@ -21,7 +21,7 @@ import { ApiBody } from '@nestjs/swagger';
 
 @Controller('activities')
 export class ActivitiesController {
-  constructor(private readonly activitiesService: ActivitiesService) { }
+  constructor(private readonly activitiesService: ActivitiesService) {}
 
   @Post('/')
   @UseGuards(IsAuthedGuard)

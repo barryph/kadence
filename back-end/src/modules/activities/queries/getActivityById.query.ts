@@ -10,7 +10,7 @@ import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 
 @Injectable()
 export class GetActivityByIdQuery {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async execute(
     activityId: string,
@@ -36,11 +36,12 @@ export class GetActivityByIdQuery {
         activityId,
       },
     );
-
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const row = result.rows[0];
     if (!row) {
       throw new NotFoundException('Activity not found');
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (row.user_id !== userId) {
       throw new UnauthorizedException('Unauthorized');
     }

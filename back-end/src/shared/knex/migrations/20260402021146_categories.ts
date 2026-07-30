@@ -6,12 +6,16 @@ export async function up(knex: Knex): Promise<void> {
     table.integer('user_id').unsigned().references('users.id').notNullable();
     table.string('name').notNullable();
     table.string('color').notNullable();
-    
+
     table.timestamps(true, true);
   });
 
   await knex.schema.alterTable('activities', (table) => {
-    table.integer('category_id').unsigned().references('categories.id').nullable();
+    table
+      .integer('category_id')
+      .unsigned()
+      .references('categories.id')
+      .nullable();
   });
 }
 

@@ -5,7 +5,7 @@ import { ActivityTimelineDTO } from '../dtos/getTimelineDto.dto';
 
 @Injectable()
 export class GetActivityTimelineQuery {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async execute(userId: string, month: string): Promise<ActivityTimelineDTO> {
     // Lists all

@@ -1,0 +1,17 @@
+appId: com.barryph.kadence
+env:
+  TEST_EMAIL: ${TEST_EMAIL || "test@kadence.dev"}
+  TEST_PASSWORD: ${TEST_PASSWORD || "testpassword123"}
+---
+- launchApp
+- runFlow:
+    when:
+      visible: "Login!"
+    file: subflows/login.yaml
+- assertVisible: "Activities In Motion"
+- tapOn: "Timeline"
+- assertVisible: "RUN"
+- tapOn: "Categories"
+- assertVisible: "Categories"
+- tapOn: "Home"
+- assertVisible: "Activities In Motion"

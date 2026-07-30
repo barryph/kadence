@@ -4,6 +4,11 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Request } from 'express';
+
+type AuthenticatedRequest = Request & {
+  isAuthenticated(): boolean;
+};
 
 /**
  * Requires the user is authenticated to access a route
@@ -19,8 +24,7 @@ import {
 @Injectable()
 export class IsAuthedGuard implements CanActivate {
   canActivate(context: ExecutionContext) {
-    console.log('is AUTH GUARRDRD!!!!!!!!!!!!!!!!!!!!$@#$');
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     if (request.isAuthenticated && request.isAuthenticated()) {
       return true;
     }

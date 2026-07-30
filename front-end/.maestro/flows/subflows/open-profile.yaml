@@ -1,0 +1,16 @@
+- tapOn:
+    id: "menu-button"
+    optional: true
+- tapOn:
+    text: ".*[Bb]ars.*"
+    optional: true
+- tapOn:
+    point: "90%,8%"
+    optional: true
+- tapOn: "Profile"
+- assertVisible: "Profile"
+- tapOn:
+    point: "90%,8%"
+    optional: true
+- tapOn: "Profile"
+- assertVisible: ${TEST_EMAIL}

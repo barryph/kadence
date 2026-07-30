@@ -11,8 +11,10 @@ export default class CreateActivityDTO {
   @MaxLength(30)
   name: string;
   @MaxLength(5)
+  @IsOptional()
   ticker?: string;
   @IsNotEmpty()
+  @IsNumber()
   interval: number;
   @IsOptional()
   @IsNumber()

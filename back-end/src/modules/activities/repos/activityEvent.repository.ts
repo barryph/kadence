@@ -11,7 +11,7 @@ interface IActivityEventRepo {
 
 @Injectable()
 export default class ActivityEventRepo implements IActivityEventRepo {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async create(activityEventDomain: ActivityEvent): Promise<ActivityEvent> {
     let result: { rows: any[] };
@@ -30,21 +30,30 @@ export default class ActivityEventRepo implements IActivityEventRepo {
         },
       );
     } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error?.constraint === 'activity_events_activity_id_date_unique') {
         throw new DuplicateActivityEventError();
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error?.name === 'unique_violation') {
         throw new DuplicateActivityEventError();
       }
       throw error;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const row = result.rows[0];
+    /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+    /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+    /* eslint-disable @typescript-eslint/no-unsafe-call */
     return ActivityEvent.reconstitute({
       id: row.id.toString(),
       activityId: row.activity_id.toString(),
       date: row.date,
     });
+    /* eslint-enable @typescript-eslint/no-unsafe-assignment */
+    /* eslint-enable @typescript-eslint/no-unsafe-member-access */
+    /* eslint-enable @typescript-eslint/no-unsafe-call */
   }
 
   async removeByActivityIdAndDate(

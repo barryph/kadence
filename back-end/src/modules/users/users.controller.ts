@@ -1,10 +1,10 @@
-import { Controller, Get, Query, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req } from '@nestjs/common';
 import { IsAuthedGuard } from '../authentication/is-authed.guard';
 import type { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
-  constructor() { }
+  constructor() {}
 
   @UseGuards(IsAuthedGuard)
   @Get('/protec')

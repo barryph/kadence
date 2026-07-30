@@ -27,7 +27,7 @@ import { ForgotPasswordRateLimitGuard } from './guards/forgot-password-rate-limi
 export class AuthenticationController {
   private readonly logger = new Logger(AuthenticationController.name);
 
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(private readonly authenticationService: AuthenticationService) { }
 
   @Post('login')
   @HttpCode(200)
@@ -56,13 +56,16 @@ export class AuthenticationController {
         return;
       }
 
-      req.logIn(user, (loginErr) => {
-        if (loginErr) {
-          this.logger.error(loginErr, 'Session login error');
-          next(new ServerError('SESSION_LOGIN_ERROR', 'Session login error'));
-          return;
-        }
-        return res.send({ data: { user } });
+      req.session.regenerate((regenErr) => {
+        if (regenErr) return next(regenErr);
+        req.logIn(user, (loginErr) => {
+          if (loginErr) {
+            this.logger.error(loginErr, 'Session login error');
+            next(new ServerError('SESSION_LOGIN_ERROR', 'Session login error'));
+            return;
+          }
+          return res.send({ data: { user } });
+        });
       });
     })(req, res, next);
   }
@@ -78,7 +81,11 @@ export class AuthenticationController {
       if (err) {
         return next(err);
       }
-      res.sendStatus(200);
+      req.session.destroy((destroyError) => {
+        if (destroyError) return next(destroyError);
+        res.clearCookie('connect.sid');
+        res.sendStatus(200);
+      });
     });
   }
 
@@ -104,13 +111,16 @@ export class AuthenticationController {
   ) {
     const user = await this.authenticationService.register(createUserDto);
 
-    // Login the user automatically after creating their account
-    req.login(user, (err) => {
-      if (err) next(err);
-      return res.send({
-        data: {
-          user,
-        },
+    req.session.regenerate((regenErr) => {
+      if (regenErr) return next(regenErr);
+      // Login the user automatically after creating their account
+      req.login(user, (err) => {
+        if (err) next(err);
+        return res.send({
+          data: {
+            user,
+          },
+        });
       });
     });
   }

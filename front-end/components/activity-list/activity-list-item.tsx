@@ -30,11 +30,9 @@ export default function ActivityListItem({
 
   return (
     <ListItemShell
-      style={[
-        activity.category && {
-          borderColor: `${activity.category?.color}66`,
-        },
-      ]}
+      style={{
+        borderWidth: 0,
+      }}
     >
       <Pressable onPress={() => onClick(activity)}>
         <SwipeRow
@@ -78,16 +76,11 @@ export default function ActivityListItem({
                         styles.categoryBadge,
                         {
                           borderColor: activity.category.color,
-                          backgroundColor: `${activity.category.color}1A`,
+                          backgroundColor: `${activity.category.color}45`,
                         },
                       ]}
                     >
-                      <ThemedText
-                        style={[
-                          styles.categoryText,
-                          { color: activity.category.color },
-                        ]}
-                      >
+                      <ThemedText style={[styles.categoryText]}>
                         {activity.category.name}
                       </ThemedText>
                     </View>
@@ -212,6 +205,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap',
     // marginBottom: 4,
   },
   activityNameGroup: {
@@ -219,7 +213,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   activityName: {
-    fontSize: 16,
+    fontSize: 18,
+    lineHeight: 28,
     color: '#fff',
   },
   activityNameSelected: {
@@ -228,12 +223,14 @@ const styles = StyleSheet.create({
   categoryBadge: {
     marginLeft: 12,
     paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingVertical: 0,
     borderRadius: 8,
     borderWidth: 1,
   },
   categoryText: {
+    color: '#fff',
     fontSize: 11,
+    lineHeight: 20,
     fontWeight: '600',
   },
   activityDetails: {

@@ -68,7 +68,7 @@ describe('Auth (e2e)', () => {
     await request(app.getHttpServer())
       .post('/auth/forgot-password')
       .send({ email: payload.email })
-      .expect(201);
+      .expect(200);
 
     const db = getTestKnex();
     const userRow = await db('users').where({ email: payload.email }).first();
@@ -85,7 +85,7 @@ describe('Auth (e2e)', () => {
     await request(app.getHttpServer())
       .post('/auth/reset-password')
       .send({ token: rawToken, password: 'newpassword123' })
-      .expect(201);
+      .expect(200);
 
     await session.agent.get('/users/protec').expect(401);
 
@@ -93,14 +93,14 @@ describe('Auth (e2e)', () => {
     await loginAgent
       .post('/auth/login')
       .send({ email: payload.email, password: 'newpassword123' })
-      .expect(201);
+      .expect(200);
   });
 
   it('returns generic message for forgot-password regardless of email existence', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/forgot-password')
       .send({ email: 'missing@example.com' })
-      .expect(201);
+      .expect(200);
 
     expect(response.body.data.message).toContain(
       'If an account with that email exists',

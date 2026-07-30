@@ -8,6 +8,7 @@ import {
   Next,
   Logger,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiBody } from '@nestjs/swagger';
 import CreateUserDTO from '../authentication/dtos/createUser.dto';
@@ -26,9 +27,10 @@ import { ForgotPasswordRateLimitGuard } from './guards/forgot-password-rate-limi
 export class AuthenticationController {
   private readonly logger = new Logger(AuthenticationController.name);
 
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(private readonly authenticationService: AuthenticationService) { }
 
   @Post('login')
+  @HttpCode(200)
   @ApiBody({
     type: LoginDTO,
     examples: {
@@ -66,6 +68,7 @@ export class AuthenticationController {
   }
 
   @Delete('logout')
+  @HttpCode(200)
   logout(
     @Req() req: Request,
     @Res() res: Response,
@@ -113,6 +116,7 @@ export class AuthenticationController {
   }
 
   @Post('forgot-password')
+  @HttpCode(200)
   @UseGuards(ForgotPasswordRateLimitGuard)
   @ApiBody({
     type: ForgotPasswordDTO,
@@ -136,6 +140,7 @@ export class AuthenticationController {
   }
 
   @Post('reset-password')
+  @HttpCode(200)
   @ApiBody({
     type: ResetPasswordDTO,
     examples: {

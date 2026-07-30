@@ -9,6 +9,8 @@ import { AuthenticationService } from './modules/authentication/services/authent
 import UsersRepo from './modules/users/repos/user.repository';
 import { KnexService } from './shared/knex/knex.service';
 
+// TODO: Implement rate limiting
+
 export function configureApp(app: INestApplication): void {
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
@@ -49,8 +51,9 @@ export function configureApp(app: INestApplication): void {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        sameSite: false,
-        secure: false,
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 1000 * 60 * 60 * 7,
       },
     }),

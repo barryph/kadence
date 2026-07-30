@@ -34,7 +34,6 @@ import {
 } from '@/components/filter-list/filter-by-category';
 
 // TODO: Sync changes when completing tasks in main page, and timeline
-// TODO: Add day of the week name to the date row
 // TODO: Make whole block clickable, not only the colored cell
 
 const CELL_WIDTH = 35;
@@ -42,6 +41,7 @@ const CELL_HEIGHT = 12;
 const CELL_GAP = 8;
 const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
+const HEADER_ROW_EXTRA_HEIGHT = 8;
 const LOAD_MORE_WIDTH = 40;
 const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
 // const headersBackground = '#1a4163';
@@ -49,8 +49,8 @@ const headersBackground = 'rgba(26, 65, 99, 0.30)';
 
 type TimelineDateColumn = {
   full: string;
-  month: string;
-  day: string;
+  monthDay: string;
+  weekday: string;
 };
 
 function toTimelineDateColumn(date: Date): TimelineDateColumn {
@@ -59,8 +59,13 @@ function toTimelineDateColumn(date: Date): TimelineDateColumn {
   const day = String(date.getDate()).padStart(2, '0');
   return {
     full: `${year}-${month}-${day}`,
-    month: date.toLocaleDateString(undefined, { month: 'short' }),
-    day: date.toLocaleDateString(undefined, { day: 'numeric' }),
+    monthDay: date
+      .toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+      })
+      .replaceAll(' ', ''),
+    weekday: date.toLocaleDateString(undefined, { weekday: 'short' }),
   };
 }
 
@@ -454,8 +459,12 @@ function TimelineScreen() {
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
                 <View key={date.full} style={[styles.dateCell]}>
-                  <Text style={styles.dateDay}>{date.day}</Text>
-                  <Text style={styles.dateMonth}>{date.month}</Text>
+                  <ThemedText style={styles.dateMonthDay}>
+                    {date.monthDay}
+                  </ThemedText>
+                  <ThemedText style={styles.dateWeekday} type="defaultSemiBold">
+                    {date.weekday}
+                  </ThemedText>
                 </View>
               ))}
             </View>
@@ -595,8 +604,8 @@ const styles = StyleSheet.create({
   },
   filterList: {
     paddingHorizontal: 12,
-    paddingTop: 9,
-    paddingBottom: 9,
+    paddingTop: 10,
+    paddingBottom: 8,
     backgroundColor: 'rgba(26, 65, 99, 0.3)',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.1)',
@@ -610,7 +619,7 @@ const styles = StyleSheet.create({
   },
   cornerCell: {
     width: LEFT_COLUMN_WIDTH,
-    height: ROW_HEIGHT,
+    height: ROW_HEIGHT + HEADER_ROW_EXTRA_HEIGHT,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,.1)',
     borderRightWidth: 1,
@@ -622,7 +631,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,.1)',
-    height: ROW_HEIGHT,
+    height: ROW_HEIGHT + HEADER_ROW_EXTRA_HEIGHT,
   },
   rowHeaderClip: {
     width: LEFT_COLUMN_WIDTH,
@@ -632,7 +641,6 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     backgroundColor: headersBackground,
-    height: ROW_HEIGHT,
     width: '100%',
     zIndex: 20,
   },
@@ -647,19 +655,18 @@ const styles = StyleSheet.create({
     width: CELL_WIDTH,
     height: ROW_CONTENT_SIZE,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
-  dateDay: {
-    // color: '#5d6778',
+  dateMonthDay: {
     color: '#fff',
-    fontSize: 14,
-    lineHeight: 14,
+    fontSize: 11,
+    lineHeight: 12,
   },
-  dateMonth: {
-    // color: '#5d6778',
+  dateWeekday: {
     color: '#fff',
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: 16,
+    lineHeight: 16,
+    marginTop: 2,
   },
   activityLabelCell: {
     height: ROW_HEIGHT,

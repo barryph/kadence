@@ -34,15 +34,15 @@ export default tseslint.config(
       // '@typescript-eslint/no-unsafe-call': 'warn',
     },
   },
-  // {
-  //   files: ['**/*.spec.ts', '**/*.int-spec.ts', 'test/**/*.ts'],
-  //   rules: {
-  //     '@typescript-eslint/unbound-method': 'off',
-  //     '@typescript-eslint/require-await': 'off',
-  //     '@typescript-eslint/no-unsafe-assignment': 'off',
-  //     '@typescript-eslint/no-unsafe-member-access': 'off',
-  //     '@typescript-eslint/no-unsafe-call': 'off',
-  //     '@typescript-eslint/no-unsafe-argument': 'off',
-  //   },
-  // },
+  {
+    files: ['**/*.spec.ts', '**/*.int-spec.ts', 'test/**/*.ts'],
+    rules: {
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+    },
+  },
 );

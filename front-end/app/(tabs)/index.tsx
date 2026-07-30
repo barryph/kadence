@@ -128,8 +128,8 @@ function Dashboard() {
     activeCategoryId === null
       ? activities
       : activities.filter(
-        (activity) => activity.categoryId === activeCategoryId,
-      );
+          (activity) => activity.categoryId === activeCategoryId,
+        );
 
   if (isLoading) {
     return <LoaderScreen text="Loading activities..." />;

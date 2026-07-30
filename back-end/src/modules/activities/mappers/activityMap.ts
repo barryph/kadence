@@ -67,12 +67,14 @@ export function persistenceToDomain(activity: IActivityPersistence): Activity {
 export function rawToActivityWithCategoryDTO(
   row: any,
 ): ActivityWithCategoryDTO {
+  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+  /* eslint-disable @typescript-eslint/no-unsafe-member-access */
   return {
     id: row.id,
     userId: row.user_id,
     name: row.name,
     ticker: row.ticker,
-    interval: parseInt(row.interval_days, 10),
+    interval: parseInt(row.interval_days as string, 10),
     categoryId: row.category_id,
     daysUntil: Number(row.days_until),
     ...(row.category && {
@@ -84,4 +86,6 @@ export function rawToActivityWithCategoryDTO(
       },
     }),
   } as ActivityWithCategoryDTO;
+  /* eslint-enable @typescript-eslint/no-unsafe-assignment */
+  /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 }

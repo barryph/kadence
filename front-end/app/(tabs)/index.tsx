@@ -30,7 +30,10 @@ function Dashboard() {
   const sortActivities = (acts: IActivityClient[] = []) => {
     return [...acts].sort((a, b) => {
       if ((a.queued && b.queued) || (!a.queued && !b.queued)) {
-        return (a.daysUntil || 0) - (b.daysUntil || 0);
+        const daysUntilSort = (a.daysUntil || 0) - (b.daysUntil || 0);
+        if (daysUntilSort !== 0) return daysUntilSort;
+        const nameSort = a.name.localeCompare(b.name);
+        return nameSort;
       }
       if (a.queued) return -1;
       if (b.queued) return 1;
@@ -128,8 +131,8 @@ function Dashboard() {
     activeCategoryId === null
       ? activities
       : activities.filter(
-          (activity) => activity.categoryId === activeCategoryId,
-        );
+        (activity) => activity.categoryId === activeCategoryId,
+      );
 
   if (isLoading) {
     return <LoaderScreen text="Loading activities..." />;

@@ -11,11 +11,9 @@ interface IActivitiesRepo {
   delete(id: string): Promise<boolean>;
 }
 
-// TODO: update all queries to return full object of category
-
 @Injectable()
 export default class ActivitiesRepo implements IActivitiesRepo {
-  constructor(private readonly knexService: KnexService) {}
+  constructor(private readonly knexService: KnexService) { }
 
   async create(activityDomain: Activity): Promise<Activity> {
     const activity = ActivityMap.toPersistence(activityDomain);

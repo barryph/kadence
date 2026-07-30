@@ -24,7 +24,7 @@ export default class UserPassword {
   }
 
   public async hashPassword(): Promise<string> {
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12);
     const hash = await bcrypt.hash(this._value, salt);
     return hash;
   }

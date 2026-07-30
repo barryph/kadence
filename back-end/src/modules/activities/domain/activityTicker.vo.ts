@@ -6,7 +6,6 @@ class TickerTooLongError extends ServerError {
   }
 }
 
-// TODO: We can do away with _value and just use this.value without the additional getter
 export default class ActivityTicker {
   _value: string;
 

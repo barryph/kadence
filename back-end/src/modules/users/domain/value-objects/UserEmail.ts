@@ -17,13 +17,13 @@ export default class UserEmail {
     return this._value;
   }
 
-  private static isValidEmail() {
-    // TODO: Validate
-    return true;
+  private static isValidEmail(email: string) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
   }
 
   public static create(email: string): UserEmail {
-    if (!this.isValidEmail()) {
+    if (!this.isValidEmail(email)) {
       throw new InvalidEmailError();
     }
     return new UserEmail(email);

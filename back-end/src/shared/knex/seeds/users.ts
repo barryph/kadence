@@ -1,10 +1,9 @@
 import { Knex } from 'knex';
-import * as bcrypt from 'bcryptjs';
+import UserPassword from 'src/modules/users/domain/value-objects/UserPassword';
 
-// TODO: This is not optimal. It is repeating this function from the authentication service
 async function hashPassword(password: string): Promise<string> {
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
+  const newPassword = UserPassword.create(password);
+  const hash = await newPassword.hashPassword();
   return hash;
 }
 

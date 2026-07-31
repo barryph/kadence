@@ -6,6 +6,8 @@ import { DatabaseModule } from './shared/knex/database.module';
 import { AuthenticaitonModule } from './modules/authentication/authentication.module';
 import { ActivitiesModule } from './modules/activities/activities.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -14,8 +16,24 @@ import { CategoriesModule } from './modules/categories/categories.module';
     AuthenticaitonModule,
     ActivitiesModule,
     CategoriesModule,
+    // Defines the global throttle
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 100,
+        },
+      ],
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // Applies the throttle globally by binding the ThrottlerGuard Guard to every endpoint
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule { }

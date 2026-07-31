@@ -1,14 +1,17 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AllExceptionsFilter } from './ExceptionFilter';
 import cors from 'cors';
 import session from 'express-session';
+import type { Express } from 'express';
 import passport from 'passport';
 import { ConnectSessionKnexStore } from 'connect-session-knex';
 import helmet from 'helmet';
+import { AllExceptionsFilter } from './ExceptionFilter';
 import { configurePassport } from './modules/authentication/passport';
 import { AuthenticationService } from './modules/authentication/services/authentication.service';
 import UsersRepo from './modules/users/repos/user.repository';
 import { KnexService } from './shared/knex/knex.service';
+
+const isRunningBehindReverseProxy = process.env.NODE_ENV === 'production';
 
 export function configureApp(app: INestApplication): void {
   app.useGlobalFilters(new AllExceptionsFilter());
@@ -28,6 +31,12 @@ export function configureApp(app: INestApplication): void {
       credentials: true,
     }),
   );
+
+  if (isRunningBehindReverseProxy) {
+    // Requried for 'secure' cookies to work when running behind a reverse proxy (Caddy)
+    const expressApp = app.getHttpAdapter().getInstance() as Express;
+    expressApp.set('trust proxy', 1);
+  }
 
   app.use(
     helmet({
@@ -56,6 +65,7 @@ export function configureApp(app: INestApplication): void {
       secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
+      proxy: isRunningBehindReverseProxy,
       cookie: {
         httpOnly: true,
         sameSite: 'strict',

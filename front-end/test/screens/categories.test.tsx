@@ -60,4 +60,12 @@ describe('Categories screen', () => {
       expect(screen.getByText('Add your first category')).toBeTruthy();
     });
   });
+
+  it('shows create category button', async () => {
+    await renderCategories();
+
+    await waitFor(() => {
+      expect(screen.getByText('Create Category')).toBeTruthy();
+    });
+  });
 });

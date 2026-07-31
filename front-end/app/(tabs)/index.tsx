@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { activitiesAPI, IActivityClient } from '@/api/api.activity';
 
@@ -10,7 +10,7 @@ import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import Background from '@/components/backgrounds/background';
 import { categoriesAPI, ICategory } from '@/api/api.categories';
 import ActivityListItem from '@/components/activity-list/activity-list-item';
-import { Colors } from '@/constants/theme';
+import FloatingActionButton from '@/components/ui/floating-action-button';
 import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
 import Toast from 'react-native-toast-message';
@@ -201,14 +201,10 @@ function Dashboard() {
         </Container>
       </ScrollView>
 
-      <Pressable
-        style={styles.floatingAddButton}
+      <FloatingActionButton
+        label="Add Activity"
         onPress={() => setShowNewActivityModal(true)}
-      >
-        <ThemedText style={styles.floatingAddButtonText}>
-          Add Activity
-        </ThemedText>
-      </Pressable>
+      />
 
       {showNewActivityModal && (
         <CreateActivityModal
@@ -249,28 +245,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingBottom: 12,
     gap: 2,
-  },
-  floatingAddButton: {
-    position: 'absolute',
-    bottom: 30,
-    right: 24,
-    height: 48,
-    paddingHorizontal: 20,
-    backgroundColor: Colors.blue.new,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    boxShadow: '0 18px 38px rgba(0,90,255,.42), 0 8px 18px rgba(0,0,0,.36)',
-  },
-  floatingAddButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });
 

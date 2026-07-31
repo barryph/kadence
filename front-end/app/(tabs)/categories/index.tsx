@@ -14,6 +14,8 @@ import CategoryModal, {
 import DeleteCategoryModal from '@/components/categories/delete-category-modal';
 import LoaderScreen from '@/components/base/loader-screen';
 import Dot from '@/components/dot';
+import CreateCategoryModal from '@/components/categories/create-category-modal';
+import FloatingActionButton from '@/components/ui/floating-action-button';
 import Container from '@/components/base/container';
 
 function Categories() {
@@ -21,6 +23,7 @@ function Categories() {
   const [activities, setActivities] = useState<IActivityClient[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+  const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
     null,
@@ -110,6 +113,15 @@ function Categories() {
     );
   }
 
+  function handleCreatedCategory(category: ICategory) {
+    setCategories((prev) => [...prev, category]);
+    setCategoryToActivityCountMap((prev) => ({
+      ...prev,
+      [category.id!]: 0,
+    }));
+    setShowCreateCategoryModal(false);
+  }
+
   if (isLoading) {
     return <LoaderScreen text="Loading..." />;
   }
@@ -180,6 +192,18 @@ function Categories() {
         </Container>
       </ScrollView>
 
+      <FloatingActionButton
+        label="Create Category"
+        onPress={() => setShowCreateCategoryModal(true)}
+      />
+
+      {showCreateCategoryModal && (
+        <CreateCategoryModal
+          onSave={handleCreatedCategory}
+          onClose={() => setShowCreateCategoryModal(false)}
+        />
+      )}
+
       {showEditCategoryModal && selectedCategory && (
         <CategoryModal
           initialValues={{
@@ -224,7 +248,7 @@ function Categories() {
 
 const styles = StyleSheet.create({
   scrollContent: {
-    paddingBottom: 32,
+    paddingBottom: 100,
   },
   title: {
     marginTop: 10,

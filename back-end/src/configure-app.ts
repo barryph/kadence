@@ -4,6 +4,7 @@ import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
 import { ConnectSessionKnexStore } from 'connect-session-knex';
+import helmet from 'helmet';
 import { configurePassport } from './modules/authentication/passport';
 import { AuthenticationService } from './modules/authentication/services/authentication.service';
 import UsersRepo from './modules/users/repos/user.repository';
@@ -25,6 +26,13 @@ export function configureApp(app: INestApplication): void {
         // @ts-expect-error origin could be undefined
         cb(null, corsOrigins.includes('*') || corsOrigins.includes(origin)),
       credentials: true,
+    }),
+  );
+
+  app.use(
+    helmet({
+      // Since we're serving a mobile application CSP is not necessary
+      contentSecurityPolicy: false,
     }),
   );
 

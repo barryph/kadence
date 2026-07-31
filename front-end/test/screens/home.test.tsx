@@ -1,34 +1,42 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react-native';
 import { TestSafeAreaProvider } from '@/test/setup/test-safe-area';
+import { TestQueryProvider } from '@/test/setup/test-query-client';
 import HomeScreen from '@/app/(tabs)/index';
-import { activitiesAPI } from '@/api/api.activity';
-import { categoriesAPI } from '@/api/api.categories';
+import { useActivitiesQuery } from '@/hooks/queries/use-activities';
+import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { testActivities } from '@/test/setup/fixtures/activities';
 import { testCategories } from '@/test/setup/fixtures/categories';
 
-jest.mock('@/api/api.activity');
-jest.mock('@/api/api.categories');
+jest.mock('@/hooks/queries/use-activities');
+jest.mock('@/hooks/queries/use-categories');
 
-const mockGetActivities = activitiesAPI.getAllByUser as jest.Mock;
-const mockGetCategories = categoriesAPI.getAllByUser as jest.Mock;
+const mockUseActivitiesQuery = useActivitiesQuery as jest.Mock;
+const mockUseCategoriesQuery = useCategoriesQuery as jest.Mock;
+
+function renderWithProviders(ui: React.ReactElement) {
+  return render(
+    <TestQueryProvider>
+      <TestSafeAreaProvider>{ui}</TestSafeAreaProvider>
+    </TestQueryProvider>,
+  );
+}
 
 async function renderHome() {
-  return render(
-    <TestSafeAreaProvider>
-      <HomeScreen />
-    </TestSafeAreaProvider>,
-  );
+  return renderWithProviders(<HomeScreen />);
 }
 
 describe('Home screen', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockGetActivities.mockResolvedValue({
-      data: { activities: testActivities },
+    mockUseActivitiesQuery.mockReturnValue({
+      data: testActivities,
+      isPending: false,
+      isError: false,
     });
-    mockGetCategories.mockResolvedValue({
-      data: { categories: testCategories },
+    mockUseCategoriesQuery.mockReturnValue({
+      data: testCategories,
+      isPending: false,
+      isError: false,
     });
   });
 
@@ -52,8 +60,16 @@ describe('Home screen', () => {
   });
 
   it('shows empty state when no activities', async () => {
-    mockGetActivities.mockResolvedValue({ data: { activities: [] } });
-    mockGetCategories.mockResolvedValue({ data: { categories: [] } });
+    mockUseActivitiesQuery.mockReturnValue({
+      data: [],
+      isPending: false,
+      isError: false,
+    });
+    mockUseCategoriesQuery.mockReturnValue({
+      data: [],
+      isPending: false,
+      isError: false,
+    });
 
     await renderHome();
 

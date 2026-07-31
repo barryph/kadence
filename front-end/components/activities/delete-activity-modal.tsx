@@ -11,7 +11,8 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
-import { activitiesAPI } from '@/api/api.activity';
+import { useDeleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
+import { ApiError } from '@/lib/query/unwrap';
 
 interface DeleteActivityModalProps {
   visible: boolean;
@@ -26,38 +27,36 @@ export default function DeleteActivityModal({
   onClose,
   onDeleted,
 }: DeleteActivityModalProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const deleteActivity = useDeleteActivityMutation();
 
   useEffect(() => {
     if (!visible) {
       setErrorMessage(null);
-      setIsDeleting(false);
     }
   }, [visible]);
 
   function handleClose() {
-    if (isDeleting) return;
+    if (deleteActivity.isPending) return;
     setErrorMessage(null);
     onClose();
   }
 
   async function handleDelete() {
-    if (isDeleting) return;
+    if (deleteActivity.isPending) return;
 
-    setIsDeleting(true);
     setErrorMessage(null);
 
-    const response = await activitiesAPI.deleteActivity(activityId);
-
-    if (response.error) {
-      setErrorMessage(response.error.message);
-      setIsDeleting(false);
-      return;
+    try {
+      await deleteActivity.mutateAsync(activityId);
+      onDeleted();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrorMessage(error.message);
+        return;
+      }
+      setErrorMessage('Something went wrong, please try again.');
     }
-
-    setIsDeleting(false);
-    onDeleted();
   }
 
   return (
@@ -74,7 +73,7 @@ export default function DeleteActivityModal({
         <Pressable
           style={styles.backdropFill}
           onPress={handleClose}
-          disabled={isDeleting}
+          disabled={deleteActivity.isPending}
         />
         <View style={styles.card}>
           <Background />
@@ -93,14 +92,14 @@ export default function DeleteActivityModal({
 
           <View style={styles.actions}>
             <Button
-              disabled={isDeleting}
+              disabled={deleteActivity.isPending}
               onPress={handleClose}
               style={styles.actionButton}
             >
               Cancel
             </Button>
             <Button
-              isLoading={isDeleting}
+              isLoading={deleteActivity.isPending}
               onPress={handleDelete}
               style={[styles.actionButton, styles.deleteButton]}
               textStyle={styles.deleteButtonText}

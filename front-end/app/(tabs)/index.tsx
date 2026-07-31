@@ -1,19 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { activitiesAPI, IActivityClient } from '@/api/api.activity';
+import Toast from 'react-native-toast-message';
 
+import { IActivityClient } from '@/api/api.activity';
 import { ThemedText } from '@/components/base/themed-text';
 import LoaderScreen from '@/components/base/loader-screen';
 import CreateActivityModal from '@/components/activities/create-activity-modal';
-import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import Background from '@/components/backgrounds/background';
-import { categoriesAPI, ICategory } from '@/api/api.categories';
 import ActivityListItem from '@/components/activity-list/activity-list-item';
 import FloatingActionButton from '@/components/ui/floating-action-button';
 import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
-import Toast from 'react-native-toast-message';
 import Container from '@/components/base/container';
 import FilterList from '@/components/filter-list/filter-list';
 import { YYYYMMDD } from '@/utils/date';
@@ -21,119 +19,95 @@ import {
   filterByCategoryId,
   toggleCategoryFilter,
 } from '@/components/filter-list/filter-by-category';
+import { useActivitiesQuery } from '@/hooks/queries/use-activities';
+import { useCategoriesQuery } from '@/hooks/queries/use-categories';
+import { useCompleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 
-// TODO: Add toast when task completed, with undo button
+function sortActivities(acts: IActivityClient[] = []) {
+  return [...acts].sort((a, b) => {
+    if ((a.queued && b.queued) || (!a.queued && !b.queued)) {
+      const daysUntilSort = (a.daysUntil || 0) - (b.daysUntil || 0);
+      if (daysUntilSort !== 0) return daysUntilSort;
+      return a.name.localeCompare(b.name);
+    }
+    if (a.queued) return -1;
+    if (b.queued) return 1;
+    return 0;
+  });
+}
 
-function Dashboard() {
+export default function Dashboard() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [activities, setActivities] = useState<IActivityClient[]>([]);
-  const [categories, setCategories] = useState<ICategory[]>([]);
+  const {
+    data: activities = [],
+    isPending: isActivitiesPending,
+    isError: isActivitiesError,
+  } = useActivitiesQuery();
+  const {
+    data: categories = [],
+    isPending: isCategoriesPending,
+    isError: isCategoriesError,
+  } = useCategoriesQuery();
+  const completeActivity = useCompleteActivityMutation();
+
+  const [queuedIds, setQueuedIds] = useState<Set<number>>(new Set());
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
   const [showNewActivityModal, setShowNewActivityModal] = useState(false);
 
-  const sortActivities = (acts: IActivityClient[] = []) => {
-    return [...acts].sort((a, b) => {
-      if ((a.queued && b.queued) || (!a.queued && !b.queued)) {
-        const daysUntilSort = (a.daysUntil || 0) - (b.daysUntil || 0);
-        if (daysUntilSort !== 0) return daysUntilSort;
-        const nameSort = a.name.localeCompare(b.name);
-        return nameSort;
+  const activitiesWithQueue = useMemo(() => {
+    const withQueue = activities.map((activity) => ({
+      ...activity,
+      queued: queuedIds.has(activity.id),
+    }));
+    return sortActivities(withQueue);
+  }, [activities, queuedIds]);
+
+  function handleActivityClick(activity: IActivityClient) {
+    setQueuedIds((current) => {
+      const next = new Set(current);
+      if (next.has(activity.id)) {
+        next.delete(activity.id);
+      } else {
+        next.add(activity.id);
       }
-      if (a.queued) return -1;
-      if (b.queued) return 1;
-      return 0;
+      return next;
     });
-  };
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    async function fetchData() {
-      try {
-        const [activitiesResponse, categoriesResponse] = await Promise.all([
-          activitiesAPI.getAllByUser({
-            signal: abortController.signal,
-          }),
-          categoriesAPI.getAllByUser({
-            signal: abortController.signal,
-          }),
-        ]);
-
-        if (activitiesResponse.data?.activities) {
-          const activities = activitiesResponse.data.activities;
-          setActivities(sortActivities(activities as IActivityClient[]));
-        }
-
-        if (categoriesResponse.data?.categories) {
-          setCategories(categoriesResponse.data.categories as ICategory[]);
-        }
-      } catch (err) {
-        if (!abortController.signal.aborted) {
-          console.error('Error fetching data', err);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchData();
-    return () => abortController.abort();
-  }, []);
-
-  async function handleActivityClick(activity: IActivityClient) {
-    const updated = activities.map((a) =>
-      a.id === activity.id ? { ...a, queued: !a.queued } : a,
-    );
-    setActivities(sortActivities(updated));
   }
 
   async function handleComplete(activityId: number) {
-    const today = YYYYMMDD();
     try {
-      const updateRes = await activitiesAPI.complete(activityId, today);
-      if (updateRes.data?.activity) {
-        const updated = activities.map((a) =>
-          a.id === activityId
-            ? (updateRes.data.activity as IActivityClient)
-            : a,
-        );
-        setActivities(sortActivities(updated));
-        Toast.show({
-          type: 'success',
-          text1: 'Activity Completed',
-        });
-      }
+      await completeActivity.mutateAsync({
+        activityId,
+        date: YYYYMMDD(),
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'Activity Completed',
+      });
     } catch (error) {
       console.error('Error completing activity', error);
     }
   }
 
   function handleEdit(activity: IActivityClient) {
-    // In Expo router, we might route to an edit screen
-    // For now we'll just log or route to a dummy path
     router.push(`/activities/edit/${activity.id}`);
-  }
-
-  function handleCreatedCategory(category: ICategory) {
-    setCategories((prev) => [...prev, category]);
-  }
-
-  function handleNewActivityModalClose(activity?: IActivityClient) {
-    if (activity) {
-      setActivities(sortActivities([...activities, activity]));
-    }
-    setShowNewActivityModal(false);
   }
 
   function handleCategoryPress(categoryId: number) {
     setActiveCategoryId((current) => toggleCategoryFilter(current, categoryId));
   }
 
-  const filteredActivities = filterByCategoryId(activities, activeCategoryId);
+  const filteredActivities = filterByCategoryId(
+    activitiesWithQueue,
+    activeCategoryId,
+  );
 
-  if (isLoading) {
+  if (isActivitiesPending || isCategoriesPending) {
     return <LoaderScreen text="Loading activities..." />;
+  }
+
+  if (isActivitiesError || isCategoriesError) {
+    return <LoaderScreen text="Unable to load activities." />;
   }
 
   return (
@@ -188,7 +162,7 @@ function Dashboard() {
                 </ThemedText>
               </ListItemShell>
             )}
-            {filteredActivities.map((activity, index) => (
+            {filteredActivities.map((activity) => (
               <ActivityListItem
                 key={activity.id}
                 activity={activity}
@@ -207,10 +181,7 @@ function Dashboard() {
       />
 
       {showNewActivityModal && (
-        <CreateActivityModal
-          onClose={handleNewActivityModalClose}
-          onCreatedCategory={handleCreatedCategory}
-        />
+        <CreateActivityModal onClose={() => setShowNewActivityModal(false)} />
       )}
     </View>
   );
@@ -226,13 +197,10 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   headline: {
-    // paddingHorizontal: 4,
     fontSize: 24,
     marginTop: 10,
     marginBottom: 5,
     color: '#fff',
-    // textTransform: 'uppercase',
-    // letterSpacing: '.08em',
     letterSpacing: -0.01,
     fontFamily: '"system-ui"',
     fontWeight: 700,
@@ -247,11 +215,3 @@ const styles = StyleSheet.create({
     gap: 2,
   },
 });
-
-export default function wrapper() {
-  return (
-    <UnmountOnBlur>
-      <Dashboard />
-    </UnmountOnBlur>
-  );
-}

@@ -174,7 +174,7 @@ export class ActivitiesService {
     activityId: string,
     userId: string,
     date: string,
-  ): Promise<void> {
+  ): Promise<ActivityWithCategoryDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
     if (!activity) {
       throw new NotFoundException('Activity not found');
@@ -184,6 +184,15 @@ export class ActivitiesService {
     }
 
     await this.activityEventRepo.removeByActivityIdAndDate(activityId, date);
+
+    const updatedActivity = await this.getActivityByIdQuery.execute(
+      activityId,
+      userId,
+    );
+    if (!updatedActivity) {
+      throw new Error('Activity not found after undoing completion');
+    }
+    return updatedActivity;
   }
 
   async getActivityTimeline(

@@ -19,6 +19,7 @@ import Toast from 'react-native-toast-message';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '@/context/auth-context';
+import { QueryProvider } from '@/lib/query/provider';
 import { RootLayoutNav } from '@/components/root-layout-nav';
 import Background from '@/components/backgrounds/background';
 import { ThemedText } from '@/components/base/themed-text';
@@ -97,10 +98,12 @@ export default function RootLayout() {
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <FontsProvider>
-          <AuthProvider>
-            <RootLayoutNav />
-            <Toast config={toastConfig} />
-          </AuthProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <RootLayoutNav />
+              <Toast config={toastConfig} />
+            </AuthProvider>
+          </QueryProvider>
         </FontsProvider>
         <StatusBar style="auto" />
       </ThemeProvider>

@@ -11,7 +11,8 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
-import { categoriesAPI } from '@/api/api.categories';
+import { useDeleteCategoryMutation } from '@/hooks/mutations/use-category-mutations';
+import { ApiError } from '@/lib/query/unwrap';
 
 interface DeleteCategoryModalProps {
   visible: boolean;
@@ -26,38 +27,36 @@ export default function DeleteCategoryModal({
   onClose,
   onDeleted,
 }: DeleteCategoryModalProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const deleteCategory = useDeleteCategoryMutation();
 
   useEffect(() => {
     if (!visible) {
       setErrorMessage(null);
-      setIsDeleting(false);
     }
   }, [visible]);
 
   function handleClose() {
-    if (isDeleting) return;
+    if (deleteCategory.isPending) return;
     setErrorMessage(null);
     onClose();
   }
 
   async function handleDelete() {
-    if (isDeleting) return;
+    if (deleteCategory.isPending) return;
 
-    setIsDeleting(true);
     setErrorMessage(null);
 
-    const response = await categoriesAPI.deleteCategory(categoryId);
-
-    if (response.error) {
-      setErrorMessage(response.error.message);
-      setIsDeleting(false);
-      return;
+    try {
+      await deleteCategory.mutateAsync(categoryId);
+      onDeleted();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrorMessage(error.message);
+        return;
+      }
+      setErrorMessage('Something went wrong, please try again.');
     }
-
-    setIsDeleting(false);
-    onDeleted();
   }
 
   return (
@@ -74,7 +73,7 @@ export default function DeleteCategoryModal({
         <Pressable
           style={styles.backdropFill}
           onPress={handleClose}
-          disabled={isDeleting}
+          disabled={deleteCategory.isPending}
         />
         <View style={styles.card}>
           <Background />
@@ -97,14 +96,14 @@ export default function DeleteCategoryModal({
 
           <View style={styles.actions}>
             <Button
-              disabled={isDeleting}
+              disabled={deleteCategory.isPending}
               onPress={handleClose}
               style={styles.actionButton}
             >
               Cancel
             </Button>
             <Button
-              isLoading={isDeleting}
+              isLoading={deleteCategory.isPending}
               onPress={handleDelete}
               style={[styles.actionButton, styles.deleteButton]}
               textStyle={styles.deleteButtonText}

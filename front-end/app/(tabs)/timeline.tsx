@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,8 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import { activitiesAPI, type IActivity } from '@/api/api.activity';
-import { categoriesAPI, type ICategory } from '@/api/api.categories';
-import {
-  timelineAPI,
-  type ITimeline,
-  type ITimelineSet,
-} from '@/api/api.timeline';
+import { type IActivity } from '@/api/api.activity';
+import { type ITimelineSet } from '@/api/api.timeline';
 import Button from '@/components/base/button';
 import Animated, {
   scrollTo,
@@ -22,7 +17,6 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/hook/commonTypes';
-import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
 import { ThemedText } from '@/components/base/themed-text';
@@ -32,8 +26,15 @@ import {
   filterByCategoryId,
   toggleCategoryFilter,
 } from '@/components/filter-list/filter-by-category';
+import { useActivitiesQuery } from '@/hooks/queries/use-activities';
+import { useCategoriesQuery } from '@/hooks/queries/use-categories';
+import { useTimelineQuery } from '@/hooks/queries/use-timeline';
+import {
+  useCompleteActivityMutation,
+  useUndoActivityMutation,
+} from '@/hooks/mutations/use-activity-mutations';
+import { ApiError } from '@/lib/query/unwrap';
 
-// TODO: Sync changes when completing tasks in main page, and timeline
 // TODO: Make whole block clickable, not only the colored cell
 
 const CELL_WIDTH = 35;
@@ -101,31 +102,43 @@ function buildMonthDateColumns(month: string): TimelineDateColumn[] {
   return columns;
 }
 
-function timelineToSet(timeline: ITimeline): ITimelineSet {
-  return Object.keys(timeline).reduce<ITimelineSet>((acc, key) => {
-    acc[key] = new Set(timeline[key]);
-    return acc;
-  }, {});
-}
-
 function getCurrentMonth() {
   const date = new Date();
   return formatMonthKey(date);
 }
 
 function TimelineScreen() {
-  const [activities, setActivities] = useState<IActivity[] | undefined>();
-  const [categories, setCategories] = useState<ICategory[]>([]);
-  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
-  const [cachedMonths, setCachedMonths] = useState<
-    Record<string, ITimelineSet>
-  >({});
+  const {
+    data: activities,
+    isPending: isActivitiesPending,
+    isError: isActivitiesError,
+  } = useActivitiesQuery();
+  const {
+    data: categories = [],
+    isPending: isCategoriesPending,
+    isError: isCategoriesError,
+  } = useCategoriesQuery();
+
   const currentMonth = getCurrentMonth();
   const [monthInView, setMonthInView] = useState<string>(currentMonth);
-  const [dateColumns, setDateColumns] = useState<TimelineDateColumn[]>([]);
-  const [isLoadingInitData, setIsLoadInitData] = useState(true);
+  const timelineQuery = useTimelineQuery(monthInView);
+  const completeActivity = useCompleteActivityMutation();
+  const undoActivity = useUndoActivityMutation();
+
+  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
   const [isLoadingTimeline, setIsLoadingTimeline] = useState(false);
-  const [initError, setInitError] = useState<string | undefined>(undefined);
+  const dateColumns = useMemo(
+    () => buildMonthDateColumns(monthInView),
+    [monthInView],
+  );
+  const isLoadingInitData =
+    isActivitiesPending ||
+    isCategoriesPending ||
+    (timelineQuery.isPending && !timelineQuery.data);
+  const initError =
+    isActivitiesError || isCategoriesError || timelineQuery.isError
+      ? 'Unable to load timeline. Please try again.'
+      : undefined;
   const [loadMoreError, setLoadMoreError] = useState<string | undefined>(
     undefined,
   );
@@ -197,51 +210,8 @@ function TimelineScreen() {
   }
 
   /***
-   * Load initial data
+   * Month navigation
    */
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    async function fetchInitData(abortController: AbortController) {
-      try {
-        setInitError(undefined);
-        const [activitiesRes, timelineRes, categoriesRes] = await Promise.all([
-          activitiesAPI.getAllByUser({ signal: abortController.signal }),
-          timelineAPI.getTimeline(monthInView, {
-            signal: abortController.signal,
-          }),
-          categoriesAPI.getAllByUser({ signal: abortController.signal }),
-        ]);
-        if (activitiesRes.data?.activities) {
-          setActivities(activitiesRes.data.activities);
-        }
-        if (categoriesRes.data?.categories) {
-          setCategories(categoriesRes.data.categories as ICategory[]);
-        }
-        if (timelineRes.data?.timeline) {
-          let timeline = timelineToSet(timelineRes.data.timeline);
-          const columns = buildMonthDateColumns(monthInView);
-
-          setCachedMonths({ ...cachedMonths, [monthInView]: timeline });
-          setDateColumns(columns);
-        }
-      } catch (err) {
-        if (!abortController.signal.aborted) {
-          setInitError('Unable to load timeline. Please try again.');
-          console.error('Error fetching init timeline data', err);
-        }
-      } finally {
-        setIsLoadInitData(false);
-      }
-    }
-
-    fetchInitData(abortController);
-    return () => {
-      abortController.abort();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   function getNextMonthToLoad(
     month: string,
     direction: 'PREV' | 'NEXT',
@@ -255,33 +225,33 @@ function TimelineScreen() {
   /***
    * Fetch more data
    */
-  async function fetchMonth(monthInView: string, direction: 'PREV' | 'NEXT') {
-    const month = getNextMonthToLoad(monthInView, direction);
-    // PREV → land at end of month; NEXT → land at start. Applied after layout.
+  function fetchMonth(currentMonth: string, direction: 'PREV' | 'NEXT') {
+    const month = getNextMonthToLoad(currentMonth, direction);
     pendingMonthScrollRef.current = direction === 'PREV' ? 'end' : 'start';
+    setLoadMoreError(undefined);
+    setIsLoadingTimeline(true);
+    setMonthInView(month);
+  }
 
-    try {
-      setIsLoadingTimeline(true);
-      setLoadMoreError(undefined);
-      const response = await timelineAPI.getTimeline(month);
-      if (response.data?.timeline) {
-        const timeline = timelineToSet(response.data.timeline);
-        const columns = buildMonthDateColumns(month);
-        setCachedMonths((prev) => ({ ...prev, [month]: timeline }));
-        setDateColumns(columns);
-        setMonthInView(month);
-        // Keep overlay up until finalizePendingMonthScroll positions the view
-      } else {
-        pendingMonthScrollRef.current = null;
-        setIsLoadingTimeline(false);
-      }
-    } catch (err) {
+  useEffect(() => {
+    if (!isLoadingTimeline) return;
+
+    if (timelineQuery.isError) {
       pendingMonthScrollRef.current = null;
       setLoadMoreError('Unable to load more timeline. Please try again.');
-      console.error('Error fetching more timeline', err);
       setIsLoadingTimeline(false);
+      return;
     }
-  }
+
+    if (!timelineQuery.isFetching && timelineQuery.data) {
+      finalizePendingMonthScroll();
+    }
+  }, [
+    isLoadingTimeline,
+    timelineQuery.isError,
+    timelineQuery.isFetching,
+    timelineQuery.data,
+  ]);
 
   // Fallback when onContentSizeChange doesn't fire (same-width months).
   // Prefer the content-size callback so we don't finalize with a stale width.
@@ -315,33 +285,17 @@ function TimelineScreen() {
       });
       const isCompleting = !isCompleted;
 
-      const response = isCompleting
-        ? await activitiesAPI.complete(activityId, dateKey)
-        : await activitiesAPI.undo(activityId, dateKey);
-
-      if (response.error) {
-        throw new Error(response.error.message);
+      if (isCompleting) {
+        await completeActivity.mutateAsync({ activityId, date: dateKey });
+      } else {
+        await undoActivity.mutateAsync({ activityId, date: dateKey });
       }
-
-      setCachedMonths((prevCachedMonths) => {
-        // if (!prevCachedMonths) return prevCachedMonths;
-
-        // Create new object rather than mutating existing
-        const newCachedMonths = { ...prevCachedMonths };
-        const month = newCachedMonths[monthInView];
-        const completedDates = month[activityId];
-
-        // Update client side toggle value of the cell
-        if (isCompleting) {
-          completedDates.add(dateKey);
-        } else {
-          completedDates.delete(dateKey);
-        }
-
-        return newCachedMonths;
-      });
     } catch (err) {
-      setToggleError('Unable to update activity status. Please try again.');
+      if (err instanceof ApiError) {
+        setToggleError(err.message);
+      } else {
+        setToggleError('Unable to update activity status. Please try again.');
+      }
       console.error('Error updating timeline activity status', err);
     } finally {
       setTogglingCells((prev) => {
@@ -379,7 +333,7 @@ function TimelineScreen() {
    * Rendering
    */
 
-  const tableData = cachedMonths[monthInView];
+  const tableData: ITimelineSet | undefined = timelineQuery.data;
   const filteredActivities = activities
     ? filterByCategoryId(activities, activeCategoryId)
     : undefined;
@@ -774,10 +728,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function wrapper() {
-  return (
-    <UnmountOnBlur>
-      <TimelineScreen />
-    </UnmountOnBlur>
-  );
-}
+export default TimelineScreen;

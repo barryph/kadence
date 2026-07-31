@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import Background from '@/components/backgrounds/background';
 import { ThemedText } from '@/components/base/themed-text';
-import UnmountOnBlur from '@/components/router/unmount-on-blur';
-import { activitiesAPI, IActivityClient } from '@/api/api.activity';
-import { categoriesAPI, ICategory } from '@/api/api.categories';
+import { ICategory } from '@/api/api.categories';
 import ListItemShell from '@/components/list-item-shell';
 import CategoryModal, {
   CategoryFormValues,
@@ -17,113 +15,98 @@ import Dot from '@/components/dot';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import FloatingActionButton from '@/components/ui/floating-action-button';
 import Container from '@/components/base/container';
+import { useActivitiesQuery } from '@/hooks/queries/use-activities';
+import { useCategoriesQuery } from '@/hooks/queries/use-categories';
+import { useEditCategoryMutation } from '@/hooks/mutations/use-category-mutations';
+import { ApiError } from '@/lib/query/unwrap';
+import type { ApiResponse } from '@/api/api.types';
 
-function Categories() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [activities, setActivities] = useState<IActivityClient[]>([]);
-  const [categories, setCategories] = useState<ICategory[]>([]);
+export default function Categories() {
+  const {
+    data: activities = [],
+    isPending: isActivitiesPending,
+    isError: isActivitiesError,
+  } = useActivitiesQuery();
+  const {
+    data: categories = [],
+    isPending: isCategoriesPending,
+    isError: isCategoriesError,
+  } = useCategoriesQuery();
+  const editCategory = useEditCategoryMutation();
+
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
     null,
   );
-  // This is kept separate as opposed to adding it as another property of each category,
-  // to avoid polluting the ICategory interface
-  const [categoryToActivityCountMap, setCategoryToActivityCountMap] =
-    useState<Record<number, number> | null>(null);
 
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    async function fetchData() {
-      try {
-        const [activitiesResponse, categoriesResponse] = await Promise.all([
-          activitiesAPI.getAllByUser({
-            signal: abortController.signal,
-          }),
-          categoriesAPI.getAllByUser({
-            signal: abortController.signal,
-          }),
-        ]);
-
-        const activitiesList = activitiesResponse.data?.activities || [];
-        const categoriesList = categoriesResponse.data?.categories || [];
-
-        // Count number of activities each category is used by
-        const map: Record<number, number> = {};
-        categoriesList.forEach(
-          (category: ICategory) => (map[category.id!] = 0),
-        );
-        activitiesList.forEach((activity: IActivityClient) => {
-          if (activity.categoryId) {
-            map[activity.categoryId]++;
-          }
-        });
-        setCategoryToActivityCountMap(map);
-
-        setActivities(activitiesList as IActivityClient[]);
-        setCategories(
-          categoriesList.sort(
-            (a: ICategory, b: ICategory) => map[b.id!] - map[a.id!],
-          ) as ICategory[],
-        );
-      } catch (err) {
-        if (!abortController.signal.aborted) {
-          console.error('Error fetching data', err);
-        }
-      } finally {
-        setIsLoading(false);
+  const { sortedCategories, categoryToActivityCountMap } = useMemo(() => {
+    const map: Record<number, number> = {};
+    categories.forEach((category) => {
+      if (category.id !== undefined) {
+        map[category.id] = 0;
       }
-    }
+    });
+    activities.forEach((activity) => {
+      if (activity.categoryId) {
+        map[activity.categoryId] = (map[activity.categoryId] ?? 0) + 1;
+      }
+    });
 
-    fetchData();
-    return () => abortController.abort();
-  }, []);
+    const sorted = [...categories].sort(
+      (a, b) => (map[b.id!] ?? 0) - (map[a.id!] ?? 0),
+    );
+
+    return { sortedCategories: sorted, categoryToActivityCountMap: map };
+  }, [activities, categories]);
 
   function openEditModal(category: ICategory) {
     setSelectedCategory(category);
     setShowEditCategoryModal(true);
   }
 
-  async function handleSubmit(values: CategoryFormValues) {
+  async function handleSubmit(
+    values: CategoryFormValues,
+  ): Promise<ApiResponse<{ category: ICategory }>> {
     if (!selectedCategory) throw new Error('No selected category');
-    const response = await categoriesAPI.editCategory(selectedCategory.id!, {
-      name: values.name,
-      color: values.color,
-    });
-    return response;
+
+    try {
+      const category = await editCategory.mutateAsync({
+        categoryId: selectedCategory.id!,
+        body: {
+          name: values.name,
+          color: values.color,
+        },
+      });
+      return { data: { category } };
+    } catch (error) {
+      if (error instanceof ApiError) {
+        return { error: error.appError };
+      }
+      throw error;
+    }
   }
 
-  function handleSave(updatedCategory: ICategory) {
+  function handleSave() {
     setShowEditCategoryModal(false);
-    // Update category in memory
-    const updatedCategories = categories.map((category) => {
-      if (category.id !== selectedCategory!.id) return category;
-      return updatedCategory;
-    });
-    setCategories(updatedCategories);
   }
 
   function handleDeleted() {
     setIsDeleteModalVisible(false);
     setShowEditCategoryModal(false);
-    setCategories(
-      categories.filter((category) => category.id !== selectedCategory!.id),
-    );
   }
 
-  function handleCreatedCategory(category: ICategory) {
-    setCategories((prev) => [...prev, category]);
-    setCategoryToActivityCountMap((prev) => ({
-      ...prev,
-      [category.id!]: 0,
-    }));
+  function handleCreatedCategory() {
     setShowCreateCategoryModal(false);
   }
 
-  if (isLoading) {
+  if (isActivitiesPending || isCategoriesPending) {
     return <LoaderScreen text="Loading..." />;
+  }
+
+  if (isActivitiesError || isCategoriesError) {
+    return <LoaderScreen text="Unable to load categories." />;
   }
 
   return (
@@ -137,7 +120,7 @@ function Categories() {
           </ThemedText>
 
           <View style={styles.categories}>
-            {categories.length === 0 && (
+            {sortedCategories.length === 0 && (
               <ListItemShell style={styles.getStartedPill}>
                 <View
                   style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
@@ -152,7 +135,7 @@ function Categories() {
                 </ThemedText>
               </ListItemShell>
             )}
-            {categories.map((category) => (
+            {sortedCategories.map((category) => (
               <Pressable
                 key={category.id}
                 onPress={() => openEditModal(category)}
@@ -170,9 +153,9 @@ function Categories() {
                           style={styles.bottomRowText}
                           type="defaultBold"
                         >
-                          {categoryToActivityCountMap![category.id!] || '0'}
+                          {categoryToActivityCountMap[category.id!] || '0'}
                         </ThemedText>{' '}
-                        {categoryToActivityCountMap![category.id!] > 1
+                        {categoryToActivityCountMap[category.id!] > 1
                           ? 'activities'
                           : 'activity'}
                       </ThemedText>
@@ -301,11 +284,3 @@ const styles = StyleSheet.create({
     gap: 2,
   },
 });
-
-export default function wrapper() {
-  return (
-    <UnmountOnBlur>
-      <Categories />
-    </UnmountOnBlur>
-  );
-}

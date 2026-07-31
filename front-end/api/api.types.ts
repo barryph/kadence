@@ -44,5 +44,4 @@ export interface AppError {
 
 export type ApiResponse<T> =
   | { data: T; error?: never }
-  | { error: AppError; data?: never }
-  | { success: true; error?: never };
+  | { error: AppError; data?: never };

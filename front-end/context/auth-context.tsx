@@ -7,6 +7,7 @@ import {
 import type { ApiResponse, IUser } from '@/api/api.types';
 import { usersAPI } from '@/api/api.users';
 import LoaderScreen from '@/components/base/loader-screen';
+import { queryClient } from '@/lib/query/client';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -76,6 +77,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
     setUser(null);
     setIsAuthenticated(false);
+    queryClient.clear();
   }
 
   async function register(

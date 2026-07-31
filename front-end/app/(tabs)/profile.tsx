@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import Background from '@/components/backgrounds/background';
 import Container from '@/components/base/container';
 import { ThemedText } from '@/components/base/themed-text';
-import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import { useAuth } from '@/context/auth-context';
 
 function Profile() {

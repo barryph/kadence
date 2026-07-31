@@ -63,10 +63,12 @@ describe('Activities (e2e)', () => {
       '2026-03-01',
     );
 
-    await agent
+    const undoResponse = await agent
       .post(`/activities/${activityId}/undo`)
       .send({ date: '2026-03-01' })
       .expect(201);
+    expect(undoResponse.body.data.activity).toBeDefined();
+    expect(undoResponse.body.data.activity.id).toBe(activityId);
 
     await agent
       .put(`/activities/edit/${activityId}`)

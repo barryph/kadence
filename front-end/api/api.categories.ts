@@ -23,7 +23,11 @@ interface EditCategoryDTO {
 }
 
 interface EditCategoryResponse {
-  activity: ICategory;
+  category: ICategory;
+}
+
+interface DeleteCategoryResponse {
+  id: number | string;
 }
 
 export const categoriesAPI = {
@@ -51,6 +55,9 @@ export const categoriesAPI = {
   },
 
   deleteCategory(categoryId: number | string, options?: OptionalOptions) {
-    return apiClient.delete<undefined>(`/categories/${categoryId}`, options);
+    return apiClient.delete<DeleteCategoryResponse>(
+      `/categories/${categoryId}`,
+      options,
+    );
   },
 };

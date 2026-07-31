@@ -147,14 +147,16 @@ export class ActivitiesController {
     @Body() body: ActivityDateActionDTO,
   ) {
     const userId = (req.user as UserDTO).id;
-    await this.activitiesService.undoActivityEvent(
+    const updatedActivity = await this.activitiesService.undoActivityEvent(
       activityId,
       userId,
       body.date,
     );
 
     return {
-      success: true,
+      data: {
+        activity: updatedActivity,
+      },
     };
   }
 
@@ -165,7 +167,9 @@ export class ActivitiesController {
     await this.activitiesService.deleteActivity(activityId, userId);
 
     return {
-      success: true,
+      data: {
+        id: activityId,
+      },
     };
   }
 }

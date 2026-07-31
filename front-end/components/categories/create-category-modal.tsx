@@ -2,8 +2,10 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import type { ICategory } from '@/api/api.categories';
-import { categoriesAPI } from '@/api/api.categories';
 import CategoryModal, { CategoryFormValues } from './category-modal';
+import { useCreateCategoryMutation } from '@/hooks/mutations/use-category-mutations';
+import { ApiError } from '@/lib/query/unwrap';
+import type { ApiResponse } from '@/api/api.types';
 
 interface CreateCategoryModalProps {
   onSave: (category: ICategory) => void;
@@ -14,12 +16,23 @@ export default function CreateCategoryModal({
   onSave,
   onClose,
 }: CreateCategoryModalProps) {
-  async function handleSubmit(values: CategoryFormValues) {
-    const response = await categoriesAPI.createCategory({
-      name: values.name,
-      color: values.color,
-    });
-    return response;
+  const createCategory = useCreateCategoryMutation();
+
+  async function handleSubmit(
+    values: CategoryFormValues,
+  ): Promise<ApiResponse<{ category: ICategory }>> {
+    try {
+      const category = await createCategory.mutateAsync({
+        name: values.name,
+        color: values.color,
+      });
+      return { data: { category } };
+    } catch (error) {
+      if (error instanceof ApiError) {
+        return { error: error.appError };
+      }
+      throw error;
+    }
   }
 
   return (
@@ -37,34 +50,7 @@ export default function CreateCategoryModal({
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-  },
-  backdropFill: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  card: {
-    borderRadius: 12,
-    padding: 20,
-    zIndex: 1,
-    overflow: 'hidden',
-  },
   title: {
     marginBottom: 16,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
-  },
-  actionButton: {
-    flex: 1,
-  },
-  colorPickerContainer: {
-    flex: 1,
-    justifyContent: 'center',
   },
 });

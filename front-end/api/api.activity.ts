@@ -47,6 +47,18 @@ interface EditActivityResponse {
   activity: IActivity;
 }
 
+interface CompleteActivityResponse {
+  activity: IActivity;
+}
+
+interface UndoActivityResponse {
+  activity: IActivity;
+}
+
+interface DeleteActivityResponse {
+  id: number | string;
+}
+
 export const activitiesAPI = {
   getById(activityId: number | string, options?: OptionalOptions) {
     return apiClient.get<GetActivityByIdResponse>(
@@ -83,7 +95,7 @@ export const activitiesAPI = {
     date: string,
     options?: OptionalOptions,
   ) {
-    return apiClient.post(
+    return apiClient.post<CompleteActivityResponse>(
       `/activities/${activityId}/complete`,
       { date },
       options,
@@ -91,10 +103,17 @@ export const activitiesAPI = {
   },
 
   undo(activityId: number | string, date: string, options?: OptionalOptions) {
-    return apiClient.post(`/activities/${activityId}/undo`, { date }, options);
+    return apiClient.post<UndoActivityResponse>(
+      `/activities/${activityId}/undo`,
+      { date },
+      options,
+    );
   },
 
   deleteActivity(activityId: number | string, options?: OptionalOptions) {
-    return apiClient.delete<undefined>(`/activities/${activityId}`, options);
+    return apiClient.delete<DeleteActivityResponse>(
+      `/activities/${activityId}`,
+      options,
+    );
   },
 };

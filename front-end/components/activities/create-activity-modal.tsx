@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Modal,
@@ -12,10 +12,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { FormProvider } from 'react-hook-form';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import { activitiesAPI, type IActivity } from '@/api/api.activity';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
-import { categoriesAPI, type ICategory } from '@/api/api.categories';
 import { formatDateISO } from '@/utils/date';
 import ActivityNameField from '@/components/activities/fields/activity-name-field';
 import ActivityTickerField from '@/components/activities/fields/activity-ticker-field';
@@ -24,72 +22,41 @@ import ActivityCategoryField from '@/components/activities/fields/activity-categ
 import ActivityLastDoneField from '@/components/activities/fields/activity-last-done-field';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import { ActivityFormValues } from '@/components/activities/activity-schema';
+import { useCategoriesQuery } from '@/hooks/queries/use-categories';
+import { useCreateActivityMutation } from '@/hooks/mutations/use-activity-mutations';
+import { ApiError } from '@/lib/query/unwrap';
 
 interface CreateActivityModalProps {
-  onClose: (activity?: IActivity) => void;
-  onCreatedCategory: (category: ICategory) => void;
+  onClose: () => void;
 }
 
-export default function CreateActivityModal({
-  onClose,
-  onCreatedCategory,
-}: CreateActivityModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
+export default function CreateActivityModal({ onClose }: CreateActivityModalProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useActivityForm();
-
-  const [categories, setCategories] = useState<ICategory[]>([]);
-
-  // Fetch categories
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    async function fetchCategories() {
-      console.log('fetching categories');
-      try {
-        const response = await categoriesAPI.getAllByUser({
-          signal: abortController.signal,
-        });
-        if (response.data?.categories) {
-          setCategories(response.data.categories as ICategory[]);
-          setIsLoading(false);
-        }
-      } catch (err) {
-        console.error('Error fetching activities', err);
-        setIsLoading(false);
-      }
-    }
-
-    fetchCategories();
-    return () => abortController.abort();
-  }, []);
-
-  function handleCreatedCategory(category: ICategory) {
-    setCategories((prev) => [...prev, category]);
-    onCreatedCategory(category);
-  }
+  const { data: categories = [] } = useCategoriesQuery();
+  const createActivity = useCreateActivityMutation();
 
   async function handleSubmit(values: ActivityFormValues) {
-    setIsLoading(true);
     setErrorMessage(null);
 
-    const response = await activitiesAPI.createActivity({
-      name: values.name,
-      ticker: values.ticker,
-      interval: values.interval,
-      lastDone: values.lastDone ? formatDateISO(values.lastDone) : undefined,
-      ...(values.categoryId && {
-        categoryId: values.categoryId,
-      }),
-    });
-
-    if (response.error) {
-      setErrorMessage(response.error.message);
-      setIsLoading(false);
-      return;
+    try {
+      await createActivity.mutateAsync({
+        name: values.name,
+        ticker: values.ticker,
+        interval: values.interval,
+        lastDone: values.lastDone ? formatDateISO(values.lastDone) : undefined,
+        ...(values.categoryId && {
+          categoryId: values.categoryId,
+        }),
+      });
+      onClose();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrorMessage(error.message);
+        return;
+      }
+      setErrorMessage('Something went wrong, please try again.');
     }
-
-    onClose(response.data?.activity);
   }
 
   return (
@@ -97,7 +64,7 @@ export default function CreateActivityModal({
       visible
       animationType="slide"
       presentationStyle="fullScreen"
-      onRequestClose={() => onClose()}
+      onRequestClose={onClose}
     >
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Background showRed={false} />
@@ -113,7 +80,7 @@ export default function CreateActivityModal({
               <ThemedText type="title">New activity</ThemedText>
               <Pressable
                 style={styles.closeButton}
-                onPress={() => onClose()}
+                onPress={onClose}
                 accessibilityLabel="Close"
               >
                 <ThemedText style={styles.closeButtonText}>✕</ThemedText>
@@ -127,7 +94,7 @@ export default function CreateActivityModal({
 
               <ActivityCategoryField
                 categories={categories}
-                onCreate={handleCreatedCategory}
+                onCreate={() => {}}
               />
 
               <ActivityLastDoneField />
@@ -140,7 +107,7 @@ export default function CreateActivityModal({
             )}
 
             <Button
-              isLoading={isLoading}
+              isLoading={createActivity.isPending}
               style={styles.submitButton}
               onPress={form.handleSubmit(handleSubmit)}
             >

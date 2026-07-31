@@ -12,13 +12,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FormProvider } from 'react-hook-form';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import UnmountOnBlur from '@/components/router/unmount-on-blur';
 import AlertError from '@/components/alerts/alert-error';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import { activitiesAPI } from '@/api/api.activity';
-import { categoriesAPI, ICategory } from '@/api/api.categories';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
@@ -28,84 +25,51 @@ import { ActivityFormValues } from '@/components/activities/activity-schema';
 import Skeleton from '@/components/ui/skeleton';
 import AlertSuccess from '@/components/alerts/alert-success';
 import DeleteActivityModal from '@/components/activities/delete-activity-modal';
+import { useActivityQuery } from '@/hooks/queries/use-activities';
+import { useCategoriesQuery } from '@/hooks/queries/use-categories';
+import { useEditActivityMutation } from '@/hooks/mutations/use-activity-mutations';
+import { ApiError } from '@/lib/query/unwrap';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-function isString(val: any): val is string {
+function isString(val: unknown): val is string {
   return typeof val === 'string';
 }
 
-function EditActivityPage() {
+export default function EditActivityPage() {
   const { id: activityId } = useLocalSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
+  const activityQuery = useActivityQuery(isString(activityId) ? activityId : undefined);
+  const { data: categories = [] } = useCategoriesQuery();
+  const editActivity = useEditActivityMutation();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [initLoadErrorMessage, setInitLoadErrorMessage] = useState<
-    string | null
-  >(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<boolean>(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const form = useActivityForm();
-  const [categories, setCategories] = useState<ICategory[]>([]);
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const [dropdownTop, setDropdownTop] = useState(0);
   const [dropdownRight, setDropdownRight] = useState(0);
+  const hasInitializedForm = useRef(false);
 
   const router = useRouter();
 
   useEffect(() => {
-    const abortController = new AbortController();
+    if (!activityQuery.data || hasInitializedForm.current) return;
 
-    async function fetchData() {
-      if (!isString(activityId)) {
-        setErrorMessage('Invalid Activity ID');
-        setIsLoading(false);
-        return;
-      }
+    const activity = activityQuery.data;
+    form.reset({
+      name: activity.name,
+      ticker: activity.ticker,
+      interval: activity.interval,
+      categoryId: activity.categoryId,
+    });
+    hasInitializedForm.current = true;
+  }, [activityQuery.data, form]);
 
-      try {
-        const [activityResponse, categoriesResponse] = await Promise.all([
-          activitiesAPI.getById(activityId, {
-            signal: abortController.signal,
-          }),
-          categoriesAPI.getAllByUser({
-            signal: abortController.signal,
-          }),
-        ]);
-
-        if (activityResponse.data?.activity) {
-          const activity = activityResponse.data.activity;
-
-          form.reset({
-            name: activity.name,
-            ticker: activity.ticker,
-            interval: activity.interval,
-            categoryId: activity.categoryId,
-          });
-        }
-
-        if (categoriesResponse.data?.categories) {
-          setCategories(categoriesResponse.data.categories as ICategory[]);
-        }
-      } catch (err) {
-        if (!abortController.signal.aborted) {
-          console.error('Error fetching data', err);
-          setInitLoadErrorMessage('Error fetching page data, please try again');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchData();
-
-    return () => abortController.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function handleCreatedCategory(category: ICategory) {
-    setCategories((prev) => [...prev, category]);
-  }
+  useEffect(() => {
+    hasInitializedForm.current = false;
+  }, [activityId]);
 
   async function handleSubmit(values: ActivityFormValues) {
     if (!isString(activityId)) {
@@ -117,21 +81,27 @@ function EditActivityPage() {
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const response = await activitiesAPI.editActivity(activityId, {
-      name: values.name,
-      ticker: values.ticker,
-      interval: values.interval,
-      categoryId: values.categoryId,
-    });
-
-    if (response.error) {
-      setErrorMessage(response.error.message);
+    try {
+      await editActivity.mutateAsync({
+        activityId,
+        body: {
+          name: values.name,
+          ticker: values.ticker,
+          interval: values.interval,
+          categoryId: values.categoryId,
+        },
+      });
+      setSuccessMessage(true);
+      router.back();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage('Something went wrong, please try again.');
+      }
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    setSuccessMessage(true);
-    router.back();
   }
 
   const settingsToggleRef = useRef<View>(null);
@@ -153,16 +123,14 @@ function EditActivityPage() {
         },
       );
     });
-    // const rect = settingsToggleRef.current?.getBoundingClientRect();
-    // const containerRect = containerRef.current?.getBoundingClientRect();
-    // if (!showSettingsDropdown) {
-    //   setDropdownTop(rect.bottom - containerRect.top);
-    //   setDropdownRight(SCREEN_WIDTH - rect.right);
-    //   setShowSettingsDropdown(true);
-    // } else {
-    //   setShowSettingsDropdown(false);
-    // }
   }
+
+  const initLoadErrorMessage =
+    !isString(activityId)
+      ? 'Invalid Activity ID'
+      : activityQuery.isError
+        ? 'Error fetching page data, please try again'
+        : null;
 
   return (
     <View style={{ flex: 1 }} ref={containerRef}>
@@ -186,12 +154,6 @@ function EditActivityPage() {
             </View>
             <View style={styles.settingsWrapper} ref={settingsToggleRef}>
               <Pressable onPress={toggleSettingsModal}>
-                {/* <FontAwesome5 */}
-                {/*   name="trash" */}
-                {/*   size={24} */}
-                {/*   color="white" */}
-                {/*   style={styles.settingsDots} */}
-                {/* /> */}
                 <MaterialCommunityIcons
                   name="dots-vertical"
                   size={24}
@@ -205,7 +167,7 @@ function EditActivityPage() {
             {initLoadErrorMessage && (
               <AlertError>{initLoadErrorMessage}</AlertError>
             )}
-            {isLoading ? (
+            {activityQuery.isPending ? (
               <>
                 <Skeleton
                   width={200}
@@ -245,7 +207,7 @@ function EditActivityPage() {
 
                   <ActivityCategoryField
                     categories={categories}
-                    onCreate={handleCreatedCategory}
+                    onCreate={() => {}}
                   />
                 </FormProvider>
 
@@ -307,9 +269,6 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  container: {
-    flex: 1,
-  },
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 14,
@@ -328,7 +287,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  backRow: {},
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -365,31 +323,7 @@ const styles = StyleSheet.create({
   settingsDeleteButton: {
     color: 'rgba(211, 40, 40, 1)',
   },
-  deleteButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#c6282833',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(211, 40, 40, 0.3)',
-  },
-  deleteButtonText: {
-    color: 'rgba(211, 40, 40, 0.5)',
-    fontSize: 14,
-    fontFamily: '"system-ui"',
-  },
   submitButton: {
     marginTop: 30,
   },
 });
-
-export default function wrapper() {
-  return (
-    <UnmountOnBlur>
-      <EditActivityPage />
-    </UnmountOnBlur>
-  );
-}

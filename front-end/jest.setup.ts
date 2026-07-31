@@ -2,6 +2,11 @@ import { cleanup } from '@testing-library/react-native';
 import './test/setup/setup-expo-router';
 import { resetMockAuth } from './test/setup/mock-auth';
 
+jest.mock('@react-native-community/netinfo', () => ({
+  addEventListener: jest.fn(() => jest.fn()),
+  fetch: jest.fn(() => Promise.resolve({ isConnected: true })),
+}));
+
 afterEach(async () => {
   await cleanup();
   resetMockAuth();
@@ -95,11 +100,3 @@ jest.mock('react-native-toast-message', () => ({
     hide: jest.fn(),
   },
 }));
-
-jest.mock('@react-navigation/native', () => {
-  const actual = jest.requireActual('@react-navigation/native');
-  return {
-    ...actual,
-    useIsFocused: () => true,
-  };
-});

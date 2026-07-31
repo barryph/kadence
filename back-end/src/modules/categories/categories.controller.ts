@@ -103,7 +103,9 @@ export class CategoriesController {
     await this.categoriesService.delete(categoryId, userId);
 
     return {
-      success: true,
+      data: {
+        id: categoryId,
+      },
     };
   }
 }

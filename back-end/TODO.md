@@ -1,3 +1,1 @@
-Write unit tests
-Replace ForgotPasswordRateLimitGuard with @nestjs/throttler module
-Add rate limits
+Consolidate between custom errors and NestJS errors

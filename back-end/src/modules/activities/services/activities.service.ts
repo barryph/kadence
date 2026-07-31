@@ -28,7 +28,7 @@ export class ActivitiesService {
     private readonly getActivitiesByUserIdQuery: GetActivitiesByUserIdQuery,
     private readonly getActivityByIdQuery: GetActivityByIdQuery,
     private readonly getActivityTimelineQuery: GetActivityTimelineQuery,
-  ) {}
+  ) { }
 
   async create(
     createActivityDto: CreateActivityDTO,
@@ -115,8 +115,16 @@ export class ActivitiesService {
     if (editActivityDto.interval) {
       activity.changeInterval(editActivityDto.interval);
     }
-    // Allow null value to clear the category
     if (editActivityDto.categoryId !== undefined) {
+      // Confirm the user owns the category,
+      // while also allowing null value to clear the category
+      if (editActivityDto.categoryId !== null) {
+        const category = await this.categoriesRepo.getByIdAndUser(
+          editActivityDto.categoryId,
+          userId,
+        );
+        if (!category) throw new NotFoundException('Category not found');
+      }
       activity.changeCategoryId(editActivityDto.categoryId);
     }
 

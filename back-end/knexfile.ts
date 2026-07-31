@@ -53,7 +53,7 @@ export const production: Knex.Config = {
     ...(isProduction && {
       ssl: {
         ca: fs.readFileSync('global-bundle.pem'),
-        rejectUnauthorized: false, // Set to false if using self-signed certificates
+        rejectUnauthorized: true,
       },
     }),
   },

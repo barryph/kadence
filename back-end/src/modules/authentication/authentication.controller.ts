@@ -43,7 +43,12 @@ export class AuthenticationController {
       },
     },
   })
-  login(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
+  login(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() _dto: LoginDTO,
+    @Next() next: NextFunction,
+  ) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     passport.authenticate('local', (err, user: UserDTO) => {
       if (err) {

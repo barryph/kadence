@@ -11,6 +11,15 @@ class PasswordTooShortError extends ServerError {
     super('PASSWORD_TOO_SHORT', message, 422);
   }
 }
+class PasswordTooManyBytes extends ServerError {
+  constructor() {
+    super(
+      'PASSWORD_TOO_MANY_BYTES',
+      'Password is too long, it must be 72 bytes or fewer',
+      422,
+    );
+  }
+}
 
 export default class UserPassword {
   _value: string;
@@ -24,6 +33,10 @@ export default class UserPassword {
   }
 
   public async hashPassword(): Promise<string> {
+    const BCRYPT_MAX_BYTES = 72;
+    if (Buffer.byteLength(this._value, 'utf8') > BCRYPT_MAX_BYTES) {
+      throw new PasswordTooManyBytes();
+    }
     const salt = await bcrypt.genSalt(12);
     const hash = await bcrypt.hash(this._value, salt);
     return hash;

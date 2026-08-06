@@ -11,7 +11,10 @@ import { AuthenticationService } from './modules/authentication/services/authent
 import UsersRepo from './modules/users/repos/user.repository';
 import { KnexService } from './shared/knex/knex.service';
 
+// TODO: Implement "Sliding Expiry" - If the user is active and the cookie is more than halfway through its lifespan, silently issue a new cookie with a reset expiration window.
+
 const isRunningBehindReverseProxy = process.env.NODE_ENV === 'production';
+const ONE_HOUR_IN_MS = 1000 * 60 * 60;
 
 export function configureApp(app: INestApplication): void {
   app.useGlobalFilters(new AllExceptionsFilter());
@@ -71,7 +74,7 @@ export function configureApp(app: INestApplication): void {
         httpOnly: true,
         sameSite: 'strict',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 1000 * 60 * 60 * 7,
+        maxAge: ONE_HOUR_IN_MS * 24 * 14,
       },
     }),
   );

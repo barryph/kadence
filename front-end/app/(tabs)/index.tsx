@@ -46,6 +46,30 @@ function sortActivities(acts: IActivityClient[] = []) {
   });
 }
 
+function partitionActivities(acts: IActivityClient[]) {
+  const queued: IActivityClient[] = [];
+  const available: IActivityClient[] = [];
+  const completed: IActivityClient[] = [];
+
+  for (const activity of acts) {
+    if (activity.completedToday) {
+      completed.push(activity);
+    } else if (activity.queued) {
+      queued.push(activity);
+    } else {
+      available.push(activity);
+    }
+  }
+
+  return { queued, available, completed };
+}
+
+const ACTIVITY_SECTIONS = [
+  { title: 'Queued', key: 'queued' },
+  { title: 'Pending', key: 'available' },
+  { title: 'Completed', key: 'completed' },
+] as const;
+
 export default function Dashboard() {
   const router = useRouter();
   const { user } = useAuth();
@@ -121,6 +145,14 @@ export default function Dashboard() {
     activeCategoryId,
   );
 
+  const activitySections = useMemo(() => {
+    const groups = partitionActivities(filteredActivities);
+    return ACTIVITY_SECTIONS.map(({ title, key }) => ({
+      title,
+      items: groups[key],
+    })).filter((section) => section.items.length > 0);
+  }, [filteredActivities]);
+
   // Queue hydration is local and usually finishes with (or before) network data,
   // so this does not add a noticeable extra loading state.
   if (isActivitiesPending || isCategoriesPending || !isQueueHydrated) {
@@ -183,14 +215,26 @@ export default function Dashboard() {
                 </ThemedText>
               </ListItemShell>
             )}
-            {filteredActivities.map((activity) => (
-              <ActivityListItem
-                key={activity.id}
-                activity={activity}
-                onClick={handleActivityClick}
-                onEdit={handleEdit}
-                onComplete={handleComplete}
-              />
+            {activitySections.map((section, sectionIndex) => (
+              <View
+                key={section.title}
+                style={sectionIndex > 0 ? styles.sectionGroupSpaced : undefined}
+              >
+                <ThemedText type="defaultSemiBold" style={styles.sectionHeader}>
+                  {section.title}
+                </ThemedText>
+                <View style={styles.sectionItems}>
+                  {section.items.map((activity) => (
+                    <ActivityListItem
+                      key={activity.id}
+                      activity={activity}
+                      onClick={handleActivityClick}
+                      onEdit={handleEdit}
+                      onComplete={handleComplete}
+                    />
+                  ))}
+                </View>
+              </View>
             ))}
           </View>
         </Container>
@@ -234,5 +278,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingBottom: 12,
     gap: 2,
+  },
+  sectionHeader: {
+    opacity: 0.6,
+    marginBottom: 3,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    fontSize: 13,
+  },
+  sectionGroupSpaced: {
+    marginTop: 14,
+  },
+  sectionItems: {
+    gap: 8,
   },
 });

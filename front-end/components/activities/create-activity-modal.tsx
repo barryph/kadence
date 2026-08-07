@@ -30,7 +30,9 @@ interface CreateActivityModalProps {
   onClose: () => void;
 }
 
-export default function CreateActivityModal({ onClose }: CreateActivityModalProps) {
+export default function CreateActivityModal({
+  onClose,
+}: CreateActivityModalProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const form = useActivityForm();
   const { data: categories = [] } = useCategoriesQuery();

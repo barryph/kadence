@@ -38,7 +38,9 @@ function isString(val: unknown): val is string {
 
 export default function EditActivityPage() {
   const { id: activityId } = useLocalSearchParams();
-  const activityQuery = useActivityQuery(isString(activityId) ? activityId : undefined);
+  const activityQuery = useActivityQuery(
+    isString(activityId) ? activityId : undefined,
+  );
   const { data: categories = [] } = useCategoriesQuery();
   const editActivity = useEditActivityMutation();
 
@@ -125,12 +127,11 @@ export default function EditActivityPage() {
     });
   }
 
-  const initLoadErrorMessage =
-    !isString(activityId)
-      ? 'Invalid Activity ID'
-      : activityQuery.isError
-        ? 'Error fetching page data, please try again'
-        : null;
+  const initLoadErrorMessage = !isString(activityId)
+    ? 'Invalid Activity ID'
+    : activityQuery.isError
+      ? 'Error fetching page data, please try again'
+      : null;
 
   return (
     <View style={{ flex: 1 }} ref={containerRef}>

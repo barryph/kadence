@@ -17,4 +17,4 @@ import { NoopEmailSender } from './infrastructure/noop-email-sender';
     },
   ],
 })
-export class AuthenticaitonModule { }
+export class AuthenticaitonModule {}

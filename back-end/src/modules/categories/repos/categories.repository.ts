@@ -15,7 +15,7 @@ interface ICategoriesRepo {
 
 @Injectable()
 export default class CategoriesRepo implements ICategoriesRepo {
-  constructor(private readonly knexService: KnexService) { }
+  constructor(private readonly knexService: KnexService) {}
 
   async create(categoryDomain: Category) {
     const category = CategoryMap.toPersistence(categoryDomain);

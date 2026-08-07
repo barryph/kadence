@@ -14,25 +14,33 @@ import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
 import Container from '@/components/base/container';
 import FilterList from '@/components/filter-list/filter-list';
-import { YYYYMMDD } from '@/utils/date';
+import { getCurrentMonth, YYYYMMDD } from '@/utils/date';
 import {
   filterByCategoryId,
   toggleCategoryFilter,
 } from '@/components/filter-list/filter-by-category';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
+import { useTimelineQuery } from '@/hooks/queries/use-timeline';
 import { useCompleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 
 function sortActivities(acts: IActivityClient[] = []) {
   return [...acts].sort((a, b) => {
-    if ((a.queued && b.queued) || (!a.queued && !b.queued)) {
-      const daysUntilSort = (a.daysUntil || 0) - (b.daysUntil || 0);
-      if (daysUntilSort !== 0) return daysUntilSort;
-      return a.name.localeCompare(b.name);
+    // queued items go first
+    if (a.queued !== b.queued) {
+      if (a.queued) return -1;
+      if (b.queued) return 1;
     }
-    if (a.queued) return -1;
-    if (b.queued) return 1;
-    return 0;
+
+    // completed items go last
+    if (!!a.completedToday !== !!b.completedToday) {
+      if (a.completedToday) return 1;
+      if (b.completedToday) return -1;
+    }
+
+    const daysUntilSort = (a.daysUntil || 0) - (b.daysUntil || 0);
+    if (daysUntilSort !== 0) return daysUntilSort;
+    return a.name.localeCompare(b.name);
   });
 }
 
@@ -48,30 +56,53 @@ export default function Dashboard() {
     isPending: isCategoriesPending,
     isError: isCategoriesError,
   } = useCategoriesQuery();
+  const currentMonth = getCurrentMonth();
+  const { data: timeline } = useTimelineQuery(currentMonth);
   const completeActivity = useCompleteActivityMutation();
 
   const [queuedIds, setQueuedIds] = useState<Set<number>>(new Set());
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
   const [showNewActivityModal, setShowNewActivityModal] = useState(false);
 
-  const activitiesWithQueue = useMemo(() => {
-    const withQueue = activities.map((activity) => ({
-      ...activity,
-      queued: queuedIds.has(activity.id),
-    }));
-    return sortActivities(withQueue);
-  }, [activities, queuedIds]);
+  const today = YYYYMMDD();
 
-  function handleActivityClick(activity: IActivityClient) {
+  const activitiesWithQueue = useMemo(() => {
+    const withClientState = activities.map((activity) => {
+      const completedToday =
+        timeline?.[String(activity.id)]?.has(today) ?? false;
+      return {
+        ...activity,
+        queued: !completedToday && queuedIds.has(activity.id),
+        completedToday,
+      };
+    });
+    return sortActivities(withClientState);
+  }, [activities, queuedIds, timeline, today]);
+
+  function toggleQueuedActivity(activityId: number) {
     setQueuedIds((current) => {
       const next = new Set(current);
-      if (next.has(activity.id)) {
-        next.delete(activity.id);
+      if (next.has(activityId)) {
+        next.delete(activityId);
       } else {
-        next.add(activity.id);
+        next.add(activityId);
       }
       return next;
     });
+  }
+
+  function removeFromQueue(activityId: number) {
+    setQueuedIds((current) => {
+      if (!current.has(activityId)) return current;
+      const next = new Set(current);
+      next.delete(activityId);
+      return next;
+    });
+  }
+
+  function handleActivityClick(activity: IActivityClient) {
+    if (activity.completedToday) return;
+    toggleQueuedActivity(activity.id);
   }
 
   async function handleComplete(activityId: number) {
@@ -80,6 +111,7 @@ export default function Dashboard() {
         activityId,
         date: YYYYMMDD(),
       });
+      removeFromQueue(activityId);
       Toast.show({
         type: 'success',
         text1: 'Activity Completed',

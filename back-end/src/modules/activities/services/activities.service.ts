@@ -28,7 +28,7 @@ export class ActivitiesService {
     private readonly getActivitiesByUserIdQuery: GetActivitiesByUserIdQuery,
     private readonly getActivityByIdQuery: GetActivityByIdQuery,
     private readonly getActivityTimelineQuery: GetActivityTimelineQuery,
-  ) { }
+  ) {}
 
   async create(
     createActivityDto: CreateActivityDTO,

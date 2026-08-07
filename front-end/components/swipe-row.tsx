@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
@@ -25,6 +25,7 @@ interface IProps {
   swipeRightBackground?: string;
   children: ReactNode;
   queued?: boolean;
+  disableSwipeRight?: boolean;
 }
 
 export default function SwipeRow({
@@ -37,8 +38,14 @@ export default function SwipeRow({
   swipeRightColor,
   swipeRightBackground,
   children,
+  disableSwipeRight = false,
 }: IProps) {
   const translateX = useSharedValue(0);
+  const swipeRightDisabled = useSharedValue(disableSwipeRight);
+
+  useEffect(() => {
+    swipeRightDisabled.value = disableSwipeRight;
+  }, [disableSwipeRight, swipeRightDisabled]);
 
   const triggerSwipeRight = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -53,6 +60,11 @@ export default function SwipeRow({
   const pan = Gesture.Pan()
     .activeOffsetX([-10, 10])
     .onUpdate((event) => {
+      if (swipeRightDisabled.value && event.translationX > 0) {
+        translateX.value = 0;
+        return;
+      }
+
       // Add resistance when dragging past MAX_SWIPE
       if (event.translationX > MAX_SWIPE) {
         translateX.value = MAX_SWIPE + (event.translationX - MAX_SWIPE) * 0.2;
@@ -65,7 +77,7 @@ export default function SwipeRow({
     .onEnd(() => {
       const finalX = translateX.value;
 
-      if (finalX > ACTION_THRESHOLD) {
+      if (finalX > ACTION_THRESHOLD && !swipeRightDisabled.value) {
         // Right swipe
         scheduleOnRN(triggerSwipeRight);
       } else if (finalX < -ACTION_THRESHOLD) {

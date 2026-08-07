@@ -79,4 +79,21 @@ describe('activity queue storage', () => {
       JSON.stringify([2]),
     );
   });
+
+  it('coalesces rapid concurrent saves into one AsyncStorage write', async () => {
+    const setItem = AsyncStorage.setItem as jest.Mock;
+    setItem.mockClear();
+
+    await Promise.all([
+      saveActivityQueue('user-1', [1]),
+      saveActivityQueue('user-1', [1, 2]),
+      saveActivityQueue('user-1', [2]),
+    ]);
+
+    expect(setItem).toHaveBeenCalledTimes(1);
+    expect(setItem).toHaveBeenCalledWith(
+      storageKeys.activityQueue('user-1'),
+      JSON.stringify([2]),
+    );
+  });
 });

@@ -5,8 +5,10 @@ import { storageKeys } from '@/lib/storage/keys';
 const memoryCache = new Map<string, number[]>();
 /** Dedupes concurrent loads for the same user so only one AsyncStorage read runs. */
 const inflightLoads = new Map<string, Promise<number[]>>();
-/** Monotonic write generation per user — drops stale AsyncStorage writes. */
-const writeGeneration = new Map<string, number>();
+/** Coalesced write per user — concurrent saves share one flush to disk. */
+const inflightWrites = new Map<string, Promise<void>>();
+/** Last value written to disk, used to skip redundant flushes. */
+const lastPersisted = new Map<string, string>();
 
 function normalizeIds(value: unknown): number[] {
   if (!Array.isArray(value)) return [];
@@ -14,7 +16,7 @@ function normalizeIds(value: unknown): number[] {
 }
 
 function serializeIds(ids: Iterable<number>): string {
-  return JSON.stringify([...ids].sort((a, b) => a - b));
+  return JSON.stringify([...ids]);
 }
 
 export function getCachedActivityQueue(userId: string): number[] | undefined {
@@ -42,6 +44,25 @@ export async function loadActivityQueue(userId: string): Promise<number[]> {
   return loadPromise;
 }
 
+async function flushActivityQueue(userId: string): Promise<void> {
+  // Yield so concurrent saveActivityQueue calls in the same tick can update cache.
+  await Promise.resolve();
+
+  const key = storageKeys.activityQueue(userId);
+
+  while (true) {
+    const ids = memoryCache.get(userId) ?? [];
+    const serialized = serializeIds(ids);
+
+    if (lastPersisted.get(userId) === serialized) {
+      return;
+    }
+
+    await setJSON(key, ids);
+    lastPersisted.set(userId, serialized);
+  }
+}
+
 export async function saveActivityQueue(
   userId: string,
   ids: Iterable<number>,
@@ -55,23 +76,29 @@ export async function saveActivityQueue(
 
   memoryCache.set(userId, next);
 
-  const generation = (writeGeneration.get(userId) ?? 0) + 1;
-  writeGeneration.set(userId, generation);
-
-  const key = storageKeys.activityQueue(userId);
-  await setJSON(key, next);
-
-  // A newer save may have started while we were writing. Persist the latest
-  // cached value so rapid toggles cannot leave stale data on disk.
-  if (writeGeneration.get(userId) !== generation) {
-    await setJSON(key, memoryCache.get(userId) ?? []);
+  let inflight = inflightWrites.get(userId);
+  if (!inflight) {
+    inflight = flushActivityQueue(userId).finally(() => {
+      inflightWrites.delete(userId);
+    });
+    inflightWrites.set(userId, inflight);
   }
+
+  return inflight;
 }
 
 export async function clearActivityQueue(userId: string): Promise<void> {
+  const inflightWrite = inflightWrites.get(userId);
+
   memoryCache.delete(userId);
   inflightLoads.delete(userId);
-  writeGeneration.delete(userId);
+  lastPersisted.delete(userId);
+  inflightWrites.delete(userId);
+
+  if (inflightWrite) {
+    await inflightWrite.catch(() => {});
+  }
+
   await removeItem(storageKeys.activityQueue(userId));
 }
 
@@ -79,5 +106,6 @@ export async function clearActivityQueue(userId: string): Promise<void> {
 export function resetActivityQueueCache(): void {
   memoryCache.clear();
   inflightLoads.clear();
-  writeGeneration.clear();
+  inflightWrites.clear();
+  lastPersisted.clear();
 }

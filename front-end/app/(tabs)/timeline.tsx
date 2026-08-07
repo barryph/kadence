@@ -6,7 +6,6 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import { type IActivity } from '@/api/api.activity';
 import { type ITimelineSet } from '@/api/api.timeline';
 import Button from '@/components/base/button';
 import Animated, {
@@ -684,8 +683,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: CELL_GAP,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,.1)',
   },
   paddingElementForLoadMoreColumn: {
     width: LOAD_MORE_WIDTH,

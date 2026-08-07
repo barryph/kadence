@@ -8,6 +8,8 @@ import SwipeRow from '@/components/swipe-row';
 import type { IActivityClient } from '@/api/api.activity';
 import ListItemShell from '@/components/list-item-shell';
 
+/** Success gradient for completed / queued activity progress bars */
+const COMPLETED_BAR_COLORS = ['#087cff', '#08d8ff', '#52f2a8'] as const;
 const DAYS_IN_WEEK = 7;
 
 interface IProps {
@@ -23,21 +25,29 @@ export default function ActivityListItem({
   onComplete,
   onClick,
 }: IProps) {
+  const completedToday = !!activity.completedToday;
   const remainingPercent = Math.min(
     Math.max((activity.daysUntil || 0) / DAYS_IN_WEEK, 0),
     1,
   );
+  const barFlex = completedToday ? 1 : 1 - remainingPercent;
 
   return (
     <ListItemShell
       style={{
         borderWidth: 0,
+        opacity: completedToday ? 0.72 : 1,
       }}
     >
-      <Pressable onPress={() => onClick(activity)}>
+      <Pressable
+        onPress={() => {
+          if (!completedToday) onClick(activity);
+        }}
+      >
         <SwipeRow
           onSwipeLeft={() => onEdit(activity)}
           onSwipeRight={() => onComplete(activity.id)}
+          disableSwipeRight={completedToday}
           swipeLeftChild={
             <ThemedText style={{ fontSize: 24, color: '#eee' }}>
               <FontAwesome6 name="gear" size={26} />
@@ -87,22 +97,33 @@ export default function ActivityListItem({
                   )}
                 </View>
                 <View style={styles.activityDetails}>
-                  <ThemedText
-                    style={[
-                      styles.activityDetailsText,
-                      activity.queued && styles.activityDetailsTextSelected,
-                    ]}
-                  >
-                    REMAIN:
+                  {completedToday ? (
+                    <View style={styles.doneBadge}>
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={14}
+                        color={COMPLETED_BAR_COLORS[2]}
+                      />
+                      <ThemedText style={styles.doneText}>DONE</ThemedText>
+                    </View>
+                  ) : (
                     <ThemedText
                       style={[
-                        styles.activityDetailsSpan,
-                        activity.queued && styles.activityDetailsSpanSelected,
+                        styles.activityDetailsText,
+                        activity.queued && styles.activityDetailsTextSelected,
                       ]}
                     >
-                      {activity.daysUntil}
+                      REMAIN:
+                      <ThemedText
+                        style={[
+                          styles.activityDetailsSpan,
+                          activity.queued && styles.activityDetailsSpanSelected,
+                        ]}
+                      >
+                        {activity.daysUntil}
+                      </ThemedText>
                     </ThemedText>
-                  </ThemedText>
+                  )}
                   <ThemedText
                     style={[
                       styles.activityDetailsText,
@@ -144,16 +165,13 @@ export default function ActivityListItem({
                     flexDirection: 'row',
                   }}
                 >
-                  {/** This reverses the bars direction **/}
-                  {/* <View style={{ flex: remainingPercent, backgroundColor: 'transparent' }} /> */}
-                  {/** Setting flex to a decimal defines the length of the gradient bar **/}
-                  {activity.queued ? (
+                  {completedToday || activity.queued ? (
                     <LinearGradient
-                      colors={['#087cff', '#08d8ff', '#52f2a8']}
+                      colors={[...COMPLETED_BAR_COLORS]}
                       locations={[0, 0.62, 1]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
-                      style={{ flex: 1 - remainingPercent }}
+                      style={{ flex: barFlex }}
                     />
                   ) : activity.daysUntil === 0 ? (
                     <LinearGradient
@@ -161,7 +179,7 @@ export default function ActivityListItem({
                       locations={[0, 0.5, 1]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
-                      style={{ flex: 1 - remainingPercent }}
+                      style={{ flex: barFlex }}
                     />
                   ) : (
                     <LinearGradient
@@ -169,15 +187,9 @@ export default function ActivityListItem({
                       locations={[0, 0.42, 1]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
-                      style={{ flex: 1 - remainingPercent }}
+                      style={{ flex: barFlex }}
                     />
                   )}
-                  {/* <LinearGradient */}
-                  {/*   colors={activity.queued ? ['#ffffff', '#ffffff'] : ['#0072ff', '#00c6ff']} */}
-                  {/*   start={{ x: 0, y: 0 }} */}
-                  {/*   end={{ x: 1, y: 0 }} */}
-                  {/*   style={{ flex: 1 - remainingPercent }} */}
-                  {/* /> */}
                 </View>
               </View>
             </View>
@@ -236,6 +248,7 @@ const styles = StyleSheet.create({
   activityDetails: {
     flexDirection: 'row',
     gap: 8,
+    alignItems: 'center',
   },
   activityDetailsText: {
     fontSize: 12,
@@ -257,6 +270,17 @@ const styles = StyleSheet.create({
   },
   activityDetailsSpanSelected: {
     color: '#fff',
+  },
+  doneBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  doneText: {
+    fontSize: 12,
+    fontWeight: 700,
+    color: COMPLETED_BAR_COLORS[2],
+    letterSpacing: -0.45,
   },
   activityBarContainer: {
     marginHorizontal: 3,

@@ -34,6 +34,7 @@ import {
   useUndoActivityMutation,
 } from '@/hooks/mutations/use-activity-mutations';
 import { ApiError } from '@/lib/query/unwrap';
+import { getCurrentMonth } from '@/utils/date';
 
 // TODO: Make whole block clickable, not only the colored cell
 
@@ -100,11 +101,6 @@ function buildMonthDateColumns(month: string): TimelineDateColumn[] {
   }
 
   return columns;
-}
-
-function getCurrentMonth() {
-  const date = new Date();
-  return formatMonthKey(date);
 }
 
 function TimelineScreen() {

@@ -1,4 +1,4 @@
-import { formatDateISO, YYYYMMDD } from '../date';
+import { formatDateISO, getCurrentMonth, YYYYMMDD } from '../date';
 
 describe('date utils', () => {
   describe('formatDateISO', () => {
@@ -23,6 +23,23 @@ describe('date utils', () => {
     it('formats a given date in YYYY-MM-DD format', () => {
       const date = new Date(2026, 6, 28);
       expect(YYYYMMDD(date)).toBe('2026-07-28');
+    });
+  });
+
+  describe('getCurrentMonth', () => {
+    it('returns today as YYYY-MM by default', () => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      expect(getCurrentMonth()).toBe(`${year}-${month}`);
+    });
+
+    it('formats a given date as YYYY-MM', () => {
+      expect(getCurrentMonth(new Date(2026, 6, 28))).toBe('2026-07');
+    });
+
+    it('zero-pads single-digit months', () => {
+      expect(getCurrentMonth(new Date(2026, 0, 5))).toBe('2026-01');
     });
   });
 });

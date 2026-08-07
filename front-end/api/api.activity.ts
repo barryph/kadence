@@ -15,6 +15,7 @@ export interface IActivity {
 // Extend IActivity for client-side properties
 export interface IActivityClient extends IActivity {
   queued?: boolean;
+  completedToday?: boolean;
 }
 
 interface CreateActivityDTO extends Omit<

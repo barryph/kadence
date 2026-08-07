@@ -33,15 +33,13 @@
           "image": "./assets/images/icon-new.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#000000",
           "dark": {
             "backgroundColor": "#000000"
           }
         }
       ],
-      [
-        "expo-font"
-      ],
+      ["expo-font"],
       "@react-native-community/datetimepicker"
     ],
     "experiments": {

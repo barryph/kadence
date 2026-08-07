@@ -9,6 +9,8 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
+const isTestMode = process.env.NODE_ENV === 'test';
+
 @Module({
   imports: [
     DatabaseModule,
@@ -16,7 +18,6 @@ import { APP_GUARD } from '@nestjs/core';
     AuthenticaitonModule,
     ActivitiesModule,
     CategoriesModule,
-    // Defines the global throttle
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -29,11 +30,16 @@ import { APP_GUARD } from '@nestjs/core';
   controllers: [AppController],
   providers: [
     AppService,
-    // Applies the throttle globally by binding the ThrottlerGuard Guard to every endpoint
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // Disable rate limits in test mode
+    ...(isTestMode
+      ? []
+      : [
+          // Applies the throttle globally by binding the ThrottlerGuard Guard to every endpoint
+          {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+          },
+        ]),
   ],
 })
 export class AppModule {}

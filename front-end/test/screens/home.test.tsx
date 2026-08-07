@@ -5,14 +5,21 @@ import { TestQueryProvider } from '@/test/setup/test-query-client';
 import HomeScreen from '@/app/(tabs)/index';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
+import { useTimelineQuery } from '@/hooks/queries/use-timeline';
 import { testActivities } from '@/test/setup/fixtures/activities';
 import { testCategories } from '@/test/setup/fixtures/categories';
+import { resetActivityQueueCache } from '@/lib/storage/activity-queue';
 
 jest.mock('@/hooks/queries/use-activities');
 jest.mock('@/hooks/queries/use-categories');
+jest.mock('@/hooks/queries/use-timeline');
+jest.mock('@/context/auth-context', () =>
+  require('@/test/setup/mock-auth').createAuthContextMock(),
+);
 
 const mockUseActivitiesQuery = useActivitiesQuery as jest.Mock;
 const mockUseCategoriesQuery = useCategoriesQuery as jest.Mock;
+const mockUseTimelineQuery = useTimelineQuery as jest.Mock;
 
 function renderWithProviders(ui: React.ReactElement) {
   return render(
@@ -28,6 +35,7 @@ async function renderHome() {
 
 describe('Home screen', () => {
   beforeEach(() => {
+    resetActivityQueueCache();
     mockUseActivitiesQuery.mockReturnValue({
       data: testActivities,
       isPending: false,
@@ -35,6 +43,11 @@ describe('Home screen', () => {
     });
     mockUseCategoriesQuery.mockReturnValue({
       data: testCategories,
+      isPending: false,
+      isError: false,
+    });
+    mockUseTimelineQuery.mockReturnValue({
+      data: undefined,
       isPending: false,
       isError: false,
     });

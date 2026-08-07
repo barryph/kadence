@@ -19,10 +19,12 @@ import {
   filterByCategoryId,
   toggleCategoryFilter,
 } from '@/components/filter-list/filter-by-category';
+import { useAuth } from '@/context/auth-context';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useTimelineQuery } from '@/hooks/queries/use-timeline';
 import { useCompleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
+import { useActivityQueue } from '@/hooks/use-activity-queue';
 
 function sortActivities(acts: IActivityClient[] = []) {
   return [...acts].sort((a, b) => {
@@ -46,6 +48,7 @@ function sortActivities(acts: IActivityClient[] = []) {
 
 export default function Dashboard() {
   const router = useRouter();
+  const { user } = useAuth();
   const {
     data: activities = [],
     isPending: isActivitiesPending,
@@ -59,8 +62,13 @@ export default function Dashboard() {
   const currentMonth = getCurrentMonth();
   const { data: timeline } = useTimelineQuery(currentMonth);
   const completeActivity = useCompleteActivityMutation();
+  const {
+    queuedIds,
+    isHydrated: isQueueHydrated,
+    toggleQueuedActivity,
+    removeFromQueue,
+  } = useActivityQueue(user?.id ?? '');
 
-  const [queuedIds, setQueuedIds] = useState<Set<number>>(new Set());
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
   const [showNewActivityModal, setShowNewActivityModal] = useState(false);
 
@@ -78,27 +86,6 @@ export default function Dashboard() {
     });
     return sortActivities(withClientState);
   }, [activities, queuedIds, timeline, today]);
-
-  function toggleQueuedActivity(activityId: number) {
-    setQueuedIds((current) => {
-      const next = new Set(current);
-      if (next.has(activityId)) {
-        next.delete(activityId);
-      } else {
-        next.add(activityId);
-      }
-      return next;
-    });
-  }
-
-  function removeFromQueue(activityId: number) {
-    setQueuedIds((current) => {
-      if (!current.has(activityId)) return current;
-      const next = new Set(current);
-      next.delete(activityId);
-      return next;
-    });
-  }
 
   function handleActivityClick(activity: IActivityClient) {
     if (activity.completedToday) return;
@@ -134,7 +121,9 @@ export default function Dashboard() {
     activeCategoryId,
   );
 
-  if (isActivitiesPending || isCategoriesPending) {
+  // Queue hydration is local and usually finishes with (or before) network data,
+  // so this does not add a noticeable extra loading state.
+  if (isActivitiesPending || isCategoriesPending || !isQueueHydrated) {
     return <LoaderScreen text="Loading activities..." />;
   }
 

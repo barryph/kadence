@@ -14,6 +14,7 @@ import { testCategories } from '@/test/setup/fixtures/categories';
 import { testTimeline } from '@/test/setup/fixtures/timeline';
 import { timelineToSet } from '@/lib/query/timeline-utils';
 import { setMockAuth } from '@/test/setup/mock-auth';
+import { resetActivityQueueCache } from '@/lib/storage/activity-queue';
 
 jest.mock('@/hooks/queries/use-activities');
 jest.mock('@/hooks/queries/use-categories');
@@ -39,6 +40,7 @@ function renderWithProviders(ui: React.ReactElement) {
 }
 
 beforeEach(() => {
+  resetActivityQueueCache();
   setMockAuth({ isAuthenticated: true });
   mockUseActivitiesQuery.mockReturnValue({
     data: testActivities,

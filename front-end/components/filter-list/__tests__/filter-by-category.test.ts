@@ -1,6 +1,8 @@
 import {
   filterByCategoryId,
   toggleCategoryFilter,
+  toggleCategoryFilterMulti,
+  toSingleSelectedCategoryIds,
 } from '@/components/filter-list/filter-by-category';
 
 describe('filterByCategoryId', () => {
@@ -33,5 +35,25 @@ describe('toggleCategoryFilter', () => {
 
   it('switches to a different category when another is active', () => {
     expect(toggleCategoryFilter(1, 2)).toBe(2);
+  });
+});
+
+describe('toggleCategoryFilterMulti', () => {
+  it('adds a category when it is not selected', () => {
+    expect(toggleCategoryFilterMulti([], 2)).toEqual([2]);
+  });
+
+  it('removes a category when it is already selected', () => {
+    expect(toggleCategoryFilterMulti([1, 2], 2)).toEqual([1]);
+  });
+});
+
+describe('toSingleSelectedCategoryIds', () => {
+  it('returns an empty array when no category is active', () => {
+    expect(toSingleSelectedCategoryIds(null)).toEqual([]);
+  });
+
+  it('returns a single-item array when a category is active', () => {
+    expect(toSingleSelectedCategoryIds(3)).toEqual([3]);
   });
 });

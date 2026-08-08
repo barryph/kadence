@@ -24,6 +24,7 @@ import FilterList from '@/components/filter-list/filter-list';
 import {
   filterByCategoryId,
   toggleCategoryFilter,
+  toSingleSelectedCategoryIds,
 } from '@/components/filter-list/filter-by-category';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
@@ -387,7 +388,7 @@ function TimelineScreen() {
 
       <FilterList
         categories={categories}
-        activeCategoryId={activeCategoryId}
+        selectedCategoryIds={toSingleSelectedCategoryIds(activeCategoryId)}
         onCategoryPress={handleCategoryPress}
         style={styles.filterList}
       />

@@ -15,9 +15,11 @@ import ActivityEvent from '../domain/activityEvent.entity';
 import { GetActivitiesByUserIdQuery } from '../queries/getActivitiesByUserId.query';
 import { GetActivityByIdQuery } from '../queries/getActivityById.query';
 import { GetActivityTimelineQuery } from '../queries/getActivityTimeline.query';
+import { GetActivityEventsQuery } from '../queries/getActivityEvents.query';
 import EditActivityDTO from '../dtos/editActivity.dto';
 import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 import { ActivityTimelineDTO } from '../dtos/getTimelineDto.dto';
+import { ActivityEventsDTO } from '../dtos/getActivityEvents.dto';
 
 @Injectable()
 export class ActivitiesService {
@@ -28,6 +30,7 @@ export class ActivitiesService {
     private readonly getActivitiesByUserIdQuery: GetActivitiesByUserIdQuery,
     private readonly getActivityByIdQuery: GetActivityByIdQuery,
     private readonly getActivityTimelineQuery: GetActivityTimelineQuery,
+    private readonly getActivityEventsQuery: GetActivityEventsQuery,
   ) {}
 
   async create(
@@ -200,6 +203,14 @@ export class ActivitiesService {
     month: string,
   ): Promise<ActivityTimelineDTO> {
     return this.getActivityTimelineQuery.execute(userId, month);
+  }
+
+  async getActivityEvents(
+    userId: string,
+    from: string,
+    to: string,
+  ): Promise<ActivityEventsDTO> {
+    return this.getActivityEventsQuery.execute(userId, from, to);
   }
 
   async deleteActivity(activityId: string, userId: string): Promise<void> {

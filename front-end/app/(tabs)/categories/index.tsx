@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import Background from '@/components/backgrounds/background';
@@ -22,6 +23,7 @@ import { ApiError } from '@/lib/query/unwrap';
 import type { ApiResponse } from '@/api/api.types';
 
 export default function Categories() {
+  const router = useRouter();
   const {
     data: activities = [],
     isPending: isActivitiesPending,
@@ -118,6 +120,20 @@ export default function Categories() {
           <ThemedText style={styles.title} type="title" size="large">
             Categories
           </ThemedText>
+
+          <Pressable
+            onPress={() => router.push('/categories/insights')}
+            style={styles.insightsLink}
+          >
+            <ThemedText
+              type="link"
+              size="small"
+              type="default"
+              style={styles.insightsLinkText}
+            >
+              See Insights &rarr;
+            </ThemedText>
+          </Pressable>
 
           <View style={styles.categories}>
             {sortedCategories.length === 0 && (
@@ -235,7 +251,14 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 8,
+  },
+  insightsLink: {
+    alignSelf: 'flex-start',
+    marginBottom: 16,
+  },
+  insightsLinkText: {
+    textDecorationLine: 'underline',
   },
   editModalTitleRow: {
     flexDirection: 'row',

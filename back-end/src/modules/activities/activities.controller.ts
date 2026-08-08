@@ -16,6 +16,7 @@ import { ActivitiesService } from './services/activities.service';
 import CreateActivityDTO from './dtos/createActivity.dto';
 import EditActivityDTO from './dtos/editActivity.dto';
 import ActivityDateActionDTO from './dtos/activityDateAction.dto';
+import GetActivityEventsQueryDTO from './dtos/getActivityEvents.dto';
 import { UserDTO } from '../users/mappers/userMap';
 import { ApiBody } from '@nestjs/swagger';
 
@@ -82,6 +83,23 @@ export class ActivitiesController {
       data: {
         timeline,
       },
+    };
+  }
+
+  @Get('/events')
+  @UseGuards(IsAuthedGuard)
+  async getActivityEvents(
+    @Req() req: Request,
+    @Query() query: GetActivityEventsQueryDTO,
+  ) {
+    const userId = (req.user as UserDTO).id;
+    const events = await this.activitiesService.getActivityEvents(
+      userId,
+      query.from,
+      query.to,
+    );
+    return {
+      data: events,
     };
   }
 

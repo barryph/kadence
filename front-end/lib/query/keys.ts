@@ -10,4 +10,8 @@ export const queryKeys = {
     all: ['timeline'] as const,
     month: (month: string) => ['timeline', month] as const,
   },
+  events: {
+    all: ['events'] as const,
+    range: (from: string, to: string) => ['events', from, to] as const,
+  },
 };

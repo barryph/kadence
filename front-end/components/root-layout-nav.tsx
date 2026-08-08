@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
 
+// TODO: Fix below
+// FIXME: Logging out still causes use activity queue to error because the page attempts to render even when user is undefined
+
 /**
  * Root navigation stack + session gate.
  * Redirects unauthenticated users to auth screens and authenticated users away from them.

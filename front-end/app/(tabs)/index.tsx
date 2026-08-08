@@ -18,6 +18,7 @@ import { getCurrentMonth, YYYYMMDD } from '@/utils/date';
 import {
   filterByCategoryId,
   toggleCategoryFilter,
+  toSingleSelectedCategoryIds,
 } from '@/components/filter-list/filter-by-category';
 import { useAuth } from '@/context/auth-context';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
@@ -190,7 +191,7 @@ export default function Dashboard() {
           <FilterList
             label="Categories"
             categories={categories}
-            activeCategoryId={activeCategoryId}
+            selectedCategoryIds={toSingleSelectedCategoryIds(activeCategoryId)}
             onCategoryPress={handleCategoryPress}
           />
           <View

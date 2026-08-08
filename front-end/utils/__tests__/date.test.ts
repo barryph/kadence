@@ -1,4 +1,4 @@
-import { formatDateISO, getCurrentMonth, YYYYMMDD } from '../date';
+import { formatDateISO, getCurrentMonth, getLastNWeekRange, getWeekStartMonday, YYYYMMDD } from '../date';
 
 describe('date utils', () => {
   describe('formatDateISO', () => {
@@ -40,6 +40,34 @@ describe('date utils', () => {
 
     it('zero-pads single-digit months', () => {
       expect(getCurrentMonth(new Date(2026, 0, 5))).toBe('2026-01');
+    });
+  });
+
+  describe('getWeekStartMonday', () => {
+    it('returns Monday for a Wednesday date', () => {
+      expect(getWeekStartMonday('2026-03-04')).toBe('2026-03-02');
+    });
+
+    it('returns the same date when the input is already Monday', () => {
+      expect(getWeekStartMonday('2026-03-02')).toBe('2026-03-02');
+    });
+
+    it('groups Sunday into the week starting the previous Monday', () => {
+      expect(getWeekStartMonday('2026-03-08')).toBe('2026-03-02');
+    });
+  });
+
+  describe('getLastNWeekRange', () => {
+    it('returns consecutive Monday week starts ending on the given date', () => {
+      const range = getLastNWeekRange(3, new Date(2026, 2, 10));
+
+      expect(range.from).toBe('2026-02-23');
+      expect(range.to).toBe('2026-03-10');
+      expect(range.weekStarts).toEqual([
+        '2026-02-23',
+        '2026-03-02',
+        '2026-03-09',
+      ]);
     });
   });
 });

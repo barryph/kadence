@@ -11,7 +11,7 @@ import type { ICategory } from '@/api/api.categories';
 interface FilterListProps {
   label?: string;
   categories: ICategory[];
-  activeCategoryId: number | null;
+  selectedCategoryIds: number[];
   onCategoryPress: (categoryId: number) => void;
   style?: ViewStyle;
 }
@@ -19,7 +19,7 @@ interface FilterListProps {
 export default function FilterList({
   label,
   categories,
-  activeCategoryId,
+  selectedCategoryIds,
   onCategoryPress,
   style,
 }: FilterListProps) {
@@ -37,7 +37,7 @@ export default function FilterList({
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.pillsRow}>
           {categories.map((category) => {
-            const isActive = activeCategoryId === category.id;
+            const isActive = selectedCategoryIds.includes(category.id!);
             return (
               <Pressable
                 key={category.id}

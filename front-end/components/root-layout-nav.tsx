@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
 
@@ -10,6 +10,7 @@ export function RootLayoutNav() {
   const { isAuthenticated, isLoading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (isLoading) return;
@@ -24,8 +25,12 @@ export function RootLayoutNav() {
       router.replace('/login');
     } else if (isAuthenticated && inAuthGroup) {
       router.replace('/');
+    } else {
+      setIsReady(true);
     }
   }, [isAuthenticated, isLoading, segments, router]);
+
+  if (!isReady) return null;
 
   return (
     <Stack>

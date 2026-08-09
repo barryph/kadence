@@ -12,10 +12,6 @@ import {
   CHART_PLOT_LEFT_OFFSET,
   computeChartHorizontalLayout,
 } from '@/lib/insights/chart-horizontal-layout';
-import {
-  computeInsightsYAxisScale,
-  getSeriesDataMax,
-} from '@/lib/insights/chart-y-axis-scale';
 import { formatWeekLabel } from '@/utils/date';
 
 export interface InsightsLineSeries {
@@ -30,6 +26,12 @@ interface InsightsLineChartKitProps {
   emptyMessage?: string;
 }
 
+const yAxisScale = {
+  maxValue: 7,
+  noOfSections: 7,
+  stepValue: 1,
+};
+
 export default function InsightsLineChartKit({
   series,
   weekStarts,
@@ -39,13 +41,6 @@ export default function InsightsLineChartKit({
   const [chartWidth, setChartWidth] = useState(0);
 
   const labels = useMemo(() => weekStarts.map(formatWeekLabel), [weekStarts]);
-
-  const yAxisScale = useMemo(() => {
-    const values = series.flatMap((item) =>
-      item.data.map((point) => point.value),
-    );
-    return computeInsightsYAxisScale(getSeriesDataMax(values));
-  }, [series]);
 
   const chartData = useMemo(
     () => ({

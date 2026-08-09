@@ -397,6 +397,7 @@ function TimelineScreen() {
         selectedIds={toSingleSelectedCategoryIds(activeCategoryId)}
         onItemPress={handleCategoryPress}
         style={styles.filterList}
+        scrollViewStyle={styles.filterListScrollViewStyle}
       />
 
       <View style={styles.topRow}>
@@ -506,10 +507,10 @@ function TimelineScreen() {
                               ? styles.statusCellComplete
                               : styles.statusCellIncomplete,
                             isCompleted &&
-                              activity.category?.color && {
-                                backgroundColor: activity.category?.color,
-                                boxShadow: `0px 0px 8px 1px ${activity.category.color}33`,
-                              },
+                            activity.category?.color && {
+                              backgroundColor: activity.category?.color,
+                              boxShadow: `0px 0px 8px 1px ${activity.category.color}33`,
+                            },
                             isToggling && styles.statusCellToggling,
                           ]}
                         />
@@ -560,12 +561,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filterList: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 0,
     paddingTop: 10,
     paddingBottom: 8,
     backgroundColor: 'rgba(26, 65, 99, 0.3)',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  filterListScrollViewStyle: {
+    paddingHorizontal: 8,
   },
   topRow: {
     flexDirection: 'row',

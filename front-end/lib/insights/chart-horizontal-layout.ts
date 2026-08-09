@@ -18,7 +18,7 @@
  * offset and the origin of the horizontal grid lines.
  */
 export const CHART_PLOT_LEFT_OFFSET = 22;
-export const CHART_END_SPACING = 4;
+export const CHART_END_SPACING = 14;
 
 export interface ChartHorizontalLayout {
   width: number;

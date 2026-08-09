@@ -54,11 +54,8 @@ export default function GoalInsightsScreen() {
           </ThemedText>
         </View>
 
-        <ThemedText type="defaultBold" size="large" style={styles.activityName}>
+        <ThemedText type="defaultBold" style={styles.activityName}>
           {stats.activityName}
-        </ThemedText>
-        <ThemedText size="small" style={styles.targetText}>
-          Target Frequency: {stats.goal.targetPerWeek}x per week
         </ThemedText>
 
         <ListItemShell style={styles.section}>
@@ -77,6 +74,25 @@ export default function GoalInsightsScreen() {
             height={10}
             style={styles.progressBar}
           />
+          {/* <hr */}
+          {/*   style={{ */}
+          {/*     width: '100%', */}
+          {/*     borderColor: '#fafafa22', */}
+          {/*     borderTopWidth: 0, */}
+          {/*   }} */}
+          {/* /> */}
+          {/* <ThemedText style={[styles.sectionLabel]} type="defaultSemiBold"> */}
+          {/*   Target Frequency:{' '} */}
+          {/*   <ThemedText */}
+          {/*     type="defaultSemiBold" */}
+          {/*     style={[ */}
+          {/*       styles.sectionLabel, */}
+          {/*       { textTransform: 'none', opacity: 1 }, */}
+          {/*     ]} */}
+          {/*   > */}
+          {/*     {stats.goal.targetPerWeek}x per week */}
+          {/*   </ThemedText> */}
+          {/* </ThemedText> */}
         </ListItemShell>
 
         <ListItemShell style={styles.section}>
@@ -127,15 +143,16 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   topRow: {
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 14,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
   activityName: {
-    fontSize: 28,
-    lineHeight: 34,
+    fontSize: 24,
+    marginBottom: 6,
+    marginTop: 8,
   },
   targetText: {
     opacity: 0.65,

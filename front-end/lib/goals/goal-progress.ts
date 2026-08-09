@@ -10,5 +10,5 @@ export function isGoalMet(count: number, target: number): boolean {
 }
 
 export function formatGoalProgress(count: number, target: number): string {
-  return `${count} / ${target} this week`;
+  return `${count}/${target} this week`;
 }

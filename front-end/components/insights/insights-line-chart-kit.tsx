@@ -93,6 +93,7 @@ export default function InsightsLineChartKit({
           showHorizontalGridLines
           formatYLabel={formatIntegerYLabel}
           labelStrategy="show"
+          legend={false}
         />
       ) : null}
     </View>

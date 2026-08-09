@@ -8,9 +8,9 @@ export function hexToRgba(hex: string, opacity: number): string {
   const expanded =
     normalized.length === 3
       ? normalized
-          .split('')
-          .map((channel) => channel + channel)
-          .join('')
+        .split('')
+        .map((channel) => channel + channel)
+        .join('')
       : normalized.slice(0, 6);
   const red = Number.parseInt(expanded.slice(0, 2), 16);
   const green = Number.parseInt(expanded.slice(2, 4), 16);

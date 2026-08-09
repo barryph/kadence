@@ -58,7 +58,7 @@ export default function GoalInsightsScreen() {
           {stats.activityName}
         </ThemedText>
         <ThemedText size="small" style={styles.targetText}>
-          {stats.goal.targetPerWeek}x per week
+          Target Frequency: {stats.goal.targetPerWeek}x per week
         </ThemedText>
 
         <ListItemShell style={styles.section}>

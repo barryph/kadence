@@ -134,18 +134,6 @@ export default function Categories() {
                 See Insights &rarr;
               </ThemedText>
             </Pressable>
-            <Pressable
-              onPress={() => router.push('/categories/insights-2')}
-              style={styles.insightsLink}
-            >
-              <ThemedText
-                size="small"
-                type="default"
-                style={styles.insightsLinkText}
-              >
-                See Insights 2 &rarr;
-              </ThemedText>
-            </Pressable>
           </View>
 
           <View style={styles.categories}>

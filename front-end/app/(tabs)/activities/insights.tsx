@@ -7,12 +7,13 @@ import LoaderScreen from '@/components/base/loader-screen';
 import { ThemedText } from '@/components/base/themed-text';
 import FilterList from '@/components/filter-list/filter-list';
 import { toggleActivityFilterMulti } from '@/components/filter-list/filter-by-category';
-import ActivityInsightsChartKit from '@/components/insights/activity-insights-chart-kit';
+import InsightsLineChartKit from '@/components/insights/insights-line-chart-kit';
 import ListItemShell from '@/components/list-item-shell';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useActivityEventsQuery } from '@/hooks/queries/use-activity-events';
 import {
   aggregateActivityWeeklyUniqueDays,
+  filterActivitySeries,
   getActivityColor,
   hasAnyWeeklyActivity,
 } from '@/lib/insights/activity-weekly-unique-days';
@@ -54,6 +55,11 @@ export default function ActivityInsightsScreen() {
         weekRange.weekStarts,
       ),
     [activities, events, weekRange.weekStarts],
+  );
+
+  const visibleSeries = useMemo(
+    () => filterActivitySeries(allSeries, selectedActivityIds),
+    [allSeries, selectedActivityIds],
   );
 
   function handleActivityPress(activityId: number) {
@@ -111,10 +117,10 @@ export default function ActivityInsightsScreen() {
                   </ThemedText>
                 </View>
               ) : (
-                <ActivityInsightsChartKit
-                  series={allSeries}
+                <InsightsLineChartKit
+                  series={visibleSeries}
                   weekStarts={weekRange.weekStarts}
-                  selectedActivityIds={selectedActivityIds}
+                  emptyMessage="Select activities to compare, or add activities to begin tracking insights."
                 />
               )}
             </View>

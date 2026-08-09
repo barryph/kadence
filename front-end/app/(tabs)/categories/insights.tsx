@@ -7,12 +7,13 @@ import LoaderScreen from '@/components/base/loader-screen';
 import { ThemedText } from '@/components/base/themed-text';
 import FilterList from '@/components/filter-list/filter-list';
 import { toggleCategoryFilterMulti } from '@/components/filter-list/filter-by-category';
-import CategoryInsightsChart from '@/components/insights/category-insights-chart';
+import InsightsLineChartKit from '@/components/insights/insights-line-chart-kit';
 import ListItemShell from '@/components/list-item-shell';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useActivityEventsQuery } from '@/hooks/queries/use-activity-events';
 import {
   aggregateCategoryWeeklyUniqueDays,
+  filterCategorySeries,
   hasAnyWeeklyActivity,
 } from '@/lib/insights/category-weekly-unique-days';
 import { getLastNWeekRange, YYYYMMDD } from '@/utils/date';
@@ -43,6 +44,11 @@ export default function CategoryInsightsScreen() {
         weekRange.weekStarts,
       ),
     [categories, events, weekRange.weekStarts],
+  );
+
+  const visibleSeries = useMemo(
+    () => filterCategorySeries(allSeries, selectedCategoryIds),
+    [allSeries, selectedCategoryIds],
   );
 
   function handleCategoryPress(categoryId: number) {
@@ -106,11 +112,10 @@ export default function CategoryInsightsScreen() {
                   </ThemedText>
                 </View>
               ) : (
-                <CategoryInsightsChart
-                  series={allSeries}
+                <InsightsLineChartKit
+                  series={visibleSeries}
                   weekStarts={weekRange.weekStarts}
-                  endDate={weekRange.to}
-                  selectedCategoryIds={selectedCategoryIds}
+                  emptyMessage="Select categories to compare, or add categories to begin tracking insights."
                 />
               )}
             </View>

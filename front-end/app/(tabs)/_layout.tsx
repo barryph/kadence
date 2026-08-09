@@ -114,14 +114,6 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="categories/insights-2"
-          options={{
-            ...headerOptions,
-            title: 'Category Insights 2',
-            href: null,
-          }}
-        />
-        <Tabs.Screen
           name="profile"
           options={{
             ...headerOptions,

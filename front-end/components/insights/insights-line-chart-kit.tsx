@@ -9,31 +9,34 @@ import {
   INSIGHTS_CHART_HEIGHT,
 } from '@/components/insights/insights-chart-kit-config';
 import {
-  filterActivitySeries,
-  type ActivityWeeklySeries,
-} from '@/lib/insights/activity-weekly-unique-days';
+  CHART_PLOT_LEFT_OFFSET,
+  computeChartHorizontalLayout,
+} from '@/lib/insights/chart-horizontal-layout';
 import {
   computeInsightsYAxisScale,
   getSeriesDataMax,
 } from '@/lib/insights/chart-y-axis-scale';
 import { formatWeekLabel } from '@/utils/date';
 
-interface ActivityInsightsChartKitProps {
-  series: ActivityWeeklySeries[];
-  weekStarts: string[];
-  selectedActivityIds: number[];
+export interface InsightsLineSeries {
+  color: string;
+  data: { weekStart: string; value: number }[];
 }
 
-export default function ActivityInsightsChartKit({
+interface InsightsLineChartKitProps {
+  series: InsightsLineSeries[];
+  weekStarts: string[];
+  caption?: string;
+  emptyMessage?: string;
+}
+
+export default function InsightsLineChartKit({
   series,
   weekStarts,
-  selectedActivityIds,
-}: ActivityInsightsChartKitProps) {
+  caption = 'Number of days completed per week',
+  emptyMessage = 'Select items to compare, or add items to begin tracking insights.',
+}: InsightsLineChartKitProps) {
   const [chartWidth, setChartWidth] = useState(0);
-  const visibleSeries = useMemo(
-    () => filterActivitySeries(series, selectedActivityIds),
-    [selectedActivityIds, series],
-  );
 
   const labels = useMemo(
     () => weekStarts.map((weekStart) => formatWeekLabel(weekStart)),
@@ -42,39 +45,43 @@ export default function ActivityInsightsChartKit({
 
   const yAxisScale = useMemo(() => {
     const values: number[] = [];
-    for (const item of visibleSeries) {
+    for (const item of series) {
       for (const point of item.data) {
         values.push(point.value);
       }
     }
     return computeInsightsYAxisScale(getSeriesDataMax(values));
-  }, [visibleSeries]);
+  }, [series]);
 
   const chartData = useMemo(
     () => ({
       labels,
-      datasets: visibleSeries.map((item) => ({
+      datasets: series.map((item) => ({
         data: item.data.map((point) => point.value),
         color: (opacity = 1) => hexToRgba(item.color, opacity),
         strokeWidth: 2,
         withDots: true,
       })),
     }),
-    [labels, visibleSeries],
+    [labels, series],
   );
 
   const chartConfig = useMemo(() => buildInsightsChartConfig(), []);
+
+  const chartLayout = useMemo(
+    () => computeChartHorizontalLayout(chartWidth, labels.length),
+    [chartWidth, labels.length],
+  );
 
   function handleLayout(event: LayoutChangeEvent) {
     setChartWidth(event.nativeEvent.layout.width);
   }
 
-  if (visibleSeries.length === 0) {
+  if (series.length === 0) {
     return (
       <View style={styles.emptyState}>
         <ThemedText size="small" style={styles.emptyText}>
-          Select activities to compare, or add activities to begin tracking
-          insights.
+          {emptyMessage}
         </ThemedText>
       </View>
     );
@@ -83,12 +90,12 @@ export default function ActivityInsightsChartKit({
   return (
     <View style={styles.wrapper} onLayout={handleLayout}>
       <ThemedText size="extraSmall" style={styles.caption}>
-        Number of days completed per week
+        {caption}
       </ThemedText>
       {chartWidth > 0 ? (
         <LineChart
           data={chartData}
-          width={chartWidth}
+          width={chartLayout.width}
           height={INSIGHTS_CHART_HEIGHT}
           chartConfig={chartConfig}
           fromZero
@@ -103,9 +110,13 @@ export default function ActivityInsightsChartKit({
           withVerticalLabels
           withHorizontalLabels
           segments={yAxisScale.noOfSections}
-          yAxisInterval={yAxisScale.stepValue}
+          yAxisInterval={1}
           formatYLabel={formatIntegerYLabel}
-          style={styles.chart}
+          style={{
+            borderRadius: 0,
+            marginRight: chartLayout.marginRight,
+            paddingRight: CHART_PLOT_LEFT_OFFSET,
+          }}
         />
       ) : null}
     </View>
@@ -121,10 +132,6 @@ const styles = StyleSheet.create({
     opacity: 0.55,
     marginBottom: 16,
     letterSpacing: 0.4,
-  },
-  chart: {
-    marginLeft: -16,
-    borderRadius: 0,
   },
   emptyState: {
     minHeight: INSIGHTS_CHART_HEIGHT,

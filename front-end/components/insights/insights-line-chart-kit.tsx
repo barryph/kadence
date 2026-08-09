@@ -22,7 +22,6 @@ export interface InsightsLineSeries {
 interface InsightsLineChartKitProps {
   series: InsightsLineSeries[];
   weekStarts: string[];
-  caption?: string;
   emptyMessage?: string;
 }
 
@@ -35,7 +34,6 @@ const yAxisScale = {
 export default function InsightsLineChartKit({
   series,
   weekStarts,
-  caption = 'Number of days completed per week',
   emptyMessage = 'Select items to compare, or add items to begin tracking insights.',
 }: InsightsLineChartKitProps) {
   const [chartWidth, setChartWidth] = useState(0);
@@ -78,9 +76,6 @@ export default function InsightsLineChartKit({
 
   return (
     <View style={styles.wrapper} onLayout={handleLayout}>
-      <ThemedText size="extraSmall" style={styles.caption}>
-        {caption}
-      </ThemedText>
       {chartWidth > 0 ? (
         <LineChart
           data={chartData}
@@ -116,11 +111,6 @@ const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
     overflow: 'hidden',
-  },
-  caption: {
-    opacity: 0.55,
-    marginBottom: 16,
-    letterSpacing: 0.4,
   },
   emptyState: {
     minHeight: INSIGHTS_CHART_HEIGHT,

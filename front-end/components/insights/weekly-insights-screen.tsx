@@ -69,7 +69,8 @@ export default function WeeklyInsightsScreen({
           </ThemedText>
 
           <ThemedText size="small" style={styles.subtitle}>
-            Activities completed over the last {weekCount} weeks.
+            Number of days you&apos;ve logged per week, over the last{' '}
+            {weekCount} weeks.
           </ThemedText>
 
           <FilterList

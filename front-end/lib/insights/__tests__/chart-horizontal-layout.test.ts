@@ -62,6 +62,7 @@ describe('computeChartHorizontalLayout', () => {
   });
 
   it('clamps the compensation at zero for very dense series', () => {
-    expect(computeChartHorizontalLayout(320, 20).marginRight).toBe(0);
+    expect(computeChartHorizontalLayout(300, 100).marginRight).toBe(0);
+    expect(computeChartHorizontalLayout(300, 100).width).toBe(300);
   });
 });

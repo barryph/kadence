@@ -12,7 +12,12 @@
  * (and their axis labels) clear of the container edges.
  */
 
-export const CHART_PLOT_LEFT_OFFSET = 64;
+/**
+ * Left gutter reserved for the Y-axis labels. Must match the `paddingRight`
+ * passed to LineChart's `style`, which the library uses as the plot's left
+ * offset and the origin of the horizontal grid lines.
+ */
+export const CHART_PLOT_LEFT_OFFSET = 22;
 export const CHART_END_SPACING = 4;
 
 export interface ChartHorizontalLayout {

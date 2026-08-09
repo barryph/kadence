@@ -7,7 +7,10 @@ import {
 } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { ThemedText } from '@/components/base/themed-text';
-import { computeChartHorizontalLayout } from '@/lib/insights/chart-horizontal-layout';
+import {
+  CHART_PLOT_LEFT_OFFSET,
+  computeChartHorizontalLayout,
+} from '@/lib/insights/chart-horizontal-layout';
 import {
   filterCategorySeries,
   type CategoryWeeklySeries,
@@ -28,9 +31,9 @@ function hexToRgba(hex: string, opacity: number): string {
   const expanded =
     normalized.length === 3
       ? normalized
-        .split('')
-        .map((channel) => channel + channel)
-        .join('')
+          .split('')
+          .map((channel) => channel + channel)
+          .join('')
       : normalized.slice(0, 6);
   const red = Number.parseInt(expanded.slice(0, 2), 16);
   const green = Number.parseInt(expanded.slice(2, 4), 16);
@@ -201,9 +204,12 @@ export default function CategoryInsightsChartKit({
           segments={yAxisScale.segments}
           yAxisInterval={1}
           formatYLabel={formatYLabel}
+          // Keep labels flush against the right side of the label gutter.
+          yLabelsOffset={14}
           style={{
             borderRadius: 0,
-            // marginRight: chartLayout.marginRight,
+            marginRight: chartLayout.marginRight,
+            paddingRight: CHART_PLOT_LEFT_OFFSET,
           }}
         />
       ) : null}

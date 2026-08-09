@@ -6,57 +6,59 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
-import type { ICategory } from '@/api/api.categories';
+
+export interface FilterListItem {
+  id: number;
+  name: string;
+  color: string;
+}
 
 interface FilterListProps {
   label?: string;
-  categories: ICategory[];
-  selectedCategoryIds: number[];
-  onCategoryPress: (categoryId: number) => void;
+  items: FilterListItem[];
+  selectedIds: number[];
+  onItemPress: (id: number) => void;
   style?: ViewStyle;
 }
 
 export default function FilterList({
   label,
-  categories,
-  selectedCategoryIds,
-  onCategoryPress,
+  items,
+  selectedIds,
+  onItemPress,
   style,
 }: FilterListProps) {
-  if (categories.length === 0) {
+  if (items.length === 0) {
     return null;
   }
 
   return (
     <View style={[style]}>
-      {label && (
+      {label ? (
         <ThemedText style={styles.title} type="defaultSemiBold">
           {label}
         </ThemedText>
-      )}
+      ) : null}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.pillsRow}>
-          {categories.map((category) => {
-            const isActive = selectedCategoryIds.includes(category.id!);
+          {items.map((item) => {
+            const isActive = selectedIds.includes(item.id);
             return (
-              <Pressable
-                key={category.id}
-                onPress={() => onCategoryPress(category.id!)}
-              >
+              <Pressable key={item.id} onPress={() => onItemPress(item.id)}>
                 <ThemedText
                   size="small"
                   type="defaultSemiBold"
                   style={[
-                    styles.categoryPill,
+                    styles.pill,
                     isActive && {
                       borderWidth: 1.5,
-                      borderColor: `${category.color}88`,
-                      backgroundColor: `${category.color}1A`,
-                      color: category.color,
+                      borderColor: `${item.color}88`,
+                      backgroundColor: `${item.color}1A`,
+                      color: item.color,
                     },
                   ]}
                 >
-                  {category.name}
+                  {item.name}
                 </ThemedText>
               </Pressable>
             );
@@ -79,10 +81,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     gap: 4,
-    // fixes visual bug on android where the bottom border of each category pill is cut off
     paddingBottom: 1,
   },
-  categoryPill: {
+  pill: {
     backgroundColor: 'rgba(255,255,255,.055)',
     color: '#f5f7fbcc',
     borderWidth: 1,

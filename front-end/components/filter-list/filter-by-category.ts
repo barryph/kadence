@@ -16,15 +16,29 @@ export function toggleCategoryFilter(
   return currentCategoryId === categoryId ? null : categoryId;
 }
 
+export function toggleMultiSelectFilter(
+  selectedIds: number[],
+  id: number,
+): number[] {
+  if (selectedIds.includes(id)) {
+    return selectedIds.filter((item) => item !== id);
+  }
+
+  return [...selectedIds, id];
+}
+
 export function toggleCategoryFilterMulti(
   selectedCategoryIds: number[],
   categoryId: number,
 ): number[] {
-  if (selectedCategoryIds.includes(categoryId)) {
-    return selectedCategoryIds.filter((id) => id !== categoryId);
-  }
+  return toggleMultiSelectFilter(selectedCategoryIds, categoryId);
+}
 
-  return [...selectedCategoryIds, categoryId];
+export function toggleActivityFilterMulti(
+  selectedActivityIds: number[],
+  activityId: number,
+): number[] {
+  return toggleMultiSelectFilter(selectedActivityIds, activityId);
 }
 
 export function toSingleSelectedCategoryIds(

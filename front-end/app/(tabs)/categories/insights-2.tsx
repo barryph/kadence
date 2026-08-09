@@ -78,9 +78,15 @@ export default function CategoryInsights2Screen() {
 
           <FilterList
             label="Categories"
-            categories={categories}
-            selectedCategoryIds={selectedCategoryIds}
-            onCategoryPress={handleCategoryPress}
+            items={categories
+              .filter((category) => category.id !== undefined)
+              .map((category) => ({
+                id: category.id!,
+                name: category.name,
+                color: category.color,
+              }))}
+            selectedIds={selectedCategoryIds}
+            onItemPress={handleCategoryPress}
             style={styles.filterList}
           />
 

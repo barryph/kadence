@@ -387,9 +387,15 @@ function TimelineScreen() {
       </View>
 
       <FilterList
-        categories={categories}
-        selectedCategoryIds={toSingleSelectedCategoryIds(activeCategoryId)}
-        onCategoryPress={handleCategoryPress}
+        items={categories
+          .filter((category) => category.id !== undefined)
+          .map((category) => ({
+            id: category.id!,
+            name: category.name,
+            color: category.color,
+          }))}
+        selectedIds={toSingleSelectedCategoryIds(activeCategoryId)}
+        onItemPress={handleCategoryPress}
         style={styles.filterList}
       />
 

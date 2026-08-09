@@ -130,6 +130,14 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
+          name="activities/insights"
+          options={{
+            ...headerOptions,
+            title: 'Activity Insights',
+            href: null,
+          }}
+        />
+        <Tabs.Screen
           name="activities/edit/[id]"
           options={{
             ...headerOptions,

@@ -12,14 +12,6 @@ export interface InsightsYAxisScale {
 export function computeInsightsYAxisScale(dataMax: number): InsightsYAxisScale {
   const clampedMax = Math.max(0, dataMax);
 
-  if (clampedMax <= 1) {
-    return {
-      maxValue: 1,
-      noOfSections: 1,
-      stepValue: 1,
-    };
-  }
-
   const maxValue = Math.min(7, clampedMax + 2);
 
   return {

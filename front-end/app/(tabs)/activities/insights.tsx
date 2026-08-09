@@ -6,61 +6,72 @@ import Container from '@/components/base/container';
 import LoaderScreen from '@/components/base/loader-screen';
 import { ThemedText } from '@/components/base/themed-text';
 import FilterList from '@/components/filter-list/filter-list';
-import { toggleCategoryFilterMulti } from '@/components/filter-list/filter-by-category';
-import CategoryInsightsChart from '@/components/insights/category-insights-chart';
+import { toggleActivityFilterMulti } from '@/components/filter-list/filter-by-category';
+import ActivityInsightsChartKit from '@/components/insights/activity-insights-chart-kit';
 import ListItemShell from '@/components/list-item-shell';
-import { useCategoriesQuery } from '@/hooks/queries/use-categories';
+import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useActivityEventsQuery } from '@/hooks/queries/use-activity-events';
 import {
-  aggregateCategoryWeeklyUniqueDays,
+  aggregateActivityWeeklyUniqueDays,
+  getActivityColor,
   hasAnyWeeklyActivity,
-} from '@/lib/insights/category-weekly-unique-days';
+} from '@/lib/insights/activity-weekly-unique-days';
 import { getLastNWeekRange, YYYYMMDD } from '@/utils/date';
 
 const WEEK_COUNT = 8;
 
-export default function CategoryInsightsScreen() {
+export default function ActivityInsightsScreen() {
   const today = YYYYMMDD();
   const weekRange = useMemo(() => getLastNWeekRange(WEEK_COUNT), [today]);
   const {
-    data: categories = [],
-    isPending: isCategoriesPending,
-    isError: isCategoriesError,
-  } = useCategoriesQuery();
+    data: activities = [],
+    isPending: isActivitiesPending,
+    isError: isActivitiesError,
+  } = useActivitiesQuery();
   const {
     data: events = [],
     isPending: isEventsPending,
     isError: isEventsError,
   } = useActivityEventsQuery(weekRange.from, weekRange.to);
 
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
+  const [selectedActivityIds, setSelectedActivityIds] = useState<number[]>([]);
+
+  const filterItems = useMemo(
+    () =>
+      activities.map((activity) => ({
+        id: activity.id,
+        name: activity.name,
+        color: getActivityColor(activity),
+      })),
+    [activities],
+  );
 
   const allSeries = useMemo(
     () =>
-      aggregateCategoryWeeklyUniqueDays(
+      aggregateActivityWeeklyUniqueDays(
         events,
-        categories,
+        activities,
         weekRange.weekStarts,
       ),
-    [categories, events, weekRange.weekStarts],
+    [activities, events, weekRange.weekStarts],
   );
 
-  function handleCategoryPress(categoryId: number) {
-    setSelectedCategoryIds((current) =>
-      toggleCategoryFilterMulti(current, categoryId),
+  function handleActivityPress(activityId: number) {
+    setSelectedActivityIds((current) =>
+      toggleActivityFilterMulti(current, activityId),
     );
   }
 
-  if (isCategoriesPending || isEventsPending) {
+  if (isActivitiesPending || isEventsPending) {
     return <LoaderScreen text="Loading insights..." />;
   }
 
-  if (isCategoriesError || isEventsError) {
-    return <LoaderScreen text="Unable to load category insights." />;
+  if (isActivitiesError || isEventsError) {
+    return <LoaderScreen text="Unable to load activity insights." />;
   }
 
-  const showNoCategories = categories.length === 0;
-  const showNoActivity = !showNoCategories && !hasAnyWeeklyActivity(allSeries);
+  const showNoActivities = activities.length === 0;
+  const showNoActivity = !showNoActivities && !hasAnyWeeklyActivity(allSeries);
 
   return (
     <View style={styles.container}>
@@ -69,7 +80,7 @@ export default function CategoryInsightsScreen() {
       <ScrollView>
         <Container style={styles.scrollContent}>
           <ThemedText style={styles.title} type="title" size="large">
-            Category Insights
+            Activity Insights
           </ThemedText>
 
           <ThemedText size="small" style={styles.subtitle}>
@@ -77,23 +88,17 @@ export default function CategoryInsightsScreen() {
           </ThemedText>
 
           <FilterList
-            label="Categories"
-            items={categories
-              .filter((category) => category.id !== undefined)
-              .map((category) => ({
-                id: category.id!,
-                name: category.name,
-                color: category.color,
-              }))}
-            selectedIds={selectedCategoryIds}
-            onItemPress={handleCategoryPress}
+            label="Activities"
+            items={filterItems}
+            selectedIds={selectedActivityIds}
+            onItemPress={handleActivityPress}
             style={styles.filterList}
           />
 
-          {showNoCategories ? (
+          {showNoActivities ? (
             <ListItemShell style={styles.messageShell}>
               <ThemedText size="small" style={styles.messageText}>
-                Add categories to start tracking completion trends.
+                Add activities to start tracking completion trends.
               </ThemedText>
             </ListItemShell>
           ) : (
@@ -101,16 +106,15 @@ export default function CategoryInsightsScreen() {
               {showNoActivity ? (
                 <View style={styles.emptyChartMessage}>
                   <ThemedText size="small" style={styles.messageText}>
-                    No category completions in this period yet. Complete
+                    No activity completions in this period yet. Complete
                     activities to see trends here.
                   </ThemedText>
                 </View>
               ) : (
-                <CategoryInsightsChart
+                <ActivityInsightsChartKit
                   series={allSeries}
                   weekStarts={weekRange.weekStarts}
-                  endDate={weekRange.to}
-                  selectedCategoryIds={selectedCategoryIds}
+                  selectedActivityIds={selectedActivityIds}
                 />
               )}
             </View>

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { Pressable, StyleSheet, View, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
 
@@ -190,10 +190,28 @@ export default function Dashboard() {
           </View>
           <FilterList
             label="Categories"
-            categories={categories}
-            selectedCategoryIds={toSingleSelectedCategoryIds(activeCategoryId)}
-            onCategoryPress={handleCategoryPress}
+            items={categories
+              .filter((category) => category.id !== undefined)
+              .map((category) => ({
+                id: category.id!,
+                name: category.name,
+                color: category.color,
+              }))}
+            selectedIds={toSingleSelectedCategoryIds(activeCategoryId)}
+            onItemPress={handleCategoryPress}
           />
+          <Pressable
+            onPress={() => router.push('/activities/insights')}
+            style={styles.insightsLink}
+          >
+            <ThemedText
+              size="small"
+              type="default"
+              style={styles.insightsLinkText}
+            >
+              See Insights &rarr;
+            </ThemedText>
+          </Pressable>
           <View
             style={{
               marginTop: 6,
@@ -273,6 +291,13 @@ const styles = StyleSheet.create({
   },
   headlineNoCategories: {
     marginBottom: 3,
+  },
+  insightsLink: {
+    alignSelf: 'flex-start',
+    marginTop: 2,
+  },
+  insightsLinkText: {
+    textDecorationLine: 'underline',
   },
   getStartedPill: {
     paddingTop: 14,

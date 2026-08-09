@@ -8,7 +8,7 @@ import { useGoalStatsQuery } from '@/hooks/queries/use-goals';
 
 jest.mock('@/hooks/queries/use-goals');
 
-jest.mock('react-native-chart-kit', () => {
+jest.mock('react-native-chart-kit/v2', () => {
   const React = require('react');
   const { View } = require('react-native');
   return {

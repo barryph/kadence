@@ -1,17 +1,13 @@
 import { useMemo, useState } from 'react';
 import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
-import { Line } from 'react-native-svg';
+import { LineChart, type LineChartSeries } from 'react-native-chart-kit/v2';
 import { ThemedText } from '@/components/base/themed-text';
 import {
-  buildInsightsChartConfig,
+  buildInsightsChartTheme,
   formatIntegerYLabel,
+  INSIGHTS_AREA_FILL_OPACITY,
   INSIGHTS_CHART_HEIGHT,
 } from '@/components/insights/insights-chart-kit-config';
-import {
-  CHART_PLOT_LEFT_OFFSET,
-  computeChartHorizontalLayout,
-} from '@/lib/insights/chart-horizontal-layout';
 import {
   GOAL_ABOVE_THRESHOLD_COLOR,
   GOAL_BELOW_THRESHOLD_COLOR,
@@ -29,18 +25,15 @@ interface GoalAreaChartProps {
   targetPerWeek: number;
 }
 
-const yAxisScale = {
-  maxValue: 7,
-  noOfSections: 7,
-  stepValue: 1,
+const Y_AXIS_MAX_VALUE = 7;
+
+type GoalAreaRow = {
+  week: string;
+  count: number;
 };
 
 /**
  * 8-week threshold area chart.
- * Two layered datasets produce a stacked area: the blue region spans from 0 to
- * the target and the amber region spans from the target up to the actual count.
- * A dashed threshold line is drawn at the target level via the chart's
- * `decorator`, which runs after the area shadows.
  */
 export default function GoalAreaChart({
   data,
@@ -48,60 +41,50 @@ export default function GoalAreaChart({
 }: GoalAreaChartProps) {
   const [chartWidth, setChartWidth] = useState(0);
 
-  const labels = useMemo(
-    () => data.map((point) => formatWeekLabel(point.weekStart)),
+  const rows = useMemo<GoalAreaRow[]>(
+    () =>
+      data.map((point) => ({
+        week: formatWeekLabel(point.weekStart),
+        count: point.count,
+      })),
     [data],
   );
 
-  const chartData = useMemo(() => {
-    const full = data.map((point) => point.count);
-    const clamped = data.map((point) => Math.min(point.count, targetPerWeek));
-    return {
-      labels,
-      datasets: [
-        {
-          data: full,
-          color: () => GOAL_ABOVE_THRESHOLD_COLOR,
-          strokeWidth: 2,
-          withDots: true,
+  const series = useMemo<LineChartSeries<GoalAreaRow>[]>(
+    () => [
+      {
+        yKey: 'count',
+        strokeWidth: 2,
+        area: true,
+        dot: false,
+        threshold: {
+          y: targetPerWeek,
+          aboveColor: GOAL_ABOVE_THRESHOLD_COLOR,
+          belowColor: GOAL_BELOW_THRESHOLD_COLOR,
         },
-        {
-          data: clamped,
-          color: () => GOAL_BELOW_THRESHOLD_COLOR,
-          strokeWidth: 0,
-          withDots: false,
-        },
-      ],
-    };
-  }, [data, labels, targetPerWeek]);
-
-  const chartConfig = useMemo(() => buildInsightsChartConfig(), []);
-
-  const chartLayout = useMemo(
-    () => computeChartHorizontalLayout(chartWidth, labels.length),
-    [chartWidth, labels.length],
+      },
+    ],
+    [targetPerWeek],
   );
 
-  const thresholdDecorator = useMemo(
-    // eslint-disable-next-line react/display-name -- render callback, not a component
-    () => (config: Record<string, number>) => {
-      const paddingTop = config.paddingTop ?? 16;
-      const y =
-        paddingTop +
-        ((config.height * 3) / 4) * (1 - targetPerWeek / yAxisScale.maxValue);
-      return (
-        <Line
-          x1={config.paddingRight ?? 0}
-          y1={y}
-          x2={config.width}
-          y2={y}
-          stroke="rgba(255,255,255,0.4)"
-          strokeWidth={1.5}
-          strokeDasharray="6 5"
-        />
-      );
-    },
+  const referenceLines = useMemo(
+    () => [
+      {
+        y: targetPerWeek,
+        color: 'rgba(255,255,255,0.4)',
+        strokeDasharray: [6, 5],
+        strokeWidth: 1.5,
+      },
+    ],
     [targetPerWeek],
+  );
+
+  const theme = useMemo(
+    () => ({
+      ...buildInsightsChartTheme(),
+      series: [GOAL_ABOVE_THRESHOLD_COLOR],
+    }),
+    [],
   );
 
   function handleLayout(event: LayoutChangeEvent) {
@@ -123,30 +106,22 @@ export default function GoalAreaChart({
     <View style={styles.wrapper} onLayout={handleLayout}>
       {chartWidth > 0 ? (
         <LineChart
-          data={chartData}
-          width={chartLayout.width}
+          data={rows}
+          xKey="week"
+          series={series}
+          width={chartWidth}
           height={INSIGHTS_CHART_HEIGHT}
-          chartConfig={chartConfig}
-          fromZero
-          fromNumber={yAxisScale.maxValue}
-          transparent
-          bezier={false}
-          withShadow
-          withInnerLines
-          withOuterLines={false}
-          withVerticalLines={false}
-          withHorizontalLines
-          withVerticalLabels
-          withHorizontalLabels
-          segments={yAxisScale.noOfSections}
-          yAxisInterval={1}
-          formatYLabel={formatIntegerYLabel}
-          decorator={thresholdDecorator}
-          style={{
-            borderRadius: 0,
-            marginRight: chartLayout.marginRight,
-            paddingRight: CHART_PLOT_LEFT_OFFSET,
+          theme={theme}
+          curve="linear"
+          yDomain={{ min: 0, max: Y_AXIS_MAX_VALUE }}
+          areaFill={{
+            fromOpacity: INSIGHTS_AREA_FILL_OPACITY,
+            toOpacity: 0,
           }}
+          showHorizontalGridLines
+          formatYLabel={formatIntegerYLabel}
+          labelStrategy="show"
+          referenceLines={referenceLines}
         />
       ) : null}
     </View>

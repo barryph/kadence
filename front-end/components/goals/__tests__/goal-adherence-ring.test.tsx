@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import GoalAdherenceRing from '../goal-adherence-ring';
 
-jest.mock('react-native-chart-kit', () => {
+jest.mock('react-native-chart-kit/v2', () => {
   const React = require('react');
   const { View } = require('react-native');
   return {

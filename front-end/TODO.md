@@ -5,3 +5,4 @@
 - "Pressure" (ascending days until), a-z,
 - Category color swatches
 - Break activities up into groups, queued, default, and completed
+- Add filter options and date selectors to charts

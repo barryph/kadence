@@ -32,7 +32,7 @@ export default function ActivityLastDoneField() {
 
         return (
           <>
-            <Label>Last Done</Label>
+            <Label>When did you last complete this activity?</Label>
 
             <Pressable
               style={styles.dateField}

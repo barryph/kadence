@@ -57,4 +57,42 @@ describe('activitySchema', () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it('accepts a valid goal target', () => {
+    const result = activitySchema.safeParse({
+      ...validActivity,
+      goalTargetPerWeek: 3,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.goalTargetPerWeek).toBe(3);
+    }
+  });
+
+  it('accepts no goal (null)', () => {
+    const result = activitySchema.safeParse({
+      ...validActivity,
+      goalTargetPerWeek: null,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.goalTargetPerWeek).toBeNull();
+    }
+  });
+
+  it('rejects a goal target above 7', () => {
+    const result = activitySchema.safeParse({
+      ...validActivity,
+      goalTargetPerWeek: 8,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects a goal target below 1', () => {
+    const result = activitySchema.safeParse({
+      ...validActivity,
+      goalTargetPerWeek: 0,
+    });
+    expect(result.success).toBe(false);
+  });
 });

@@ -9,6 +9,13 @@ export const activitySchema = z.object({
   interval: z.coerce.number().min(1, 'Interval must be greater than 0'),
   categoryId: z.number().nullable(),
   lastDone: z.date().nullable().optional(),
+  goalTargetPerWeek: z
+    .number()
+    .int('Goal must be a whole number')
+    .min(1, 'Goal must be between 1 and 7 times per week')
+    .max(7, 'Goal must be between 1 and 7 times per week')
+    .nullable()
+    .optional(),
 });
 
 export type ActivityFormValues = z.infer<typeof activitySchema>;

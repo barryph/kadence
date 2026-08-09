@@ -4,6 +4,8 @@ import {
   IsOptional,
   IsString,
   IsNumber,
+  Min,
+  Max,
 } from 'class-validator';
 
 export default class CreateActivityDTO {
@@ -22,4 +24,9 @@ export default class CreateActivityDTO {
   @IsOptional()
   @IsString()
   lastDone?: string; // YYYY-MM-DD
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(7)
+  goalTargetPerWeek?: number | null;
 }

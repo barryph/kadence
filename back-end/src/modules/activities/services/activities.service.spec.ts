@@ -11,9 +11,13 @@ import CategoriesRepo from '../../categories/repos/categories.repository';
 import { GetActivitiesByUserIdQuery } from '../queries/getActivitiesByUserId.query';
 import { GetActivityByIdQuery } from '../queries/getActivityById.query';
 import { GetActivityTimelineQuery } from '../queries/getActivityTimeline.query';
+import { GetActivityEventsQuery } from '../queries/getActivityEvents.query';
 import Activity from '../domain/activity.entity';
 import Category from '../../categories/domain/category.entity';
 import { DuplicateActivityEventError } from '../activitiyEvent.errors';
+import { KnexService } from 'src/shared/knex/knex.service';
+import ActivityGoalsRepo from '../../activity-goals/repos/activityGoals.repository';
+import ActivityGoal from '../../activity-goals/domain/activityGoal.entity';
 
 describe('ActivitiesService', () => {
   let service: ActivitiesService;
@@ -21,6 +25,8 @@ describe('ActivitiesService', () => {
   let activityEventRepo: jest.Mocked<ActivityEventRepo>;
   let categoriesRepo: jest.Mocked<CategoriesRepo>;
   let getActivityByIdQuery: jest.Mocked<GetActivityByIdQuery>;
+  let activityGoalsRepo: jest.Mocked<ActivityGoalsRepo>;
+  let knexService: jest.Mocked<KnexService>;
 
   const activityDto = {
     id: '1',
@@ -52,6 +58,22 @@ describe('ActivitiesService', () => {
       execute: jest.fn(),
     } as unknown as jest.Mocked<GetActivityByIdQuery>;
 
+    activityGoalsRepo = {
+      create: jest.fn(),
+      getByActivityId: jest.fn(),
+      update: jest.fn(),
+      deleteByActivityId: jest.fn(),
+    } as unknown as jest.Mocked<ActivityGoalsRepo>;
+
+    knexService = {
+      getCurrentDate: jest.fn().mockResolvedValue('2026-01-15'),
+      connection: {
+        transaction: jest.fn((cb: (trx: unknown) => Promise<unknown>) =>
+          cb('trx'),
+        ),
+      },
+    } as unknown as jest.Mocked<KnexService>;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ActivitiesService,
@@ -67,6 +89,12 @@ describe('ActivitiesService', () => {
           provide: GetActivityTimelineQuery,
           useValue: { execute: jest.fn() },
         },
+        {
+          provide: GetActivityEventsQuery,
+          useValue: { execute: jest.fn() },
+        },
+        { provide: KnexService, useValue: knexService },
+        { provide: ActivityGoalsRepo, useValue: activityGoalsRepo },
       ],
     }).compile();
 
@@ -162,6 +190,112 @@ describe('ActivitiesService', () => {
 
     await service.deleteActivity('1', 'user-1');
 
+    expect(activityEventRepo.removeByActivityId).toHaveBeenCalledWith('1');
+    expect(activitiesRepo.delete).toHaveBeenCalledWith('1');
+  });
+
+  it('creates an activity goal atomically with the activity', async () => {
+    const created = Activity.reconstitute({
+      id: '1',
+      userId: 'user-1',
+      name: 'Exercise',
+      interval: 7,
+    });
+    activitiesRepo.create.mockResolvedValue(created);
+    getActivityByIdQuery.execute.mockResolvedValue(activityDto);
+
+    await service.create(
+      { name: 'Exercise', interval: 7, goalTargetPerWeek: 3 },
+      'user-1',
+    );
+
+    expect(activitiesRepo.create).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+    );
+    expect(activityGoalsRepo.create).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+    );
+    const goalArg = activityGoalsRepo.create.mock.calls[0][0];
+    expect(goalArg.activityId).toBe('1');
+    expect(goalArg.targetPerWeek).toBe(3);
+  });
+
+  it('updates an existing goal when editing an activity', async () => {
+    activitiesRepo.getById.mockResolvedValue(
+      Activity.reconstitute({
+        id: '1',
+        userId: 'user-1',
+        name: 'Exercise',
+        interval: 7,
+      }),
+    );
+    activityGoalsRepo.getByActivityId.mockResolvedValue(
+      ActivityGoal.reconstitute({
+        id: 'g1',
+        activityId: '1',
+        targetPerWeek: 3,
+      }),
+    );
+    getActivityByIdQuery.execute.mockResolvedValue(activityDto);
+
+    await service.editActivity('1', { goalTargetPerWeek: 5 }, 'user-1');
+
+    expect(activityGoalsRepo.update).toHaveBeenCalled();
+    const updatedGoal = activityGoalsRepo.update.mock.calls[0][0];
+    expect(updatedGoal.targetPerWeek).toBe(5);
+  });
+
+  it('creates a goal when editing an activity without one', async () => {
+    activitiesRepo.getById.mockResolvedValue(
+      Activity.reconstitute({
+        id: '1',
+        userId: 'user-1',
+        name: 'Exercise',
+        interval: 7,
+      }),
+    );
+    activityGoalsRepo.getByActivityId.mockResolvedValue(null);
+    getActivityByIdQuery.execute.mockResolvedValue(activityDto);
+
+    await service.editActivity('1', { goalTargetPerWeek: 4 }, 'user-1');
+
+    expect(activityGoalsRepo.create).toHaveBeenCalled();
+  });
+
+  it('removes the goal when goalTargetPerWeek is null', async () => {
+    activitiesRepo.getById.mockResolvedValue(
+      Activity.reconstitute({
+        id: '1',
+        userId: 'user-1',
+        name: 'Exercise',
+        interval: 7,
+      }),
+    );
+    getActivityByIdQuery.execute.mockResolvedValue(activityDto);
+
+    await service.editActivity('1', { goalTargetPerWeek: null }, 'user-1');
+
+    expect(activityGoalsRepo.deleteByActivityId).toHaveBeenCalledWith(
+      '1',
+      expect.anything(),
+    );
+  });
+
+  it('deletes the goal when deleting the activity', async () => {
+    activitiesRepo.getById.mockResolvedValue(
+      Activity.reconstitute({
+        id: '1',
+        userId: 'user-1',
+        name: 'Exercise',
+        interval: 7,
+      }),
+    );
+
+    await service.deleteActivity('1', 'user-1');
+
+    expect(activityGoalsRepo.deleteByActivityId).toHaveBeenCalledWith('1');
     expect(activityEventRepo.removeByActivityId).toHaveBeenCalledWith('1');
     expect(activitiesRepo.delete).toHaveBeenCalledWith('1');
   });

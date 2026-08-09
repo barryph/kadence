@@ -20,6 +20,13 @@ import EditActivityDTO from '../dtos/editActivity.dto';
 import { ActivityWithCategoryDTO } from '../dtos/activityWithCategory.dto';
 import { ActivityTimelineDTO } from '../dtos/getTimelineDto.dto';
 import { ActivityEventsDTO } from '../dtos/getActivityEvents.dto';
+import { KnexService } from 'src/shared/knex/knex.service';
+import ActivityGoalsRepo from '../../activity-goals/repos/activityGoals.repository';
+import ActivityGoal from '../../activity-goals/domain/activityGoal.entity';
+import {
+  getGoalWeekRange,
+  type GoalWeekRange,
+} from '../../activity-goals/domain/goal-performance.calculator';
 
 @Injectable()
 export class ActivitiesService {
@@ -31,11 +38,19 @@ export class ActivitiesService {
     private readonly getActivityByIdQuery: GetActivityByIdQuery,
     private readonly getActivityTimelineQuery: GetActivityTimelineQuery,
     private readonly getActivityEventsQuery: GetActivityEventsQuery,
+    private readonly knexService: KnexService,
+    private readonly activityGoalsRepo: ActivityGoalsRepo,
   ) {}
+
+  private async resolveGoalWeekRange(today?: string): Promise<GoalWeekRange> {
+    const resolvedToday = today ?? (await this.knexService.getCurrentDate());
+    return getGoalWeekRange(resolvedToday);
+  }
 
   async create(
     createActivityDto: CreateActivityDTO,
     userId: string,
+    today?: string,
   ): Promise<ActivityWithCategoryDTO> {
     if (createActivityDto.categoryId !== undefined) {
       const category = await this.categoriesRepo.getByIdAndUser(
@@ -59,8 +74,30 @@ export class ActivitiesService {
       categoryId: createActivityDto.categoryId,
     });
 
-    const createdActivity: Activity =
-      await this.activitiesRepo.create(activity);
+    const goalTargetPerWeek = createActivityDto.goalTargetPerWeek;
+    const wantsGoal =
+      goalTargetPerWeek !== undefined && goalTargetPerWeek !== null;
+
+    let createdActivity: Activity;
+    if (wantsGoal) {
+      createdActivity = await this.knexService.connection.transaction(
+        async (trx) => {
+          const created: Activity = await this.activitiesRepo.create(
+            activity,
+            trx,
+          );
+          created.ensurePersisted();
+          const goal = ActivityGoal.createNew({
+            activityId: created.id,
+            targetPerWeek: goalTargetPerWeek,
+          });
+          await this.activityGoalsRepo.create(goal, trx);
+          return created;
+        },
+      );
+    } else {
+      createdActivity = await this.activitiesRepo.create(activity);
+    }
 
     if (createActivityDto.lastDone) {
       // Record optional "lastDone" to event db
@@ -78,24 +115,40 @@ export class ActivitiesService {
       );
     }
 
-    return this.getActivityByIdQuery.execute(createdActivity.id, userId);
+    return this.getActivityByIdQuery.execute(
+      createdActivity.id,
+      userId,
+      await this.resolveGoalWeekRange(today),
+    );
   }
 
-  async getAllByUserId(userId: string): Promise<ActivityWithCategoryDTO[]> {
-    return this.getActivitiesByUserIdQuery.execute(userId);
+  async getAllByUserId(
+    userId: string,
+    today?: string,
+  ): Promise<ActivityWithCategoryDTO[]> {
+    return this.getActivitiesByUserIdQuery.execute(
+      userId,
+      await this.resolveGoalWeekRange(today),
+    );
   }
 
   async getById(
     activityId: string,
     userId: string,
+    today?: string,
   ): Promise<ActivityWithCategoryDTO> {
-    return this.getActivityByIdQuery.execute(activityId, userId);
+    return this.getActivityByIdQuery.execute(
+      activityId,
+      userId,
+      await this.resolveGoalWeekRange(today),
+    );
   }
 
   async editActivity(
     activityId: string,
     editActivityDto: EditActivityDTO,
     userId: string,
+    today?: string,
   ): Promise<ActivityWithCategoryDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
     // Authorize the request
@@ -131,14 +184,46 @@ export class ActivitiesService {
       activity.changeCategoryId(editActivityDto.categoryId);
     }
 
-    await this.activitiesRepo.update(activity);
-    return this.getActivityByIdQuery.execute(activityId, userId);
+    const goalTargetPerWeek = editActivityDto.goalTargetPerWeek;
+    const wantsGoalChange = goalTargetPerWeek !== undefined;
+    const wantsGoal = goalTargetPerWeek !== null;
+
+    if (wantsGoalChange) {
+      await this.knexService.connection.transaction(async (trx) => {
+        await this.activitiesRepo.update(activity, trx);
+        if (wantsGoal) {
+          const existing =
+            await this.activityGoalsRepo.getByActivityId(activityId);
+          if (existing) {
+            existing.changeTargetPerWeek(goalTargetPerWeek);
+            await this.activityGoalsRepo.update(existing, trx);
+          } else {
+            const goal = ActivityGoal.createNew({
+              activityId,
+              targetPerWeek: goalTargetPerWeek,
+            });
+            await this.activityGoalsRepo.create(goal, trx);
+          }
+        } else {
+          await this.activityGoalsRepo.deleteByActivityId(activityId, trx);
+        }
+      });
+    } else {
+      await this.activitiesRepo.update(activity);
+    }
+
+    return this.getActivityByIdQuery.execute(
+      activityId,
+      userId,
+      await this.resolveGoalWeekRange(today),
+    );
   }
 
   async completeActivity(
     activityId: string,
     userId: string,
     date: string,
+    today?: string,
   ): Promise<ActivityWithCategoryDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
     if (!activity) {
@@ -166,6 +251,7 @@ export class ActivitiesService {
     const updatedActivity = await this.getActivityByIdQuery.execute(
       activityId,
       userId,
+      await this.resolveGoalWeekRange(today),
     );
     if (!updatedActivity) {
       throw new Error('Activity not found after completing it');
@@ -177,6 +263,7 @@ export class ActivitiesService {
     activityId: string,
     userId: string,
     date: string,
+    today?: string,
   ): Promise<ActivityWithCategoryDTO> {
     const activity = await this.activitiesRepo.getById(activityId);
     if (!activity) {
@@ -191,6 +278,7 @@ export class ActivitiesService {
     const updatedActivity = await this.getActivityByIdQuery.execute(
       activityId,
       userId,
+      await this.resolveGoalWeekRange(today),
     );
     if (!updatedActivity) {
       throw new Error('Activity not found after undoing completion');
@@ -222,6 +310,7 @@ export class ActivitiesService {
       throw new UnauthorizedException('Unauthorized');
     }
 
+    await this.activityGoalsRepo.deleteByActivityId(activityId);
     await this.activityEventRepo.removeByActivityId(activityId);
     await this.activitiesRepo.delete(activityId);
   }

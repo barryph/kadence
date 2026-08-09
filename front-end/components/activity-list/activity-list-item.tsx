@@ -7,6 +7,7 @@ import { ThemedText } from '@/components/base/themed-text';
 import SwipeRow from '@/components/swipe-row';
 import type { IActivityClient } from '@/api/api.activity';
 import ListItemShell from '@/components/list-item-shell';
+import GoalProgressBar from '@/components/goals/goal-progress-bar';
 
 /** Success gradient for completed / queued activity progress bars */
 const COMPLETED_BAR_COLORS = ['#087cff', '#08d8ff', '#52f2a8'] as const;
@@ -192,6 +193,16 @@ export default function ActivityListItem({
                   )}
                 </View>
               </View>
+
+              {activity.goal && activity.goalProgress && (
+                <GoalProgressBar
+                  count={activity.goalProgress.currentWeekCount}
+                  target={activity.goal.targetPerWeek}
+                  height={6}
+                  trackColor="#4b4b5c"
+                  style={styles.goalProgress}
+                />
+              )}
             </View>
           </View>
         </SwipeRow>
@@ -305,5 +316,8 @@ const styles = StyleSheet.create({
   activityBarNotchBorder: {
     borderRightWidth: 2,
     borderRightColor: '#00000088',
+  },
+  goalProgress: {
+    marginTop: 6,
   },
 });

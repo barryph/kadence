@@ -6,6 +6,7 @@ import { DatabaseModule } from './shared/knex/database.module';
 import { AuthenticaitonModule } from './modules/authentication/authentication.module';
 import { ActivitiesModule } from './modules/activities/activities.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { ActivityGoalsModule } from './modules/activity-goals/activityGoals.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -18,6 +19,7 @@ const isTestMode = process.env.NODE_ENV === 'test';
     AuthenticaitonModule,
     ActivitiesModule,
     CategoriesModule,
+    ActivityGoalsModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {

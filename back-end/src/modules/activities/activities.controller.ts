@@ -17,6 +17,7 @@ import CreateActivityDTO from './dtos/createActivity.dto';
 import EditActivityDTO from './dtos/editActivity.dto';
 import ActivityDateActionDTO from './dtos/activityDateAction.dto';
 import GetActivityEventsQueryDTO from './dtos/getActivityEvents.dto';
+import OptionalTodayQueryDTO from './dtos/optionalToday.dto';
 import { UserDTO } from '../users/mappers/userMap';
 import { ApiBody } from '@nestjs/swagger';
 
@@ -42,11 +43,13 @@ export class ActivitiesController {
   async create(
     @Req() req: Request,
     @Body() createActivityDto: CreateActivityDTO,
+    @Query() query: OptionalTodayQueryDTO,
   ) {
     const userId = (req.user as UserDTO).id;
     const activity = await this.activitiesService.create(
       createActivityDto,
       userId,
+      query.today,
     );
 
     return {
@@ -58,9 +61,15 @@ export class ActivitiesController {
 
   @Get('/')
   @UseGuards(IsAuthedGuard)
-  async getAllByUserId(@Req() req: Request) {
+  async getAllByUserId(
+    @Req() req: Request,
+    @Query() query: OptionalTodayQueryDTO,
+  ) {
     const userId = (req.user as UserDTO).id;
-    const activities = await this.activitiesService.getAllByUserId(userId);
+    const activities = await this.activitiesService.getAllByUserId(
+      userId,
+      query.today,
+    );
     return {
       data: {
         activities,
@@ -105,9 +114,17 @@ export class ActivitiesController {
 
   @Get('/:activityId')
   @UseGuards(IsAuthedGuard)
-  async getById(@Req() req: Request, @Param('activityId') activityId: string) {
+  async getById(
+    @Req() req: Request,
+    @Param('activityId') activityId: string,
+    @Query() query: OptionalTodayQueryDTO,
+  ) {
     const userId = (req.user as UserDTO).id;
-    const activity = await this.activitiesService.getById(activityId, userId);
+    const activity = await this.activitiesService.getById(
+      activityId,
+      userId,
+      query.today,
+    );
     return {
       data: {
         activity,
@@ -121,12 +138,14 @@ export class ActivitiesController {
     @Req() req: Request,
     @Param('activityId') activityId: string,
     @Body() editActivityDto: EditActivityDTO,
+    @Query() query: OptionalTodayQueryDTO,
   ) {
     const userId = (req.user as UserDTO).id;
     const activity = await this.activitiesService.editActivity(
       activityId,
       editActivityDto,
       userId,
+      query.today,
     );
 
     return {
@@ -142,12 +161,14 @@ export class ActivitiesController {
     @Req() req: Request,
     @Param('activityId') activityId: string,
     @Body() body: ActivityDateActionDTO,
+    @Query() query: OptionalTodayQueryDTO,
   ) {
     const userId = (req.user as UserDTO).id;
     const updatedActivity = await this.activitiesService.completeActivity(
       activityId,
       userId,
       body.date,
+      query.today,
     );
 
     return {
@@ -163,12 +184,14 @@ export class ActivitiesController {
     @Req() req: Request,
     @Param('activityId') activityId: string,
     @Body() body: ActivityDateActionDTO,
+    @Query() query: OptionalTodayQueryDTO,
   ) {
     const userId = (req.user as UserDTO).id;
     const updatedActivity = await this.activitiesService.undoActivityEvent(
       activityId,
       userId,
       body.date,
+      query.today,
     );
 
     return {

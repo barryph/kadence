@@ -7,6 +7,7 @@ import {
 import { queryKeys } from '@/lib/query/keys';
 import { patchTimelineSet } from '@/lib/query/timeline-utils';
 import { unwrapApiResponse } from '@/lib/query/unwrap';
+import { YYYYMMDD } from '@/utils/date';
 
 function updateActivitiesListCache(
   queryClient: ReturnType<typeof useQueryClient>,
@@ -43,6 +44,18 @@ function invalidateTimeline(queryClient: ReturnType<typeof useQueryClient>) {
   return queryClient.invalidateQueries({ queryKey: queryKeys.timeline.all });
 }
 
+function invalidateGoals(
+  queryClient: ReturnType<typeof useQueryClient>,
+  activityId?: number | string,
+) {
+  void queryClient.invalidateQueries({ queryKey: queryKeys.goals.all });
+  if (activityId !== undefined) {
+    void queryClient.invalidateQueries({
+      queryKey: queryKeys.goals.detail(activityId),
+    });
+  }
+}
+
 export function useCreateActivityMutation() {
   const queryClient = useQueryClient();
 
@@ -50,7 +63,7 @@ export function useCreateActivityMutation() {
     mutationFn: async (
       body: Parameters<typeof activitiesAPI.createActivity>[0],
     ) => {
-      const resp = await activitiesAPI.createActivity(body);
+      const resp = await activitiesAPI.createActivity(body, YYYYMMDD());
       const data = unwrapApiResponse(resp);
       return data.activity;
     },
@@ -64,6 +77,7 @@ export function useCreateActivityMutation() {
         activity,
       );
       void invalidateTimeline(queryClient);
+      invalidateGoals(queryClient, activity.id);
     },
   });
 }
@@ -79,13 +93,18 @@ export function useEditActivityMutation() {
       activityId: number | string;
       body: Parameters<typeof activitiesAPI.editActivity>[1];
     }) => {
-      const resp = await activitiesAPI.editActivity(activityId, body);
+      const resp = await activitiesAPI.editActivity(
+        activityId,
+        body,
+        YYYYMMDD(),
+      );
       const data = unwrapApiResponse(resp);
       return data.activity;
     },
     onSuccess: (activity) => {
       setActivityInCaches(queryClient, activity);
       void invalidateTimeline(queryClient);
+      invalidateGoals(queryClient, activity.id);
     },
   });
 }
@@ -102,6 +121,7 @@ export function useDeleteActivityMutation() {
     onSuccess: (activityId) => {
       removeActivityFromCaches(queryClient, activityId);
       void invalidateTimeline(queryClient);
+      invalidateGoals(queryClient, activityId);
     },
   });
 }
@@ -117,7 +137,7 @@ export function useCompleteActivityMutation() {
       activityId: number | string;
       date: string;
     }) => {
-      const resp = await activitiesAPI.complete(activityId, date);
+      const resp = await activitiesAPI.complete(activityId, date, YYYYMMDD());
       const data = unwrapApiResponse(resp);
       return { activity: data.activity, date };
     },
@@ -130,6 +150,7 @@ export function useCompleteActivityMutation() {
             ? patchTimelineSet(current, activity.id, date, true)
             : current,
       );
+      invalidateGoals(queryClient, activity.id);
     },
   });
 }
@@ -145,7 +166,7 @@ export function useUndoActivityMutation() {
       activityId: number | string;
       date: string;
     }) => {
-      const resp = await activitiesAPI.undo(activityId, date);
+      const resp = await activitiesAPI.undo(activityId, date, YYYYMMDD());
       const data = await unwrapApiResponse(resp);
       return { activity: data.activity, date };
     },
@@ -158,6 +179,7 @@ export function useUndoActivityMutation() {
             ? patchTimelineSet(current, activity.id, date, false)
             : current,
       );
+      invalidateGoals(queryClient, activity.id);
     },
   });
 }

@@ -21,6 +21,7 @@ import ActivityCategoryField from '@/components/activities/fields/activity-categ
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
 import ActivityNameField from '@/components/activities/fields/activity-name-field';
 import ActivityTickerField from '@/components/activities/fields/activity-ticker-field';
+import ActivityGoalField from '@/components/goals/activity-goal-field';
 import { ActivityFormValues } from '@/components/activities/activity-schema';
 import Skeleton from '@/components/ui/skeleton';
 import AlertSuccess from '@/components/alerts/alert-success';
@@ -65,6 +66,7 @@ export default function EditActivityPage() {
       ticker: activity.ticker,
       interval: activity.interval,
       categoryId: activity.categoryId,
+      goalTargetPerWeek: activity.goal?.targetPerWeek ?? null,
     });
     hasInitializedForm.current = true;
   }, [activityQuery.data, form]);
@@ -91,6 +93,7 @@ export default function EditActivityPage() {
           ticker: values.ticker,
           interval: values.interval,
           categoryId: values.categoryId,
+          goalTargetPerWeek: values.goalTargetPerWeek,
         },
       });
       setSuccessMessage(true);
@@ -210,6 +213,7 @@ export default function EditActivityPage() {
                     categories={categories}
                     onCreate={() => {}}
                   />
+                  <ActivityGoalField />
                 </FormProvider>
 
                 {errorMessage && (

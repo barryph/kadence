@@ -8,9 +8,10 @@ import { GetActivityByIdQuery } from './queries/getActivityById.query';
 import { GetActivityTimelineQuery } from './queries/getActivityTimeline.query';
 import { GetActivityEventsQuery } from './queries/getActivityEvents.query';
 import { CategoriesModule } from '../categories/categories.module';
+import { ActivityGoalsModule } from '../activity-goals/activityGoals.module';
 
 @Module({
-  imports: [CategoriesModule],
+  imports: [CategoriesModule, ActivityGoalsModule],
   controllers: [ActivitiesController],
   providers: [
     ActivitiesService,

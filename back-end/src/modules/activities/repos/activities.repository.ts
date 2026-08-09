@@ -3,11 +3,12 @@ import { KnexService } from 'src/shared/knex/knex.service';
 import Activity from '../domain/activity.entity';
 import * as ActivityMap from '../mappers/activityMap';
 import { IActivityPersistence } from '../mappers/activityMap';
+import type { Knex } from 'knex';
 
 interface IActivitiesRepo {
-  create(activity: Activity): Promise<Activity>;
+  create(activity: Activity, trx?: Knex.Transaction): Promise<Activity>;
   getById(id: string): Promise<Activity | null>;
-  update(activity: Activity): Promise<Activity>;
+  update(activity: Activity, trx?: Knex.Transaction): Promise<Activity>;
   delete(id: string): Promise<boolean>;
 }
 
@@ -15,9 +16,13 @@ interface IActivitiesRepo {
 export default class ActivitiesRepo implements IActivitiesRepo {
   constructor(private readonly knexService: KnexService) {}
 
-  async create(activityDomain: Activity): Promise<Activity> {
+  async create(
+    activityDomain: Activity,
+    trx?: Knex.Transaction,
+  ): Promise<Activity> {
     const activity = ActivityMap.toPersistence(activityDomain);
-    const result = await this.knexService.connection.raw<{
+    const connection = trx ?? this.knexService.connection;
+    const result = await connection.raw<{
       rows: IActivityPersistence[];
     }>(
       `
@@ -60,9 +65,13 @@ export default class ActivitiesRepo implements IActivitiesRepo {
     return ActivityMap.persistenceToDomain(result.rows[0]);
   }
 
-  async update(activityDomain: Activity): Promise<Activity> {
+  async update(
+    activityDomain: Activity,
+    trx?: Knex.Transaction,
+  ): Promise<Activity> {
     const activity = ActivityMap.toPersistence(activityDomain);
-    const result = await this.knexService.connection.raw<{
+    const connection = trx ?? this.knexService.connection;
+    const result = await connection.raw<{
       rows: IActivityPersistence[];
     }>(
       `

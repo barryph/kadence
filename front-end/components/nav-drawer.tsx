@@ -105,6 +105,13 @@ export default function NavDrawer({
 
             <Pressable
               style={styles.navItem}
+              onPress={() => handleNavigate('/goals')}
+            >
+              <ThemedText style={styles.navText}>Goals</ThemedText>
+            </Pressable>
+
+            <Pressable
+              style={styles.navItem}
               onPress={() => handleNavigate('/categories')}
             >
               <ThemedText style={styles.navText}>Categories</ThemedText>

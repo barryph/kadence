@@ -1,5 +1,6 @@
 import { apiClient, type OptionalOptions } from './api.client';
 import { ICategory } from './api.categories';
+import { IGoal } from './api.goals';
 
 export interface IActivity {
   id: number;
@@ -10,6 +11,10 @@ export interface IActivity {
   categoryId?: number;
   category?: ICategory;
   daysUntil: number;
+  goal?: IGoal;
+  goalProgress?: {
+    currentWeekCount: number;
+  };
 }
 
 // Extend IActivity for client-side properties
@@ -18,11 +23,13 @@ export interface IActivityClient extends IActivity {
   completedToday?: boolean;
 }
 
-interface CreateActivityDTO extends Omit<
-  Omit<Omit<IActivity, 'id'>, 'userId'>,
-  'daysUntil'
-> {
+interface CreateActivityDTO {
+  name: string;
+  ticker?: string;
+  interval: number;
+  categoryId?: number;
   lastDone?: string;
+  goalTargetPerWeek?: number | null;
 }
 
 interface CreateActivityResponse {
@@ -38,10 +45,11 @@ interface GetActivityByIdResponse {
 }
 
 interface EditActivityDTO {
-  name: string;
+  name?: string;
   ticker?: string;
-  interval: number;
-  categoryId: number | null;
+  interval?: number;
+  categoryId?: number | null;
+  goalTargetPerWeek?: number | null;
 }
 
 interface EditActivityResponse {
@@ -61,9 +69,13 @@ interface DeleteActivityResponse {
 }
 
 export const activitiesAPI = {
-  getById(activityId: number | string, options?: OptionalOptions) {
+  getById(
+    activityId: number | string,
+    today: string,
+    options?: OptionalOptions,
+  ) {
     return apiClient.get<GetActivityByIdResponse>(
-      `/activities/${activityId}`,
+      `/activities/${activityId}?today=${encodeURIComponent(today)}`,
       options,
     );
   },
@@ -71,22 +83,31 @@ export const activitiesAPI = {
   editActivity(
     activityId: number | string,
     body: EditActivityDTO,
+    today: string,
     options?: OptionalOptions,
   ) {
     return apiClient.put<EditActivityResponse>(
-      `/activities/edit/${activityId}`,
+      `/activities/edit/${activityId}?today=${encodeURIComponent(today)}`,
       body,
       options,
     );
   },
 
-  createActivity(body: CreateActivityDTO, options?: OptionalOptions) {
-    return apiClient.post<CreateActivityResponse>('/activities', body, options);
+  createActivity(
+    body: CreateActivityDTO,
+    today: string,
+    options?: OptionalOptions,
+  ) {
+    return apiClient.post<CreateActivityResponse>(
+      `/activities?today=${encodeURIComponent(today)}`,
+      body,
+      options,
+    );
   },
 
-  getAllByUser(options?: OptionalOptions) {
+  getAllByUser(today: string, options?: OptionalOptions) {
     return apiClient.get<GetAllActivitiesByUserResponse>(
-      '/activities',
+      `/activities?today=${encodeURIComponent(today)}`,
       options,
     );
   },
@@ -94,18 +115,24 @@ export const activitiesAPI = {
   complete(
     activityId: number | string,
     date: string,
+    today: string,
     options?: OptionalOptions,
   ) {
     return apiClient.post<CompleteActivityResponse>(
-      `/activities/${activityId}/complete`,
+      `/activities/${activityId}/complete?today=${encodeURIComponent(today)}`,
       { date },
       options,
     );
   },
 
-  undo(activityId: number | string, date: string, options?: OptionalOptions) {
+  undo(
+    activityId: number | string,
+    date: string,
+    today: string,
+    options?: OptionalOptions,
+  ) {
     return apiClient.post<UndoActivityResponse>(
-      `/activities/${activityId}/undo`,
+      `/activities/${activityId}/undo?today=${encodeURIComponent(today)}`,
       { date },
       options,
     );

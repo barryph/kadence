@@ -40,7 +40,10 @@ describe('Activity queries (integration)', () => {
     const activityId = activity.id as string;
 
     await expect(
-      getActivityByIdQuery.execute(activityId, otherId),
+      getActivityByIdQuery.execute(activityId, otherId, {
+        from: '2026-08-03',
+        to: '2026-08-09',
+      }),
     ).rejects.toThrow(UnauthorizedException);
   });
 

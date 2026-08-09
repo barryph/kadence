@@ -96,6 +96,24 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="goals/index"
+          options={{
+            ...headerOptions,
+            title: 'Goals',
+            tabBarIcon: ({ color }) => (
+              <Feather name="target" size={24} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="goals/[activityId]"
+          options={{
+            ...headerOptions,
+            title: 'Goal Insights',
+            href: null,
+          }}
+        />
+        <Tabs.Screen
           name="categories/index"
           options={{
             ...headerOptions,

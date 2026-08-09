@@ -1,14 +1,7 @@
 import { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
 
-import Background from '@/components/backgrounds/background';
-import Container from '@/components/base/container';
-import LoaderScreen from '@/components/base/loader-screen';
-import { ThemedText } from '@/components/base/themed-text';
-import FilterList from '@/components/filter-list/filter-list';
 import { toggleActivityFilterMulti } from '@/components/filter-list/filter-by-category';
-import InsightsLineChartKit from '@/components/insights/insights-line-chart-kit';
-import ListItemShell from '@/components/list-item-shell';
+import WeeklyInsightsScreen from '@/components/insights/weekly-insights-screen';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useActivityEventsQuery } from '@/hooks/queries/use-activity-events';
 import {
@@ -17,13 +10,12 @@ import {
   getActivityColor,
   hasAnyWeeklyActivity,
 } from '@/lib/insights/activity-weekly-unique-days';
-import { getLastNWeekRange, YYYYMMDD } from '@/utils/date';
+import { getLastNWeekRange } from '@/utils/date';
 
 const WEEK_COUNT = 8;
 
 export default function ActivityInsightsScreen() {
-  const today = YYYYMMDD();
-  const weekRange = useMemo(() => getLastNWeekRange(WEEK_COUNT), [today]);
+  const weekRange = useMemo(() => getLastNWeekRange(WEEK_COUNT), []);
   const {
     data: activities = [],
     isPending: isActivitiesPending,
@@ -62,111 +54,31 @@ export default function ActivityInsightsScreen() {
     [allSeries, selectedActivityIds],
   );
 
+  const hasActivity = hasAnyWeeklyActivity(allSeries);
+
   function handleActivityPress(activityId: number) {
     setSelectedActivityIds((current) =>
       toggleActivityFilterMulti(current, activityId),
     );
   }
 
-  if (isActivitiesPending || isEventsPending) {
-    return <LoaderScreen text="Loading insights..." />;
-  }
-
-  if (isActivitiesError || isEventsError) {
-    return <LoaderScreen text="Unable to load activity insights." />;
-  }
-
-  const showNoActivities = activities.length === 0;
-  const showNoActivity = !showNoActivities && !hasAnyWeeklyActivity(allSeries);
-
   return (
-    <View style={styles.container}>
-      <Background showRed={false} />
-
-      <ScrollView>
-        <Container style={styles.scrollContent}>
-          <ThemedText style={styles.title} type="title" size="large">
-            Activity Insights
-          </ThemedText>
-
-          <ThemedText size="small" style={styles.subtitle}>
-            Activities completed over the last {WEEK_COUNT} weeks.
-          </ThemedText>
-
-          <FilterList
-            label="Activities"
-            items={filterItems}
-            selectedIds={selectedActivityIds}
-            onItemPress={handleActivityPress}
-            style={styles.filterList}
-          />
-
-          {showNoActivities ? (
-            <ListItemShell style={styles.messageShell}>
-              <ThemedText size="small" style={styles.messageText}>
-                Add activities to start tracking completion trends.
-              </ThemedText>
-            </ListItemShell>
-          ) : (
-            <View style={styles.chartShell}>
-              {showNoActivity ? (
-                <View style={styles.emptyChartMessage}>
-                  <ThemedText size="small" style={styles.messageText}>
-                    No activity completions in this period yet. Complete
-                    activities to see trends here.
-                  </ThemedText>
-                </View>
-              ) : (
-                <InsightsLineChartKit
-                  series={visibleSeries}
-                  weekStarts={weekRange.weekStarts}
-                  emptyMessage="Select activities to compare, or add activities to begin tracking insights."
-                />
-              )}
-            </View>
-          )}
-        </Container>
-      </ScrollView>
-    </View>
+    <WeeklyInsightsScreen
+      title="Activity Insights"
+      filterLabel="Activities"
+      filterItems={filterItems}
+      selectedIds={selectedActivityIds}
+      onItemPress={handleActivityPress}
+      visibleSeries={visibleSeries}
+      weekStarts={weekRange.weekStarts}
+      weekCount={WEEK_COUNT}
+      isLoading={isActivitiesPending || isEventsPending}
+      isError={isActivitiesError || isEventsError}
+      errorMessage="Unable to load activity insights."
+      hasActivity={hasActivity}
+      noItemsMessage="Add activities to start tracking completion trends."
+      noActivityMessage="No activity completions in this period yet. Complete activities to see trends here."
+      emptyMessage="Select activities to compare, or add activities to begin tracking insights."
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    gap: 12,
-    paddingBottom: 40,
-  },
-  title: {
-    marginTop: 10,
-    marginBottom: 2,
-  },
-  subtitle: {
-    opacity: 0.65,
-    lineHeight: 20,
-  },
-  filterList: {
-    marginTop: 8,
-  },
-  chartShell: {
-    paddingVertical: 0,
-    marginTop: 4,
-  },
-  messageShell: {
-    paddingHorizontal: 16,
-    paddingVertical: 18,
-    marginTop: 4,
-  },
-  messageText: {
-    opacity: 0.7,
-    lineHeight: 20,
-  },
-  emptyChartMessage: {
-    minHeight: 220,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-  },
-});

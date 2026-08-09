@@ -38,18 +38,12 @@ export default function InsightsLineChartKit({
 }: InsightsLineChartKitProps) {
   const [chartWidth, setChartWidth] = useState(0);
 
-  const labels = useMemo(
-    () => weekStarts.map((weekStart) => formatWeekLabel(weekStart)),
-    [weekStarts],
-  );
+  const labels = useMemo(() => weekStarts.map(formatWeekLabel), [weekStarts]);
 
   const yAxisScale = useMemo(() => {
-    const values: number[] = [];
-    for (const item of series) {
-      for (const point of item.data) {
-        values.push(point.value);
-      }
-    }
+    const values = series.flatMap((item) =>
+      item.data.map((point) => point.value),
+    );
     return computeInsightsYAxisScale(getSeriesDataMax(values));
   }, [series]);
 

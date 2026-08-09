@@ -121,19 +121,32 @@ export default function Categories() {
             Categories
           </ThemedText>
 
-          <Pressable
-            onPress={() => router.push('/categories/insights')}
-            style={styles.insightsLink}
-          >
-            <ThemedText
-              type="link"
-              size="small"
-              type="default"
-              style={styles.insightsLinkText}
+          <View style={styles.insightsLinks}>
+            <Pressable
+              onPress={() => router.push('/categories/insights')}
+              style={styles.insightsLink}
             >
-              See Insights &rarr;
-            </ThemedText>
-          </Pressable>
+              <ThemedText
+                size="small"
+                type="default"
+                style={styles.insightsLinkText}
+              >
+                See Insights &rarr;
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              onPress={() => router.push('/categories/insights-2')}
+              style={styles.insightsLink}
+            >
+              <ThemedText
+                size="small"
+                type="default"
+                style={styles.insightsLinkText}
+              >
+                See Insights 2 &rarr;
+              </ThemedText>
+            </Pressable>
+          </View>
 
           <View style={styles.categories}>
             {sortedCategories.length === 0 && (
@@ -253,9 +266,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 8,
   },
+  insightsLinks: {
+    gap: 8,
+    marginBottom: 16,
+  },
   insightsLink: {
     alignSelf: 'flex-start',
-    marginBottom: 16,
   },
   insightsLinkText: {
     textDecorationLine: 'underline',

@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { ThemedText } from '@/components/base/themed-text';
+import { computeChartHorizontalLayout } from '@/lib/insights/chart-horizontal-layout';
 import {
   filterCategorySeries,
   type CategoryWeeklySeries,
@@ -125,6 +126,16 @@ export default function CategoryInsightsChartKit({
     return computeYAxisScale(getVisibleMaxValue(visibleSeries));
   }, [visibleSeries]);
 
+  const pointCount = useMemo(() => {
+    let count = 1;
+    for (const item of visibleSeries) {
+      if (item.data.length > count) {
+        count = item.data.length;
+      }
+    }
+    return count;
+  }, [visibleSeries]);
+
   const chartData = useMemo(
     () => ({
       labels,
@@ -139,6 +150,11 @@ export default function CategoryInsightsChartKit({
   );
 
   const chartConfig = useMemo(() => buildChartConfig(), []);
+
+  const chartLayout = useMemo(
+    () => computeChartHorizontalLayout(chartWidth, pointCount),
+    [chartWidth, pointCount],
+  );
 
   const formatYLabel = useMemo(
     () => (value: string) => formatIntegerYLabel(value, yAxisScale.axisMax),
@@ -168,7 +184,7 @@ export default function CategoryInsightsChartKit({
       {chartWidth > 0 ? (
         <LineChart
           data={chartData}
-          width={chartWidth}
+          width={chartLayout.width}
           height={CHART_HEIGHT}
           chartConfig={chartConfig}
           fromZero
@@ -185,7 +201,10 @@ export default function CategoryInsightsChartKit({
           segments={yAxisScale.segments}
           yAxisInterval={1}
           formatYLabel={formatYLabel}
-          style={styles.chart}
+          style={{
+            borderRadius: 0,
+            // marginRight: chartLayout.marginRight,
+          }}
         />
       ) : null}
     </View>
@@ -201,10 +220,6 @@ const styles = StyleSheet.create({
     opacity: 0.55,
     marginBottom: 16,
     letterSpacing: 0.4,
-  },
-  chart: {
-    marginLeft: -16,
-    borderRadius: 0,
   },
   emptyState: {
     minHeight: CHART_HEIGHT,

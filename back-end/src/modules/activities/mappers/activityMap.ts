@@ -85,6 +85,18 @@ export function rawToActivityWithCategoryDTO(
         color: row.category.color,
       },
     }),
+    ...(row.goal && {
+      goal: {
+        id: row.goal.id,
+        activityId: row.goal.activity_id,
+        targetPerWeek: row.goal.target_per_week,
+      },
+    }),
+    ...(row.current_week_count !== undefined && {
+      goalProgress: {
+        currentWeekCount: Number(row.current_week_count),
+      },
+    }),
   } as ActivityWithCategoryDTO;
   /* eslint-enable @typescript-eslint/no-unsafe-assignment */
   /* eslint-enable @typescript-eslint/no-unsafe-member-access */

@@ -11,6 +11,7 @@ export function useActivityForm(initialValues?: Partial<ActivityFormValues>) {
       interval: 1,
       categoryId: null,
       lastDone: null,
+      goalTargetPerWeek: null,
       ...initialValues,
     },
   });

@@ -185,21 +185,10 @@ export default function Dashboard() {
                 !(categories.length > 0) && styles.headlineNoCategories,
               ]}
             >
-              Activities In Motion
+              Activities Queue
             </ThemedText>
           </View>
-          <FilterList
-            label="Categories"
-            items={categories
-              .filter((category) => category.id !== undefined)
-              .map((category) => ({
-                id: category.id!,
-                name: category.name,
-                color: category.color,
-              }))}
-            selectedIds={toSingleSelectedCategoryIds(activeCategoryId)}
-            onItemPress={handleCategoryPress}
-          />
+
           <Pressable
             onPress={() => router.push('/activities/insights')}
             style={styles.insightsLink}
@@ -212,6 +201,20 @@ export default function Dashboard() {
               See Insights &rarr;
             </ThemedText>
           </Pressable>
+
+          <FilterList
+            label="Categories"
+            items={categories
+              .filter((category) => category.id !== undefined)
+              .map((category) => ({
+                id: category.id!,
+                name: category.name,
+                color: category.color,
+              }))}
+            selectedIds={toSingleSelectedCategoryIds(activeCategoryId)}
+            onItemPress={handleCategoryPress}
+          />
+
           <View
             style={{
               marginTop: 6,
@@ -294,7 +297,7 @@ const styles = StyleSheet.create({
   },
   insightsLink: {
     alignSelf: 'flex-start',
-    marginTop: 2,
+    marginBottom: 6,
   },
   insightsLinkText: {
     textDecorationLine: 'underline',

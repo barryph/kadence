@@ -19,6 +19,7 @@ interface FilterListProps {
   selectedIds: number[];
   onItemPress: (id: number) => void;
   style?: ViewStyle;
+  scrollViewStyle?: ViewStyle;
 }
 
 export default function FilterList({
@@ -27,6 +28,7 @@ export default function FilterList({
   selectedIds,
   onItemPress,
   style,
+  scrollViewStyle,
 }: FilterListProps) {
   if (items.length === 0) {
     return null;
@@ -39,7 +41,11 @@ export default function FilterList({
           {label}
         </ThemedText>
       ) : null}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={scrollViewStyle}
+      >
         <View style={styles.pillsRow}>
           {items.map((item) => {
             const isActive = selectedIds.includes(item.id);

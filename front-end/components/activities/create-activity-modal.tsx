@@ -20,6 +20,7 @@ import ActivityTickerField from '@/components/activities/fields/activity-ticker-
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
 import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
 import ActivityLastDoneField from '@/components/activities/fields/activity-last-done-field';
+import ActivityGoalField from '@/components/goals/activity-goal-field';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import { ActivityFormValues } from '@/components/activities/activity-schema';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
@@ -29,6 +30,9 @@ import { ApiError } from '@/lib/query/unwrap';
 interface CreateActivityModalProps {
   onClose: () => void;
 }
+
+// TODO: Remove onCreate prop on category select
+// TODO: Swap dropdowns for mobile friendly patterns such as bottom sheets or modals
 
 export default function CreateActivityModal({
   onClose,
@@ -50,6 +54,7 @@ export default function CreateActivityModal({
         ...(values.categoryId && {
           categoryId: values.categoryId,
         }),
+        goalTargetPerWeek: values.goalTargetPerWeek,
       });
       onClose();
     } catch (error) {
@@ -100,6 +105,7 @@ export default function CreateActivityModal({
               />
 
               <ActivityLastDoneField />
+              <ActivityGoalField />
             </FormProvider>
 
             {errorMessage && (

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min, Max } from 'class-validator';
 
 export default class EditActivityDTO {
   @ApiProperty({
@@ -8,7 +8,7 @@ export default class EditActivityDTO {
   })
   @IsString()
   @IsOptional()
-  name: string;
+  name?: string;
 
   @ApiPropertyOptional({
     example: 'READ',
@@ -24,8 +24,13 @@ export default class EditActivityDTO {
   })
   @IsNumber()
   @IsOptional()
-  interval: number;
+  interval?: number;
   @IsOptional()
   @IsNumber()
   categoryId?: number;
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(7)
+  goalTargetPerWeek?: number | null;
 }

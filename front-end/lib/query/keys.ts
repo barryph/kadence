@@ -14,4 +14,9 @@ export const queryKeys = {
     all: ['events'] as const,
     range: (from: string, to: string) => ['events', from, to] as const,
   },
+  goals: {
+    all: ['goals'] as const,
+    detail: (activityId: number | string) =>
+      ['goals', String(activityId)] as const,
+  },
 };

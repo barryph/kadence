@@ -1,17 +1,13 @@
 import { useMemo, useState } from 'react';
 import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import { LineChart } from 'react-native-chart-kit/v2';
 import { ThemedText } from '@/components/base/themed-text';
 import {
-  buildInsightsChartConfig,
+  buildInsightsChartTheme,
   formatIntegerYLabel,
-  hexToRgba,
+  INSIGHTS_AREA_FILL_OPACITY,
   INSIGHTS_CHART_HEIGHT,
 } from '@/components/insights/insights-chart-kit-config';
-import {
-  CHART_PLOT_LEFT_OFFSET,
-  computeChartHorizontalLayout,
-} from '@/lib/insights/chart-horizontal-layout';
 import { formatWeekLabel } from '@/utils/date';
 
 export interface InsightsLineSeries {
@@ -25,11 +21,9 @@ interface InsightsLineChartKitProps {
   emptyMessage?: string;
 }
 
-const yAxisScale = {
-  maxValue: 7,
-  noOfSections: 7,
-  stepValue: 1,
-};
+const Y_AXIS_MAX_VALUE = 7;
+
+type ComparisonRow = Record<string, string | number>;
 
 export default function InsightsLineChartKit({
   series,
@@ -38,27 +32,33 @@ export default function InsightsLineChartKit({
 }: InsightsLineChartKitProps) {
   const [chartWidth, setChartWidth] = useState(0);
 
-  const labels = useMemo(() => weekStarts.map(formatWeekLabel), [weekStarts]);
+  const rows = useMemo<ComparisonRow[]>(() => {
+    const valuesBySeries = series.map(
+      (item) =>
+        new Map(item.data.map((point) => [point.weekStart, point.value])),
+    );
+    return weekStarts.map((weekStart, weekIndex) => {
+      const row: ComparisonRow = { week: formatWeekLabel(weekStart) };
+      valuesBySeries.forEach((values, seriesIndex) => {
+        row[`s${seriesIndex}`] = values.get(weekStart) ?? 0;
+      });
+      return row;
+    });
+  }, [series, weekStarts]);
 
-  const chartData = useMemo(
-    () => ({
-      labels,
-      datasets: series.map((item) => ({
-        data: item.data.map((point) => point.value),
-        color: (opacity = 1) => hexToRgba(item.color, opacity),
+  const chartSeries = useMemo(
+    () =>
+      series.map((item, index) => ({
+        yKey: `s${index}`,
+        color: item.color,
         strokeWidth: 2,
-        withDots: true,
+        area: true,
+        dot: true,
       })),
-    }),
-    [labels, series],
+    [series],
   );
 
-  const chartConfig = useMemo(() => buildInsightsChartConfig(), []);
-
-  const chartLayout = useMemo(
-    () => computeChartHorizontalLayout(chartWidth, labels.length),
-    [chartWidth, labels.length],
-  );
+  const theme = useMemo(() => buildInsightsChartTheme(), []);
 
   function handleLayout(event: LayoutChangeEvent) {
     setChartWidth(event.nativeEvent.layout.width);
@@ -78,29 +78,22 @@ export default function InsightsLineChartKit({
     <View style={styles.wrapper} onLayout={handleLayout}>
       {chartWidth > 0 ? (
         <LineChart
-          data={chartData}
-          width={chartLayout.width}
+          data={rows}
+          xKey="week"
+          series={chartSeries}
+          width={chartWidth}
           height={INSIGHTS_CHART_HEIGHT}
-          chartConfig={chartConfig}
-          fromZero
-          fromNumber={yAxisScale.maxValue}
-          transparent
-          bezier={false}
-          withShadow
-          withInnerLines
-          withOuterLines={false}
-          withVerticalLines={false}
-          withHorizontalLines
-          withVerticalLabels
-          withHorizontalLabels
-          segments={yAxisScale.noOfSections}
-          yAxisInterval={1}
-          formatYLabel={formatIntegerYLabel}
-          style={{
-            borderRadius: 0,
-            marginRight: chartLayout.marginRight,
-            paddingRight: CHART_PLOT_LEFT_OFFSET,
+          theme={theme}
+          curve="linear"
+          yDomain={{ min: 0, max: Y_AXIS_MAX_VALUE }}
+          areaFill={{
+            fromOpacity: INSIGHTS_AREA_FILL_OPACITY,
+            toOpacity: 0,
           }}
+          showHorizontalGridLines
+          formatYLabel={formatIntegerYLabel}
+          labelStrategy="show"
+          legend={false}
         />
       ) : null}
     </View>

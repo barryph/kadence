@@ -21,6 +21,7 @@ import ActivityCategoryField from '@/components/activities/fields/activity-categ
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
 import ActivityNameField from '@/components/activities/fields/activity-name-field';
 import ActivityTickerField from '@/components/activities/fields/activity-ticker-field';
+import ActivityGoalField from '@/components/goals/activity-goal-field';
 import { ActivityFormValues } from '@/components/activities/activity-schema';
 import Skeleton from '@/components/ui/skeleton';
 import AlertSuccess from '@/components/alerts/alert-success';
@@ -29,6 +30,10 @@ import { useActivityQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useEditActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { ApiError } from '@/lib/query/unwrap';
+
+// FIXME: Fix dropdown background is transparent
+// TODO: Fix ticker - Either mark it required, or don't make it required.
+// TODO: Close other dropdown when other one is clicked. One option is to close dropdown on any click outside of it.
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -52,26 +57,40 @@ export default function EditActivityPage() {
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const [dropdownTop, setDropdownTop] = useState(0);
   const [dropdownRight, setDropdownRight] = useState(0);
-  const hasInitializedForm = useRef(false);
+  const [initializedForId, setInitializedForId] = useState<string | null>(null);
 
   const router = useRouter();
 
+  // This screen is a tab screen, so it stays mounted when navigating between
+  // activities. The form must be (re)initialized from scratch each time the
+  // activity id changes, once that activity's data is available. The guard is
+  // checked and set within the same effect so cached data never gets skipped.
   useEffect(() => {
-    if (!activityQuery.data || hasInitializedForm.current) return;
+    if (!activityQuery.data) return;
+    if (initializedForId === String(activityId)) return;
 
     const activity = activityQuery.data;
     form.reset({
       name: activity.name,
-      ticker: activity.ticker,
+      ticker: activity.ticker ?? '',
       interval: activity.interval,
-      categoryId: activity.categoryId,
+      categoryId: activity.categoryId ?? null,
+      goalTargetPerWeek: activity.goal?.targetPerWeek ?? null,
     });
-    hasInitializedForm.current = true;
-  }, [activityQuery.data, form]);
+    setInitializedForId(String(activityId));
+  }, [activityId, activityQuery.data, form, initializedForId]);
 
+  // Clear transient UI state when switching between activities.
   useEffect(() => {
-    hasInitializedForm.current = false;
+    setErrorMessage(null);
+    setSuccessMessage(false);
+    setIsSubmitting(false);
+    setShowSettingsDropdown(false);
+    setIsDeleteModalVisible(false);
   }, [activityId]);
+
+  const formReady =
+    !isString(activityId) || initializedForId === String(activityId);
 
   async function handleSubmit(values: ActivityFormValues) {
     if (!isString(activityId)) {
@@ -91,6 +110,7 @@ export default function EditActivityPage() {
           ticker: values.ticker,
           interval: values.interval,
           categoryId: values.categoryId,
+          goalTargetPerWeek: values.goalTargetPerWeek,
         },
       });
       setSuccessMessage(true);
@@ -168,7 +188,7 @@ export default function EditActivityPage() {
             {initLoadErrorMessage && (
               <AlertError>{initLoadErrorMessage}</AlertError>
             )}
-            {activityQuery.isPending ? (
+            {activityQuery.isPending || !formReady ? (
               <>
                 <Skeleton
                   width={200}
@@ -210,6 +230,7 @@ export default function EditActivityPage() {
                     categories={categories}
                     onCreate={() => {}}
                   />
+                  <ActivityGoalField />
                 </FormProvider>
 
                 {errorMessage && (

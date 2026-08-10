@@ -128,6 +128,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   submitButton: {
-    marginTop: 30,
+    marginTop: 15,
   },
 });

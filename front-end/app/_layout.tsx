@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useEffect } from 'react';
 import {
   IBMPlexMono_400Regular,
@@ -97,15 +98,17 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <FontsProvider>
-          <QueryProvider>
-            <AuthProvider>
-              <RootLayoutNav />
-              <Toast config={toastConfig} />
-            </AuthProvider>
-          </QueryProvider>
-        </FontsProvider>
-        <StatusBar style="auto" />
+        <BottomSheetModalProvider>
+          <FontsProvider>
+            <QueryProvider>
+              <AuthProvider>
+                <RootLayoutNav />
+                <Toast config={toastConfig} />
+              </AuthProvider>
+            </QueryProvider>
+          </FontsProvider>
+          <StatusBar style="auto" />
+        </BottomSheetModalProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

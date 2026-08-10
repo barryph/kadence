@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Platform, Pressable, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -31,7 +31,7 @@ export default function ActivityLastDoneField() {
         }
 
         return (
-          <>
+          <View style={styles.wrapper}>
             <Label>When did you last complete this activity?</Label>
 
             <Pressable
@@ -81,7 +81,7 @@ export default function ActivityLastDoneField() {
                 )}
               </>
             )}
-          </>
+          </View>
         );
       }}
     />
@@ -89,6 +89,10 @@ export default function ActivityLastDoneField() {
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    marginBottom: 16,
+    width: '100%',
+  },
   dateField: {
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',

@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Controller, useFormContext } from 'react-hook-form';
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 import { ThemedText } from '@/components/base/themed-text';
@@ -16,7 +18,7 @@ const GOAL_OPTIONS: { value: number | null; label: string }[] = [
 
 export default function ActivityGoalField() {
   const { control } = useFormContext<ActivityFormValues>();
-  const [isOpen, setIsOpen] = useState(false);
+  const sheetRef = useRef<BottomSheetModal>(null);
 
   return (
     <Controller
@@ -27,12 +29,19 @@ export default function ActivityGoalField() {
           (option) => option.value === field.value,
         );
 
+        const selectOption = (option: (typeof GOAL_OPTIONS)[number]) => {
+          field.onChange(option.value);
+          sheetRef.current?.dismiss();
+        };
+
         return (
           <View style={styles.wrapper}>
             <Label>How often do you want to do this?</Label>
             <Pressable
-              onPress={() => setIsOpen((open) => !open)}
+              onPress={() => sheetRef.current?.present()}
               style={styles.select}
+              accessibilityRole="button"
+              accessibilityLabel="Goal frequency"
             >
               <ThemedText
                 style={
@@ -47,26 +56,43 @@ export default function ActivityGoalField() {
               </ThemedText>
             </Pressable>
 
-            {isOpen && (
-              <View style={styles.dropdown}>
-                {GOAL_OPTIONS.map((option) => (
-                  <Pressable
-                    key={String(option.value)}
-                    style={styles.dropdownItem}
-                    onPress={() => {
-                      field.onChange(option.value);
-                      setIsOpen(false);
-                    }}
-                  >
-                    <ThemedText>{option.label}</ThemedText>
-                  </Pressable>
-                ))}
-              </View>
-            )}
-
             {fieldState.error?.message && (
               <InputErrorMessage>{fieldState.error.message}</InputErrorMessage>
             )}
+
+            <BottomSheetModal
+              ref={sheetRef}
+              index={0}
+              snapPoints={['50%']}
+              backgroundStyle={styles.sheetBackground}
+              handleIndicatorStyle={styles.sheetHandle}
+            >
+              <BottomSheetView style={styles.sheetContent}>
+                {GOAL_OPTIONS.map((option) => {
+                  const isSelected = option.value === field.value;
+                  return (
+                    <Pressable
+                      key={String(option.value)}
+                      style={styles.sheetItem}
+                      onPress={() => selectOption(option)}
+                      accessibilityRole="button"
+                      accessibilityLabel={option.label}
+                      accessibilityState={{ selected: isSelected }}
+                    >
+                      <ThemedText
+                        style={styles.sheetItemText}
+                        type={isSelected ? 'defaultSemiBold' : 'default'}
+                      >
+                        {option.label}
+                      </ThemedText>
+                      {isSelected && (
+                        <Ionicons name="checkmark" size={20} color="#fff" />
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </BottomSheetView>
+            </BottomSheetModal>
           </View>
         );
       }}
@@ -76,10 +102,8 @@ export default function ActivityGoalField() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: 'relative',
     marginBottom: 16,
     width: '100%',
-    zIndex: 10,
   },
   select: {
     flexDirection: 'row',
@@ -100,26 +124,26 @@ const styles = StyleSheet.create({
     color: '#999',
     transform: [{ rotate: '90deg' }],
   },
-  dropdown: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    right: 0,
-    marginTop: 4,
-    borderRadius: 8,
-    overflow: 'hidden',
-    zIndex: 20,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+  sheetBackground: {
     backgroundColor: 'rgb(22, 50, 81)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  dropdownItem: {
-    paddingHorizontal: 12,
+  sheetHandle: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  sheetContent: {
+    paddingVertical: 8,
+    paddingBottom: 24,
+  },
+  sheetItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
     paddingVertical: 12,
+  },
+  sheetItemText: {
+    flex: 1,
   },
 });

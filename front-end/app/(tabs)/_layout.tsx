@@ -148,6 +148,14 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="activities/create"
+          options={{
+            ...headerOptions,
+            title: 'New Activity',
+            href: null,
+          }}
+        />
+        <Tabs.Screen
           name="activities/edit/[id]"
           options={{
             ...headerOptions,

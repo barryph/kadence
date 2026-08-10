@@ -39,7 +39,7 @@ describe('ActivityGoalField', () => {
     expect(screen.getByText('5 Times Per Week')).toBeTruthy();
   });
 
-  it('shows all options when opened', async () => {
+  it('shows all options when the sheet is opened', async () => {
     await render(<Harness />);
     await fireEvent.press(screen.getByText('No goal'));
     expect(screen.getByText('1 Time Per Week')).toBeTruthy();
@@ -47,10 +47,22 @@ describe('ActivityGoalField', () => {
     expect(screen.getByText('7 Times Per Week')).toBeTruthy();
   });
 
-  it('selects a frequency', async () => {
+  it('marks the currently selected goal as selected when opened', async () => {
+    await render(<Harness initialGoal={3} />);
+    await fireEvent.press(screen.getByText('3 Times Per Week'));
+    const selected = screen.getByRole('button', {
+      name: '3 Times Per Week',
+      selected: true,
+    });
+    expect(selected).toBeTruthy();
+  });
+
+  it('selects a frequency and closes the sheet', async () => {
     await render(<Harness />);
     await fireEvent.press(screen.getByText('No goal'));
     await fireEvent.press(screen.getByText('3 Times Per Week'));
     expect(screen.getByText('3 Times Per Week')).toBeTruthy();
+    expect(screen.queryByText('1 Time Per Week')).toBeNull();
+    expect(screen.queryByText('7 Times Per Week')).toBeNull();
   });
 });

@@ -31,10 +31,6 @@ import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useEditActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { ApiError } from '@/lib/query/unwrap';
 
-// FIXME: Fix dropdown background is transparent
-// TODO: Fix ticker - Either mark it required, or don't make it required.
-// TODO: Close other dropdown when other one is clicked. One option is to close dropdown on any click outside of it.
-
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 function isString(val: unknown): val is string {
@@ -226,10 +222,7 @@ export default function EditActivityPage() {
                   <ActivityTickerField />
                   <ActivityIntervalField />
 
-                  <ActivityCategoryField
-                    categories={categories}
-                    onCreate={() => {}}
-                  />
+                  <ActivityCategoryField categories={categories} />
                   <ActivityGoalField />
                 </FormProvider>
 

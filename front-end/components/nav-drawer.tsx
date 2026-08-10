@@ -106,19 +106,16 @@ export default function NavDrawer({
             {/* eslint-disable prettier/prettier */}
 
             <NavLink onClick={() => handleNavigate('/')}>Activities</NavLink>
-            <NavLink onClick={() => handleNavigate('/timeline')}>Timeline</NavLink>
             <NavLink onClick={() => handleNavigate('/categories')}>Categories</NavLink>
+            <NavLink onClick={() => handleNavigate('/timeline')}>Timeline</NavLink>
             <NavLink onClick={() => handleNavigate('/goals')}>Goals</NavLink>
-            <NavLink onClick={() => handleNavigate('/profile')}>Profile</NavLink>
 
+
+            <View style={styles.navBottom}>
+              <NavLink onClick={() => handleNavigate('/profile')}>Profile</NavLink>
+              <NavLink onClick={handleLogout}>Logout</NavLink>
+            </View>
             {/* eslint-enable prettier/prettier */}
-
-            <Pressable
-              style={[styles.navItem, styles.logout]}
-              onPress={handleLogout}
-            >
-              <ThemedText style={styles.navText}>Logout</ThemedText>
-            </Pressable>
           </View>
         </Animated.View>
       </View>
@@ -180,9 +177,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'right',
   },
-  logout: {
+  navBottom: {
     borderTopWidth: 1,
     marginTop: 35,
+    paddingTop: 10,
     borderTopColor: '#fff',
     opacity: 0.6,
   },

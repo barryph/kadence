@@ -1,6 +1,7 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { render, waitFor } from '@testing-library/react-native';
-import { useSegments } from 'expo-router';
+import { Stack, useSegments } from 'expo-router';
 import { RootLayoutNav } from '@/components/root-layout-nav';
 import { mockReplace } from '@/test/setup/navigation-mocks';
 import { resetMockAuth, setMockAuth } from '@/test/setup/mock-auth';
@@ -14,6 +15,11 @@ describe('RootLayoutNav auth gate', () => {
     mockReplace.mockClear();
     resetMockAuth();
     (useSegments as jest.Mock).mockReturnValue([]);
+    // Emit a sentinel from Stack.Screen so tests can observe whether the
+    // protected navigator is actually mounted (the default mock renders nothing).
+    (Stack as any).Screen = function StackScreenSentinel() {
+      return React.createElement(Text, null, 'stack-screen');
+    };
   });
 
   it('redirects unauthenticated users to login', async () => {
@@ -57,6 +63,29 @@ describe('RootLayoutNav auth gate', () => {
 
     await waitFor(() => {
       expect(mockReplace).not.toHaveBeenCalled();
+    });
+  });
+
+  it('does not render protected screens when logged out on a protected route', async () => {
+    setMockAuth({ isAuthenticated: false, isLoading: false, user: null });
+    (useSegments as jest.Mock).mockReturnValue(['(tabs)']);
+
+    const { queryAllByText } = await render(<RootLayoutNav />);
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith('/login');
+    });
+    expect(queryAllByText('stack-screen')).toHaveLength(0);
+  });
+
+  it('renders protected screens when authenticated on a protected route', async () => {
+    setMockAuth({ isAuthenticated: true, isLoading: false });
+    (useSegments as jest.Mock).mockReturnValue(['(tabs)']);
+
+    const { getAllByText } = await render(<RootLayoutNav />);
+
+    await waitFor(() => {
+      expect(getAllByText('stack-screen').length).toBeGreaterThan(0);
     });
   });
 });

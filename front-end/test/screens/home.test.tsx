@@ -12,6 +12,7 @@ import {
   resetActivityQueueCache,
   saveActivityQueue,
 } from '@/lib/storage/activity-queue';
+import { setMockAuth } from '@/test/setup/mock-auth';
 import { YYYYMMDD } from '@/utils/date';
 
 jest.mock('@/hooks/queries/use-activities');
@@ -142,5 +143,13 @@ describe('Home screen', () => {
     await waitFor(() => {
       expect(screen.getByText('Add Activity')).toBeTruthy();
     });
+  });
+
+  it('renders nothing without crashing when the user is logged out', async () => {
+    setMockAuth({ user: null, isAuthenticated: false });
+
+    await renderHome();
+
+    expect(screen.queryByText('Activities Queue')).toBeNull();
   });
 });

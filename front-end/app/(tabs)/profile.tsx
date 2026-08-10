@@ -6,8 +6,9 @@ import { ThemedText } from '@/components/base/themed-text';
 import { useAuth } from '@/context/auth-context';
 
 function Profile() {
-  const authContext = useAuth();
-  const user = authContext.user!;
+  const { user } = useAuth();
+
+  if (!user) return null;
 
   return (
     <View style={styles.container}>

@@ -24,4 +24,17 @@ describe('Profile screen smoke', () => {
       expect(screen.getByText(testUser.email)).toBeTruthy();
     });
   });
+
+  it('renders nothing without crashing when the user is logged out', async () => {
+    setMockAuth({ user: null, isAuthenticated: false });
+
+    await render(
+      <TestSafeAreaProvider>
+        <ProfileScreen />
+      </TestSafeAreaProvider>,
+    );
+
+    expect(screen.queryByText('Profile')).toBeNull();
+    expect(screen.queryByText(testUser.email)).toBeNull();
+  });
 });

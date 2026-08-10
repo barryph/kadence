@@ -11,12 +11,15 @@ import {
  * Storage details stay in lib/storage — screens only toggle/remove IDs.
  */
 export function useActivityQueue(userId: string) {
+  const isActive = userId !== '';
+
   const [queuedIds, setQueuedIds] = useState<Set<number>>(() => {
+    if (!isActive) return new Set();
     const cached = getCachedActivityQueue(userId);
     return cached !== undefined ? new Set(cached) : new Set();
   });
   const [isHydrated, setIsHydrated] = useState(
-    () => getCachedActivityQueue(userId) !== undefined,
+    () => isActive && getCachedActivityQueue(userId) !== undefined,
   );
   // State drives renders; ref lets mutators read the latest set across rapid
   // taps before React re-renders (avoids lost toggles from a stale closure).
@@ -24,6 +27,8 @@ export function useActivityQueue(userId: string) {
   queuedIdsRef.current = queuedIds;
 
   useEffect(() => {
+    if (!isActive) return;
+
     const cached = getCachedActivityQueue(userId);
     if (cached !== undefined) {
       const next = new Set(cached);
@@ -47,10 +52,15 @@ export function useActivityQueue(userId: string) {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, isActive]);
 
-  if (!userId) {
-    throw new Error('useActivityQueue requires a userId');
+  if (!isActive) {
+    return {
+      queuedIds: new Set<number>(),
+      isHydrated: false,
+      toggleQueuedActivity: () => {},
+      removeFromQueue: () => {},
+    };
   }
 
   function commitQueue(next: Set<number>) {

@@ -71,8 +71,15 @@ const ACTIVITY_SECTIONS = [
 ] as const;
 
 export default function Dashboard() {
-  const router = useRouter();
   const { user } = useAuth();
+
+  if (!user) return null;
+
+  return <DashboardContent userId={user.id} />;
+}
+
+function DashboardContent({ userId }: { userId: string }) {
+  const router = useRouter();
   const {
     data: activities = [],
     isPending: isActivitiesPending,
@@ -91,7 +98,7 @@ export default function Dashboard() {
     isHydrated: isQueueHydrated,
     toggleQueuedActivity,
     removeFromQueue,
-  } = useActivityQueue(user?.id ?? '');
+  } = useActivityQueue(userId);
 
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
 

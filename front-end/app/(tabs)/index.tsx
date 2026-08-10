@@ -6,7 +6,6 @@ import Toast from 'react-native-toast-message';
 import { IActivityClient } from '@/api/api.activity';
 import { ThemedText } from '@/components/base/themed-text';
 import LoaderScreen from '@/components/base/loader-screen';
-import CreateActivityModal from '@/components/activities/create-activity-modal';
 import Background from '@/components/backgrounds/background';
 import ActivityListItem from '@/components/activity-list/activity-list-item';
 import FloatingActionButton from '@/components/ui/floating-action-button';
@@ -95,7 +94,6 @@ export default function Dashboard() {
   } = useActivityQueue(user?.id ?? '');
 
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
-  const [showNewActivityModal, setShowNewActivityModal] = useState(false);
 
   const today = YYYYMMDD();
 
@@ -264,12 +262,8 @@ export default function Dashboard() {
 
       <FloatingActionButton
         label="Add Activity"
-        onPress={() => setShowNewActivityModal(true)}
+        onPress={() => router.push('/activities/create')}
       />
-
-      {showNewActivityModal && (
-        <CreateActivityModal onClose={() => setShowNewActivityModal(false)} />
-      )}
     </View>
   );
 }

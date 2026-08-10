@@ -74,6 +74,7 @@ export default function TabLayout() {
             borderTopWidth: 0,
           },
         }}
+        backBehavior="history"
       >
         <Tabs.Screen
           name="index"

@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Pressable } from 'react-native';
 
 import Background from '@/components/backgrounds/background';
 import Container from '@/components/base/container';
@@ -11,6 +11,8 @@ import InsightsLineChartKit, {
   type InsightsLineSeries,
 } from '@/components/insights/insights-line-chart-kit';
 import ListItemShell from '@/components/list-item-shell';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from 'expo-router';
 
 interface WeeklyInsightsScreenProps {
   title: string;
@@ -47,6 +49,8 @@ export default function WeeklyInsightsScreen({
   noActivityMessage,
   emptyMessage,
 }: WeeklyInsightsScreenProps) {
+  const router = useRouter();
+
   if (isLoading) {
     return <LoaderScreen text="Loading insights..." />;
   }
@@ -64,9 +68,14 @@ export default function WeeklyInsightsScreen({
 
       <ScrollView>
         <Container style={styles.scrollContent}>
-          <ThemedText style={styles.title} type="title" size="large">
-            {title}
-          </ThemedText>
+          <View style={styles.titleRow}>
+            <Pressable onPress={() => router.back()}>
+              <Ionicons name="arrow-back" size={27} color="white" />
+            </Pressable>
+            <ThemedText type="title" size="large">
+              {title}
+            </ThemedText>
+          </View>
 
           <ThemedText size="small" style={styles.subtitle}>
             Number of days you&apos;ve logged per week, over the last{' '}
@@ -118,7 +127,10 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingBottom: 40,
   },
-  title: {
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
     marginTop: 10,
     marginBottom: 2,
   },

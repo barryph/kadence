@@ -40,6 +40,8 @@ export default function GoalInsightsScreen() {
     return <LoaderScreen text="Goal not found." />;
   }
 
+  const NUMBER_OF_WEEKS_REPORTED = stats.weeklyPerformance?.length || 0;
+
   return (
     <View style={styles.container}>
       <Background showRed={false} />
@@ -100,7 +102,10 @@ export default function GoalInsightsScreen() {
             Performance
           </ThemedText>
           <ThemedText size="small" style={styles.sectionHint}>
-            Over the last 8 weeks
+            Over the last{' '}
+            {NUMBER_OF_WEEKS_REPORTED > 1
+              ? NUMBER_OF_WEEKS_REPORTED + ' weeks'
+              : 'week'}
           </ThemedText>
           <GoalAreaChart
             data={stats.weeklyPerformance}
@@ -111,7 +116,7 @@ export default function GoalInsightsScreen() {
         <ListItemShell style={[styles.section, styles.ringSection]}>
           <GoalAdherenceRing
             adherence={stats.adherence}
-            periodLabel="last 8 weeks"
+            periodLabel={`last ${NUMBER_OF_WEEKS_REPORTED > 1 ? NUMBER_OF_WEEKS_REPORTED + ' weeks' : 'week'}`}
           />
         </ListItemShell>
 
@@ -120,7 +125,10 @@ export default function GoalInsightsScreen() {
             Cadence
           </ThemedText>
           <ThemedText size="small" style={styles.sectionHint}>
-            Over the last 6 months
+            Over the last{' '}
+            {stats.heatmap.length > 1
+              ? `${stats.heatmap.length} weeks`
+              : 'week'}
           </ThemedText>
           <GoalHeatmap
             data={stats.heatmap}

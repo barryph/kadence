@@ -117,7 +117,7 @@ export default function Categories() {
 
       <ScrollView>
         <Container style={styles.scrollContent}>
-          <ThemedText style={styles.title} type="title" size="large">
+          <ThemedText style={styles.title} type="title" size="medium">
             Categories
           </ThemedText>
 
@@ -249,10 +249,11 @@ export default function Categories() {
 const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 100,
+    gap: 8,
   },
   title: {
     marginTop: 10,
-    marginBottom: 8,
+    marginBottom: 3,
   },
   insightsLinks: {
     gap: 8,

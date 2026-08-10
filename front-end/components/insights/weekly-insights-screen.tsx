@@ -72,7 +72,7 @@ export default function WeeklyInsightsScreen({
             <Pressable onPress={() => router.back()}>
               <Ionicons name="arrow-back" size={27} color="white" />
             </Pressable>
-            <ThemedText type="title" size="large">
+            <ThemedText type="title" size="medium">
               {title}
             </ThemedText>
           </View>

@@ -49,12 +49,12 @@ export default function GoalInsightsScreen() {
           <Pressable onPress={() => router.back()} hitSlop={8}>
             <Ionicons name="arrow-back" size={27} color="white" />
           </Pressable>
-          <ThemedText type="title" size="large">
+          <ThemedText weight="700" size="regular">
             Goal Insights
           </ThemedText>
         </View>
 
-        <ThemedText type="defaultBold" style={styles.activityName}>
+        <ThemedText weight="600" size="title" style={styles.activityName}>
           {stats.activityName}
         </ThemedText>
 
@@ -144,15 +144,13 @@ const styles = StyleSheet.create({
   },
   topRow: {
     marginTop: 10,
-    marginBottom: 14,
+    marginBottom: 17,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
   activityName: {
-    fontSize: 24,
-    marginBottom: 6,
-    marginTop: 8,
+    marginBottom: 8,
   },
   targetText: {
     opacity: 0.65,

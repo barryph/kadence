@@ -189,6 +189,7 @@ function DashboardContent({ userId }: { userId: string }) {
                 styles.headline,
                 !(categories.length > 0) && styles.headlineNoCategories,
               ]}
+              size="medium"
             >
               Activities Queue
             </ThemedText>
@@ -285,11 +286,9 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   headline: {
-    fontSize: 24,
     marginTop: 10,
-    marginBottom: 5,
+    marginBottom: 3,
     color: '#fff',
-    letterSpacing: -0.01,
     fontFamily: '"system-ui"',
     fontWeight: 700,
   },

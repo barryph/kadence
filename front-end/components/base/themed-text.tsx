@@ -5,15 +5,16 @@ export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
   type?:
-    | 'default'
-    | 'defaultSmall'
-    | 'title'
-    | 'defaultSemiBold'
-    | 'defaultBold'
-    | 'subtitle'
-    | 'link';
+  | 'default'
+  | 'defaultSmall'
+  | 'title'
+  | 'defaultSemiBold'
+  | 'defaultBold'
+  | 'subtitle'
+  | 'link';
   weight?: '400' | '600' | '700';
-  size?: 'extraSmall' | 'small' | 'regular' | 'large' | 'title';
+  size?: 'extraSmall' | 'small' | 'regular' | 'medium' | 'large' | 'title';
+  font?: 'system';
 };
 
 export function ThemedText({
@@ -23,6 +24,7 @@ export function ThemedText({
   type = 'default',
   weight,
   size,
+  font,
   ...rest
 }: ThemedTextProps) {
   // const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
@@ -45,8 +47,10 @@ export function ThemedText({
         size === 'extraSmall' ? styles.sizeExtraSmall : undefined,
         size === 'small' ? styles.sizeSmall : undefined,
         size === 'regular' ? styles.sizeRegular : undefined,
+        size === 'medium' ? styles.sizeMedium : undefined,
         size === 'large' ? styles.sizeLarge : undefined,
         size === 'title' ? styles.sizeTitle : undefined,
+        font === 'system' ? styles.fontSystem : undefined,
         style,
       ]}
       {...rest}
@@ -116,10 +120,19 @@ const styles = StyleSheet.create({
   sizeRegular: {
     fontSize: 16,
   },
+  sizeMedium: {
+    fontSize: 24,
+    lineHeight: 29,
+  },
   sizeLarge: {
     fontSize: 28,
+    lineHeight: 33,
   },
   sizeTitle: {
     fontSize: 32,
+    lineHeight: 37,
+  },
+  fontSystem: {
+    fontFamily: '"system-ui"',
   },
 });

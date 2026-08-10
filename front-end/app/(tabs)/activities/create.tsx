@@ -73,8 +73,8 @@ export default function CreateActivityPage() {
             <Pressable onPress={() => router.back()} hitSlop={8}>
               <Ionicons name="arrow-back" size={27} color="white" />
             </Pressable>
-            <ThemedText type="title" size="large">
-              New activity
+            <ThemedText weight="700" size="large">
+              New Activity
             </ThemedText>
           </View>
 
@@ -121,8 +121,8 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   topRow: {
-    marginTop: 10,
-    marginBottom: 25,
+    marginTop: 15,
+    marginBottom: 23,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,

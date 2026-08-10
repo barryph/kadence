@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -8,7 +8,7 @@ import {
   Dimensions,
   View,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { FormProvider } from 'react-hook-form';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -31,6 +31,13 @@ import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useEditActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { ApiError } from '@/lib/query/unwrap';
 
+// FIXME: When swapping between edit pages, data doesn't always up date.
+// FIXME: When swapping between edit pages, if ticker is null it inherits the last viewed items ticker.
+// FIXME: Fix dropdown background is transparent
+// FIXME: Category is never set
+// TODO: Fix ticker - Either mark it required, or don't make it required.
+// TODO: Close other dropdown when other one is clicked. One option is to close dropdown on any click outside of it.
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 function isString(val: unknown): val is string {
@@ -39,6 +46,7 @@ function isString(val: unknown): val is string {
 
 export default function EditActivityPage() {
   const { id: activityId } = useLocalSearchParams();
+  console.log('activityId', activityId);
   const activityQuery = useActivityQuery(
     isString(activityId) ? activityId : undefined,
   );
@@ -74,6 +82,22 @@ export default function EditActivityPage() {
   useEffect(() => {
     hasInitializedForm.current = false;
   }, [activityId]);
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // This runs when the screen comes into focus
+  //
+  //     return () => {
+  //       // This runs when the screen leaves focus
+  //       // Reset state
+  //       setErrorMessage(null);
+  //       setSuccessMessage(false);
+  //       setShowSettingsDropdown(false);
+  //       setIsDeleteModalVisible(false);
+  //       setIsSubmitting(false);
+  //     };
+  //   }, []),
+  // );
 
   async function handleSubmit(values: ActivityFormValues) {
     if (!isString(activityId)) {
@@ -211,7 +235,7 @@ export default function EditActivityPage() {
 
                   <ActivityCategoryField
                     categories={categories}
-                    onCreate={() => {}}
+                    onCreate={() => { }}
                   />
                   <ActivityGoalField />
                 </FormProvider>

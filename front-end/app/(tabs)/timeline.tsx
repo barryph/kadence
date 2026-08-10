@@ -397,7 +397,6 @@ function TimelineScreen() {
         selectedIds={activeCategoryId}
         onItemPress={handleCategoryPress}
         style={styles.filterList}
-        scrollViewStyle={styles.filterListScrollViewStyle}
       />
 
       <View style={styles.monthNavigationRow}>
@@ -569,15 +568,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filterList: {
-    paddingHorizontal: 0,
+    paddingHorizontal: 8,
     paddingTop: 12,
     paddingBottom: 10,
     backgroundColor: 'rgba(26, 65, 99, 0.3)',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  filterListScrollViewStyle: {
-    paddingHorizontal: 8,
   },
   monthNavigationRow: {
     flexDirection: 'row',

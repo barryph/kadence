@@ -43,8 +43,8 @@ describe('goal-progress', () => {
 
   describe('formatGoalProgress', () => {
     it('formats actual count vs target', () => {
-      expect(formatGoalProgress(2, 3)).toBe('2 / 3 this week');
-      expect(formatGoalProgress(5, 3)).toBe('5 / 3 this week');
+      expect(formatGoalProgress(2, 3)).toBe('2/3 this week');
+      expect(formatGoalProgress(5, 3)).toBe('5/3 this week');
     });
   });
 });

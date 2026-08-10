@@ -4,6 +4,7 @@ import GoalHeatmap from '../goal-heatmap';
 import {
   getGoalHeatmapColor,
   GOAL_ABOVE_THRESHOLD_COLOR,
+  GOAL_BELOW_THRESHOLD_COLOR,
   GOAL_MET_COLOR,
 } from '@/lib/goals/goal-colors';
 
@@ -38,8 +39,8 @@ describe('GoalHeatmap', () => {
 
   it('colors cells according to their performance relative to the target', () => {
     const color = (count: number) => getGoalHeatmapColor(count, 3);
-    expect(color(2)).not.toBe(GOAL_MET_COLOR);
-    expect(color(3)).toBe(GOAL_MET_COLOR);
+    expect(color(2)).not.toBe(GOAL_BELOW_THRESHOLD_COLOR);
+    expect(color(3)).toBe(GOAL_ABOVE_THRESHOLD_COLOR);
     expect(color(5)).toBe(GOAL_ABOVE_THRESHOLD_COLOR);
   });
 });

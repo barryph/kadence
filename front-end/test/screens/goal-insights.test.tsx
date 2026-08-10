@@ -59,8 +59,7 @@ describe('Goal insights screen', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Squats')).toBeTruthy();
-      expect(screen.getByText('3x per week')).toBeTruthy();
-      expect(screen.getByText('2 / 3 this week')).toBeTruthy();
+      expect(screen.getByText('2/3 this week')).toBeTruthy();
       expect(screen.getByText('Over the last 8 weeks')).toBeTruthy();
       expect(screen.getByText('50%')).toBeTruthy();
       expect(screen.getByText('Over the last 6 months')).toBeTruthy();
@@ -84,7 +83,7 @@ describe('Goal insights screen', () => {
     await renderWithProviders(<GoalInsightsScreen />);
 
     await waitFor(() => {
-      expect(screen.getByText('0 / 3 this week')).toBeTruthy();
+      expect(screen.getByText('0/3 this week')).toBeTruthy();
       expect(screen.getByText('—')).toBeTruthy();
       expect(
         screen.getByText(

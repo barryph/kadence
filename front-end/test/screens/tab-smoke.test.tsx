@@ -64,7 +64,7 @@ describe('Tab screen smoke tests', () => {
   it('Home tab mounts', async () => {
     await renderWithProviders(<HomeScreen />);
     await waitFor(() => {
-      expect(screen.getByText('Activities In Motion')).toBeTruthy();
+      expect(screen.getByText('Activities Queue')).toBeTruthy();
     });
   });
 

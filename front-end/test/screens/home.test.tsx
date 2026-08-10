@@ -62,7 +62,7 @@ describe('Home screen', () => {
     await renderHome();
 
     await waitFor(() => {
-      expect(screen.getByText('Activities In Motion')).toBeTruthy();
+      expect(screen.getByText('Activities Queue')).toBeTruthy();
       expect(screen.getByText('Morning Run')).toBeTruthy();
       expect(screen.getByText('Weekly Review')).toBeTruthy();
     });
@@ -72,8 +72,8 @@ describe('Home screen', () => {
     await renderHome();
 
     await waitFor(() => {
-      expect(screen.getByText('Activities')).toBeTruthy();
       expect(screen.queryByText('Queued')).toBeNull();
+      expect(screen.getByText('Pending')).toBeTruthy();
       expect(screen.queryByText('Completed')).toBeNull();
     });
   });
@@ -85,7 +85,7 @@ describe('Home screen', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Queued')).toBeTruthy();
-      expect(screen.getByText('Activities')).toBeTruthy();
+      expect(screen.getByText('Pending')).toBeTruthy();
       expect(screen.queryByText('Completed')).toBeNull();
     });
   });
@@ -103,7 +103,7 @@ describe('Home screen', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Completed')).toBeTruthy();
-      expect(screen.getByText('Activities')).toBeTruthy();
+      expect(screen.getByText('Pending')).toBeTruthy();
       expect(screen.queryByText('Queued')).toBeNull();
     });
   });

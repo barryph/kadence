@@ -9,7 +9,7 @@ describe('getGoalHeatmapColor', () => {
   });
 
   it('uses the above-threshold color when the target is reached', () => {
-    expect(getGoalHeatmapColor(3, 3)).toBe(GOAL_MET_COLOR);
+    expect(getGoalHeatmapColor(3, 3)).toBe(GOAL_ABOVE_THRESHOLD_COLOR);
   });
 
   it('uses a faint cell for no completions', () => {

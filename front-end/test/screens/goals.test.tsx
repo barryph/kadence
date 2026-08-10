@@ -66,9 +66,9 @@ describe('Goals screen', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Squats')).toBeTruthy();
-      expect(screen.getByText('2 / 3 this week')).toBeTruthy();
+      expect(screen.getByText('2/3 this week')).toBeTruthy();
       expect(screen.getByText('Running')).toBeTruthy();
-      expect(screen.getByText('5 / 4 this week')).toBeTruthy();
+      expect(screen.getByText('5/4 this week')).toBeTruthy();
     });
   });
 

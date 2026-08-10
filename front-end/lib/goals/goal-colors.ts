@@ -1,4 +1,4 @@
-import { DEFAULT_ACTIVITY_COLOR } from '@/li b/insights/activity-weekly-unique-days';
+import { DEFAULT_ACTIVITY_COLOR } from '@/lib/insights/activity-weekly-unique-days';
 
 /** Default activity blue — used below/at the weekly goal target. */
 export const GOAL_BELOW_THRESHOLD_COLOR = DEFAULT_ACTIVITY_COLOR;
@@ -22,7 +22,7 @@ export function getGoalHeatmapColor(count: number, target: number): string {
   if (count <= 0) {
     return blueAtOpacity(0.15);
   }
-  // If below threshold - set opacity to make progress %
+  // If below threshold - set opacity to match progress %
   const ratio = Math.min(count / target, 1);
   return blueAtOpacity(0.35 + ratio * 0.4);
 }

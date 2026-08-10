@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -8,7 +8,7 @@ import {
   Dimensions,
   View,
 } from 'react-native';
-import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FormProvider } from 'react-hook-form';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -31,10 +31,7 @@ import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useEditActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { ApiError } from '@/lib/query/unwrap';
 
-// FIXME: When swapping between edit pages, data doesn't always up date.
-// FIXME: When swapping between edit pages, if ticker is null it inherits the last viewed items ticker.
 // FIXME: Fix dropdown background is transparent
-// FIXME: Category is never set
 // TODO: Fix ticker - Either mark it required, or don't make it required.
 // TODO: Close other dropdown when other one is clicked. One option is to close dropdown on any click outside of it.
 
@@ -46,7 +43,6 @@ function isString(val: unknown): val is string {
 
 export default function EditActivityPage() {
   const { id: activityId } = useLocalSearchParams();
-  console.log('activityId', activityId);
   const activityQuery = useActivityQuery(
     isString(activityId) ? activityId : undefined,
   );
@@ -61,43 +57,40 @@ export default function EditActivityPage() {
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const [dropdownTop, setDropdownTop] = useState(0);
   const [dropdownRight, setDropdownRight] = useState(0);
-  const hasInitializedForm = useRef(false);
+  const [initializedForId, setInitializedForId] = useState<string | null>(null);
 
   const router = useRouter();
 
+  // This screen is a tab screen, so it stays mounted when navigating between
+  // activities. The form must be (re)initialized from scratch each time the
+  // activity id changes, once that activity's data is available. The guard is
+  // checked and set within the same effect so cached data never gets skipped.
   useEffect(() => {
-    if (!activityQuery.data || hasInitializedForm.current) return;
+    if (!activityQuery.data) return;
+    if (initializedForId === String(activityId)) return;
 
     const activity = activityQuery.data;
     form.reset({
       name: activity.name,
-      ticker: activity.ticker,
+      ticker: activity.ticker ?? '',
       interval: activity.interval,
-      categoryId: activity.categoryId,
+      categoryId: activity.categoryId ?? null,
       goalTargetPerWeek: activity.goal?.targetPerWeek ?? null,
     });
-    hasInitializedForm.current = true;
-  }, [activityQuery.data, form]);
+    setInitializedForId(String(activityId));
+  }, [activityId, activityQuery.data, form, initializedForId]);
 
+  // Clear transient UI state when switching between activities.
   useEffect(() => {
-    hasInitializedForm.current = false;
+    setErrorMessage(null);
+    setSuccessMessage(false);
+    setIsSubmitting(false);
+    setShowSettingsDropdown(false);
+    setIsDeleteModalVisible(false);
   }, [activityId]);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     // This runs when the screen comes into focus
-  //
-  //     return () => {
-  //       // This runs when the screen leaves focus
-  //       // Reset state
-  //       setErrorMessage(null);
-  //       setSuccessMessage(false);
-  //       setShowSettingsDropdown(false);
-  //       setIsDeleteModalVisible(false);
-  //       setIsSubmitting(false);
-  //     };
-  //   }, []),
-  // );
+  const formReady =
+    !isString(activityId) || initializedForId === String(activityId);
 
   async function handleSubmit(values: ActivityFormValues) {
     if (!isString(activityId)) {
@@ -195,7 +188,7 @@ export default function EditActivityPage() {
             {initLoadErrorMessage && (
               <AlertError>{initLoadErrorMessage}</AlertError>
             )}
-            {activityQuery.isPending ? (
+            {activityQuery.isPending || !formReady ? (
               <>
                 <Skeleton
                   width={200}

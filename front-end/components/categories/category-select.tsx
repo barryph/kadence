@@ -29,13 +29,11 @@ export default function CategorySelect({
   onClear,
 }: CategorySelectProps) {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
-    value || null,
-  );
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
 
+  const selectedCategory = value ?? null;
+
   function handleSave(category: ICategory) {
-    setSelectedCategory(category);
     setShowCreateCategoryModal(false);
     setShowDropdown(false);
     onCreate(category);
@@ -43,13 +41,11 @@ export default function CategorySelect({
   }
 
   function selectCategory(category: ICategory) {
-    setSelectedCategory(category);
     setShowDropdown(false);
     onSelect(category);
   }
 
   function clearCategory() {
-    setSelectedCategory(null);
     onClear();
   }
 

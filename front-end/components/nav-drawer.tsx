@@ -17,6 +17,19 @@ import BlueBackground from '@/components/backgrounds/blue-background';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const DRAWER_WIDTH = Math.floor((SCREEN_WIDTH / 100) * 75);
 
+interface NavLinkProps {
+  children: React.ReactNode;
+  onClick: () => void;
+}
+
+function NavLink({ children, onClick }: NavLinkProps) {
+  return (
+    <Pressable style={styles.navItem} onPress={onClick}>
+      <ThemedText style={styles.navText}>{children}</ThemedText>
+    </Pressable>
+  );
+}
+
 interface NavDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,6 +45,7 @@ export default function NavDrawer({
   const slideAnim = useRef(new Animated.Value(DRAWER_WIDTH)).current;
   const [isModalVisible, setIsModalVisible] = useState(isOpen);
 
+  // In/Out animation
   useEffect(() => {
     if (isOpen) {
       setIsModalVisible(true);
@@ -89,40 +103,15 @@ export default function NavDrawer({
           </SafeAreaView>
 
           <View style={styles.navItems}>
-            <Pressable
-              style={styles.navItem}
-              onPress={() => handleNavigate('/')}
-            >
-              <ThemedText style={styles.navText}>Activities</ThemedText>
-            </Pressable>
+            {/* eslint-disable prettier/prettier */}
 
-            <Pressable
-              style={styles.navItem}
-              onPress={() => handleNavigate('/timeline')}
-            >
-              <ThemedText style={styles.navText}>Timeline</ThemedText>
-            </Pressable>
+            <NavLink onClick={() => handleNavigate('/')}>Activities</NavLink>
+            <NavLink onClick={() => handleNavigate('/timeline')}>Timeline</NavLink>
+            <NavLink onClick={() => handleNavigate('/categories')}>Categories</NavLink>
+            <NavLink onClick={() => handleNavigate('/goals')}>Goals</NavLink>
+            <NavLink onClick={() => handleNavigate('/profile')}>Profile</NavLink>
 
-            <Pressable
-              style={styles.navItem}
-              onPress={() => handleNavigate('/goals')}
-            >
-              <ThemedText style={styles.navText}>Goals</ThemedText>
-            </Pressable>
-
-            <Pressable
-              style={styles.navItem}
-              onPress={() => handleNavigate('/categories')}
-            >
-              <ThemedText style={styles.navText}>Categories</ThemedText>
-            </Pressable>
-
-            <Pressable
-              style={styles.navItem}
-              onPress={() => handleNavigate('/profile')}
-            >
-              <ThemedText style={styles.navText}>Profile</ThemedText>
-            </Pressable>
+            {/* eslint-enable prettier/prettier */}
 
             <Pressable
               style={[styles.navItem, styles.logout]}

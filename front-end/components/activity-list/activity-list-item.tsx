@@ -8,6 +8,7 @@ import SwipeRow from '@/components/swipe-row';
 import type { IActivityClient } from '@/api/api.activity';
 import ListItemShell from '@/components/list-item-shell';
 import GoalProgressBar from '@/components/goals/goal-progress-bar';
+import ProgressBadge from '../progress-badge';
 
 /** Success gradient for completed / queued activity progress bars */
 const COMPLETED_BAR_COLORS = ['#087cff', '#08d8ff', '#52f2a8'] as const;
@@ -99,14 +100,18 @@ export default function ActivityListItem({
                 </View>
                 <View style={styles.activityDetails}>
                   {completedToday ? (
-                    <View style={styles.doneBadge}>
-                      <Ionicons
-                        name="checkmark-circle"
-                        size={14}
-                        color={COMPLETED_BAR_COLORS[2]}
-                      />
-                      <ThemedText style={styles.doneText}>DONE</ThemedText>
-                    </View>
+                    <ProgressBadge
+                      color={COMPLETED_BAR_COLORS[2]}
+                      icon={
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={14}
+                          color={COMPLETED_BAR_COLORS[2]}
+                        />
+                      }
+                    >
+                      DONE
+                    </ProgressBadge>
                   ) : (
                     <ThemedText
                       style={[
@@ -318,6 +323,10 @@ const styles = StyleSheet.create({
     borderRightColor: '#00000088',
   },
   goalProgress: {
-    marginTop: 6,
+    marginTop: 10,
+  },
+  goalText: {
+    textAlign: 'right',
+    marginTop: 0,
   },
 });

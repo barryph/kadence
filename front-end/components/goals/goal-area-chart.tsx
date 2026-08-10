@@ -56,7 +56,7 @@ export default function GoalAreaChart({
         yKey: 'count',
         strokeWidth: 2,
         area: true,
-        dot: false,
+        dot: data.length === 1,
         threshold: {
           y: targetPerWeek,
           aboveColor: GOAL_ABOVE_THRESHOLD_COLOR,

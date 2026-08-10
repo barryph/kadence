@@ -101,7 +101,7 @@ export default function CreateActivityModal({
 
               <ActivityCategoryField
                 categories={categories}
-                onCreate={() => { }}
+                onCreate={() => {}}
               />
 
               <ActivityLastDoneField />

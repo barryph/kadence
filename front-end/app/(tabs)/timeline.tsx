@@ -42,7 +42,7 @@ const CELL_HEIGHT = 12;
 const CELL_GAP = 8;
 const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
-const HEADER_ROW_EXTRA_HEIGHT = 8;
+const HEADER_ROW_EXTRA_HEIGHT = 12;
 const LOAD_MORE_WIDTH = 40;
 const LEFT_COLUMN_WIDTH = 60; // To allow the ticker text to show
 // const headersBackground = '#1a4163';
@@ -627,12 +627,12 @@ const styles = StyleSheet.create({
   },
   dateMonthDay: {
     color: '#fff',
-    fontSize: 11,
+    fontSize: 12,
     lineHeight: 12,
   },
   dateWeekday: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 16,
     marginTop: 2,
   },

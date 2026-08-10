@@ -5,7 +5,6 @@ import {
   getGoalHeatmapColor,
   GOAL_ABOVE_THRESHOLD_COLOR,
   GOAL_BELOW_THRESHOLD_COLOR,
-  GOAL_MET_COLOR,
 } from '@/lib/goals/goal-colors';
 
 const CELL_SIZE = 18;
@@ -47,7 +46,6 @@ export default function GoalHeatmap({ data, targetPerWeek }: GoalHeatmapProps) {
       <View style={styles.legend}>
         <LegendDot color="rgba(0, 115, 255, 0.15)" label="None" />
         <LegendDot color={GOAL_BELOW_THRESHOLD_COLOR} label="Below" />
-        <LegendDot color={GOAL_MET_COLOR} label="Met" />
         <LegendDot color={GOAL_ABOVE_THRESHOLD_COLOR} label="Above" />
       </View>
     </View>

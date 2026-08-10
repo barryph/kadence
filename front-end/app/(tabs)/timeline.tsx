@@ -43,7 +43,6 @@ const CELL_GAP = 8;
 const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
 const HEADER_ROW_EXTRA_HEIGHT = 12;
-const LOAD_MORE_WIDTH = 40;
 const LEFT_COLUMN_WIDTH = 60; // To allow the ticker text to show
 // const headersBackground = '#1a4163';
 const headersBackground = 'rgba(26, 65, 99, 0.30)';
@@ -77,6 +76,14 @@ function formatMonthKey(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   return `${year}-${month}`;
+}
+
+function formatMonthLabel(month: string): string {
+  const [year, monthNumber] = month.split('-').map(Number);
+  return new Date(year, monthNumber - 1, 1).toLocaleDateString(undefined, {
+    month: 'long',
+    year: 'numeric',
+  });
 }
 
 function buildMonthDateColumns(month: string): TimelineDateColumn[] {
@@ -404,6 +411,32 @@ function TimelineScreen() {
         scrollViewStyle={styles.filterListScrollViewStyle}
       />
 
+      <View style={styles.monthNavigationRow}>
+        <Button
+          onPress={() => fetchMonth(monthInView, 'PREV')}
+          isLoading={isLoadingTimeline}
+          style={[styles.navArrowButton]}
+          textStyle={styles.navArrowButtonText}
+        >
+          {isLoadingTimeline ? 'Loading...' : <>&larr;</>}
+        </Button>
+        <ThemedText style={styles.monthLabel} type="defaultSemiBold">
+          {formatMonthLabel(monthInView)}
+        </ThemedText>
+        <Button
+          onPress={() => fetchMonth(monthInView, 'NEXT')}
+          isLoading={isLoadingTimeline}
+          disabled={monthInView === currentMonth}
+          style={[
+            styles.navArrowButton,
+            monthInView === currentMonth && styles.navArrowButtonDisabled,
+          ]}
+          textStyle={styles.navArrowButtonText}
+        >
+          {isLoadingTimeline ? 'Loading...' : <>&rarr;</>}
+        </Button>
+      </View>
+
       <View style={styles.topRow}>
         {/* Blank corner cell - top left */}
         <View style={styles.cornerCell}></View>
@@ -416,7 +449,6 @@ function TimelineScreen() {
             horizontal
             showsHorizontalScrollIndicator={false}
           >
-            <View style={styles.paddingElementForLoadMoreColumn}></View>
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
                 <View key={date.full} style={[styles.dateCell]}>
@@ -432,7 +464,6 @@ function TimelineScreen() {
                 </View>
               ))}
             </View>
-            <View style={styles.paddingElementForLoadMoreColumn}></View>
           </Animated.ScrollView>
         </View>
       </View>
@@ -471,17 +502,6 @@ function TimelineScreen() {
             finalizePendingMonthScroll();
           }}
         >
-          <View style={[styles.loadMoreColumn]}>
-            <Button
-              onPress={() => fetchMonth(monthInView, 'PREV')}
-              isLoading={isLoadingTimeline}
-              style={styles.loadMoreButton}
-              textStyle={styles.loadMoreButtonTextStyles}
-            >
-              {isLoadingTimeline ? 'Loading...' : <>&larr;</>}
-            </Button>
-          </View>
-
           <Animated.ScrollView
             showsVerticalScrollIndicator={false}
             onScroll={scrollHandlerY}
@@ -528,19 +548,6 @@ function TimelineScreen() {
               );
             })}
           </Animated.ScrollView>
-
-          {monthInView !== currentMonth && (
-            <View style={[styles.loadMoreColumn]}>
-              <Button
-                onPress={() => fetchMonth(monthInView, 'NEXT')}
-                isLoading={isLoadingTimeline}
-                style={styles.loadMoreButton}
-                textStyle={styles.loadMoreButtonTextStyles}
-              >
-                {isLoadingTimeline ? 'Loading...' : <>&rarr;</>}
-              </Button>
-            </View>
-          )}
         </Animated.ScrollView>
       </View>
 
@@ -577,6 +584,36 @@ const styles = StyleSheet.create({
   },
   filterListScrollViewStyle: {
     paddingHorizontal: 8,
+  },
+  monthNavigationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(26, 65, 99, 0.3)',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  monthLabel: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  navArrowButton: {
+    flexGrow: 0,
+    color: '#fff',
+    backgroundColor: 'transparent',
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    width: 40,
+  },
+  navArrowButtonText: {
+    color: '#fff',
+    fontSize: 28,
+    lineHeight: 32,
+  },
+  navArrowButtonDisabled: {
+    opacity: 0.3,
   },
   topRow: {
     flexDirection: 'row',
@@ -700,25 +737,6 @@ const styles = StyleSheet.create({
   },
   statusCellToggling: {
     opacity: 0.5,
-  },
-  loadMoreColumn: {
-    width: LOAD_MORE_WIDTH,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: CELL_GAP,
-  },
-  paddingElementForLoadMoreColumn: {
-    width: LOAD_MORE_WIDTH,
-  },
-  loadMoreButton: {
-    flexGrow: 0,
-    color: '#fff',
-    backgroundColor: 'transparent',
-    paddingHorizontal: 0,
-  },
-  loadMoreButtonTextStyles: {
-    color: '#fff',
-    fontSize: 40,
   },
   footerOverlay: {
     position: 'absolute',

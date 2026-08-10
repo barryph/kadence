@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { type ITimelineSet } from '@/api/api.timeline';
-import Button from '@/components/base/button';
 import Animated, {
   scrollTo,
   useAnimatedRef,
@@ -19,7 +18,6 @@ import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/ho
 import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
 import { ThemedText } from '@/components/base/themed-text';
-import LoaderScreen from '@/components/base/loader-screen';
 import FilterList from '@/components/filter-list/filter-list';
 import {
   filterByCategoryId,
@@ -136,10 +134,6 @@ function TimelineScreen() {
     () => buildMonthDateColumns(monthInView),
     [monthInView],
   );
-  const isLoadingInitData =
-    isActivitiesPending ||
-    isCategoriesPending ||
-    (timelineQuery.isPending && !timelineQuery.data);
   const initError =
     isActivitiesError || isCategoriesError || timelineQuery.isError
       ? 'Unable to load timeline. Please try again.'
@@ -232,10 +226,12 @@ function TimelineScreen() {
    */
   function fetchMonth(currentMonth: string, direction: 'PREV' | 'NEXT') {
     const month = getNextMonthToLoad(currentMonth, direction);
-    pendingMonthScrollRef.current = direction === 'PREV' ? 'end' : 'start';
     setLoadMoreError(undefined);
     setIsLoadingTimeline(true);
-    setMonthInView(month);
+    requestAnimationFrame(() => {
+      pendingMonthScrollRef.current = direction === 'PREV' ? 'end' : 'start';
+      setMonthInView(month);
+    });
   }
 
   useEffect(() => {
@@ -349,10 +345,6 @@ function TimelineScreen() {
     );
   }
 
-  if (isLoadingInitData) {
-    return <LoaderScreen text="Loading timeline..." />;
-  }
-
   if (initError) {
     return (
       <Center>
@@ -380,21 +372,18 @@ function TimelineScreen() {
     );
   }
 
+  const isLoading =
+    !(timelineQuery.isPending && !timelineQuery.data) &&
+    !isLoadingTimeline &&
+    isInitialScrollReady;
+
   return (
     <View style={styles.container}>
       <Background showRed={false} />
 
-      <View
-        style={[
-          styles.isLoadingOverlay,
-          !isLoadingTimeline && isInitialScrollReady && styles.hide,
-        ]}
-      >
+      <View style={[styles.isLoadingOverlay, isLoading && styles.hide]}>
         {!isInitialScrollReady && <Background />}
         <ActivityIndicator color="#fff" />
-        <ThemedText style={{ color: '#fff', marginTop: 15 }}>
-          Loading timeline...
-        </ThemedText>
       </View>
 
       <FilterList
@@ -412,29 +401,30 @@ function TimelineScreen() {
       />
 
       <View style={styles.monthNavigationRow}>
-        <Button
+        <Pressable
           onPress={() => fetchMonth(monthInView, 'PREV')}
-          isLoading={isLoadingTimeline}
+          disabled={isLoadingTimeline}
           style={[styles.navArrowButton]}
-          textStyle={styles.navArrowButtonText}
         >
-          {isLoadingTimeline ? 'Loading...' : <>&larr;</>}
-        </Button>
+          <ThemedText style={styles.navArrowButtonText} type="defaultSemiBold">
+            &larr;
+          </ThemedText>
+        </Pressable>
         <ThemedText style={styles.monthLabel} type="defaultSemiBold">
           {formatMonthLabel(monthInView)}
         </ThemedText>
-        <Button
+        <Pressable
           onPress={() => fetchMonth(monthInView, 'NEXT')}
-          isLoading={isLoadingTimeline}
-          disabled={monthInView === currentMonth}
+          disabled={isLoadingTimeline || monthInView === currentMonth}
           style={[
             styles.navArrowButton,
             monthInView === currentMonth && styles.navArrowButtonDisabled,
           ]}
-          textStyle={styles.navArrowButtonText}
         >
-          {isLoadingTimeline ? 'Loading...' : <>&rarr;</>}
-        </Button>
+          <ThemedText style={styles.navArrowButtonText} type="defaultSemiBold">
+            &rarr;
+          </ThemedText>
+        </Pressable>
       </View>
 
       <View style={styles.topRow}>
@@ -475,13 +465,14 @@ function TimelineScreen() {
             ref={rowHeaderRef}
             showsVerticalScrollIndicator={false}
           >
-            {filteredActivities?.map((activity) => (
-              <View key={activity.id} style={styles.activityLabelCell}>
-                <Text style={styles.activityLabelText} numberOfLines={1}>
-                  {activity.ticker || activity.name}
-                </Text>
-              </View>
-            ))}
+            {tableData &&
+              filteredActivities?.map((activity) => (
+                <View key={activity.id} style={styles.activityLabelCell}>
+                  <Text style={styles.activityLabelText} numberOfLines={1}>
+                    {activity.ticker || activity.name}
+                  </Text>
+                </View>
+              ))}
           </Animated.ScrollView>
         </View>
 
@@ -507,46 +498,47 @@ function TimelineScreen() {
             onScroll={scrollHandlerY}
             nestedScrollEnabled={true}
           >
-            {filteredActivities?.map((activity) => {
-              const completedDates =
-                tableData[activity.id] || new Set<string>();
-              return (
-                <View key={activity.id} style={styles.activityRow}>
-                  {dateColumns.map((date) => {
-                    const isCompleted = completedDates.has(date.full);
-                    const cellKey = `${activity.id}-${date.full}`;
-                    const isToggling = togglingCells.has(cellKey);
-                    return (
-                      <View key={cellKey} style={styles.statusCellContainer}>
-                        <Pressable
-                          disabled={isToggling}
-                          onPress={() =>
-                            handleCellClick(
-                              cellKey,
-                              activity.id,
-                              date.full,
-                              isCompleted,
-                            )
-                          }
-                          style={[
-                            styles.statusCell,
-                            isCompleted
-                              ? styles.statusCellComplete
-                              : styles.statusCellIncomplete,
-                            isCompleted &&
+            {tableData &&
+              filteredActivities?.map((activity) => {
+                const completedDates =
+                  tableData[activity.id] || new Set<string>();
+                return (
+                  <View key={activity.id} style={styles.activityRow}>
+                    {dateColumns.map((date) => {
+                      const isCompleted = completedDates.has(date.full);
+                      const cellKey = `${activity.id}-${date.full}`;
+                      const isToggling = togglingCells.has(cellKey);
+                      return (
+                        <View key={cellKey} style={styles.statusCellContainer}>
+                          <Pressable
+                            disabled={isToggling}
+                            onPress={() =>
+                              handleCellClick(
+                                cellKey,
+                                activity.id,
+                                date.full,
+                                isCompleted,
+                              )
+                            }
+                            style={[
+                              styles.statusCell,
+                              isCompleted
+                                ? styles.statusCellComplete
+                                : styles.statusCellIncomplete,
+                              isCompleted &&
                               activity.category?.color && {
                                 backgroundColor: activity.category?.color,
                                 boxShadow: `0px 0px 8px 1px ${activity.category.color}33`,
                               },
-                            isToggling && styles.statusCellToggling,
-                          ]}
-                        />
-                      </View>
-                    );
-                  })}
-                </View>
-              );
-            })}
+                              isToggling && styles.statusCellToggling,
+                            ]}
+                          />
+                        </View>
+                      );
+                    })}
+                  </View>
+                );
+              })}
           </Animated.ScrollView>
         </Animated.ScrollView>
       </View>
@@ -565,6 +557,8 @@ function TimelineScreen() {
   );
 }
 
+const NAV_ARROW_HEIGHT = 32;
+
 const styles = StyleSheet.create({
   errorText: {
     color: '#d32f2f',
@@ -576,8 +570,8 @@ const styles = StyleSheet.create({
   },
   filterList: {
     paddingHorizontal: 0,
-    paddingTop: 10,
-    paddingBottom: 8,
+    paddingTop: 12,
+    paddingBottom: 10,
     backgroundColor: 'rgba(26, 65, 99, 0.3)',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.1)',
@@ -606,11 +600,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingVertical: 0,
     width: 40,
+    height: NAV_ARROW_HEIGHT,
   },
   navArrowButtonText: {
     color: '#fff',
     fontSize: 28,
-    lineHeight: 32,
+    lineHeight: NAV_ARROW_HEIGHT,
+    height: NAV_ARROW_HEIGHT,
+    textAlign: 'center',
   },
   navArrowButtonDisabled: {
     opacity: 0.3,

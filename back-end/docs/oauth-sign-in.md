@@ -100,6 +100,7 @@ Public values (embedded in the app bundle — treat as public):
    - **Android**: type Android. Add the app package name (`com.barryph.kadence`
      for production, plus `.dev` / `.preview` variants) and the **SHA-1**
      signing-certificate fingerprint for each build variant.
+     To find your SHA-1 certificate fingerprint run `eas credentials`.
    - **iOS**: type iOS. Add the bundle identifier (`com.barryph.kadence` etc.).
      Take note of the **iOS client ID** and the **reversed client ID**
      (`com.googleusercontent.apps.<client-id>`) — the reversed ID becomes

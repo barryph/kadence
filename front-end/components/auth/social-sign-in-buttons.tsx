@@ -10,7 +10,7 @@ interface SocialSignInButtonsProps {
 }
 
 /**
- * Sign in with Google / Apple buttons. Apple is only rendered on iOS.
+ * Sign in with Google / Apple buttons. Apple is only rendered on iOS. Google is only rendered on Android.
  * While a sign-in is in flight, all buttons are disabled.
  */
 export default function SocialSignInButtons({
@@ -29,13 +29,15 @@ export default function SocialSignInButtons({
       </View>
 
       <View style={styles.buttons} pointerEvents={isLoading ? 'none' : 'auto'}>
-        <GoogleSigninButton
-          size={GoogleSigninButton.Size.Wide}
-          color={GoogleSigninButton.Color.Dark}
-          onPress={onGooglePress}
-          disabled={isLoading}
-          style={styles.googleButton}
-        />
+        {Platform.OS === 'android' && (
+          <GoogleSigninButton
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={onGooglePress}
+            disabled={isLoading}
+            style={styles.googleButton}
+          />
+        )}
 
         {Platform.OS === 'ios' && (
           <AppleAuthentication.AppleAuthenticationButton

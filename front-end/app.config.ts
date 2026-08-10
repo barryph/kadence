@@ -30,10 +30,29 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   //   production: './src/assets/icons/apple-touch-icon.png',
   // };
 
+  const googleIosUrlScheme = process.env.GOOGLE_IOS_URL_SCHEME;
+
+  const plugins: ExpoConfig['plugins'] = [
+    ...(config.plugins ?? []),
+    'expo-apple-authentication',
+    // Only register the Google iOS URL scheme when configured. Set
+    // GOOGLE_IOS_URL_SCHEME to the reversed iOS client ID
+    // (com.googleusercontent.apps.<client-id>) before building iOS.
+    ...(googleIosUrlScheme
+      ? ([
+          [
+            '@react-native-google-signin/google-signin',
+            { iosUrlScheme: googleIosUrlScheme },
+          ],
+        ] as [string, { iosUrlScheme: string }][])
+      : []),
+  ];
+
   return {
     ...config,
     name: nameMap[variant],
     slug: config.slug!,
+    plugins,
     ios: {
       ...config.ios,
       // icon: appIcon[variant],

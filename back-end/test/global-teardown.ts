@@ -8,13 +8,15 @@ export default async function globalTeardown() {
   }
 
   const { containerId } = JSON.parse(fs.readFileSync(ENV_FILE, 'utf-8')) as {
-    containerId: string;
+    containerId: string | null;
   };
 
-  try {
-    execSync(`docker rm -f ${containerId}`, { stdio: 'ignore' });
-  } catch {
-    // Container may already be stopped
+  if (containerId) {
+    try {
+      execSync(`docker rm -f ${containerId}`, { stdio: 'ignore' });
+    } catch {
+      // Container may already be stopped
+    }
   }
 
   fs.unlinkSync(ENV_FILE);

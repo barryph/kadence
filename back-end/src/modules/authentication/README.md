@@ -1,3 +1,13 @@
+# Authentication
+
 Here we separate authentication into it's own module. This was the recommended approach by gipity and others online. Conceptually it makes sense, separating the authentications application and infrastructural concerns separate from the users, but may not be the most practical.
 Stemmler in his ddd-form repo instead includes authentication in his users module (DDD module).
 Stemmlers repo: https://github.com/stemmlerjs/ddd-forum/tree/master/src/modules/users/services
+
+## Social authentication (Google & Apple)
+
+The `infrastructure/providers/` directory contains the provider verification
+logic (`GoogleProvider`, `AppleProvider`), which derive identity exclusively
+from cryptographically verified provider credentials. `ExternalIdentityService`
+resolves/creates the application user. See `docs/oauth-sign-in.md` for full
+configuration, flow, account-linking behaviour, and security assumptions.

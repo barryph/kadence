@@ -32,6 +32,9 @@ export const test: Knex.Config = {
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.DATABASE_NAME,
+    // Keep test sessions on UTC so date-based assertions are deterministic
+    // regardless of the host's timezone.
+    options: '-c TimeZone=UTC',
   },
   migrations: {
     directory: path.join(root, '/src/shared/knex/migrations'),

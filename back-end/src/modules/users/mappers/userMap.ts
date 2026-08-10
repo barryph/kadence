@@ -6,7 +6,7 @@ import UserPassword from '../domain/value-objects/UserPassword';
 export interface IUserPersistence {
   id?: string; // Optional if first time saving
   email: string;
-  password: string;
+  password: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -29,7 +29,9 @@ export function toDTO(user: User): UserDTO {
 }
 
 export async function toPersistence(user: User): Promise<IUserPersistence> {
-  const hashedPassword = await user.password.hashPassword();
+  const hashedPassword = user.password
+    ? await user.password.hashPassword()
+    : null;
   return {
     ...(user.isPersisted() && { id: user.id }),
     email: user.email.value,
@@ -38,17 +40,12 @@ export async function toPersistence(user: User): Promise<IUserPersistence> {
 }
 
 export function persistenceToDomain(user: IUserPersistence) {
-  // try {
   const email = UserEmail.create(user.email);
-  const password = UserPassword.create(user.password);
+  const password = user.password ? UserPassword.create(user.password) : null;
   const domainUser = User.reconstitute({
     id: user.id,
     email,
     password,
   });
   return domainUser;
-  // } catch (err) {
-  //   console.log('errrrrrsr', err);
-  // }
-  // return {} as User;
 }

@@ -5,7 +5,8 @@ import UserPassword from './value-objects/UserPassword';
 interface IUser {
   id?: string;
   email: UserEmail;
-  password: UserPassword;
+  // Nullable for accounts created via external identity providers (no password login).
+  password: UserPassword | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,7 +29,7 @@ export default class User {
     return this.props.email;
   }
 
-  get password(): UserPassword {
+  get password(): UserPassword | null {
     return this.props.password;
   }
 

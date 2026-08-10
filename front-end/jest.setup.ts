@@ -184,3 +184,113 @@ jest.mock('react-native-toast-message', () => ({
     hide: jest.fn(),
   },
 }));
+
+/**
+ * Social authentication providers are native modules with no Jest
+ * implementation. Provide lightweight mocks so the auth flow can be tested;
+ * tests control the SDK calls through the exported jest.fn()s.
+ */
+jest.mock('expo-crypto', () => {
+  let callCount = 0;
+  return {
+    getRandomBytesAsync: jest.fn(async (length: number) => {
+      const bytes = new Uint8Array(length);
+      for (let i = 0; i < length; i += 1) {
+        bytes[i] = (callCount + i + 1) % 256;
+      }
+      callCount += 1;
+      return bytes;
+    }),
+    digestStringAsync: jest.fn(async (_algorithm: string, value: string) =>
+      `sha256-of-${value}`,
+    ),
+    CryptoDigestAlgorithm: { SHA256: 'SHA256' },
+  };
+});
+
+jest.mock('@react-native-google-signin/google-signin', () => {
+  const React = require('react');
+  const { Pressable, View } = require('react-native');
+
+  const GoogleSigninButton = ({
+    onPress,
+    disabled,
+    style,
+  }: {
+    onPress?: () => void;
+    disabled?: boolean;
+    style?: object;
+  }) =>
+    React.createElement(
+      Pressable,
+      {
+        testID: 'google-signin-button',
+        accessibilityLabel: 'Sign in with Google',
+        onPress,
+        disabled,
+        style,
+      },
+      React.createElement(View, null),
+    );
+  GoogleSigninButton.Size = { Wide: 'wide', Standard: 'standard' };
+  GoogleSigninButton.Color = { Dark: 'dark', Light: 'light' };
+
+  return {
+    GoogleSignin: {
+      configure: jest.fn(),
+      signIn: jest.fn(),
+      signInSilently: jest.fn(),
+      hasPlayServices: jest.fn(),
+      getCurrentUser: jest.fn(),
+      clearCachedAccessToken: jest.fn(),
+      revokeAccess: jest.fn(),
+    },
+    GoogleSigninButton,
+    statusCodes: {
+      SIGN_IN_CANCELLED: 'SIGN_IN_CANCELLED',
+      IN_PROGRESS: 'IN_PROGRESS',
+      SIGN_IN_REQUIRED: 'SIGN_IN_REQUIRED',
+      PLAY_SERVICES_NOT_AVAILABLE: 'PLAY_SERVICES_NOT_AVAILABLE',
+    },
+  };
+});
+
+jest.mock('expo-apple-authentication', () => {
+  const React = require('react');
+  const { Pressable, View } = require('react-native');
+
+  const AppleAuthenticationButton = ({
+    onPress,
+    style,
+  }: {
+    onPress?: () => void;
+    style?: object;
+  }) =>
+    React.createElement(
+      Pressable,
+      {
+        testID: 'apple-signin-button',
+        accessibilityLabel: 'Sign in with Apple',
+        onPress,
+        style,
+      },
+      React.createElement(View, null),
+    );
+
+  return {
+    signInAsync: jest.fn(),
+    isAvailableAsync: jest.fn(),
+    getCredentialStateAsync: jest.fn(),
+    AppleAuthenticationScope: {
+      FULL_NAME: 'FULL_NAME',
+      EMAIL: 'EMAIL',
+    },
+    AppleAuthenticationButtonType: { SIGN_IN: 'SIGN_IN' },
+    AppleAuthenticationButtonStyle: {
+      BLACK: 'BLACK',
+      WHITE: 'WHITE',
+      WHITE_OUTLINE: 'WHITE_OUTLINE',
+    },
+    AppleAuthenticationButton,
+  };
+});

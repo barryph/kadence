@@ -16,6 +16,8 @@ export interface MockAuthContextValue {
     Promise<ApiResponse<RegisterResponse>>,
     [email: string, password: string, passwordConfirm: string]
   >;
+  signInWithGoogle: jest.Mock<Promise<ApiResponse<LoginResponse>>, []>;
+  signInWithApple: jest.Mock<Promise<ApiResponse<LoginResponse>>, []>;
 }
 
 export function createMockAuthValue(
@@ -30,6 +32,12 @@ export function createMockAuthValue(
       .mockResolvedValue({ data: { user: testUser } }),
     logout: jest.fn().mockResolvedValue(undefined),
     register: jest
+      .fn()
+      .mockResolvedValue({ data: { user: testUser } }),
+    signInWithGoogle: jest
+      .fn()
+      .mockResolvedValue({ data: { user: testUser } }),
+    signInWithApple: jest
       .fn()
       .mockResolvedValue({ data: { user: testUser } }),
     ...overrides,

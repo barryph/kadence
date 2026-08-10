@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import cors from 'cors';
 import session from 'express-session';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import type { Express } from 'express';
 import passport from 'passport';
 import { ConnectSessionKnexStore } from 'connect-session-knex';
@@ -18,6 +19,13 @@ import { KnexService } from './shared/knex/knex.service';
 const isRunningBehindReverseProxy = process.env.NODE_ENV === 'production';
 const ONE_HOUR_IN_MS = 1000 * 60 * 60;
 
+function parseCsv(value: string | undefined): string[] {
+  return (value ?? '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
 export function configureApp(app: INestApplication): void {
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(
@@ -28,15 +36,26 @@ export function configureApp(app: INestApplication): void {
     }),
   );
 
-  const corsOrigins = ['*'];
+  // Mobile clients do not send an Origin header, so CORS exists only for web
+  // development. Allow an explicit list from env rather than reflecting any
+  // origin. Default to localhost dev servers when not in production.
+  const defaultCorsOrigins =
+    process.env.NODE_ENV === 'production'
+      ? []
+      : ['http://localhost:8081', 'http://localhost:3000'];
+  const corsOrigins = parseCsv(process.env.CORS_ORIGINS).length
+    ? parseCsv(process.env.CORS_ORIGINS)
+    : defaultCorsOrigins;
   app.use(
     cors({
-      origin: (origin, cb) =>
-        // @ts-expect-error origin could be undefined
-        cb(null, corsOrigins.includes('*') || corsOrigins.includes(origin)),
+      origin: corsOrigins,
       credentials: true,
     }),
   );
+
+  // Auth payloads (e.g. provider ID tokens) are small; reject oversized bodies
+  // before they reach validation.
+  (app as NestExpressApplication).useBodyParser('json', { limit: '32kb' });
 
   if (isRunningBehindReverseProxy) {
     // Requried for 'secure' cookies to work when running behind a reverse proxy (Caddy)

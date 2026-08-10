@@ -19,6 +19,86 @@ afterEach(async () => {
 jest.mock('react-native-reanimated');
 
 /**
+ * @gorhom/bottom-sheet relies on native gesture/reanimated worklets that are
+ * not available under jest. Render a lightweight stand-in: the provider is a
+ * plain View and the modal only renders its children once present() is called.
+ */
+jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  const { forwardRef, useImperativeHandle, useState } = React;
+
+  const BottomSheetModalProvider = ({
+    children,
+  }: {
+    children?: React.ReactNode;
+  }) => React.createElement(View, null, children);
+
+  const BottomSheetModal = forwardRef(
+    (
+      { children }: { children?: React.ReactNode },
+      ref: React.Ref<any>,
+    ) => {
+      const [visible, setVisible] = useState(false);
+      useImperativeHandle(ref, () => ({
+        present: () => setVisible(true),
+        dismiss: () => setVisible(false),
+        snapToIndex: jest.fn(),
+        snapToPosition: jest.fn(),
+        collapse: jest.fn(),
+        expand: jest.fn(),
+        close: () => setVisible(false),
+        forceClose: jest.fn(),
+      }));
+      return visible ? React.createElement(View, null, children) : null;
+    },
+  );
+
+  const BottomSheet = forwardRef((props: any, ref: React.Ref<any>) => {
+    const [visible, setVisible] = useState(true);
+    useImperativeHandle(ref, () => ({
+      present: () => setVisible(true),
+      dismiss: () => setVisible(false),
+      snapToIndex: jest.fn(),
+      snapToPosition: jest.fn(),
+      collapse: jest.fn(),
+      expand: jest.fn(),
+      close: () => setVisible(false),
+      forceClose: jest.fn(),
+    }));
+    return visible ? React.createElement(View, null, props.children) : null;
+  });
+
+  const BottomSheetView = ({ children }: { children?: React.ReactNode }) =>
+    React.createElement(View, null, children);
+
+  const BottomSheetScrollView = ({
+    children,
+  }: {
+    children?: React.ReactNode;
+  }) => React.createElement(View, null, children);
+
+  return {
+    __esModule: true,
+    default: BottomSheet,
+    BottomSheetModalProvider,
+    BottomSheetModal,
+    BottomSheet,
+    BottomSheetView,
+    BottomSheetScrollView,
+    useBottomSheetModal: () => ({
+      dismiss: jest.fn(),
+      dismissAll: jest.fn(),
+      snapToIndex: jest.fn(),
+      snapToPosition: jest.fn(),
+      expand: jest.fn(),
+      collapse: jest.fn(),
+    }),
+  };
+});
+
+/**
  * KeyboardAvoidingView registers Keyboard listeners and layout state updates
  * that race with RNTL's async act() in login form tests. Keyboard avoidance
  * is not under test in screen suites — mock as a plain View.

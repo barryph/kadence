@@ -226,10 +226,7 @@ export default function EditActivityPage() {
                   <ActivityTickerField />
                   <ActivityIntervalField />
 
-                  <ActivityCategoryField
-                    categories={categories}
-                    onCreate={() => {}}
-                  />
+                  <ActivityCategoryField categories={categories} />
                   <ActivityGoalField />
                 </FormProvider>
 

@@ -73,20 +73,6 @@ export default function GoalsScreen() {
                         </ThemedText>
 
                         <View style={styles.itemRight}>
-                          <ThemedText
-                            size="small"
-                            style={
-                              met
-                                ? styles.metText
-                                : { color: 'rgb(236, 232, 30)' }
-                            }
-                          >
-                            {formatGoalProgress(
-                              goal.currentWeekCount,
-                              goal.targetPerWeek,
-                            )}
-                          </ThemedText>
-
                           {goal.currentWeekCount >= goal.targetPerWeek ? (
                             <ProgressBadge
                               color="#52f2a8"
@@ -122,6 +108,24 @@ export default function GoalsScreen() {
                         height={10}
                         style={styles.progressBar}
                       />
+                      <View style={styles.bottomRow}>
+                        <ThemedText size="extraSmall">
+                          See Stats &rarr;
+                        </ThemedText>
+                        <ThemedText
+                          size="small"
+                          style={
+                            met
+                              ? styles.metText
+                              : { color: 'rgb(236, 232, 30)' }
+                          }
+                        >
+                          {formatGoalProgress(
+                            goal.currentWeekCount,
+                            goal.targetPerWeek,
+                          )}
+                        </ThemedText>
+                      </View>
                     </Pressable>
                   </ListItemShell>
                 );
@@ -186,5 +190,11 @@ const styles = StyleSheet.create({
   emptyText: {
     opacity: 0.7,
     lineHeight: 20,
+  },
+  bottomRow: {
+    marginTop: 3,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });

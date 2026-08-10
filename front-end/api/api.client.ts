@@ -34,7 +34,14 @@ class APIClient {
             },
           };
         }
-        return { data: undefined as T };
+        try {
+          const json: ServerResponse<T> = await response.json();
+          return {
+            data: json.data!,
+          };
+        } catch {
+          return { data: undefined as T };
+        }
       }
 
       const json: ServerResponse<T> = await response.json();

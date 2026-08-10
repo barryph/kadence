@@ -113,14 +113,14 @@ describe('getActivityColor', () => {
 });
 
 describe('isActivityVisible', () => {
-  it('returns true for every activity when none are selected', () => {
-    expect(isActivityVisible(1, [])).toBe(true);
-    expect(isActivityVisible(2, [])).toBe(true);
+  it('returns true for every activity when none is selected', () => {
+    expect(isActivityVisible(1, null)).toBe(true);
+    expect(isActivityVisible(2, null)).toBe(true);
   });
 
-  it('returns true only for selected activities', () => {
-    expect(isActivityVisible(1, [1])).toBe(true);
-    expect(isActivityVisible(2, [1])).toBe(false);
+  it('returns true only for the active activity', () => {
+    expect(isActivityVisible(1, 1)).toBe(true);
+    expect(isActivityVisible(2, 1)).toBe(false);
   });
 });
 
@@ -140,12 +140,12 @@ describe('filterActivitySeries', () => {
     },
   ];
 
-  it('returns all series when no activities are selected', () => {
-    expect(filterActivitySeries(series, [])).toEqual(series);
+  it('returns all series when no activity is selected', () => {
+    expect(filterActivitySeries(series, null)).toEqual(series);
   });
 
-  it('returns only selected activities', () => {
-    expect(filterActivitySeries(series, [2])).toEqual([series[1]]);
+  it('returns only the active activity', () => {
+    expect(filterActivitySeries(series, 2)).toEqual([series[1]]);
   });
 });
 

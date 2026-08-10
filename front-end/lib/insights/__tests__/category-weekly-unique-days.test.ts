@@ -74,18 +74,14 @@ describe('aggregateCategoryWeeklyUniqueDays', () => {
 });
 
 describe('isCategoryVisible', () => {
-  it('returns true for every category when none are selected', () => {
-    expect(isCategoryVisible(1, [])).toBe(true);
-    expect(isCategoryVisible(2, [])).toBe(true);
+  it('returns true for every category when none is selected', () => {
+    expect(isCategoryVisible(1, null)).toBe(true);
+    expect(isCategoryVisible(2, null)).toBe(true);
   });
 
-  it('returns true only for selected categories', () => {
-    expect(isCategoryVisible(1, [1])).toBe(true);
-    expect(isCategoryVisible(2, [1])).toBe(false);
-  });
-
-  it('matches selected ids even when types differ', () => {
-    expect(isCategoryVisible(2, ['2' as unknown as number])).toBe(true);
+  it('returns true only for the active category', () => {
+    expect(isCategoryVisible(1, 1)).toBe(true);
+    expect(isCategoryVisible(2, 1)).toBe(false);
   });
 });
 
@@ -105,12 +101,12 @@ describe('filterCategorySeries', () => {
     },
   ];
 
-  it('returns all series when no categories are selected', () => {
-    expect(filterCategorySeries(series, [])).toEqual(series);
+  it('returns all series when no category is selected', () => {
+    expect(filterCategorySeries(series, null)).toEqual(series);
   });
 
-  it('returns only selected categories', () => {
-    expect(filterCategorySeries(series, [2])).toEqual([series[1]]);
+  it('returns only the active category', () => {
+    expect(filterCategorySeries(series, 2)).toEqual([series[1]]);
   });
 
   it('preserves each category series data independently of selection', () => {
@@ -129,17 +125,11 @@ describe('filterCategorySeries', () => {
       },
     ];
 
-    const legsAlone = filterCategorySeries(fullSeries, [1])[0];
-    const legsWithPush = filterCategorySeries(fullSeries, [1, 2])[0];
+    const legsAlone = filterCategorySeries(fullSeries, 1)[0];
+    const legsWithPush = filterCategorySeries(fullSeries, 2)[0];
 
     expect(legsAlone).toEqual(fullSeries[0]);
-    expect(legsWithPush).toEqual(fullSeries[0]);
-  });
-
-  it('matches selected ids even when types differ', () => {
-    expect(filterCategorySeries(series, ['2' as unknown as number])).toEqual([
-      series[1],
-    ]);
+    expect(legsWithPush).toEqual(fullSeries[1]);
   });
 });
 

@@ -18,7 +18,7 @@ interface WeeklyInsightsScreenProps {
   title: string;
   filterLabel: string;
   filterItems: FilterListItem[];
-  selectedIds: number[];
+  selectedIds: number | null;
   onItemPress: (id: number) => void;
   visibleSeries: InsightsLineSeries[];
   weekStarts: string[];

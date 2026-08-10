@@ -64,22 +64,21 @@ export function aggregateCategoryWeeklyUniqueDays(
 
 export function isCategoryVisible(
   categoryId: number,
-  selectedCategoryIds: number[],
+  activeCategoryId: number | null,
 ): boolean {
-  if (selectedCategoryIds.length === 0) {
+  if (activeCategoryId === null) {
     return true;
   }
 
-  const selected = new Set(selectedCategoryIds.map((id) => Number(id)));
-  return selected.has(Number(categoryId));
+  return Number(categoryId) === Number(activeCategoryId);
 }
 
 export function filterCategorySeries(
   series: CategoryWeeklySeries[],
-  selectedCategoryIds: number[],
+  activeCategoryId: number | null,
 ): CategoryWeeklySeries[] {
   return series.filter((item) =>
-    isCategoryVisible(item.categoryId, selectedCategoryIds),
+    isCategoryVisible(item.categoryId, activeCategoryId),
   );
 }
 

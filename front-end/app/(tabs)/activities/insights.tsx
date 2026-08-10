@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { toggleActivityFilterMulti } from '@/components/filter-list/filter-by-category';
+import { toggleSingleSelectFilter } from '@/components/filter-list/filter-by-category';
 import WeeklyInsightsScreen from '@/components/insights/weekly-insights-screen';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useActivityEventsQuery } from '@/hooks/queries/use-activity-events';
@@ -27,7 +27,7 @@ export default function ActivityInsightsScreen() {
     isError: isEventsError,
   } = useActivityEventsQuery(weekRange.from, weekRange.to);
 
-  const [selectedActivityIds, setSelectedActivityIds] = useState<number[]>([]);
+  const [activeActivityId, setActiveActivityId] = useState<number | null>(null);
 
   const filterItems = useMemo(
     () =>
@@ -50,15 +50,15 @@ export default function ActivityInsightsScreen() {
   );
 
   const visibleSeries = useMemo(
-    () => filterActivitySeries(allSeries, selectedActivityIds),
-    [allSeries, selectedActivityIds],
+    () => filterActivitySeries(allSeries, activeActivityId),
+    [allSeries, activeActivityId],
   );
 
   const hasActivity = hasAnyWeeklyActivity(allSeries);
 
   function handleActivityPress(activityId: number) {
-    setSelectedActivityIds((current) =>
-      toggleActivityFilterMulti(current, activityId),
+    setActiveActivityId((current) =>
+      toggleSingleSelectFilter(current, activityId),
     );
   }
 
@@ -67,7 +67,7 @@ export default function ActivityInsightsScreen() {
       title="Activity Insights"
       filterLabel="Activities"
       filterItems={filterItems}
-      selectedIds={selectedActivityIds}
+      selectedIds={activeActivityId}
       onItemPress={handleActivityPress}
       visibleSeries={visibleSeries}
       weekStarts={weekRange.weekStarts}

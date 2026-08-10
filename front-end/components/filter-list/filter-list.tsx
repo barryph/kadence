@@ -16,7 +16,7 @@ export interface FilterListItem {
 interface FilterListProps {
   label?: string;
   items: FilterListItem[];
-  selectedIds: number[];
+  selectedIds: number | null;
   onItemPress: (id: number) => void;
   style?: ViewStyle;
   scrollViewStyle?: ViewStyle;
@@ -48,7 +48,7 @@ export default function FilterList({
       >
         <View style={styles.pillsRow}>
           {items.map((item) => {
-            const isActive = selectedIds.includes(item.id);
+            const isActive = selectedIds === item.id;
             return (
               <Pressable key={item.id} onPress={() => onItemPress(item.id)}>
                 <ThemedText

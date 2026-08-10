@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { toggleCategoryFilterMulti } from '@/components/filter-list/filter-by-category';
+import { toggleSingleSelectFilter } from '@/components/filter-list/filter-by-category';
 import WeeklyInsightsScreen from '@/components/insights/weekly-insights-screen';
 import { useActivityEventsQuery } from '@/hooks/queries/use-activity-events';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
@@ -26,7 +26,7 @@ export default function CategoryInsightsScreen() {
     isError: isEventsError,
   } = useActivityEventsQuery(weekRange.from, weekRange.to);
 
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
+  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
 
   const filterItems = useMemo(
     () =>
@@ -51,15 +51,15 @@ export default function CategoryInsightsScreen() {
   );
 
   const visibleSeries = useMemo(
-    () => filterCategorySeries(allSeries, selectedCategoryIds),
-    [allSeries, selectedCategoryIds],
+    () => filterCategorySeries(allSeries, activeCategoryId),
+    [allSeries, activeCategoryId],
   );
 
   const hasActivity = hasAnyWeeklyActivity(allSeries);
 
   function handleCategoryPress(categoryId: number) {
-    setSelectedCategoryIds((current) =>
-      toggleCategoryFilterMulti(current, categoryId),
+    setActiveCategoryId((current) =>
+      toggleSingleSelectFilter(current, categoryId),
     );
   }
 
@@ -68,7 +68,7 @@ export default function CategoryInsightsScreen() {
       title="Category Insights"
       filterLabel="Categories"
       filterItems={filterItems}
-      selectedIds={selectedCategoryIds}
+      selectedIds={activeCategoryId}
       onItemPress={handleCategoryPress}
       visibleSeries={visibleSeries}
       weekStarts={weekRange.weekStarts}

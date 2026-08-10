@@ -1,8 +1,6 @@
 import {
   filterByCategoryId,
-  toggleCategoryFilter,
-  toggleCategoryFilterMulti,
-  toSingleSelectedCategoryIds,
+  toggleSingleSelectFilter,
 } from '@/components/filter-list/filter-by-category';
 
 describe('filterByCategoryId', () => {
@@ -24,36 +22,16 @@ describe('filterByCategoryId', () => {
   });
 });
 
-describe('toggleCategoryFilter', () => {
-  it('selects a category when none is active', () => {
-    expect(toggleCategoryFilter(null, 2)).toBe(2);
+describe('toggleSingleSelectFilter', () => {
+  it('selects an item when none is active', () => {
+    expect(toggleSingleSelectFilter(null, 2)).toBe(2);
   });
 
-  it('deselects the category when it is already active', () => {
-    expect(toggleCategoryFilter(2, 2)).toBeNull();
+  it('deselects the item when it is already active', () => {
+    expect(toggleSingleSelectFilter(2, 2)).toBeNull();
   });
 
-  it('switches to a different category when another is active', () => {
-    expect(toggleCategoryFilter(1, 2)).toBe(2);
-  });
-});
-
-describe('toggleCategoryFilterMulti', () => {
-  it('adds a category when it is not selected', () => {
-    expect(toggleCategoryFilterMulti([], 2)).toEqual([2]);
-  });
-
-  it('removes a category when it is already selected', () => {
-    expect(toggleCategoryFilterMulti([1, 2], 2)).toEqual([1]);
-  });
-});
-
-describe('toSingleSelectedCategoryIds', () => {
-  it('returns an empty array when no category is active', () => {
-    expect(toSingleSelectedCategoryIds(null)).toEqual([]);
-  });
-
-  it('returns a single-item array when a category is active', () => {
-    expect(toSingleSelectedCategoryIds(3)).toEqual([3]);
+  it('switches to a different item when another is active', () => {
+    expect(toggleSingleSelectFilter(1, 2)).toBe(2);
   });
 });

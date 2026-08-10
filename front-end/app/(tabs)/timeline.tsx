@@ -23,8 +23,7 @@ import LoaderScreen from '@/components/base/loader-screen';
 import FilterList from '@/components/filter-list/filter-list';
 import {
   filterByCategoryId,
-  toggleCategoryFilter,
-  toSingleSelectedCategoryIds,
+  toggleSingleSelectFilter,
 } from '@/components/filter-list/filter-by-category';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
@@ -338,7 +337,9 @@ function TimelineScreen() {
     : undefined;
 
   function handleCategoryPress(categoryId: number) {
-    setActiveCategoryId((current) => toggleCategoryFilter(current, categoryId));
+    setActiveCategoryId((current) =>
+      toggleSingleSelectFilter(current, categoryId),
+    );
   }
 
   if (isLoadingInitData) {
@@ -397,7 +398,7 @@ function TimelineScreen() {
             name: category.name,
             color: category.color,
           }))}
-        selectedIds={toSingleSelectedCategoryIds(activeCategoryId)}
+        selectedIds={activeCategoryId}
         onItemPress={handleCategoryPress}
         style={styles.filterList}
         scrollViewStyle={styles.filterListScrollViewStyle}

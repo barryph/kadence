@@ -63,22 +63,21 @@ export function aggregateActivityWeeklyUniqueDays(
 
 export function isActivityVisible(
   activityId: number,
-  selectedActivityIds: number[],
+  activeActivityId: number | null,
 ): boolean {
-  if (selectedActivityIds.length === 0) {
+  if (activeActivityId === null) {
     return true;
   }
 
-  const selected = new Set(selectedActivityIds.map((id) => Number(id)));
-  return selected.has(Number(activityId));
+  return Number(activityId) === Number(activeActivityId);
 }
 
 export function filterActivitySeries(
   series: ActivityWeeklySeries[],
-  selectedActivityIds: number[],
+  activeActivityId: number | null,
 ): ActivityWeeklySeries[] {
   return series.filter((item) =>
-    isActivityVisible(item.activityId, selectedActivityIds),
+    isActivityVisible(item.activityId, activeActivityId),
   );
 }
 

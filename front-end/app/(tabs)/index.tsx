@@ -16,8 +16,7 @@ import FilterList from '@/components/filter-list/filter-list';
 import { getCurrentMonth, YYYYMMDD } from '@/utils/date';
 import {
   filterByCategoryId,
-  toggleCategoryFilter,
-  toSingleSelectedCategoryIds,
+  toggleSingleSelectFilter,
 } from '@/components/filter-list/filter-by-category';
 import { useAuth } from '@/context/auth-context';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
@@ -143,7 +142,9 @@ function DashboardContent({ userId }: { userId: string }) {
   }
 
   function handleCategoryPress(categoryId: number) {
-    setActiveCategoryId((current) => toggleCategoryFilter(current, categoryId));
+    setActiveCategoryId((current) =>
+      toggleSingleSelectFilter(current, categoryId),
+    );
   }
 
   const filteredActivities = filterByCategoryId(
@@ -217,7 +218,7 @@ function DashboardContent({ userId }: { userId: string }) {
                 name: category.name,
                 color: category.color,
               }))}
-            selectedIds={toSingleSelectedCategoryIds(activeCategoryId)}
+            selectedIds={activeCategoryId}
             onItemPress={handleCategoryPress}
           />
 

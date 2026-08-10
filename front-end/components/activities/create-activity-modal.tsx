@@ -31,6 +31,9 @@ interface CreateActivityModalProps {
   onClose: () => void;
 }
 
+// TODO: Remove onCreate prop on category select
+// TODO: Swap dropdowns for mobile friendly patterns such as bottom sheets or modals
+
 export default function CreateActivityModal({
   onClose,
 }: CreateActivityModalProps) {
@@ -98,7 +101,7 @@ export default function CreateActivityModal({
 
               <ActivityCategoryField
                 categories={categories}
-                onCreate={() => {}}
+                onCreate={() => { }}
               />
 
               <ActivityLastDoneField />

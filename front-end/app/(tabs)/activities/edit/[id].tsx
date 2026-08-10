@@ -228,7 +228,7 @@ export default function EditActivityPage() {
 
                   <ActivityCategoryField
                     categories={categories}
-                    onCreate={() => { }}
+                    onCreate={() => {}}
                   />
                   <ActivityGoalField />
                 </FormProvider>

@@ -38,14 +38,14 @@ import { getCurrentMonth } from '@/utils/date';
 
 // TODO: Make whole block clickable, not only the colored cell
 
-const CELL_WIDTH = 35;
+const CELL_WIDTH = 30;
 const CELL_HEIGHT = 12;
 const CELL_GAP = 8;
 const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
 const HEADER_ROW_EXTRA_HEIGHT = 8;
 const LOAD_MORE_WIDTH = 40;
-const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
+const LEFT_COLUMN_WIDTH = 60; // To allow the ticker text to show
 // const headersBackground = '#1a4163';
 const headersBackground = 'rgba(26, 65, 99, 0.30)';
 
@@ -66,8 +66,11 @@ function toTimelineDateColumn(date: Date): TimelineDateColumn {
         month: 'short',
         day: 'numeric',
       })
-      .replaceAll(' ', ''),
+      .split(' ')
+      .reverse()
+      .join('\n'),
     weekday: date.toLocaleDateString(undefined, { weekday: 'short' }),
+    // num: ((date.getDay() + 6) % 7) + 1,
   };
 }
 
@@ -422,6 +425,9 @@ function TimelineScreen() {
                   <ThemedText style={styles.dateWeekday} type="defaultSemiBold">
                     {date.weekday}
                   </ThemedText>
+                  {/* <ThemedText style={styles.dateWeekNum} size="extraSmall"> */}
+                  {/*   {date.num} */}
+                  {/* </ThemedText> */}
                 </View>
               ))}
             </View>
@@ -629,6 +635,11 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginTop: 2,
   },
+  // dateWeekNum: {
+  //   color: '#fff',
+  //   lineHeight: 14,
+  //   marginTop: 2,
+  // },
   activityLabelCell: {
     height: ROW_HEIGHT,
     justifyContent: 'center',
@@ -705,6 +716,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   loadMoreButtonTextStyles: {
+    color: '#fff',
     fontSize: 40,
   },
   footerOverlay: {

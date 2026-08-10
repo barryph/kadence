@@ -37,10 +37,6 @@ export default function GoalsScreen() {
             <ThemedText style={styles.title} type="title" size="large">
               Monitor your frequency
             </ThemedText>
-
-            <ThemedText style={styles.subTitle} size="small">
-              Add targets on activities to track your adherance.
-            </ThemedText>
           </View>
 
           {goals.length === 0 ? (

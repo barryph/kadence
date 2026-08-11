@@ -6,6 +6,7 @@ import {
   waitFor,
   userEvent,
 } from '@testing-library/react-native';
+import { Platform } from 'react-native';
 import { TestSafeAreaProvider } from '@/test/setup/test-safe-area';
 import LoginScreen from '@/app/login';
 import { ErrorCode } from '@/api/api.types';
@@ -105,6 +106,158 @@ describe('LoginScreen', () => {
       await screen.findByText('Invalid email or password, please try again.'),
     ).toBeTruthy();
     expect(auth.login).toHaveBeenCalled();
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+});
+
+describe('LoginScreen social sign-in', () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+    mockReplace.mockClear();
+    setMockAuth({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+    });
+  });
+
+  it('renders the Google button and the Apple button on iOS', async () => {
+    await render(
+      <TestSafeAreaProvider>
+        <LoginScreen />
+      </TestSafeAreaProvider>,
+    );
+    await screen.findByText('Login!');
+
+    expect(screen.getByTestId('google-signin-button')).toBeTruthy();
+    expect(screen.getByTestId('apple-signin-button')).toBeTruthy();
+  });
+
+  it('does not render the Apple button on Android', async () => {
+    jest.replaceProperty(Platform, 'OS', 'android');
+
+    await render(
+      <TestSafeAreaProvider>
+        <LoginScreen />
+      </TestSafeAreaProvider>,
+    );
+    await screen.findByText('Login!');
+
+    expect(screen.getByTestId('google-signin-button')).toBeTruthy();
+    expect(screen.queryByTestId('apple-signin-button')).toBeNull();
+  });
+
+  it('signs in with Google and navigates on success', async () => {
+    const auth = setMockAuth({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      signInWithGoogle: jest
+        .fn()
+        .mockResolvedValue({ data: { user: testUser } }),
+    });
+
+    await renderLogin();
+    const user = userEvent.setup();
+
+    await user.press(screen.getByTestId('google-signin-button'));
+
+    await waitFor(() => {
+      expect(auth.signInWithGoogle).toHaveBeenCalled();
+      expect(mockReplace).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('signs in with Apple and navigates on success', async () => {
+    const auth = setMockAuth({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      signInWithApple: jest
+        .fn()
+        .mockResolvedValue({ data: { user: testUser } }),
+    });
+
+    await renderLogin();
+    const user = userEvent.setup();
+
+    await user.press(screen.getByTestId('apple-signin-button'));
+
+    await waitFor(() => {
+      expect(auth.signInWithApple).toHaveBeenCalled();
+      expect(mockReplace).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('does not show an error when sign-in is cancelled', async () => {
+    setMockAuth({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      signInWithGoogle: jest.fn().mockResolvedValue({
+        error: {
+          code: ErrorCode.SOCIAL_AUTH_CANCELLED,
+          message: 'Sign in was cancelled.',
+        },
+      }),
+    });
+
+    await renderLogin();
+    const user = userEvent.setup();
+
+    await user.press(screen.getByTestId('google-signin-button'));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Sign in was cancelled.')).toBeNull();
+    });
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  it('shows a friendly message when provider sign-in fails', async () => {
+    setMockAuth({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      signInWithGoogle: jest.fn().mockResolvedValue({
+        error: {
+          code: ErrorCode.SOCIAL_AUTH_FAILED,
+          message: 'Sign in failed. Please try again.',
+        },
+      }),
+    });
+
+    await renderLogin();
+    const user = userEvent.setup();
+
+    await user.press(screen.getByTestId('google-signin-button'));
+
+    expect(
+      await screen.findByText('Sign in failed. Please try again.'),
+    ).toBeTruthy();
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  it('shows a friendly message on network failure', async () => {
+    setMockAuth({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      signInWithApple: jest.fn().mockResolvedValue({
+        error: {
+          code: ErrorCode.NETWORK_ERROR,
+          message: 'Network error. Please check your connection.',
+        },
+      }),
+    });
+
+    await renderLogin();
+    const user = userEvent.setup();
+
+    await user.press(screen.getByTestId('apple-signin-button'));
+
+    expect(
+      await screen.findByText('Network error. Please check your connection.'),
+    ).toBeTruthy();
     expect(mockReplace).not.toHaveBeenCalled();
   });
 });

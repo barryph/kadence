@@ -2,8 +2,11 @@ import { KnexService } from 'src/shared/knex/knex.service';
 import User from '../domain/user.entity';
 import UserEmail from '../domain/value-objects/UserEmail';
 import { Injectable } from '@nestjs/common';
+import type { Knex } from 'knex';
 import type { IUserPersistence } from '../mappers/userMap';
 import * as UserMap from '../mappers/userMap';
+
+type DbConnection = Knex | Knex.Transaction;
 
 export interface IUsersRepo {
   exists(email: UserEmail): Promise<boolean>;
@@ -61,9 +64,10 @@ export default class UsersRepo implements IUsersRepo {
     return UserMap.persistenceToDomain(user);
   }
 
-  async create(userDomain: User): Promise<User> {
+  async create(userDomain: User, trx?: DbConnection): Promise<User> {
     const user = await UserMap.toPersistence(userDomain);
-    const result = await this.knexService.connection.raw<{
+    const db = trx ?? this.knexService.connection;
+    const result = await db.raw<{
       rows: IUserPersistence[];
     }>(
       `

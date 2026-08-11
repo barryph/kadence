@@ -19,6 +19,9 @@ import type { NextFunction, Request, Response } from 'express';
 import LoginDTO from './dtos/login.dto';
 import ForgotPasswordDTO from './dtos/forgotPassword.dto';
 import ResetPasswordDTO from './dtos/resetPassword.dto';
+import GoogleLoginDTO from './dtos/google-login.dto';
+import AppleLoginDTO from './dtos/apple-login.dto';
+import { SocialAuthService } from './services/social-auth.service';
 import { InvalidCredentialsError } from './authentication.errors';
 import ServerError from 'src/shared/ServerError';
 
@@ -26,7 +29,35 @@ import ServerError from 'src/shared/ServerError';
 export class AuthenticationController {
   private readonly logger = new Logger(AuthenticationController.name);
 
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(
+    private readonly authenticationService: AuthenticationService,
+    private readonly socialAuthService: SocialAuthService,
+  ) {}
+
+  /**
+   * Establishes an authenticated session for the given user, regenerating the
+   * session ID first to prevent session fixation. Identical to the flow used
+   * for email/password login so the resulting session is indistinguishable.
+   */
+  private establishSession(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+    user: UserDTO,
+  ) {
+    req.session.regenerate((regenErr) => {
+      if (regenErr) return next(regenErr);
+      req.logIn(user, (loginErr) => {
+        if (loginErr) {
+          this.logger.error(loginErr, 'Session login error');
+          return next(
+            new ServerError('SESSION_LOGIN_ERROR', 'Session login error'),
+          );
+        }
+        return res.send({ data: { user } });
+      });
+    });
+  }
 
   @Post('login')
   @HttpCode(200)
@@ -61,17 +92,7 @@ export class AuthenticationController {
         return;
       }
 
-      req.session.regenerate((regenErr) => {
-        if (regenErr) return next(regenErr);
-        req.logIn(user, (loginErr) => {
-          if (loginErr) {
-            this.logger.error(loginErr, 'Session login error');
-            next(new ServerError('SESSION_LOGIN_ERROR', 'Session login error'));
-            return;
-          }
-          return res.send({ data: { user } });
-        });
-      });
+      this.establishSession(req, res, next, user);
     })(req, res, next);
   }
 
@@ -116,19 +137,59 @@ export class AuthenticationController {
     @Next() next: NextFunction,
   ) {
     const user = await this.authenticationService.register(createUserDto);
+    this.establishSession(req, res, next, user);
+  }
 
-    req.session.regenerate((regenErr) => {
-      if (regenErr) return next(regenErr);
-      // Login the user automatically after creating their account
-      req.login(user, (err) => {
-        if (err) next(err);
-        return res.send({
-          data: {
-            user,
-          },
-        });
-      });
-    });
+  @Post('google')
+  @HttpCode(200)
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
+  @ApiBody({
+    type: GoogleLoginDTO,
+    examples: {
+      googleExample: {
+        summary: 'Sign in with Google',
+        value: {
+          idToken: '...google id token...',
+        },
+      },
+    },
+  })
+  async googleLogin(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() dto: GoogleLoginDTO,
+    @Next() next: NextFunction,
+  ) {
+    const user = await this.socialAuthService.signInWithGoogle(dto.idToken);
+    this.establishSession(req, res, next, user);
+  }
+
+  @Post('apple')
+  @HttpCode(200)
+  @Throttle({ default: { ttl: 60000, limit: 5 } })
+  @ApiBody({
+    type: AppleLoginDTO,
+    examples: {
+      appleExample: {
+        summary: 'Sign in with Apple',
+        value: {
+          idToken: '...apple identity token...',
+          nonce: '...raw nonce...',
+        },
+      },
+    },
+  })
+  async appleLogin(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() dto: AppleLoginDTO,
+    @Next() next: NextFunction,
+  ) {
+    const user = await this.socialAuthService.signInWithApple(
+      dto.idToken,
+      dto.nonce,
+    );
+    this.establishSession(req, res, next, user);
   }
 
   @Post('forgot-password')

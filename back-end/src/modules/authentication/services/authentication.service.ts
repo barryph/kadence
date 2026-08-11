@@ -19,6 +19,11 @@ export class AuthenticationService {
       throw new InvalidCredentialsError();
     }
 
+    // OAuth-only accounts have no password and cannot use password login.
+    if (!user.password) {
+      throw new InvalidCredentialsError();
+    }
+
     const doPasswordsMatch = await user.password.comparePasswords(pass);
     if (!doPasswordsMatch) {
       throw new InvalidCredentialsError();

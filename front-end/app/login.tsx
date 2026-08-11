@@ -6,26 +6,25 @@ import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
 import Input from '@/components/base/input';
 import Button from '@/components/base/button';
+import SocialSignInButtons from '@/components/auth/social-sign-in-buttons';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 import KBAvoidingView from '@/components/kb-avoiding-view';
+import { ErrorCode } from '@/api/api.types';
+import type { ApiResponse } from '@/api/api.types';
+import type { LoginResponse } from '@/api/api.auth';
 import {
   loginSchema,
   type LoginFormValues,
 } from '@/components/auth/auth-schemas';
-
-// FIXME: White bar at bottom of page on staging build
-
-// TODO: Implement OAuth for both google and apple
-//   Expo recommends using separate packages for each provider. They have video guides for both here:
-//   https://docs.expo.dev/develop/authentication/#custom-oauth-with-expo-api-routes
 
 export default function LoginScreen() {
   const authContext = useAuth();
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
   const { control, handleSubmit } = useForm<LoginFormValues>({
@@ -49,6 +48,25 @@ export default function LoginScreen() {
 
     // AuthContext and RootLayout will handle redirect to tabs,
     // but we can manually push to root if we want.
+    router.replace('/');
+  }
+
+  async function handleSocialSignIn(
+    signIn: () => Promise<ApiResponse<LoginResponse>>,
+  ) {
+    setErrorMessage(null);
+    setSocialLoading(true);
+
+    const response = await signIn();
+    if (response.error) {
+      // Cancellation is not an error worth showing.
+      if (response.error.code !== ErrorCode.SOCIAL_AUTH_CANCELLED) {
+        setErrorMessage(response.error.message);
+      }
+      setSocialLoading(false);
+      return;
+    }
+
     router.replace('/');
   }
 
@@ -78,7 +96,7 @@ export default function LoginScreen() {
                 autoCapitalize="none"
                 keyboardType="email-address"
                 errorMessage={fieldState.error?.message}
-                editable={!isLoading}
+                editable={!isLoading && !socialLoading}
               />
             )}
           />
@@ -97,7 +115,7 @@ export default function LoginScreen() {
                 autoCorrect={false}
                 textContentType="password"
                 errorMessage={fieldState.error?.message}
-                editable={!isLoading}
+                editable={!isLoading && !socialLoading}
               />
             )}
           />
@@ -105,10 +123,21 @@ export default function LoginScreen() {
           <Button
             onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
+            disabled={socialLoading}
             style={styles.submitButton}
           >
             Enter
           </Button>
+
+          <SocialSignInButtons
+            onGooglePress={() =>
+              handleSocialSignIn(() => authContext.signInWithGoogle())
+            }
+            onApplePress={() =>
+              handleSocialSignIn(() => authContext.signInWithApple())
+            }
+            isLoading={socialLoading}
+          />
 
           <Link href="/forgot-password" style={styles.linkContainer}>
             <Text style={styles.linkText}>

@@ -6,10 +6,14 @@ import { useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
 import Input from '@/components/base/input';
 import Button from '@/components/base/button';
+import SocialSignInButtons from '@/components/auth/social-sign-in-buttons';
 import { ThemedText } from '@/components/base/themed-text';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 import KBAvoidingView from '@/components/kb-avoiding-view';
+import { ErrorCode } from '@/api/api.types';
+import type { ApiResponse } from '@/api/api.types';
+import type { LoginResponse } from '@/api/api.auth';
 import {
   registerSchema,
   type RegisterFormValues,
@@ -20,6 +24,7 @@ export default function RegisterScreen() {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
   const { control, handleSubmit } = useForm<RegisterFormValues>({
@@ -55,6 +60,25 @@ export default function RegisterScreen() {
     router.replace('/');
   }
 
+  async function handleSocialSignIn(
+    signIn: () => Promise<ApiResponse<LoginResponse>>,
+  ) {
+    setErrorMessage(null);
+    setSocialLoading(true);
+
+    const response = await signIn();
+    if (response.error) {
+      // Cancellation is not an error worth showing.
+      if (response.error.code !== ErrorCode.SOCIAL_AUTH_CANCELLED) {
+        setErrorMessage(response.error.message);
+      }
+      setSocialLoading(false);
+      return;
+    }
+
+    router.replace('/');
+  }
+
   return (
     <KBAvoidingView
       style={styles.container}
@@ -80,7 +104,7 @@ export default function RegisterScreen() {
                 autoCapitalize="none"
                 keyboardType="email-address"
                 errorMessage={fieldState.error?.message}
-                editable={!isLoading}
+                editable={!isLoading && !socialLoading}
               />
             )}
           />
@@ -96,7 +120,7 @@ export default function RegisterScreen() {
                 onChangeText={field.onChange}
                 secureTextEntry
                 errorMessage={fieldState.error?.message}
-                editable={!isLoading}
+                editable={!isLoading && !socialLoading}
               />
             )}
           />
@@ -112,7 +136,7 @@ export default function RegisterScreen() {
                 onChangeText={field.onChange}
                 secureTextEntry
                 errorMessage={fieldState.error?.message}
-                editable={!isLoading}
+                editable={!isLoading && !socialLoading}
               />
             )}
           />
@@ -120,10 +144,21 @@ export default function RegisterScreen() {
           <Button
             onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
+            disabled={socialLoading}
             style={styles.submitButton}
           >
             Enter
           </Button>
+
+          <SocialSignInButtons
+            onGooglePress={() =>
+              handleSocialSignIn(() => authContext.signInWithGoogle())
+            }
+            onApplePress={() =>
+              handleSocialSignIn(() => authContext.signInWithApple())
+            }
+            isLoading={socialLoading}
+          />
 
           <Link href="/login" style={styles.linkContainer}>
             <Text style={styles.linkText}>

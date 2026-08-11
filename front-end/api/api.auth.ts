@@ -37,6 +37,15 @@ export interface ResetPasswordResponse {
   message: string;
 }
 
+interface GoogleLoginDTO {
+  idToken: string;
+}
+
+interface AppleLoginDTO {
+  idToken: string;
+  nonce: string;
+}
+
 export const authAPI = {
   login(body: LoginDTO) {
     return apiClient.post<LoginResponse>('/auth/login', body);
@@ -48,6 +57,14 @@ export const authAPI = {
 
   register(body: RegisterDTO) {
     return apiClient.post<RegisterResponse>('/auth/register', body);
+  },
+
+  googleLogin(body: GoogleLoginDTO) {
+    return apiClient.post<LoginResponse>('/auth/google', body);
+  },
+
+  appleLogin(body: AppleLoginDTO) {
+    return apiClient.post<LoginResponse>('/auth/apple', body);
   },
 
   forgotPassword(body: ForgotPasswordDTO) {

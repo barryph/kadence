@@ -68,10 +68,12 @@ export class GoogleProvider {
     } catch {
       // google-auth-library embeds the JWT in some error messages (e.g.
       // "Invalid token signature: <jwt>"). Never log or surface it.
+      console.error('Error: While verifying google token');
       throw new OAuthCredentialError();
     }
 
     if (!payload?.sub) {
+      console.error('Error: Google token missing sub');
       throw new OAuthCredentialError();
     }
 

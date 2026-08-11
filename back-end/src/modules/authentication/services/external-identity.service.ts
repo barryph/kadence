@@ -38,7 +38,7 @@ export class ExternalIdentityService {
     private readonly usersRepo: UsersRepo,
     private readonly externalIdentitiesRepo: ExternalIdentitiesRepo,
     private readonly knexService: KnexService,
-  ) {}
+  ) { }
 
   async resolveOrCreate(verified: VerifiedExternalIdentity): Promise<User> {
     const existing = await this.findExisting(verified);
@@ -77,6 +77,7 @@ export class ExternalIdentityService {
     if (!user) {
       // Identity row exists but the user is gone (e.g. deleted). Fail closed
       // rather than silently creating a fresh account.
+      console.error('Error: User not found in external identity service');
       throw new OAuthCredentialError();
     }
     return user;

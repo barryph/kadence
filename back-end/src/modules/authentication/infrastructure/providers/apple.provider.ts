@@ -71,6 +71,7 @@ export class AppleProvider {
     // Sign in with Apple always uses a nonce in this application. Fail closed
     // rather than skip nonce validation if one was not supplied.
     if (!rawNonce) {
+      console.error('Error: No raw nonce');
       throw new OAuthCredentialError();
     }
 
@@ -85,10 +86,12 @@ export class AppleProvider {
       }) as jwt.JwtPayload;
     } catch {
       // Never log or surface the raw error: it can include token contents.
+      console.error('Error: While verifying apple identify token');
       throw new OAuthCredentialError();
     }
 
     if (typeof payload.sub !== 'string' || payload.sub.length === 0) {
+      console.error('Error: Apple token is missing sub');
       throw new OAuthCredentialError();
     }
 

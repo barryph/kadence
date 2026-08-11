@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
   authAPI,
   type LoginResponse,
@@ -134,6 +128,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     ) => Promise<ApiResponse<LoginResponse>>,
   ): Promise<ApiResponse<LoginResponse>> {
     if (socialAuthInFlight.current) {
+      console.error('Error: Social Auth In Flight');
       return toAppError(
         ErrorCode.SOCIAL_AUTH_FAILED,
         'A sign-in is already in progress.',

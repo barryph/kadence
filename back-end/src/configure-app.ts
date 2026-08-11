@@ -12,8 +12,6 @@ import UsersRepo from './modules/users/repos/user.repository';
 import { KnexService } from './shared/knex/knex.service';
 
 // TODO: Implement "Sliding Expiry" - If the user is active and the cookie is more than halfway through its lifespan, silently issue a new cookie with a reset expiration window.
-// FIXME: Attempting to complete activity already completed today does nothing.
-// TODO: If timeline shows less than 7 days in this month, show last month too
 
 const isRunningBehindReverseProxy = process.env.NODE_ENV === 'production';
 const ONE_HOUR_IN_MS = 1000 * 60 * 60;

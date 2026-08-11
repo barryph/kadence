@@ -56,7 +56,20 @@ export default function GoalAreaChart({
         yKey: 'count',
         strokeWidth: 2,
         area: true,
-        dot: data.length === 1,
+        dot:
+          data.length === 1
+            ? {
+              visible: true,
+              stroke:
+                data[0].count >= targetPerWeek
+                  ? GOAL_ABOVE_THRESHOLD_COLOR
+                  : GOAL_BELOW_THRESHOLD_COLOR,
+              fill:
+                data[0].count >= targetPerWeek
+                  ? GOAL_ABOVE_THRESHOLD_COLOR
+                  : GOAL_BELOW_THRESHOLD_COLOR,
+            }
+            : false,
         threshold: {
           y: targetPerWeek,
           aboveColor: GOAL_ABOVE_THRESHOLD_COLOR,
@@ -64,7 +77,7 @@ export default function GoalAreaChart({
         },
       },
     ],
-    [targetPerWeek],
+    [targetPerWeek, data],
   );
 
   const referenceLines = useMemo(

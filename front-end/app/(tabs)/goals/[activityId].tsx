@@ -14,8 +14,6 @@ import { useGoalStatsQuery } from '@/hooks/queries/use-goals';
 import { formatGoalProgress } from '@/lib/goals/goal-progress';
 import { YYYYMMDD } from '@/utils/date';
 
-// FIXME: Performance chart shows nothing on the first week an activity is completed if it's it only week
-
 function isString(val: unknown): val is string {
   return typeof val === 'string';
 }

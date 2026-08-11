@@ -38,7 +38,7 @@ export class ExternalIdentityService {
     private readonly usersRepo: UsersRepo,
     private readonly externalIdentitiesRepo: ExternalIdentitiesRepo,
     private readonly knexService: KnexService,
-  ) { }
+  ) {}
 
   async resolveOrCreate(verified: VerifiedExternalIdentity): Promise<User> {
     const existing = await this.findExisting(verified);

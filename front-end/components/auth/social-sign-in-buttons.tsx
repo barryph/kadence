@@ -29,15 +29,13 @@ export default function SocialSignInButtons({
       </View>
 
       <View style={styles.buttons} pointerEvents={isLoading ? 'none' : 'auto'}>
-        {Platform.OS === 'android' && (
-          <GoogleSigninButton
-            size={GoogleSigninButton.Size.Wide}
-            color={GoogleSigninButton.Color.Dark}
-            onPress={onGooglePress}
-            disabled={isLoading}
-            style={styles.googleButton}
-          />
-        )}
+        <GoogleSigninButton
+          size={GoogleSigninButton.Size.Wide}
+          color={GoogleSigninButton.Color.Dark}
+          onPress={onGooglePress}
+          disabled={isLoading}
+          style={styles.googleButton}
+        />
 
         {Platform.OS === 'ios' && (
           <AppleAuthentication.AppleAuthenticationButton

@@ -8,8 +8,8 @@ import { expectErrorBody } from '../helpers/assertions';
 import {
   EMAIL_SENDER,
   IEmailSender,
-  SentEmail,
 } from '../../src/shared/email/email-sender.port';
+import type { SentEmail } from '../helpers/fake-email-sender';
 import { hashDeletionToken } from '../../src/modules/account-management/infrastructure/deletion-token';
 
 const DELETION_SITE_URL = 'https://delete.kadence.test';

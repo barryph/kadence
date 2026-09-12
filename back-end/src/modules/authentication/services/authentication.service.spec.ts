@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { Logger } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { UsersService } from '../../users/services/users.service';
 import { InvalidCredentialsError } from '../authentication.errors';
@@ -11,8 +12,13 @@ describe('AuthenticationService', () => {
   let service: AuthenticationService;
   let usersService: jest.Mocked<UsersService>;
   let emailSender: jest.Mocked<IEmailSender>;
+  let loggerErrorSpy: jest.SpyInstance;
 
   beforeEach(async () => {
+    loggerErrorSpy = jest
+      .spyOn(Logger.prototype, 'error')
+      .mockImplementation(() => undefined);
+
     usersService = {
       getByEmail: jest.fn(),
       create: jest.fn(),
@@ -35,6 +41,10 @@ describe('AuthenticationService', () => {
     }).compile();
 
     service = module.get(AuthenticationService);
+  });
+
+  afterEach(() => {
+    loggerErrorSpy.mockRestore();
   });
 
   it('validates user with correct credentials', async () => {
@@ -97,5 +107,25 @@ describe('AuthenticationService', () => {
     await service.forgotPassword('unknown@example.com');
 
     expect(emailSender.sendPasswordResetEmail).not.toHaveBeenCalled();
+  });
+
+  it('stays enumeration-safe when the reset email cannot be delivered', async () => {
+    usersService.initiatePasswordReset.mockResolvedValue({
+      recipientEmail: 'test@example.com',
+      resetToken: 'token123',
+    });
+    emailSender.sendPasswordResetEmail.mockRejectedValue(
+      new Error('provider unavailable'),
+    );
+
+    // The endpoint must answer identically whether or not the account exists,
+    // so a delivery failure is logged rather than surfaced.
+    await expect(
+      service.forgotPassword('test@example.com'),
+    ).resolves.toBeUndefined();
+
+    expect(loggerErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('provider unavailable'),
+    );
   });
 });

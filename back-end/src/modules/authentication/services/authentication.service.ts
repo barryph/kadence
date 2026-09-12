@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { UsersService } from '../../users/services/users.service';
 import { InvalidCredentialsError } from '../authentication.errors';
 import CreateUserDTO from '../dtos/createUser.dto';
@@ -11,6 +11,8 @@ import {
 
 @Injectable()
 export class AuthenticationService {
+  private readonly logger = new Logger(AuthenticationService.name);
+
   constructor(
     private usersService: UsersService,
     @Inject(EMAIL_SENDER) private readonly emailSender: IEmailSender,
@@ -43,11 +45,25 @@ export class AuthenticationService {
   async forgotPassword(email: string): Promise<void> {
     const resetRequest = await this.usersService.initiatePasswordReset(email);
 
-    if (resetRequest) {
+    if (!resetRequest) {
+      return;
+    }
+
+    try {
       await this.emailSender.sendPasswordResetEmail({
         recipientEmail: resetRequest.recipientEmail,
         resetToken: resetRequest.resetToken,
       });
+    } catch (err) {
+      // Swallowed on purpose, matching DeletionRequestService. The endpoint
+      // answers with one generic message whether or not the address is
+      // registered; surfacing a send failure would turn it into an
+      // account-existence oracle whenever mail delivery is flaky.
+      this.logger.error(
+        `Failed to send the password reset email: ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
     }
   }
 

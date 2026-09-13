@@ -1,6 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface IProps {
   children: React.ReactNode;
@@ -18,9 +18,9 @@ export default function AlertError({ children }: IProps) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 12,
+    padding: Spacing.xl,
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
     borderWidth: 1,
     borderColor: Colors.dangerText,
     backgroundColor: Colors.dangerSurface,

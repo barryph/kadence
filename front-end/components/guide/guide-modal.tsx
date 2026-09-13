@@ -16,7 +16,7 @@ import Button from '@/components/base/button';
 import Background from '@/components/backgrounds/background';
 import { ThemedText } from '@/components/base/themed-text';
 import type { GuideStep } from '@/components/guide/types';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 
 /** Horizontal travel (px) for the step slide transition. */
 const SLIDE = 42;
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing['4xl'],
     backgroundColor: Colors.scrimStrong,
   },
   backdropFill: {
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     maxWidth: '100%',
     alignSelf: 'center',
     borderRadius: 16,
-    padding: 20,
+    padding: Spacing['3xl'],
     zIndex: 1,
     overflow: 'hidden',
     minHeight: CONTENT_HEIGHT + 110,
@@ -397,17 +397,17 @@ const styles = StyleSheet.create({
     height: CONTENT_HEIGHT,
     position: 'relative',
     overflow: 'hidden',
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   stepBody: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: Spacing.lg,
   },
   stepTitle: {
     textAlign: 'center',
     marginTop: 5,
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.md,
   },
   stepDescription: {
     color: Colors.textSecondary,
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
   paginationRow: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 16,
+    marginTop: Spacing['2xl'],
   },
   activeDot: {
     position: 'absolute',
@@ -441,8 +441,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     backgroundColor: 'transparent',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.xl,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',

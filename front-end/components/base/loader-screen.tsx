@@ -2,7 +2,7 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
 import Background from '@/components/backgrounds/background';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface IProps {
   text: string;
@@ -27,6 +27,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    marginTop: 10,
+    marginTop: Spacing.lg,
   },
 });

@@ -4,7 +4,7 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import ModalShell from '@/components/base/modal-shell';
 import AlertError from '@/components/alerts/alert-error';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useDeleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { ApiError } from '@/lib/query/unwrap';
 
@@ -67,7 +67,7 @@ export default function DeleteActivityModal({
       </ThemedText>
 
       {errorMessage ? (
-        <View style={{ marginTop: 10 }}>
+        <View style={{ marginTop: Spacing.lg }}>
           <AlertError>{errorMessage}</AlertError>
         </View>
       ) : null}
@@ -95,16 +95,16 @@ export default function DeleteActivityModal({
 
 const styles = StyleSheet.create({
   title: {
-    marginTop: 8,
-    marginBottom: 12,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xl,
   },
   message: {
     color: Colors.textSecondary,
   },
   actions: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 20,
+    gap: Spacing.xl,
+    marginTop: Spacing['3xl'],
   },
   actionButton: {
     flex: 1,

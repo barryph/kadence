@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 import Background from '@/components/backgrounds/background';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 export interface ModalShellProps {
   /** Defaults to visible; pass `false` to keep the modal mounted but hidden. */
@@ -63,12 +63,12 @@ const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     justifyContent: 'center',
-    padding: 24,
+    padding: Spacing['4xl'],
     backgroundColor: Colors.scrim,
   },
   card: {
     borderRadius: 12,
-    padding: 20,
+    padding: Spacing['3xl'],
     zIndex: 1,
     overflow: 'hidden',
   },

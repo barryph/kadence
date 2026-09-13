@@ -125,6 +125,27 @@ export const Colors = {
 } as const;
 
 /**
+ * Spacing scale for padding, margin and gap.
+ *
+ * Steps sit on a 2pt grid. The scale is a common vocabulary, not a rule: a
+ * value that genuinely needs a different number (a hairline offset, an
+ * optical adjustment, a fixed native control size) can stay a literal.
+ */
+export const Spacing = {
+  xxs: 2,
+  xs: 4,
+  sm: 6,
+  md: 8,
+  lg: 10,
+  xl: 12,
+  '2xl': 16,
+  '3xl': 20,
+  '4xl': 24,
+  '5xl': 32,
+  '6xl': 40,
+} as const;
+
+/**
  * Curated swatches offered when picking a category colour.
  *
  * These are user-chosen data colours rather than UI chrome, so they stay a

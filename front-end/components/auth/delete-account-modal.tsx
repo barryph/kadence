@@ -6,7 +6,7 @@ import ModalShell from '@/components/base/modal-shell';
 import AlertError from '@/components/alerts/alert-error';
 import { useAuth } from '@/context/auth-context';
 import { ApiError } from '@/lib/query/unwrap';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface DeleteAccountModalProps {
   visible: boolean;
@@ -73,7 +73,7 @@ export default function DeleteAccountModal({
       </ThemedText>
 
       {errorMessage ? (
-        <View style={{ marginTop: 10 }}>
+        <View style={{ marginTop: Spacing.lg }}>
           <AlertError>{errorMessage}</AlertError>
         </View>
       ) : null}
@@ -101,16 +101,16 @@ export default function DeleteAccountModal({
 
 const styles = StyleSheet.create({
   title: {
-    marginTop: 8,
-    marginBottom: 12,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xl,
   },
   message: {
     color: Colors.textSecondary,
   },
   actions: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 20,
+    gap: Spacing.xl,
+    marginTop: Spacing['3xl'],
   },
   actionButton: {
     flex: 1,

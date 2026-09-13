@@ -7,7 +7,7 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import AlertError from '@/components/alerts/alert-error';
 import DeleteAccountModal from '@/components/auth/delete-account-modal';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
 
 function Profile() {
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: Spacing['5xl'],
     minHeight: '100%',
     justifyContent: 'space-between',
   },
@@ -97,19 +97,19 @@ const styles = StyleSheet.create({
     paddingBottom: 25,
   },
   title: {
-    marginTop: 10,
-    marginBottom: 20,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing['3xl'],
   },
   card: {
     paddingTop: 14,
-    paddingBottom: 12,
-    gap: 2,
+    paddingBottom: Spacing.xl,
+    gap: Spacing.xxs,
   },
   label: {
     opacity: 0.6,
   },
   error: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   logoutButton: {
     backgroundColor: Colors.surfaceTranslucentStrong,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
   },
   dangerZone: {
-    marginTop: 24,
+    marginTop: Spacing['4xl'],
   },
   deleteButton: {
     backgroundColor: Colors.dangerStrong,

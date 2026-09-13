@@ -14,7 +14,7 @@ import AlertError from '@/components/alerts/alert-error';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
@@ -95,7 +95,7 @@ export default function CreateActivityPage() {
           </FormProvider>
 
           {errorMessage && (
-            <View style={{ marginTop: 10 }}>
+            <View style={{ marginTop: Spacing.lg }}>
               <AlertError>{errorMessage}</AlertError>
             </View>
           )}
@@ -121,16 +121,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing['2xl'],
     paddingTop: 14,
-    paddingBottom: 32,
+    paddingBottom: Spacing['5xl'],
   },
   topRow: {
     marginTop: 15,
     marginBottom: 23,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: Spacing.xl,
   },
   submitButton: {
     marginTop: 15,

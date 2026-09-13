@@ -11,7 +11,7 @@ import GoalProgressBar from '@/components/goals/goal-progress-bar';
 import GoalAreaChart from '@/components/goals/goal-area-chart';
 import GoalAdherenceRing from '@/components/goals/goal-adherence-ring';
 import GoalHeatmap from '@/components/goals/goal-heatmap';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useGoalStatsQuery } from '@/hooks/queries/use-goals';
 import { useStaleRefetchOnFocus } from '@/hooks/queries/use-stale-refetch-on-focus';
 import { queryKeys } from '@/lib/query/keys';
@@ -141,30 +141,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing['2xl'],
     paddingTop: 14,
-    paddingBottom: 40,
-    gap: 12,
+    paddingBottom: Spacing['6xl'],
+    gap: Spacing.xl,
   },
   topRow: {
-    marginTop: 10,
+    marginTop: Spacing.lg,
     marginBottom: 17,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: Spacing.xl,
   },
   activityName: {
-    marginBottom: 8,
+    marginBottom: Spacing.md,
   },
   targetText: {
     opacity: 0.65,
-    marginBottom: 6,
+    marginBottom: Spacing.sm,
   },
   section: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing['2xl'],
     paddingTop: 14,
-    paddingBottom: 16,
-    gap: 4,
+    paddingBottom: Spacing['2xl'],
+    gap: Spacing.xs,
   },
   ringSection: {
     alignItems: 'center',
@@ -175,12 +175,12 @@ const styles = StyleSheet.create({
   },
   sectionHint: {
     opacity: 0.65,
-    marginBottom: 8,
+    marginBottom: Spacing.md,
   },
   progressText: {
     opacity: 0.9,
   },
   progressBar: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
 });

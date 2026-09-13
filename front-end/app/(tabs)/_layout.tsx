@@ -7,7 +7,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
 
 import { HapticTab } from '@/components/base/haptic-tab';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import BlueBackground from '@/components/backgrounds/blue-background';
 import Logo from '@/components/logo';
 
@@ -17,7 +17,7 @@ export default function TabLayout() {
   const headerOptions = {
     headerShown: true,
     headerStyle: {
-      paddingVertical: 40,
+      paddingVertical: Spacing['6xl'],
     },
 
     header: () => (
@@ -150,7 +150,7 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingVertical: 10,
+    paddingVertical: Spacing.lg,
     paddingHorizontal: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',

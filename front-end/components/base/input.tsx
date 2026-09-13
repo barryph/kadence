@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, type TextInputProps } from 'react-native';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { FONT_SIZE } from '@/constants/typography';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
@@ -39,7 +39,7 @@ export default function Input({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
     width: '100%',
   },
   requiredMark: {
@@ -49,8 +49,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xl,
     fontSize: FONT_SIZE.lg,
     backgroundColor: Colors.surfaceTranslucent,
     color: Colors.textPrimary,

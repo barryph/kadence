@@ -1,5 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { ThemedText } from './base/themed-text';
+import { Spacing } from '@/constants/theme';
 
 interface IProgressBadgeProps {
   icon: React.ReactNode;
@@ -31,6 +32,6 @@ const styles = StyleSheet.create({
   doneBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: Spacing.xs,
   },
 });

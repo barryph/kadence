@@ -10,6 +10,7 @@ import Animated, {
   Extrapolation,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import { Spacing } from '@/constants/theme';
 
 const ACTION_THRESHOLD = 110;
 const MAX_SWIPE = 110;
@@ -128,7 +129,7 @@ export default function SwipeRow({
               backgroundColor: swipeLeftBackground,
             }),
             justifyContent: 'flex-end',
-            paddingRight: 20,
+            paddingRight: Spacing['3xl'],
           },
           leftBackgroundOpacity,
         ]}
@@ -147,7 +148,7 @@ export default function SwipeRow({
               backgroundColor: swipeRightBackground,
             }),
             justifyContent: 'flex-start',
-            paddingLeft: 20,
+            paddingLeft: Spacing['3xl'],
           },
           rightBackgroundOpacity,
         ]}

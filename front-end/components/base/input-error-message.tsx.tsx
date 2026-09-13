@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 type InputErrorMessageProper = {
   children: React.ReactNode;
@@ -19,6 +19,6 @@ export default function InputErrorMessage({
 const styles = StyleSheet.create({
   errorText: {
     color: Colors.dangerText,
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
 });

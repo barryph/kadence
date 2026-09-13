@@ -10,6 +10,7 @@ import type { ICategory } from '@/api/api.categories';
 import CategoryNameField from '@/components/categories/fields/category-name-field';
 import CategoryColorPickerField from '@/components/categories/fields/category-color-picker-field';
 import { ApiResponse } from '@/api/api.types';
+import { Spacing } from '@/constants/theme';
 
 export const categorySchema = z.object({
   name: z
@@ -76,7 +77,7 @@ export default function CategoryModal({
       </FormProvider>
 
       {errorMessage ? (
-        <View style={{ marginTop: 10 }}>
+        <View style={{ marginTop: Spacing.lg }}>
           <AlertError>{errorMessage}</AlertError>
         </View>
       ) : null}
@@ -103,8 +104,8 @@ export default function CategoryModal({
 const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 8,
+    gap: Spacing.xl,
+    marginTop: Spacing.md,
   },
   actionButton: {
     flex: 1,

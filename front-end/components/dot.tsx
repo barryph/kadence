@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface IProps {
   backgroundColor?: string;
@@ -15,6 +15,6 @@ const styles = StyleSheet.create({
     height: 8,
     width: 8,
     borderRadius: 4,
-    marginRight: 8,
+    marginRight: Spacing.md,
   },
 });

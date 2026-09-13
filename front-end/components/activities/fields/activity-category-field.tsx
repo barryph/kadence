@@ -10,7 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import Dot from '@/components/dot';
 import type { ICategory } from '@/api/api.categories';
@@ -165,15 +165,15 @@ export default function ActivityCategoryField({ categories }: Props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
     width: '100%',
   },
   select: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.xl,
     backgroundColor: Colors.surfaceTranslucent,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -205,26 +205,26 @@ const styles = StyleSheet.create({
     backgroundColor: withAlpha(Colors.textPrimary, 0.3),
   },
   sheetContent: {
-    paddingVertical: 8,
-    paddingBottom: 24,
+    paddingVertical: Spacing.md,
+    paddingBottom: Spacing['4xl'],
   },
   createButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xl,
     borderBottomWidth: 1,
     borderColor: Colors.border,
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   emptyText: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xl,
     color: Colors.textMuted,
   },
   sheetItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xl,
   },
   sheetItemText: {
     flex: 1,

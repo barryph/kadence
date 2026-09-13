@@ -13,7 +13,7 @@ import FloatingActionButton from '@/components/ui/floating-action-button';
 import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
 import Container from '@/components/base/container';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import FilterList from '@/components/filter-list/filter-list';
 import { getMonthOf, YYYYMMDD } from '@/utils/date';
 import { useToday } from '@/hooks/use-today';
@@ -282,15 +282,19 @@ function DashboardContent({ userId }: { userId: string }) {
 
           <View
             style={{
-              marginTop: 6,
+              marginTop: Spacing.sm,
               display: 'flex',
-              gap: 8,
+              gap: Spacing.md,
             }}
           >
             {activities.length === 0 && (
               <ListItemShell style={styles.getStartedPill}>
                 <View
-                  style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+                  style={{
+                    flexDirection: 'row',
+                    gap: Spacing.xxs,
+                    alignItems: 'center',
+                  }}
                 >
                   <Dot />
                   <ThemedText variant="bodyBold">
@@ -350,7 +354,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     display: 'flex',
-    gap: 8,
+    gap: Spacing.md,
     paddingBottom: 100,
   },
   headlineRow: {
@@ -358,13 +362,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: Spacing.lg,
     marginBottom: 3,
   },
   headlineActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: Spacing.lg,
   },
   headline: {
     color: Colors.textPrimary,
@@ -377,8 +381,8 @@ const styles = StyleSheet.create({
   getStartedPill: {
     paddingTop: 14,
     paddingHorizontal: 15,
-    paddingBottom: 12,
-    gap: 2,
+    paddingBottom: Spacing.xl,
+    gap: Spacing.xxs,
   },
   sectionHeader: {
     opacity: 0.6,
@@ -388,6 +392,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   sectionItems: {
-    gap: 8,
+    gap: Spacing.md,
   },
 });

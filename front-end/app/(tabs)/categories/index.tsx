@@ -18,7 +18,7 @@ import Dot from '@/components/dot';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import FloatingActionButton from '@/components/ui/floating-action-button';
 import Container from '@/components/base/container';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useEditCategoryMutation } from '@/hooks/mutations/use-category-mutations';
@@ -151,7 +151,11 @@ export default function Categories() {
             {sortedCategories.length === 0 && (
               <ListItemShell style={styles.getStartedPill}>
                 <View
-                  style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
+                  style={{
+                    flexDirection: 'row',
+                    gap: Spacing.xxs,
+                    alignItems: 'center',
+                  }}
                 >
                   <Dot />
                   <ThemedText variant="bodyBold">
@@ -199,7 +203,7 @@ export default function Categories() {
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',
-                      paddingHorizontal: 6,
+                      paddingHorizontal: Spacing.sm,
                       gap: 9,
                     }}
                   >
@@ -241,7 +245,7 @@ export default function Categories() {
               </ThemedText>
               <Pressable onPress={() => setIsDeleteModalVisible(true)}>
                 <FontAwesome6
-                  style={{ padding: 6 }}
+                  style={{ padding: Spacing.sm }}
                   name="trash"
                   size={20}
                   color={Colors.textPrimary}
@@ -273,14 +277,14 @@ export default function Categories() {
 const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 100,
-    gap: 24,
+    gap: Spacing['4xl'],
   },
   headlineRow: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: Spacing.lg,
   },
   headline: {
     color: Colors.textPrimary,
@@ -292,20 +296,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
   },
   editModalTitle: {
     flex: 1,
-    marginRight: 12,
+    marginRight: Spacing.xl,
   },
   categories: {
-    gap: 12,
+    gap: Spacing.xl,
   },
   category: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing['2xl'],
   },
   leftRow: {
     flexGrow: 1,
@@ -317,7 +321,7 @@ const styles = StyleSheet.create({
   bottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20,
+    gap: Spacing['3xl'],
   },
   bottomRowText: {
     opacity: 0.6,
@@ -329,7 +333,7 @@ const styles = StyleSheet.create({
   getStartedPill: {
     paddingTop: 14,
     paddingHorizontal: 15,
-    paddingBottom: 12,
-    gap: 2,
+    paddingBottom: Spacing.xl,
+    gap: Spacing.xxs,
   },
 });

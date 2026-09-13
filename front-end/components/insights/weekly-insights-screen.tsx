@@ -5,7 +5,7 @@ import Container from '@/components/base/container';
 import LoaderScreen from '@/components/base/loader-screen';
 import ErrorScreen from '@/components/base/error-screen';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import FilterList, {
   type FilterListItem,
 } from '@/components/filter-list/filter-list';
@@ -132,30 +132,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    gap: 12,
-    paddingBottom: 40,
+    gap: Spacing.xl,
+    paddingBottom: Spacing['6xl'],
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginTop: 10,
-    marginBottom: 2,
+    gap: Spacing.xl,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.xxs,
   },
   subtitle: {
     opacity: 0.65,
   },
   filterList: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   chartShell: {
     paddingVertical: 0,
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   messageShell: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing['2xl'],
     paddingVertical: 18,
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   messageText: {
     opacity: 0.7,
@@ -164,6 +164,6 @@ const styles = StyleSheet.create({
     minHeight: 220,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.md,
   },
 });

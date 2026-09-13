@@ -9,7 +9,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface ButtonProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode;
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: Colors.accent,
     paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing['4xl'],
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',

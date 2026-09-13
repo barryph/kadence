@@ -1,4 +1,5 @@
 import { StyleSheet, View, type ViewProps } from 'react-native';
+import { Spacing } from '@/constants/theme';
 
 interface IProps extends ViewProps {}
 
@@ -9,6 +10,6 @@ export default function Container({ children, style }: IProps) {
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing['2xl'],
   },
 });

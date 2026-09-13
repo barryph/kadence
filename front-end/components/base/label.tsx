@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
+import { Spacing } from '@/constants/theme';
 
 type LabelProps = {
   children: React.ReactNode;
@@ -15,6 +16,6 @@ export default function Label({ children }: LabelProps) {
 
 const styles = StyleSheet.create({
   label: {
-    marginBottom: 8,
+    marginBottom: Spacing.md,
   },
 });

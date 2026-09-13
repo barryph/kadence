@@ -5,7 +5,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import GuideMediaIcon from '@/components/guide/guide-media-icon';
 import type { GuideStep } from '@/components/guide/types';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 
 function GuideGif({ source }: { source: ImageSource }) {
   const image = useImage(source);
@@ -18,7 +18,7 @@ function GuideGif({ source }: { source: ImageSource }) {
       style={{
         width: '100%',
         aspectRatio,
-        marginTop: 8,
+        marginTop: Spacing.md,
         marginBottom: 0,
         borderWidth: 1,
         borderColor: withAlpha(Colors.accentGlow, 0.1),

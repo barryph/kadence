@@ -4,7 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useIsOffline } from '@/hooks/use-is-offline';
 
 interface IProps {
@@ -57,15 +57,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 12,
+    paddingHorizontal: Spacing['5xl'],
+    gap: Spacing.xl,
   },
   message: {
     textAlign: 'center',
     opacity: 0.85,
   },
   retry: {
-    marginTop: 8,
+    marginTop: Spacing.md,
     maxWidth: 220,
   },
 });

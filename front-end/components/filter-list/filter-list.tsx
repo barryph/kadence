@@ -6,7 +6,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 export interface FilterListItem {
   id: number;
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   pillsRow: {
     display: 'flex',
     flexDirection: 'row',
-    gap: 4,
+    gap: Spacing.xs,
     paddingBottom: 1,
   },
   pill: {

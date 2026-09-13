@@ -34,6 +34,12 @@ to their component.
 transactional emails. Change a shared colour in both files; the parity test in
 `constants/__tests__/theme-parity.test.ts` guards the shared brand tokens.
 
+## Spacing
+
+`Spacing` in `constants/theme.ts` is a 2pt-grid scale for padding, margin and
+gap. It is a common vocabulary, not a rule: hairline offsets, optical
+adjustments and fixed native sizes stay literals where the scale does not fit.
+
 ## Typography
 
 `constants/typography.ts` models family, size, weight, line height and letter

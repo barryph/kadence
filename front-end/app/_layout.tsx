@@ -20,7 +20,7 @@ import { RootLayoutNav } from '@/components/root-layout-nav';
 import Background from '@/components/backgrounds/background';
 import { ThemedText } from '@/components/base/themed-text';
 import Button from '@/components/base/button';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import { MONO_FONTS } from '@/constants/typography';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Constants from 'expo-constants';
@@ -170,18 +170,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    gap: 12,
+    paddingHorizontal: Spacing['5xl'],
+    gap: Spacing.xl,
   },
   errorTitle: {
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   errorMessage: {
     textAlign: 'center',
     opacity: 0.85,
   },
   errorRetry: {
-    marginTop: 8,
+    marginTop: Spacing.md,
     maxWidth: 220,
   },
 });

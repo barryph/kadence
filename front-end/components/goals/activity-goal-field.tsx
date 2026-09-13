@@ -10,7 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import type { ActivityFormValues } from '../activities/activity-schema';
 import { useSheetBackHandler } from '@/hooks/use-sheet-back-handler';
 
@@ -123,15 +123,15 @@ export default function ActivityGoalField() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
     width: '100%',
   },
   select: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.xl,
     backgroundColor: Colors.surfaceTranslucent,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -153,15 +153,15 @@ const styles = StyleSheet.create({
     backgroundColor: withAlpha(Colors.textPrimary, 0.3),
   },
   sheetContent: {
-    paddingVertical: 8,
-    paddingBottom: 24,
+    paddingVertical: Spacing.md,
+    paddingBottom: Spacing['4xl'],
   },
   sheetItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xl,
   },
   sheetItemText: {
     flex: 1,

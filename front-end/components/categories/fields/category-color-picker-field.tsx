@@ -9,7 +9,7 @@ import ColorPicker, {
   ColorFormatsObject,
 } from 'reanimated-color-picker';
 import Label from '@/components/base/label';
-import { CategoryColors } from '@/constants/theme';
+import { CategoryColors, Spacing } from '@/constants/theme';
 import { CategoryFormValues } from '../category-modal';
 
 export default function CategoryColorPickerField() {
@@ -30,14 +30,14 @@ export default function CategoryColorPickerField() {
             value={field.value}
           >
             <Preview
-              style={{ marginBottom: 12, height: 30 }}
+              style={{ marginBottom: Spacing.xl, height: 30 }}
               hideInitialColor={true}
             />
 
             <View>
               <Panel1 style={{ height: 150 }} />
               <HueSlider
-                style={{ marginTop: 12 }}
+                style={{ marginTop: Spacing.xl }}
                 sliderThickness={20}
                 thumbSize={25}
               />

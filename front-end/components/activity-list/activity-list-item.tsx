@@ -4,7 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, Gradients } from '@/constants/theme';
+import { Colors, Gradients, Spacing } from '@/constants/theme';
 import SwipeRow from '@/components/swipe-row';
 import type { IActivityClient } from '@/api/api.activity';
 import ListItemShell from '@/components/list-item-shell';
@@ -228,15 +228,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   categoryBadge: {
-    marginLeft: 12,
-    paddingHorizontal: 6,
+    marginLeft: Spacing.xl,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 0,
     borderRadius: 8,
     borderWidth: 1,
   },
   activityDetails: {
     flexDirection: 'row',
-    gap: 8,
+    gap: Spacing.md,
     alignItems: 'center',
   },
   activityDetailsText: {
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     borderRightColor: Colors.divider,
   },
   goalProgress: {
-    marginTop: 6,
+    marginTop: Spacing.sm,
   },
   goalText: {
     textAlign: 'right',

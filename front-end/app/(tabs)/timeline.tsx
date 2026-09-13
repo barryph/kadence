@@ -12,7 +12,7 @@ import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/ho
 import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import FilterList from '@/components/filter-list/filter-list';
 import {
   filterByCategoryId,
@@ -581,15 +581,15 @@ const NAV_ARROW_HEIGHT = 32;
 const styles = StyleSheet.create({
   errorText: {
     color: Colors.dangerText,
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   container: {
     flex: 1,
   },
   filterList: {
-    paddingHorizontal: 8,
-    paddingTop: 12,
-    paddingBottom: 10,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.lg,
     backgroundColor: Colors.surfaceHeader,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
@@ -598,8 +598,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 16,
-    paddingVertical: 8,
+    gap: Spacing['2xl'],
+    paddingVertical: Spacing.md,
     backgroundColor: Colors.surfaceHeader,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
@@ -669,12 +669,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   dateWeekday: {
-    marginTop: 2,
+    marginTop: Spacing.xxs,
   },
   activityLabelCell: {
     height: ROW_HEIGHT,
     justifyContent: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
     backgroundColor: headersBackground,
@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
     bottom: 20,
     alignSelf: 'center',
     backgroundColor: Colors.surfaceInverse,
-    padding: 8,
+    padding: Spacing.md,
     borderRadius: 8,
     elevation: 2,
     shadowColor: Colors.shadow,

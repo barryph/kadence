@@ -15,7 +15,7 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordFormValues,
 } from '@/components/auth/auth-schemas';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
 const SUCCESS_MESSAGE =
   'If an account with that email exists, a password reset link has been sent. Please check your email.';
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 24,
+    padding: Spacing['4xl'],
   },
   formContainer: {
     width: '100%',
@@ -127,14 +127,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    marginBottom: 24,
+    marginBottom: Spacing['4xl'],
     textAlign: 'center',
   },
   submitButton: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   linkContainer: {
-    marginTop: 24,
+    marginTop: Spacing['4xl'],
     alignSelf: 'center',
   },
   linkText: {

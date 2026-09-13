@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import type { IGoalWeeklyPoint } from '@/api/api.goals';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import {
   getGoalHeatmapColor,
   GOAL_ABOVE_THRESHOLD_COLOR,
@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
   legend: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
-    marginTop: 12,
+    gap: Spacing.xl,
+    marginTop: Spacing.xl,
   },
   legendItem: {
     flexDirection: 'row',
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   emptyState: {
-    paddingVertical: 16,
+    paddingVertical: Spacing['2xl'],
   },
   emptyText: {
     opacity: 0.65,

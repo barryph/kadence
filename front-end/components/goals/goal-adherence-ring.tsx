@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ProgressChart } from 'react-native-chart-kit/v2';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import { buildInsightsChartTheme } from '@/components/insights/insights-chart-kit-config';
 import { GOAL_BELOW_THRESHOLD_COLOR } from '@/lib/goals/goal-colors';
 import type { IGoalAdherence } from '@/api/api.goals';
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
   },
   caption: {
     opacity: 0.65,
-    marginTop: 6,
+    marginTop: Spacing.sm,
     textAlign: 'center',
   },
 });

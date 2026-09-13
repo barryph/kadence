@@ -8,7 +8,7 @@ import Label from '@/components/base/label';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import type { ActivityFormValues } from '../activity-schema';
 import { YYYYMMDD } from '@/utils/date';
 
@@ -90,7 +90,7 @@ export default function ActivityLastDoneField() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
     width: '100%',
   },
   dateField: {
@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     borderRadius: 8,
     backgroundColor: Colors.surfaceTranslucent,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xl,
   },
   dateValue: {
     color: Colors.textPrimary,
@@ -112,6 +112,6 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   datePickerDone: {
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
   },
 });

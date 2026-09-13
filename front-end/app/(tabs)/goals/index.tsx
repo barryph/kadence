@@ -10,7 +10,7 @@ import ErrorScreen from '@/components/base/error-screen';
 import ListItemShell from '@/components/list-item-shell';
 import { ThemedText } from '@/components/base/themed-text';
 import GoalProgressBar from '@/components/goals/goal-progress-bar';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useGoalsQuery } from '@/hooks/queries/use-goals';
 import { useStaleRefetchOnFocus } from '@/hooks/queries/use-stale-refetch-on-focus';
 import { queryKeys } from '@/lib/query/keys';
@@ -157,17 +157,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    gap: 24,
-    paddingBottom: 40,
+    gap: Spacing['4xl'],
+    paddingBottom: Spacing['6xl'],
   },
   title: {
-    marginTop: 10,
+    marginTop: Spacing.lg,
   },
   subTitle: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   list: {
-    gap: 12,
+    gap: Spacing.xl,
   },
   item: {
     paddingHorizontal: 15,
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 10,
+    gap: Spacing.lg,
   },
   itemName: {
     flexShrink: 1,
@@ -185,16 +185,16 @@ const styles = StyleSheet.create({
   itemRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: Spacing['2xl'],
   },
   metText: {
     color: Colors.success,
   },
   progressBar: {
-    marginTop: 6,
+    marginTop: Spacing.sm,
   },
   emptyShell: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing['2xl'],
     paddingVertical: 18,
   },
   emptyText: {

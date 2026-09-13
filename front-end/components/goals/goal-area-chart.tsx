@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import { LineChart, type LineChartSeries } from 'react-native-chart-kit/v2';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import {
   buildInsightsChartTheme,
   formatIntegerYLabel,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     minHeight: INSIGHTS_CHART_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: Spacing.xl,
   },
   emptyText: {
     opacity: 0.65,

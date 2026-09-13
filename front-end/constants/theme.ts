@@ -13,6 +13,9 @@
  *
  * Prefer these tokens over literals in components. A one-off colour that is not
  * part of the brand or a semantic state belongs next to its component instead.
+ *
+ * See `docs/design-system.md` for the dark-only decision and how to extend the
+ * system.
  */
 export const Colors = {
   // --- Canvas -------------------------------------------------------------

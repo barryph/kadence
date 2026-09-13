@@ -40,6 +40,12 @@ transactional emails. Change a shared colour in both files; the parity test in
 gap. It is a common vocabulary, not a rule: hairline offsets, optical
 adjustments and fixed native sizes stay literals where the scale does not fit.
 
+## Elevation
+
+`Shadows` in `constants/theme.ts` holds the elevation presets, spread into a
+style (`...Shadows.card`). A glow tinted by a runtime colour, such as a
+category, is not a preset and stays inline.
+
 ## Typography
 
 `constants/typography.ts` models family, size, weight, line height and letter

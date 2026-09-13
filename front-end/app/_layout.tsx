@@ -20,7 +20,7 @@ import { RootLayoutNav } from '@/components/root-layout-nav';
 import Background from '@/components/backgrounds/background';
 import { ThemedText } from '@/components/base/themed-text';
 import Button from '@/components/base/button';
-import { Colors, Spacing, withAlpha } from '@/constants/theme';
+import { Colors, Shadows, Spacing } from '@/constants/theme';
 import { MONO_FONTS } from '@/constants/typography';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Constants from 'expo-constants';
@@ -120,7 +120,7 @@ export default function RootLayout() {
           minWidth: '95%',
           borderRadius: 6,
           overflow: 'hidden',
-          boxShadow: `${withAlpha(Colors.shadow, 0.3)} 0px 19px 38px, ${withAlpha(Colors.shadow, 0.22)} 0px 15px 12px`,
+          ...Shadows.toast,
           backgroundColor: Colors.toast,
           display: 'flex',
           alignContent: 'center',

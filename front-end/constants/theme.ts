@@ -185,6 +185,50 @@ export const Gradients = {
 } as const;
 
 /**
+ * Elevation presets, spread into a style (`...Shadows.card`).
+ *
+ * `boxShadow` is the modern shadow (New Architecture and web); the
+ * `shadowColor`/`shadowOffset`/`shadowOpacity`/`shadowRadius`/`elevation`
+ * fields remain for the surfaces that also need a native Android lift. A glow
+ * tinted by a runtime colour (e.g. a category) is not a preset and stays
+ * inline.
+ */
+export const Shadows = {
+  /** Elevated card / list item. */
+  card: {
+    boxShadow: `0 14px 35px ${withAlpha(Colors.shadow, 0.22)}`,
+  },
+  /** Floating action button, with its accent glow. */
+  floatingAction: {
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    boxShadow: `0 18px 38px ${withAlpha(Colors.accent, 0.42)}, 0 8px 18px ${withAlpha(Colors.shadow, 0.36)}`,
+  },
+  /** Floating status message above a screen. */
+  overlay: {
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  /** Dropdown / popover menu. */
+  menu: {
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  /** Toast notification. */
+  toast: {
+    boxShadow: `${withAlpha(Colors.shadow, 0.3)} 0px 19px 38px, ${withAlpha(Colors.shadow, 0.22)} 0px 15px 12px`,
+  },
+} as const;
+
+/**
  * Composites a hex token into an `rgba()` string at the given opacity.
  *
  * Useful where only a fragment of a colour is needed (a shadow or glow built

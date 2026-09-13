@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, Spacing, withAlpha } from '@/constants/theme';
+import { Colors, Shadows, Spacing } from '@/constants/theme';
 
 interface FloatingActionButtonProps {
   label: string;
@@ -30,11 +30,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    boxShadow: `0 18px 38px ${withAlpha(Colors.accent, 0.42)}, 0 8px 18px ${withAlpha(Colors.shadow, 0.36)}`,
+    ...Shadows.floatingAction,
   },
 });

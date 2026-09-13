@@ -16,7 +16,7 @@ import AlertError from '@/components/alerts/alert-error';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, Spacing } from '@/constants/theme';
+import { Colors, Shadows, Spacing } from '@/constants/theme';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
@@ -363,10 +363,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     zIndex: 999999,
     elevation: 999999,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
+    ...Shadows.menu,
     backgroundColor: Colors.surfaceElevated,
     borderWidth: 1,
     borderColor: Colors.border,

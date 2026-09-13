@@ -12,7 +12,7 @@ import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/ho
 import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors, Spacing, withAlpha } from '@/constants/theme';
+import { Colors, Shadows, Spacing, withAlpha } from '@/constants/theme';
 import FilterList from '@/components/filter-list/filter-list';
 import {
   filterByCategoryId,
@@ -729,11 +729,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surfaceInverse,
     padding: Spacing.md,
     borderRadius: 8,
-    elevation: 2,
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
+    ...Shadows.overlay,
   },
   errorTextSmall: {
     color: Colors.dangerText,

@@ -1,6 +1,6 @@
 import { StyleSheet, View, type ViewProps } from 'react-native';
 import ActivityBackground from '@/components/backgrounds/activity-background';
-import { Colors, withAlpha } from '@/constants/theme';
+import { Colors, Shadows } from '@/constants/theme';
 
 interface IProps extends ViewProps {}
 
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: Colors.border,
     borderRadius: 15,
-    boxShadow: `0 14px 35px ${withAlpha(Colors.shadow, 0.22)}`,
+    ...Shadows.card,
     overflow: 'hidden',
   },
 });

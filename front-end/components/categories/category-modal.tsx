@@ -1,23 +1,15 @@
 import React, { useState } from 'react';
-import {
-  Modal,
-  View,
-  StyleSheet,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '@/components/base/button';
-import Background from '@/components/backgrounds/background';
+import ModalShell from '@/components/base/modal-shell';
 import AlertError from '@/components/alerts/alert-error';
 import type { ICategory } from '@/api/api.categories';
 import CategoryNameField from '@/components/categories/fields/category-name-field';
 import CategoryColorPickerField from '@/components/categories/fields/category-color-picker-field';
 import { ApiResponse } from '@/api/api.types';
-import { Colors } from '@/constants/theme';
 
 export const categorySchema = z.object({
   name: z
@@ -76,66 +68,39 @@ export default function CategoryModal({
   }
 
   return (
-    <Modal visible transparent animationType="none" onRequestClose={onClose}>
-      <KeyboardAvoidingView
-        style={styles.backdrop}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <Pressable style={styles.backdropFill} onPress={onClose} />
-        <View style={styles.card}>
-          <Background />
-          {title && title()}
-          <FormProvider {...form}>
-            <CategoryNameField />
-            <CategoryColorPickerField />
-          </FormProvider>
+    <ModalShell onRequestClose={onClose} animationType="none">
+      {title && title()}
+      <FormProvider {...form}>
+        <CategoryNameField />
+        <CategoryColorPickerField />
+      </FormProvider>
 
-          {errorMessage ? (
-            <View style={{ marginTop: 10 }}>
-              <AlertError>{errorMessage}</AlertError>
-            </View>
-          ) : null}
-
-          <View style={styles.actions}>
-            <Button
-              isLoading={isLoading}
-              onPress={onClose}
-              style={styles.actionButton}
-            >
-              Cancel
-            </Button>
-            <Button
-              onPress={form.handleSubmit(handleSubmit)}
-              style={styles.actionButton}
-            >
-              Save
-            </Button>
-          </View>
+      {errorMessage ? (
+        <View style={{ marginTop: 10 }}>
+          <AlertError>{errorMessage}</AlertError>
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      ) : null}
+
+      <View style={styles.actions}>
+        <Button
+          isLoading={isLoading}
+          onPress={onClose}
+          style={styles.actionButton}
+        >
+          Cancel
+        </Button>
+        <Button
+          onPress={form.handleSubmit(handleSubmit)}
+          style={styles.actionButton}
+        >
+          Save
+        </Button>
+      </View>
+    </ModalShell>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: Colors.scrim,
-  },
-  backdropFill: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  card: {
-    borderRadius: 12,
-    padding: 20,
-    zIndex: 1,
-    overflow: 'hidden',
-  },
-  title: {
-    marginBottom: 16,
-  },
   actions: {
     flexDirection: 'row',
     gap: 12,
@@ -143,9 +108,5 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     flex: 1,
-  },
-  colorPickerContainer: {
-    flex: 1,
-    justifyContent: 'center',
   },
 });

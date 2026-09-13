@@ -1,15 +1,8 @@
 import { useEffect, useState } from 'react';
-import {
-  Modal,
-  View,
-  StyleSheet,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import Background from '@/components/backgrounds/background';
+import ModalShell from '@/components/base/modal-shell';
 import AlertError from '@/components/alerts/alert-error';
 import { useAuth } from '@/context/auth-context';
 import { ApiError } from '@/lib/query/unwrap';
@@ -66,78 +59,47 @@ export default function DeleteAccountModal({
   }
 
   return (
-    <Modal
+    <ModalShell
       visible={visible}
-      transparent
-      animationType="fade"
       onRequestClose={handleClose}
+      dismissDisabled={isDeleting}
     >
-      <KeyboardAvoidingView
-        style={styles.backdrop}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <Pressable
-          style={styles.backdropFill}
-          onPress={handleClose}
-          disabled={isDeleting}
-        />
-        <View style={styles.card}>
-          <Background />
-          <ThemedText variant="subheading" style={styles.title}>
-            Delete Account
-          </ThemedText>
-          <ThemedText style={styles.message}>
-            Deleting your account will permanently remove your account, your
-            activities, your history and all of your data. This cannot be
-            undone.
-          </ThemedText>
+      <ThemedText variant="subheading" style={styles.title}>
+        Delete Account
+      </ThemedText>
+      <ThemedText style={styles.message}>
+        Deleting your account will permanently remove your account, your
+        activities, your history and all of your data. This cannot be undone.
+      </ThemedText>
 
-          {errorMessage ? (
-            <View style={{ marginTop: 10 }}>
-              <AlertError>{errorMessage}</AlertError>
-            </View>
-          ) : null}
-
-          <View style={styles.actions}>
-            <Button
-              disabled={isDeleting}
-              onPress={handleClose}
-              style={styles.actionButton}
-            >
-              Cancel
-            </Button>
-            <Button
-              isLoading={isDeleting}
-              onPress={handleDelete}
-              style={[styles.actionButton, styles.deleteButton]}
-              textStyle={styles.deleteButtonText}
-            >
-              Delete
-            </Button>
-          </View>
+      {errorMessage ? (
+        <View style={{ marginTop: 10 }}>
+          <AlertError>{errorMessage}</AlertError>
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      ) : null}
+
+      <View style={styles.actions}>
+        <Button
+          disabled={isDeleting}
+          onPress={handleClose}
+          style={styles.actionButton}
+        >
+          Cancel
+        </Button>
+        <Button
+          isLoading={isDeleting}
+          onPress={handleDelete}
+          style={[styles.actionButton, styles.deleteButton]}
+          textStyle={styles.deleteButtonText}
+        >
+          Delete
+        </Button>
+      </View>
+    </ModalShell>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: Colors.scrim,
-  },
-  backdropFill: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  card: {
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    zIndex: 1,
-    overflow: 'hidden',
-  },
   title: {
     marginTop: 8,
     marginBottom: 12,

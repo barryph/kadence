@@ -1,17 +1,10 @@
 import { useEffect, useState } from 'react';
-import {
-  Modal,
-  View,
-  StyleSheet,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import { Colors } from '@/constants/theme';
-import Background from '@/components/backgrounds/background';
+import ModalShell from '@/components/base/modal-shell';
 import AlertError from '@/components/alerts/alert-error';
+import { Colors } from '@/constants/theme';
 import { useDeleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { ApiError } from '@/lib/query/unwrap';
 
@@ -61,76 +54,46 @@ export default function DeleteActivityModal({
   }
 
   return (
-    <Modal
+    <ModalShell
       visible={visible}
-      transparent
-      animationType="fade"
       onRequestClose={handleClose}
+      dismissDisabled={deleteActivity.isPending}
     >
-      <KeyboardAvoidingView
-        style={styles.backdrop}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <Pressable
-          style={styles.backdropFill}
-          onPress={handleClose}
-          disabled={deleteActivity.isPending}
-        />
-        <View style={styles.card}>
-          <Background />
-          <ThemedText variant="subheading" style={styles.title}>
-            Delete Activity
-          </ThemedText>
-          <ThemedText lineHeight={22} style={styles.message}>
-            Deleting this activity is permanent and cannot be undone.
-          </ThemedText>
+      <ThemedText variant="subheading" style={styles.title}>
+        Delete Activity
+      </ThemedText>
+      <ThemedText lineHeight={22} style={styles.message}>
+        Deleting this activity is permanent and cannot be undone.
+      </ThemedText>
 
-          {errorMessage ? (
-            <View style={{ marginTop: 10 }}>
-              <AlertError>{errorMessage}</AlertError>
-            </View>
-          ) : null}
-
-          <View style={styles.actions}>
-            <Button
-              disabled={deleteActivity.isPending}
-              onPress={handleClose}
-              style={styles.actionButton}
-            >
-              Cancel
-            </Button>
-            <Button
-              isLoading={deleteActivity.isPending}
-              onPress={handleDelete}
-              style={[styles.actionButton, styles.deleteButton]}
-              textStyle={styles.deleteButtonText}
-            >
-              Delete
-            </Button>
-          </View>
+      {errorMessage ? (
+        <View style={{ marginTop: 10 }}>
+          <AlertError>{errorMessage}</AlertError>
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      ) : null}
+
+      <View style={styles.actions}>
+        <Button
+          disabled={deleteActivity.isPending}
+          onPress={handleClose}
+          style={styles.actionButton}
+        >
+          Cancel
+        </Button>
+        <Button
+          isLoading={deleteActivity.isPending}
+          onPress={handleDelete}
+          style={[styles.actionButton, styles.deleteButton]}
+          textStyle={styles.deleteButtonText}
+        >
+          Delete
+        </Button>
+      </View>
+    </ModalShell>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: Colors.scrim,
-  },
-  backdropFill: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  card: {
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    zIndex: 1,
-    overflow: 'hidden',
-  },
   title: {
     marginTop: 8,
     marginBottom: 12,

@@ -14,6 +14,7 @@ import AlertError from '@/components/alerts/alert-error';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors } from '@/constants/theme';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
@@ -73,11 +74,13 @@ export default function CreateActivityPage() {
         >
           <View style={styles.topRow}>
             <Pressable onPress={() => goBackOrHome(router)} hitSlop={8}>
-              <Ionicons name="arrow-back" size={27} color="white" />
+              <Ionicons
+                name="arrow-back"
+                size={27}
+                color={Colors.textPrimary}
+              />
             </Pressable>
-            <ThemedText weight="700" size="large">
-              New Activity
-            </ThemedText>
+            <ThemedText variant="title">New Activity</ThemedText>
           </View>
 
           <FormProvider {...form}>

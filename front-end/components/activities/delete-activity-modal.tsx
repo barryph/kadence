@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors } from '@/constants/theme';
 import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 import { useDeleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
@@ -77,10 +78,10 @@ export default function DeleteActivityModal({
         />
         <View style={styles.card}>
           <Background />
-          <ThemedText type="subtitle" style={styles.title}>
+          <ThemedText variant="subheading" style={styles.title}>
             Delete Activity
           </ThemedText>
-          <ThemedText style={styles.message}>
+          <ThemedText lineHeight={22} style={styles.message}>
             Deleting this activity is permanent and cannot be undone.
           </ThemedText>
 
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: Colors.scrim,
   },
   backdropFill: {
     ...StyleSheet.absoluteFillObject,
@@ -135,8 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   message: {
-    lineHeight: 22,
-    color: '#ccc',
+    color: Colors.textSecondary,
   },
   actions: {
     flexDirection: 'row',
@@ -147,9 +147,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   deleteButton: {
-    backgroundColor: '#c62828',
+    backgroundColor: Colors.dangerStrong,
   },
   deleteButtonText: {
-    color: '#fff',
+    color: Colors.textPrimary,
   },
 });

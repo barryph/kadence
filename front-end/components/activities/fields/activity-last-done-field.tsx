@@ -8,6 +8,7 @@ import Label from '@/components/base/label';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
+import { Colors } from '@/constants/theme';
 import type { ActivityFormValues } from '../activity-schema';
 import { YYYYMMDD } from '@/utils/date';
 
@@ -52,9 +53,7 @@ export default function ActivityLastDoneField() {
                 style={styles.clearDateButton}
                 accessibilityRole="button"
               >
-                <ThemedText style={styles.clearDateText}>
-                  Clear date{' '}
-                </ThemedText>
+                <ThemedText variant="bodySmall">Clear date </ThemedText>
               </Pressable>
             )}
 
@@ -96,27 +95,21 @@ const styles = StyleSheet.create({
   },
   dateField: {
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
     borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,.055)',
+    backgroundColor: Colors.surfaceTranslucent,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   dateValue: {
-    fontSize: 16,
-    color: '#fff',
+    color: Colors.textPrimary,
   },
   datePlaceholder: {
-    fontSize: 16,
-    color: '#999',
+    color: Colors.textMuted,
   },
   clearDateButton: {
     alignSelf: 'flex-start',
     marginTop: 3,
-  },
-  clearDateText: {
-    fontSize: 14,
-    color: '#fff',
   },
   datePickerDone: {
     marginBottom: 16,

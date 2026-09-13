@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '@/components/base/themed-text';
+import { Colors } from '@/constants/theme';
 
 interface GuideMediaIconProps {
   /** Icon shown in the center of the preview box. */
@@ -22,7 +22,7 @@ interface GuideMediaIconProps {
 export default function GuideMediaIcon({
   icon,
   label,
-  accent = '#087cff',
+  accent = Colors.accentGlow,
 }: GuideMediaIconProps) {
   return (
     <View
@@ -46,9 +46,6 @@ export default function GuideMediaIcon({
       >
         {icon}
       </View>
-      {/* <ThemedText size="extraSmall" style={styles.caption}> */}
-      {/*   {label} */}
-      {/* </ThemedText> */}
     </View>
   );
 }
@@ -69,12 +66,5 @@ const styles = StyleSheet.create({
     borderRadius: 23,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  caption: {
-    fontSize: 11,
-    lineHeight: 14,
-    color: '#fff',
-    marginTop: 2,
-    letterSpacing: -0.2,
   },
 });

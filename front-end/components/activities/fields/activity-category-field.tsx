@@ -10,6 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, withAlpha } from '@/constants/theme';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import Dot from '@/components/dot';
 import type { ICategory } from '@/api/api.categories';
@@ -59,16 +60,14 @@ export default function ActivityCategoryField({ categories }: Props) {
               {selected ? (
                 <View style={styles.selectedRow}>
                   <Dot backgroundColor={selected.color} />
-                  <ThemedText style={styles.selectText} selectable={false}>
-                    {selected.name}
-                  </ThemedText>
+                  <ThemedText selectable={false}>{selected.name}</ThemedText>
                 </View>
               ) : (
                 <ThemedText style={styles.placeholderText} selectable={false}>
                   Choose a Category
                 </ThemedText>
               )}
-              <ThemedText style={styles.arrow} selectable={false}>
+              <ThemedText size="2xl" style={styles.arrow} selectable={false}>
                 ›
               </ThemedText>
             </Pressable>
@@ -79,9 +78,7 @@ export default function ActivityCategoryField({ categories }: Props) {
                 style={styles.clearCategoryButton}
                 accessibilityRole="button"
               >
-                <ThemedText style={styles.clearCategoryText}>
-                  Clear category
-                </ThemedText>
+                <ThemedText variant="bodySmall">Clear category</ThemedText>
               </Pressable>
             )}
 
@@ -107,7 +104,7 @@ export default function ActivityCategoryField({ categories }: Props) {
                   accessibilityRole="button"
                   accessibilityLabel="Create Category"
                 >
-                  <ThemedText type="defaultSemiBold">
+                  <ThemedText variant="bodyStrong">
                     + Create Category
                   </ThemedText>
                 </Pressable>
@@ -131,12 +128,16 @@ export default function ActivityCategoryField({ categories }: Props) {
                         <Dot backgroundColor={category.color} />
                         <ThemedText
                           style={styles.sheetItemText}
-                          type={isSelected ? 'defaultSemiBold' : 'default'}
+                          variant={isSelected ? 'bodyStrong' : 'body'}
                         >
                           {category.name}
                         </ThemedText>
                         {isSelected && (
-                          <Ionicons name="checkmark" size={20} color="#fff" />
+                          <Ionicons
+                            name="checkmark"
+                            size={20}
+                            color={Colors.textPrimary}
+                          />
                         )}
                       </Pressable>
                     );
@@ -173,9 +174,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 12,
     paddingVertical: 12,
-    backgroundColor: 'rgba(255,255,255,.055)',
+    backgroundColor: Colors.surfaceTranslucent,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
     borderRadius: 8,
   },
   selectedRow: {
@@ -183,34 +184,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  selectText: {
-    fontSize: 16,
-  },
   placeholderText: {
-    fontSize: 16,
-    color: '#999',
+    color: Colors.textMuted,
     flex: 1,
   },
   arrow: {
-    fontSize: 20,
-    color: '#999',
+    color: Colors.textMuted,
     transform: [{ rotate: '90deg' }],
   },
   clearCategoryButton: {
     alignSelf: 'flex-start',
     marginTop: 3,
   },
-  clearCategoryText: {
-    fontSize: 14,
-    color: '#fff',
-  },
   sheetBackground: {
-    backgroundColor: 'rgb(22, 50, 81)',
+    backgroundColor: Colors.surfaceSelected,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
   },
   sheetHandle: {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: withAlpha(Colors.textPrimary, 0.3),
   },
   sheetContent: {
     paddingVertical: 8,
@@ -220,13 +212,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
     marginBottom: 4,
   },
   emptyText: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    color: '#999',
+    color: Colors.textMuted,
   },
   sheetItem: {
     flexDirection: 'row',

@@ -4,6 +4,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors } from '@/constants/theme';
 import { useIsOffline } from '@/hooks/use-is-offline';
 
 interface IProps {
@@ -33,7 +34,7 @@ export default function ErrorScreen({ message, onRetry }: IProps) {
         <Ionicons
           name={isOffline ? 'cloud-offline-outline' : 'alert-circle-outline'}
           size={30}
-          color="#d8ecff"
+          color={Colors.iconAccent}
         />
         <ThemedText style={styles.message}>
           {isOffline ? OFFLINE_MESSAGE : message}

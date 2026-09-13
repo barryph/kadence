@@ -2,6 +2,7 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import { ThemedView } from '@/components/base/themed-view';
 import Background from '@/components/backgrounds/background';
+import { Colors } from '@/constants/theme';
 
 interface IProps {
   text: string;
@@ -11,8 +12,8 @@ export default function LoaderScreen({ text }: IProps) {
   return (
     <ThemedView style={styles.container}>
       <Background />
-      <ActivityIndicator color="#fff" />
-      <ThemedText style={{ marginTop: 10 }}>{text}</ThemedText>
+      <ActivityIndicator color={Colors.textPrimary} />
+      <ThemedText style={styles.text}>{text}</ThemedText>
     </ThemedView>
   );
 }
@@ -24,5 +25,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  text: {
+    marginTop: 10,
   },
 });

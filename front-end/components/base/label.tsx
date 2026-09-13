@@ -7,7 +7,7 @@ type LabelProps = {
 
 export default function Label({ children }: LabelProps) {
   return (
-    <ThemedText style={styles.label} type="defaultSemiBold">
+    <ThemedText style={styles.label} variant="label">
       {children}
     </ThemedText>
   );
@@ -16,8 +16,5 @@ export default function Label({ children }: LabelProps) {
 const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
-    fontSize: 14,
-    lineHeight: 22,
-    color: '#fff',
   },
 });

@@ -18,6 +18,7 @@ import Dot from '@/components/dot';
 import CreateCategoryModal from '@/components/categories/create-category-modal';
 import FloatingActionButton from '@/components/ui/floating-action-button';
 import Container from '@/components/base/container';
+import { Colors } from '@/constants/theme';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useEditCategoryMutation } from '@/hooks/mutations/use-category-mutations';
@@ -130,11 +131,7 @@ export default function Categories() {
       <ScrollView>
         <Container style={styles.scrollContent}>
           <View style={styles.headlineRow}>
-            <ThemedText
-              style={styles.headline}
-              type="defaultBold"
-              size="medium"
-            >
+            <ThemedText style={styles.headline} variant="heading" font="system">
               Categories
             </ThemedText>
 
@@ -143,11 +140,7 @@ export default function Categories() {
                 onPress={() => router.push('/categories/insights')}
                 style={styles.insightsLink}
               >
-                <ThemedText
-                  size="small"
-                  type="default"
-                  style={styles.insightsLinkText}
-                >
+                <ThemedText variant="bodySmall" style={styles.insightsLinkText}>
                   See Insights &rarr;
                 </ThemedText>
               </Pressable>
@@ -161,11 +154,11 @@ export default function Categories() {
                   style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
                 >
                   <Dot />
-                  <ThemedText type="defaultBold">
+                  <ThemedText variant="bodyBold">
                     Add your first category
                   </ThemedText>
                 </View>
-                <ThemedText size="extraSmall">
+                <ThemedText variant="caption">
                   Get started by adding your first Category!
                 </ThemedText>
               </ListItemShell>
@@ -179,21 +172,20 @@ export default function Categories() {
                   <View style={styles.leftRow}>
                     <View style={styles.topRow}>
                       <Dot backgroundColor={category.color} />
-                      <ThemedText
-                        type="defaultBold"
-                        style={{
-                          lineHeight: 28,
-                        }}
-                      >
+                      <ThemedText variant="bodyBold" lineHeight={28}>
                         {category.name}
                       </ThemedText>
                     </View>
                     <View style={styles.bottomRow}>
-                      <ThemedText style={styles.bottomRowText} size="small">
+                      <ThemedText
+                        style={styles.bottomRowText}
+                        variant="caption"
+                      >
                         Used in{' '}
                         <ThemedText
                           style={styles.bottomRowText}
-                          type="defaultBold"
+                          variant="caption"
+                          weight="700"
                         >
                           {categoryToActivityCountMap[category.id!] || '0'}
                         </ThemedText>{' '}
@@ -211,7 +203,11 @@ export default function Categories() {
                       gap: 9,
                     }}
                   >
-                    <AntDesign name="edit" size={18} color="#eeed" />
+                    <AntDesign
+                      name="edit"
+                      size={18}
+                      color={Colors.textSecondary}
+                    />
                   </View>
                 </ListItemShell>
               </Pressable>
@@ -240,7 +236,7 @@ export default function Categories() {
           }}
           title={() => (
             <View style={styles.editModalTitleRow}>
-              <ThemedText type="subtitle" style={styles.editModalTitle}>
+              <ThemedText variant="subheading" style={styles.editModalTitle}>
                 Edit Category &quot;{selectedCategory.name}&quot;
               </ThemedText>
               <Pressable onPress={() => setIsDeleteModalVisible(true)}>
@@ -248,7 +244,7 @@ export default function Categories() {
                   style={{ padding: 6 }}
                   name="trash"
                   size={20}
-                  color="white"
+                  color={Colors.textPrimary}
                 />
               </Pressable>
             </View>
@@ -287,9 +283,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   headline: {
-    color: '#fff',
-    fontFamily: '"system-ui"',
-    fontWeight: 700,
+    color: Colors.textPrimary,
   },
   insightsLinks: {},
   insightsLink: {},
@@ -326,7 +320,6 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   bottomRowText: {
-    fontSize: 12,
     opacity: 0.6,
   },
   settingsButton: {

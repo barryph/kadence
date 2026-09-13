@@ -4,14 +4,13 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, Gradients } from '@/constants/theme';
 import SwipeRow from '@/components/swipe-row';
 import type { IActivityClient } from '@/api/api.activity';
 import ListItemShell from '@/components/list-item-shell';
 import GoalProgressBar from '@/components/goals/goal-progress-bar';
 import ProgressBadge from '../progress-badge';
 
-/** Success gradient for completed / queued activity progress bars */
-const COMPLETED_BAR_COLORS = ['#087cff', '#08d8ff', '#52f2a8'] as const;
 const DAYS_IN_WEEK = 7;
 
 interface IProps {
@@ -51,35 +50,28 @@ export default function ActivityListItem({
           onSwipeRight={() => onComplete(activity.id)}
           disableSwipeRight={completedToday}
           swipeLeftChild={
-            <ThemedText style={{ fontSize: 24, color: '#eee' }}>
+            <ThemedText variant="heading" style={{ color: Colors.textPrimary }}>
               <FontAwesome6 name="gear" size={26} />
             </ThemedText>
           }
           swipeLeftColor="inherit"
           swipeRightChild={
-            <ThemedText style={{ fontSize: 24, color: '#000' }}>
-              <Ionicons name="checkmark-done" size={24} color="#fff" />
+            <ThemedText variant="heading">
+              <Ionicons
+                name="checkmark-done"
+                size={24}
+                color={Colors.textPrimary}
+              />
             </ThemedText>
           }
-          swipeRightColor="#fff"
+          swipeRightColor={Colors.textPrimary}
           queued={activity.queued}
         >
-          <View
-            style={[
-              styles.activityInner,
-              activity.queued && styles.activityInnerSelected,
-            ]}
-          >
+          <View>
             <View style={[styles.activityMain]}>
               <View style={styles.activityTitleRow}>
                 <View style={styles.activityNameGroup}>
-                  <ThemedText
-                    type="defaultSemiBold"
-                    style={[
-                      styles.activityName,
-                      activity.queued && styles.activityNameSelected,
-                    ]}
-                  >
+                  <ThemedText variant="bodyStrong" lineHeight={28}>
                     {activity.name}
                   </ThemedText>
                   {activity.category && (
@@ -92,7 +84,11 @@ export default function ActivityListItem({
                         },
                       ]}
                     >
-                      <ThemedText style={[styles.categoryText]}>
+                      <ThemedText
+                        variant="caption"
+                        weight="600"
+                        lineHeight={20}
+                      >
                         {activity.category.name}
                       </ThemedText>
                     </View>
@@ -101,12 +97,12 @@ export default function ActivityListItem({
                 <View style={styles.activityDetails}>
                   {completedToday ? (
                     <ProgressBadge
-                      color={COMPLETED_BAR_COLORS[2]}
+                      color={Colors.success}
                       icon={
                         <Ionicons
                           name="checkmark-circle"
                           size={14}
-                          color={COMPLETED_BAR_COLORS[2]}
+                          color={Colors.success}
                         />
                       }
                     >
@@ -114,34 +110,32 @@ export default function ActivityListItem({
                     </ProgressBadge>
                   ) : (
                     <ThemedText
-                      style={[
-                        styles.activityDetailsText,
-                        activity.queued && styles.activityDetailsTextSelected,
-                      ]}
+                      variant="caption"
+                      weight="500"
+                      letterSpacing={-0.45}
+                      style={styles.activityDetailsText}
                     >
                       REMAIN:
                       <ThemedText
-                        style={[
-                          styles.activityDetailsSpan,
-                          activity.queued && styles.activityDetailsSpanSelected,
-                        ]}
+                        variant="bodySmall"
+                        weight="700"
+                        style={styles.activityDetailsSpan}
                       >
                         {activity.daysUntil}
                       </ThemedText>
                     </ThemedText>
                   )}
                   <ThemedText
-                    style={[
-                      styles.activityDetailsText,
-                      activity.queued && styles.activityDetailsTextSelected,
-                    ]}
+                    variant="caption"
+                    weight="500"
+                    letterSpacing={-0.45}
+                    style={styles.activityDetailsText}
                   >
                     INTRVL:
                     <ThemedText
-                      style={[
-                        styles.activityDetailsSpan,
-                        activity.queued && styles.activityDetailsSpanSelected,
-                      ]}
+                      variant="bodySmall"
+                      weight="700"
+                      style={styles.activityDetailsSpan}
                     >
                       {activity.interval}
                     </ThemedText>
@@ -173,7 +167,7 @@ export default function ActivityListItem({
                 >
                   {completedToday || activity.queued ? (
                     <LinearGradient
-                      colors={[...COMPLETED_BAR_COLORS]}
+                      colors={[...Gradients.goalMet]}
                       locations={[0, 0.62, 1]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
@@ -181,7 +175,7 @@ export default function ActivityListItem({
                     />
                   ) : activity.daysUntil === 0 ? (
                     <LinearGradient
-                      colors={['#087cff', '#08d8ff', '#ff3d54']}
+                      colors={[...Gradients.overdue]}
                       locations={[0, 0.5, 1]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
@@ -189,7 +183,7 @@ export default function ActivityListItem({
                     />
                   ) : (
                     <LinearGradient
-                      colors={['#087cff', '#0096ff', '#08d8ff']}
+                      colors={[...Gradients.goalInProgress]}
                       locations={[0, 0.42, 1]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
@@ -204,7 +198,7 @@ export default function ActivityListItem({
                   count={activity.goalProgress.currentWeekCount}
                   target={activity.goal.targetPerWeek}
                   height={6}
-                  trackColor="#4b4b5c"
+                  trackColor={Colors.track}
                   style={styles.goalProgress}
                 />
               )}
@@ -217,12 +211,6 @@ export default function ActivityListItem({
 }
 
 const styles = StyleSheet.create({
-  activityInner: {
-    // backgroundColor: '#fff',
-  },
-  activityInnerSelected: {
-    // backgroundColor: '#0072ff', // Simplification of gradient
-  },
   activityMain: {
     width: '100%',
     paddingTop: 11,
@@ -234,18 +222,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
-    // marginBottom: 4,
   },
   activityNameGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  activityName: {
-    lineHeight: 28,
-    color: '#fff',
-  },
-  activityNameSelected: {
-    color: '#fff',
   },
   categoryBadge: {
     marginLeft: 12,
@@ -254,55 +234,22 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
   },
-  categoryText: {
-    color: '#fff',
-    fontSize: 11,
-    lineHeight: 20,
-    fontWeight: '600',
-  },
   activityDetails: {
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
   },
   activityDetailsText: {
-    fontSize: 12,
-    // fontSize: '.78rem',
-    // color: '#8f98aa',
-    color: '#7e91b6',
-    // letterSpacing: '-.045em',
-    letterSpacing: -0.45,
-    fontWeight: 500,
+    color: Colors.textSubtle,
   },
   activityDetailsSpan: {
-    fontSize: 14,
-    fontWeight: 700,
-    color: '#fff',
     marginLeft: 3,
-  },
-  activityDetailsTextSelected: {
-    color: '#eee',
-  },
-  activityDetailsSpanSelected: {
-    color: '#fff',
-  },
-  doneBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  doneText: {
-    fontSize: 12,
-    fontWeight: 700,
-    color: COMPLETED_BAR_COLORS[2],
-    letterSpacing: -0.45,
   },
   activityBarContainer: {
     // Horizontal margin is for angled dividers. Which doesn't work on android
     // marginHorizontal: 3,
     height: 12,
-    // backgroundColor: '#d6daea',
-    backgroundColor: '#4b4b5c',
+    backgroundColor: Colors.track,
     position: 'relative',
     overflow: 'hidden',
     transform: [{ skewX: '-24deg' }],
@@ -320,7 +267,7 @@ const styles = StyleSheet.create({
   },
   activityBarNotchBorder: {
     borderRightWidth: 2,
-    borderRightColor: '#00000088',
+    borderRightColor: Colors.divider,
   },
   goalProgress: {
     marginTop: 6,

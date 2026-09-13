@@ -10,12 +10,7 @@ import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useEffect } from 'react';
-import {
-  IBMPlexMono_400Regular,
-  IBMPlexMono_600SemiBold,
-  IBMPlexMono_700Bold,
-  useFonts,
-} from '@expo-google-fonts/ibm-plex-mono';
+import { useFonts } from '@expo-google-fonts/ibm-plex-mono';
 import Toast, { type ToastConfig } from 'react-native-toast-message';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -25,7 +20,8 @@ import { RootLayoutNav } from '@/components/root-layout-nav';
 import Background from '@/components/backgrounds/background';
 import { ThemedText } from '@/components/base/themed-text';
 import Button from '@/components/base/button';
-import { Colors } from '@/constants/theme';
+import { Colors, withAlpha } from '@/constants/theme';
+import { MONO_FONTS } from '@/constants/typography';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Constants from 'expo-constants';
 import {
@@ -49,11 +45,15 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
     <View style={styles.errorContainer}>
       <Background />
       <View style={styles.errorContent}>
-        <Ionicons name="alert-circle-outline" size={36} color="#d8ecff" />
-        <ThemedText type="subtitle" style={styles.errorTitle}>
+        <Ionicons
+          name="alert-circle-outline"
+          size={36}
+          color={Colors.iconAccent}
+        />
+        <ThemedText variant="subheading" style={styles.errorTitle}>
           Something went wrong
         </ThemedText>
-        <ThemedText size="small" style={styles.errorMessage}>
+        <ThemedText variant="bodySmall" style={styles.errorMessage}>
           {error.message}
         </ThemedText>
         <Button onPress={retry} style={styles.errorRetry}>
@@ -65,11 +65,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 }
 
 function FontsProvider({ children }: { children: React.ReactNode }) {
-  const [loaded, error] = useFonts({
-    IBMPlexMono_400Regular,
-    IBMPlexMono_600SemiBold,
-    IBMPlexMono_700Bold,
-  });
+  const [loaded, error] = useFonts(MONO_FONTS);
 
   useEffect(() => {
     if (error) {
@@ -124,9 +120,8 @@ export default function RootLayout() {
           minWidth: '95%',
           borderRadius: 6,
           overflow: 'hidden',
-          boxShadow:
-            'rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px',
-          backgroundColor: Colors.dark.toast,
+          boxShadow: `${withAlpha(Colors.shadow, 0.3)} 0px 19px 38px, ${withAlpha(Colors.shadow, 0.22)} 0px 15px 12px`,
+          backgroundColor: Colors.toast,
           display: 'flex',
           alignContent: 'center',
           alignItems: 'center',
@@ -137,9 +132,9 @@ export default function RootLayout() {
         <Ionicons
           name="checkmark-circle-sharp"
           size={24}
-          color={Colors.toastSuccess}
+          color={Colors.success}
         />
-        <ThemedText size="small" type="defaultBold">
+        <ThemedText variant="bodySmall" weight="700">
           {text1}
         </ThemedText>
       </View>

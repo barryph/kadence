@@ -17,6 +17,7 @@ import type { ICategory } from '@/api/api.categories';
 import CategoryNameField from '@/components/categories/fields/category-name-field';
 import CategoryColorPickerField from '@/components/categories/fields/category-color-picker-field';
 import { ApiResponse } from '@/api/api.types';
+import { Colors } from '@/constants/theme';
 
 export const categorySchema = z.object({
   name: z
@@ -41,6 +42,7 @@ function useCategoryForm(initialValues?: Partial<CategoryFormValues>) {
     resolver: zodResolver(categorySchema),
     defaultValues: {
       name: '',
+      // Data default for the colour picker, not a design token.
       color: '#000',
       ...initialValues,
     },
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: Colors.scrim,
   },
   backdropFill: {
     ...StyleSheet.absoluteFillObject,

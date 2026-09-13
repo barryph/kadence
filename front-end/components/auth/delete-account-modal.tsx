@@ -13,6 +13,7 @@ import Background from '@/components/backgrounds/background';
 import AlertError from '@/components/alerts/alert-error';
 import { useAuth } from '@/context/auth-context';
 import { ApiError } from '@/lib/query/unwrap';
+import { Colors } from '@/constants/theme';
 
 interface DeleteAccountModalProps {
   visible: boolean;
@@ -82,7 +83,7 @@ export default function DeleteAccountModal({
         />
         <View style={styles.card}>
           <Background />
-          <ThemedText type="subtitle" style={styles.title}>
+          <ThemedText variant="subheading" style={styles.title}>
             Delete Account
           </ThemedText>
           <ThemedText style={styles.message}>
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: Colors.scrim,
   },
   backdropFill: {
     ...StyleSheet.absoluteFillObject,
@@ -142,8 +143,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   message: {
-    lineHeight: 22,
-    color: '#ccc',
+    color: Colors.textSecondary,
   },
   actions: {
     flexDirection: 'row',
@@ -154,9 +154,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   deleteButton: {
-    backgroundColor: '#c62828',
+    backgroundColor: Colors.dangerStrong,
   },
   deleteButtonText: {
-    color: '#fff',
+    color: Colors.textPrimary,
   },
 });

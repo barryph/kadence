@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'expo-router';
@@ -15,6 +15,7 @@ import {
   forgotPasswordSchema,
   type ForgotPasswordFormValues,
 } from '@/components/auth/auth-schemas';
+import { Colors } from '@/constants/theme';
 
 const SUCCESS_MESSAGE =
   'If an account with that email exists, a password reset link has been sent. Please check your email.';
@@ -59,7 +60,7 @@ export default function ForgotPasswordScreen() {
       >
         <Background />
         <View style={styles.formContainer}>
-          <ThemedText style={styles.title} type="title">
+          <ThemedText variant="display" style={styles.title}>
             Forgot Password
           </ThemedText>
 
@@ -94,10 +95,16 @@ export default function ForgotPasswordScreen() {
           </Button>
 
           <Link href="/login" style={styles.linkContainer}>
-            <Text style={styles.linkText}>
+            <ThemedText variant="bodySmall" style={styles.linkText}>
               Remember your password?{' '}
-              <Text style={styles.linkTextBold}>Log In</Text>
-            </Text>
+              <ThemedText
+                variant="bodySmall"
+                weight="700"
+                style={styles.linkTextBold}
+              >
+                Log In
+              </ThemedText>
+            </ThemedText>
           </Link>
         </View>
       </ScrollView>
@@ -108,7 +115,6 @@ export default function ForgotPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContent: {
     flexGrow: 1,
@@ -123,7 +129,6 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 24,
     textAlign: 'center',
-    color: '#fff',
   },
   submitButton: {
     marginTop: 8,
@@ -133,11 +138,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   linkText: {
-    color: '#ddd',
-    fontSize: 14,
+    color: Colors.textSecondary,
   },
   linkTextBold: {
-    color: '#0072ff',
-    fontWeight: '700',
+    color: Colors.accent,
   },
 });

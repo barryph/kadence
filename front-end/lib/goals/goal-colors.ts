@@ -1,15 +1,10 @@
+import { Colors, withAlpha } from '@/constants/theme';
 import { DEFAULT_ACTIVITY_COLOR } from '@/lib/insights/activity-weekly-unique-days';
 
 /** Default activity blue — used below/at the weekly goal target. */
 export const GOAL_BELOW_THRESHOLD_COLOR = DEFAULT_ACTIVITY_COLOR;
 /** Complementary color for performance above the target (neutral valence). */
-export const GOAL_ABOVE_THRESHOLD_COLOR = '#ff9f43';
-
-const BLUE_RGB = '0, 115, 255';
-
-function blueAtOpacity(opacity: number): string {
-  return `rgba(${BLUE_RGB}, ${opacity})`;
-}
+export const GOAL_ABOVE_THRESHOLD_COLOR = Colors.exceeded;
 
 /**
  * Heatmap cell color for a week's performance relative to the goal target.
@@ -20,9 +15,9 @@ export function getGoalHeatmapColor(count: number, target: number): string {
     return GOAL_ABOVE_THRESHOLD_COLOR;
   }
   if (count <= 0) {
-    return blueAtOpacity(0.15);
+    return withAlpha(Colors.accent, 0.15);
   }
   // If below threshold - set opacity to match progress %
   const ratio = Math.min(count / target, 1);
-  return blueAtOpacity(0.35 + ratio * 0.4);
+  return withAlpha(Colors.accent, 0.35 + ratio * 0.4);
 }

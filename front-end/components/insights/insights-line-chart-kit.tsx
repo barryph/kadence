@@ -67,7 +67,7 @@ export default function InsightsLineChartKit({
   if (series.length === 0) {
     return (
       <View style={styles.emptyState}>
-        <ThemedText size="small" style={styles.emptyText}>
+        <ThemedText variant="bodySmall" style={styles.emptyText}>
           {emptyMessage}
         </ThemedText>
       </View>

@@ -11,6 +11,7 @@ import GoalProgressBar from '@/components/goals/goal-progress-bar';
 import GoalAreaChart from '@/components/goals/goal-area-chart';
 import GoalAdherenceRing from '@/components/goals/goal-adherence-ring';
 import GoalHeatmap from '@/components/goals/goal-heatmap';
+import { Colors } from '@/constants/theme';
 import { useGoalStatsQuery } from '@/hooks/queries/use-goals';
 import { useStaleRefetchOnFocus } from '@/hooks/queries/use-stale-refetch-on-focus';
 import { queryKeys } from '@/lib/query/keys';
@@ -65,22 +66,20 @@ export default function GoalInsightsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.topRow}>
           <Pressable onPress={() => goBackOrHome(router)} hitSlop={8}>
-            <Ionicons name="arrow-back" size={27} color="white" />
+            <Ionicons name="arrow-back" size={27} color={Colors.textPrimary} />
           </Pressable>
-          <ThemedText weight="700" size="regular">
-            Goal Insights
-          </ThemedText>
+          <ThemedText variant="bodyBold">Goal Insights</ThemedText>
         </View>
 
-        <ThemedText weight="600" size="title" style={styles.activityName}>
+        <ThemedText variant="display" weight="600" style={styles.activityName}>
           {stats.activityName}
         </ThemedText>
 
         <ListItemShell style={styles.section}>
-          <ThemedText style={styles.sectionLabel} type="defaultSemiBold">
+          <ThemedText style={styles.sectionLabel} variant="eyebrow">
             This week
           </ThemedText>
-          <ThemedText size="small" style={styles.progressText}>
+          <ThemedText variant="bodySmall" style={styles.progressText}>
             {formatGoalProgress(
               stats.currentWeekCount,
               stats.goal.targetPerWeek,
@@ -92,32 +91,13 @@ export default function GoalInsightsScreen() {
             height={10}
             style={styles.progressBar}
           />
-          {/* <hr */}
-          {/*   style={{ */}
-          {/*     width: '100%', */}
-          {/*     borderColor: '#fafafa22', */}
-          {/*     borderTopWidth: 0, */}
-          {/*   }} */}
-          {/* /> */}
-          {/* <ThemedText style={[styles.sectionLabel]} type="defaultSemiBold"> */}
-          {/*   Target Frequency:{' '} */}
-          {/*   <ThemedText */}
-          {/*     type="defaultSemiBold" */}
-          {/*     style={[ */}
-          {/*       styles.sectionLabel, */}
-          {/*       { textTransform: 'none', opacity: 1 }, */}
-          {/*     ]} */}
-          {/*   > */}
-          {/*     {stats.goal.targetPerWeek}x per week */}
-          {/*   </ThemedText> */}
-          {/* </ThemedText> */}
         </ListItemShell>
 
         <ListItemShell style={styles.section}>
-          <ThemedText style={styles.sectionLabel} type="defaultSemiBold">
+          <ThemedText style={styles.sectionLabel} variant="eyebrow">
             Performance
           </ThemedText>
-          <ThemedText size="small" style={styles.sectionHint}>
+          <ThemedText variant="bodySmall" style={styles.sectionHint}>
             Over the last{' '}
             {NUMBER_OF_WEEKS_REPORTED !== 1
               ? NUMBER_OF_WEEKS_REPORTED + ' weeks'
@@ -137,10 +117,10 @@ export default function GoalInsightsScreen() {
         </ListItemShell>
 
         <ListItemShell style={styles.section}>
-          <ThemedText style={styles.sectionLabel} type="defaultSemiBold">
+          <ThemedText style={styles.sectionLabel} variant="eyebrow">
             Cadence
           </ThemedText>
-          <ThemedText size="small" style={styles.sectionHint}>
+          <ThemedText variant="bodySmall" style={styles.sectionHint}>
             Over the last{' '}
             {stats.heatmap.length !== 1
               ? `${stats.heatmap.length} weeks`
@@ -191,9 +171,6 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
   },
   sectionLabel: {
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontSize: 13,
     opacity: 0.6,
   },
   sectionHint: {

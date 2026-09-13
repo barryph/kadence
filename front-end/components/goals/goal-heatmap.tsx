@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
 import type { IGoalWeeklyPoint } from '@/api/api.goals';
+import { Colors, withAlpha } from '@/constants/theme';
 import {
   getGoalHeatmapColor,
   GOAL_ABOVE_THRESHOLD_COLOR,
@@ -19,7 +20,7 @@ export default function GoalHeatmap({ data, targetPerWeek }: GoalHeatmapProps) {
   if (data.length === 0) {
     return (
       <View style={styles.emptyState}>
-        <ThemedText size="small" style={styles.emptyText}>
+        <ThemedText variant="bodySmall" style={styles.emptyText}>
           No completion history yet. Weeks will appear here once this activity
           has been completed.
         </ThemedText>
@@ -44,7 +45,7 @@ export default function GoalHeatmap({ data, targetPerWeek }: GoalHeatmapProps) {
         ))}
       </View>
       <View style={styles.legend}>
-        <LegendDot color="rgba(0, 115, 255, 0.15)" label="None" />
+        <LegendDot color={withAlpha(Colors.accent, 0.15)} label="None" />
         <LegendDot color={GOAL_BELOW_THRESHOLD_COLOR} label="Below" />
         <LegendDot color={GOAL_ABOVE_THRESHOLD_COLOR} label="Above" />
       </View>
@@ -56,7 +57,7 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   return (
     <View style={styles.legendItem}>
       <View style={[styles.legendDot, { backgroundColor: color }]} />
-      <ThemedText size="extraSmall" style={styles.legendText}>
+      <ThemedText variant="caption" style={styles.legendText}>
         {label}
       </ThemedText>
     </View>
@@ -98,6 +99,5 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     opacity: 0.65,
-    lineHeight: 18,
   },
 });

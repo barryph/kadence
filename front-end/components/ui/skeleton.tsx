@@ -6,6 +6,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { Colors } from '@/constants/theme';
+
 interface SkeletonProps {
   width?: DimensionValue;
   height?: DimensionValue;
@@ -60,7 +62,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
 
 const styles = StyleSheet.create({
   skeleton: {
-    backgroundColor: '#E1E9EE',
+    backgroundColor: Colors.skeleton,
   },
 });
 

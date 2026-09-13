@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ProgressChart } from 'react-native-chart-kit/v2';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, withAlpha } from '@/constants/theme';
 import { buildInsightsChartTheme } from '@/components/insights/insights-chart-kit-config';
 import { GOAL_BELOW_THRESHOLD_COLOR } from '@/lib/goals/goal-colors';
 import type { IGoalAdherence } from '@/api/api.goals';
@@ -9,7 +10,7 @@ import type { IGoalAdherence } from '@/api/api.goals';
 const RING_SIZE = 132;
 const RING_STROKE_WIDTH = 12;
 
-const RING_BACKGROUND_COLOR = 'rgba(245, 247, 251, 0.13)';
+const RING_BACKGROUND_COLOR = withAlpha(Colors.textPrimary, 0.13);
 
 interface GoalAdherenceRingProps {
   adherence: IGoalAdherence;
@@ -48,12 +49,12 @@ export default function GoalAdherenceRing({
           hideLegend
         />
         <View style={styles.center}>
-          <ThemedText type="defaultBold" size="large" style={styles.percent}>
+          <ThemedText variant="title" style={styles.percent}>
             {percentage === null ? '—' : `${percentage}%`}
           </ThemedText>
         </View>
       </View>
-      <ThemedText size="small" style={styles.caption}>
+      <ThemedText variant="bodySmall" style={styles.caption}>
         Adherence · {periodLabel}
       </ThemedText>
     </View>
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   percent: {
-    color: '#fff',
+    color: Colors.textPrimary,
   },
   caption: {
     opacity: 0.65,

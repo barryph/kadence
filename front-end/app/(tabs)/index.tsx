@@ -13,6 +13,7 @@ import FloatingActionButton from '@/components/ui/floating-action-button';
 import ListItemShell from '@/components/list-item-shell';
 import Dot from '@/components/dot';
 import Container from '@/components/base/container';
+import { Colors } from '@/constants/theme';
 import FilterList from '@/components/filter-list/filter-list';
 import { getMonthOf, YYYYMMDD } from '@/utils/date';
 import { useToday } from '@/hooks/use-today';
@@ -243,12 +244,12 @@ function DashboardContent({ userId }: { userId: string }) {
         <Container style={styles.scrollContent}>
           <View style={styles.headlineRow}>
             <ThemedText
-              type="defaultBold"
+              variant="heading"
+              font="system"
               style={[
                 styles.headline,
                 !(categories.length > 0) && styles.headlineNoCategories,
               ]}
-              size="medium"
             >
               Activities Center
             </ThemedText>
@@ -258,11 +259,7 @@ function DashboardContent({ userId }: { userId: string }) {
                 onPress={() => router.push('/activities/insights')}
                 style={styles.insightsLink}
               >
-                <ThemedText
-                  size="small"
-                  type="default"
-                  style={styles.insightsLinkText}
-                >
+                <ThemedText variant="bodySmall" style={styles.insightsLinkText}>
                   See Insights &rarr;
                 </ThemedText>
               </Pressable>
@@ -296,11 +293,11 @@ function DashboardContent({ userId }: { userId: string }) {
                   style={{ flexDirection: 'row', gap: 2, alignItems: 'center' }}
                 >
                   <Dot />
-                  <ThemedText type="defaultBold">
+                  <ThemedText variant="bodyBold">
                     Add your first activity
                   </ThemedText>
                 </View>
-                <ThemedText size="extraSmall">
+                <ThemedText variant="caption">
                   Get started by adding your first activity!
                 </ThemedText>
               </ListItemShell>
@@ -310,7 +307,7 @@ function DashboardContent({ userId }: { userId: string }) {
                 key={section.title}
                 style={sectionIndex > 0 ? styles.sectionGroupSpaced : undefined}
               >
-                <ThemedText type="defaultSemiBold" style={styles.sectionHeader}>
+                <ThemedText variant="eyebrow" style={styles.sectionHeader}>
                   {section.title}
                 </ThemedText>
                 <View style={styles.sectionItems}>
@@ -349,7 +346,7 @@ function DashboardContent({ userId }: { userId: string }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#181d23',
+    backgroundColor: Colors.surface,
   },
   scrollContent: {
     display: 'flex',
@@ -370,9 +367,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   headline: {
-    color: '#fff',
-    fontFamily: '"system-ui"',
-    fontWeight: 700,
+    color: Colors.textPrimary,
   },
   headlineNoCategories: {
     marginBottom: 3,
@@ -388,9 +383,6 @@ const styles = StyleSheet.create({
   sectionHeader: {
     opacity: 0.6,
     marginBottom: 3,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontSize: 13,
   },
   sectionGroupSpaced: {
     marginTop: 14,

@@ -1,56 +1,59 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
-// import { useThemeColor } from '@/hooks/use-theme-color';
+
+import { Colors } from '@/constants/theme';
+import {
+  resolveTypography,
+  type Font,
+  type Size,
+  type TextVariant,
+  type Weight,
+} from '@/constants/typography';
 
 export type ThemedTextProps = TextProps & {
-  lightColor?: string;
-  darkColor?: string;
-  type?:
-    | 'default'
-    | 'defaultSmall'
-    | 'title'
-    | 'defaultSemiBold'
-    | 'defaultBold'
-    | 'subtitle'
-    | 'link';
-  weight?: '400' | '600' | '700';
-  size?: 'extraSmall' | 'small' | 'regular' | 'medium' | 'large' | 'title';
-  font?: 'system';
+  /** Named typography preset. Defaults to `body`. */
+  variant?: TextVariant;
+  /** Override the preset's typeface. */
+  font?: Font;
+  /** Override the preset's size step. */
+  size?: Size;
+  /** Override the preset's weight. */
+  weight?: Weight;
+  /** Extra tracking; overrides the preset's letter spacing. */
+  letterSpacing?: number;
+  /** Explicit line height; otherwise derived from the final font and size. */
+  lineHeight?: number;
 };
 
+/**
+ * The only text primitive in the app.
+ *
+ * Typography comes from the `variant` presets in `constants/typography.ts`;
+ * `font`, `size`, `weight`, `letterSpacing` and `lineHeight` override the
+ * preset axes individually. Colour defaults to the theme's primary text colour
+ * and can be overridden through `style`, which is applied last.
+ */
 export function ThemedText({
   style,
-  lightColor,
-  darkColor,
-  type = 'default',
-  weight,
-  size,
+  variant = 'body',
   font,
+  size,
+  weight,
+  letterSpacing,
+  lineHeight,
   ...rest
 }: ThemedTextProps) {
-  // const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-  const color = '#fff';
-
   return (
     <Text
       style={[
-        { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'defaultSmall' ? styles.defaultSmall : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'defaultBold' ? styles.defaultBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
-        weight === '400' ? styles.weightRegular : undefined,
-        weight === '600' ? styles.weightSemiBold : undefined,
-        weight === '700' ? styles.weightBold : undefined,
-        size === 'extraSmall' ? styles.sizeExtraSmall : undefined,
-        size === 'small' ? styles.sizeSmall : undefined,
-        size === 'regular' ? styles.sizeRegular : undefined,
-        size === 'medium' ? styles.sizeMedium : undefined,
-        size === 'large' ? styles.sizeLarge : undefined,
-        size === 'title' ? styles.sizeTitle : undefined,
-        font === 'system' ? styles.fontSystem : undefined,
+        styles.base,
+        resolveTypography({
+          variant,
+          font,
+          size,
+          weight,
+          letterSpacing,
+          lineHeight,
+        }),
         style,
       ]}
       {...rest}
@@ -58,81 +61,8 @@ export function ThemedText({
   );
 }
 
-const baseStyles = {
-  fontFamily: 'IBMPlexMono_400Regular',
-};
-
 const styles = StyleSheet.create({
-  default: {
-    ...baseStyles,
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  defaultSmall: {
-    ...baseStyles,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  defaultSemiBold: {
-    ...baseStyles,
-    fontSize: 16,
-    lineHeight: 24,
-    fontFamily: 'IBMPlexMono_600SemiBold',
-  },
-  defaultBold: {
-    ...baseStyles,
-    fontSize: 16,
-    lineHeight: 24,
-    fontFamily: 'IBMPlexMono_700Bold',
-  },
-  title: {
-    ...baseStyles,
-    fontSize: 32,
-    fontFamily: 'IBMPlexMono_700Bold',
-    lineHeight: 38,
-  },
-  subtitle: {
-    ...baseStyles,
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  link: {
-    ...baseStyles,
-    lineHeight: 30,
-    fontSize: 16,
-    color: '#0a7ea4',
-  },
-  weightRegular: {
-    fontFamily: 'IBMPlexMono_400Regular',
-  },
-  weightSemiBold: {
-    fontFamily: 'IBMPlexMono_600SemiBold',
-  },
-  weightBold: {
-    fontFamily: 'IBMPlexMono_700Bold',
-  },
-  sizeExtraSmall: {
-    fontSize: 12,
-  },
-  sizeSmall: {
-    fontSize: 14,
-  },
-  sizeRegular: {
-    fontSize: 16,
-  },
-  sizeMedium: {
-    fontSize: 24,
-    lineHeight: 29,
-  },
-  sizeLarge: {
-    fontSize: 28,
-    lineHeight: 33,
-  },
-  sizeTitle: {
-    fontSize: 32,
-    lineHeight: 37,
-  },
-  fontSystem: {
-    fontFamily: '"system-ui"',
+  base: {
+    color: Colors.textPrimary,
   },
 });

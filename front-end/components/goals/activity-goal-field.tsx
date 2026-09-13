@@ -10,6 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, withAlpha } from '@/constants/theme';
 import type { ActivityFormValues } from '../activities/activity-schema';
 import { useSheetBackHandler } from '@/hooks/use-sheet-back-handler';
 
@@ -65,7 +66,7 @@ export default function ActivityGoalField() {
               >
                 {selected?.label ?? 'No goal'}
               </ThemedText>
-              <ThemedText style={styles.arrow} selectable={false}>
+              <ThemedText size="2xl" style={styles.arrow} selectable={false}>
                 ›
               </ThemedText>
             </Pressable>
@@ -97,12 +98,16 @@ export default function ActivityGoalField() {
                     >
                       <ThemedText
                         style={styles.sheetItemText}
-                        type={isSelected ? 'defaultSemiBold' : 'default'}
+                        variant={isSelected ? 'bodyStrong' : 'body'}
                       >
                         {option.label}
                       </ThemedText>
                       {isSelected && (
-                        <Ionicons name="checkmark" size={20} color="#fff" />
+                        <Ionicons
+                          name="checkmark"
+                          size={20}
+                          color={Colors.textPrimary}
+                        />
                       )}
                     </Pressable>
                   );
@@ -127,26 +132,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 12,
     paddingVertical: 12,
-    backgroundColor: 'rgba(255,255,255,.055)',
+    backgroundColor: Colors.surfaceTranslucent,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
     borderRadius: 8,
   },
   placeholder: {
-    color: '#999',
+    color: Colors.textMuted,
   },
   arrow: {
-    fontSize: 20,
-    color: '#999',
+    color: Colors.textMuted,
     transform: [{ rotate: '90deg' }],
   },
   sheetBackground: {
-    backgroundColor: 'rgb(22, 50, 81)',
+    backgroundColor: Colors.surfaceSelected,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
   },
   sheetHandle: {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: withAlpha(Colors.textPrimary, 0.3),
   },
   sheetContent: {
     paddingVertical: 8,

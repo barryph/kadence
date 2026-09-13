@@ -6,6 +6,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors } from '@/constants/theme';
 
 export interface FilterListItem {
   id: number;
@@ -37,7 +38,7 @@ export default function FilterList({
   return (
     <View style={[style]}>
       {label ? (
-        <ThemedText style={styles.title} type="defaultSemiBold">
+        <ThemedText style={styles.title} variant="eyebrow">
           {label}
         </ThemedText>
       ) : null}
@@ -52,8 +53,8 @@ export default function FilterList({
             return (
               <Pressable key={item.id} onPress={() => onItemPress(item.id)}>
                 <ThemedText
-                  size="small"
-                  type="defaultSemiBold"
+                  variant="bodySmall"
+                  weight="600"
                   style={[
                     styles.pill,
                     isActive && {
@@ -79,9 +80,6 @@ const styles = StyleSheet.create({
   title: {
     opacity: 0.6,
     marginBottom: 3,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontSize: 13,
   },
   pillsRow: {
     display: 'flex',
@@ -90,13 +88,12 @@ const styles = StyleSheet.create({
     paddingBottom: 1,
   },
   pill: {
-    backgroundColor: 'rgba(255,255,255,.055)',
-    color: '#f5f7fbcc',
+    backgroundColor: Colors.surfaceTranslucent,
+    color: Colors.textFaint,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,.1)',
+    borderColor: Colors.border,
     paddingHorizontal: 14,
     paddingVertical: 3,
     borderRadius: 16,
-    fontSize: 13,
   },
 });

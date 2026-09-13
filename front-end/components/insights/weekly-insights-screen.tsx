@@ -5,6 +5,7 @@ import Container from '@/components/base/container';
 import LoaderScreen from '@/components/base/loader-screen';
 import ErrorScreen from '@/components/base/error-screen';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors } from '@/constants/theme';
 import FilterList, {
   type FilterListItem,
 } from '@/components/filter-list/filter-list';
@@ -75,14 +76,16 @@ export default function WeeklyInsightsScreen({
         <Container style={styles.scrollContent}>
           <View style={styles.titleRow}>
             <Pressable onPress={() => goBackOrHome(router)}>
-              <Ionicons name="arrow-back" size={27} color="white" />
+              <Ionicons
+                name="arrow-back"
+                size={27}
+                color={Colors.textPrimary}
+              />
             </Pressable>
-            <ThemedText type="title" size="medium">
-              {title}
-            </ThemedText>
+            <ThemedText variant="heading">{title}</ThemedText>
           </View>
 
-          <ThemedText size="small" style={styles.subtitle}>
+          <ThemedText variant="bodySmall" style={styles.subtitle}>
             Number of days you&apos;ve logged per week, over the last{' '}
             {weekCount} weeks.
           </ThemedText>
@@ -97,7 +100,7 @@ export default function WeeklyInsightsScreen({
 
           {showNoItems ? (
             <ListItemShell style={styles.messageShell}>
-              <ThemedText size="small" style={styles.messageText}>
+              <ThemedText variant="bodySmall" style={styles.messageText}>
                 {noItemsMessage}
               </ThemedText>
             </ListItemShell>
@@ -105,7 +108,7 @@ export default function WeeklyInsightsScreen({
             <View style={styles.chartShell}>
               {showNoActivity ? (
                 <View style={styles.emptyChartMessage}>
-                  <ThemedText size="small" style={styles.messageText}>
+                  <ThemedText variant="bodySmall" style={styles.messageText}>
                     {noActivityMessage}
                   </ThemedText>
                 </View>
@@ -141,7 +144,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     opacity: 0.65,
-    lineHeight: 20,
   },
   filterList: {
     marginTop: 8,
@@ -157,7 +159,6 @@ const styles = StyleSheet.create({
   },
   messageText: {
     opacity: 0.7,
-    lineHeight: 20,
   },
   emptyChartMessage: {
     minHeight: 220,

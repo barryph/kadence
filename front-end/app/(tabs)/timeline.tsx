@@ -1,11 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import { type ITimelineSet } from '@/api/api.timeline';
 import Animated, {
   scrollTo,
@@ -18,6 +12,7 @@ import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/ho
 import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, withAlpha } from '@/constants/theme';
 import FilterList from '@/components/filter-list/filter-list';
 import {
   filterByCategoryId,
@@ -43,8 +38,7 @@ const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
 const HEADER_ROW_EXTRA_HEIGHT = 12;
 const LEFT_COLUMN_WIDTH = 60; // To allow the ticker text to show
-// const headersBackground = '#1a4163';
-const headersBackground = 'rgba(26, 65, 99, 0.30)';
+const headersBackground = Colors.surfaceHeader;
 
 type TimelineDateColumn = {
   full: string;
@@ -346,7 +340,9 @@ function TimelineScreen() {
     return (
       <Center>
         <Background showRed={false} />
-        <ThemedText style={styles.errorText}>{initError}</ThemedText>
+        <ThemedText style={styles.errorText} variant="bodySmall">
+          {initError}
+        </ThemedText>
       </Center>
     );
   }
@@ -380,7 +376,7 @@ function TimelineScreen() {
 
       <View style={[styles.isLoadingOverlay, isLoading && styles.hide]}>
         {!isInitialScrollReady && <Background />}
-        <ActivityIndicator color="#fff" />
+        <ActivityIndicator color={Colors.textPrimary} />
       </View>
 
       <FilterList
@@ -402,11 +398,15 @@ function TimelineScreen() {
           disabled={isLoadingTimeline}
           style={[styles.navArrowButton]}
         >
-          <ThemedText style={styles.navArrowButtonText} type="defaultSemiBold">
+          <ThemedText
+            style={styles.navArrowButtonText}
+            variant="title"
+            weight="600"
+          >
             &larr;
           </ThemedText>
         </Pressable>
-        <ThemedText style={styles.monthLabel} type="defaultSemiBold">
+        <ThemedText variant="bodyStrong">
           {formatMonthLabel(monthInView)}
         </ThemedText>
         <Pressable
@@ -417,7 +417,11 @@ function TimelineScreen() {
             monthInView === currentMonth && styles.navArrowButtonDisabled,
           ]}
         >
-          <ThemedText style={styles.navArrowButtonText} type="defaultSemiBold">
+          <ThemedText
+            style={styles.navArrowButtonText}
+            variant="title"
+            weight="600"
+          >
             &rarr;
           </ThemedText>
         </Pressable>
@@ -438,15 +442,17 @@ function TimelineScreen() {
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
                 <View key={date.full} style={[styles.dateCell]}>
-                  <ThemedText style={styles.dateMonthDay}>
+                  <ThemedText variant="caption" lineHeight={12}>
                     {date.monthDay}
                   </ThemedText>
-                  <ThemedText style={styles.dateWeekday} type="defaultSemiBold">
+                  <ThemedText
+                    style={styles.dateWeekday}
+                    variant="bodySmall"
+                    weight="600"
+                    lineHeight={16}
+                  >
                     {date.weekday}
                   </ThemedText>
-                  {/* <ThemedText style={styles.dateWeekNum} size="extraSmall"> */}
-                  {/*   {date.num} */}
-                  {/* </ThemedText> */}
                 </View>
               ))}
             </View>
@@ -464,9 +470,14 @@ function TimelineScreen() {
             {tableData &&
               filteredActivities?.map((activity) => (
                 <View key={activity.id} style={styles.activityLabelCell}>
-                  <Text style={styles.activityLabelText} numberOfLines={1}>
+                  <ThemedText
+                    font="system"
+                    variant="bodySmall"
+                    weight="500"
+                    numberOfLines={1}
+                  >
                     {activity.ticker || activity.name}
-                  </Text>
+                  </ThemedText>
                 </View>
               ))}
           </Animated.ScrollView>
@@ -542,10 +553,22 @@ function TimelineScreen() {
       {loadMoreError || toggleError ? (
         <View style={styles.footerOverlay}>
           {loadMoreError && (
-            <Text style={styles.errorTextSmall}>{loadMoreError}</Text>
+            <ThemedText
+              font="system"
+              variant="bodySmall"
+              style={styles.errorTextSmall}
+            >
+              {loadMoreError}
+            </ThemedText>
           )}
           {toggleError && (
-            <Text style={styles.errorTextSmall}>{toggleError}</Text>
+            <ThemedText
+              font="system"
+              variant="bodySmall"
+              style={styles.errorTextSmall}
+            >
+              {toggleError}
+            </ThemedText>
           )}
         </View>
       ) : null}
@@ -557,8 +580,7 @@ const NAV_ARROW_HEIGHT = 32;
 
 const styles = StyleSheet.create({
   errorText: {
-    color: '#d32f2f',
-    fontSize: 14,
+    color: Colors.dangerText,
     marginTop: 8,
   },
   container: {
@@ -568,9 +590,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingTop: 12,
     paddingBottom: 10,
-    backgroundColor: 'rgba(26, 65, 99, 0.3)',
+    backgroundColor: Colors.surfaceHeader,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomColor: Colors.border,
   },
   monthNavigationRow: {
     flexDirection: 'row',
@@ -578,17 +600,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 16,
     paddingVertical: 8,
-    backgroundColor: 'rgba(26, 65, 99, 0.3)',
+    backgroundColor: Colors.surfaceHeader,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-  },
-  monthLabel: {
-    color: '#fff',
-    fontSize: 16,
+    borderBottomColor: Colors.border,
   },
   navArrowButton: {
     flexGrow: 0,
-    color: '#fff',
+    color: Colors.textPrimary,
     backgroundColor: 'transparent',
     paddingHorizontal: 0,
     paddingVertical: 0,
@@ -596,8 +614,6 @@ const styles = StyleSheet.create({
     height: NAV_ARROW_HEIGHT,
   },
   navArrowButtonText: {
-    color: '#fff',
-    fontSize: 28,
     lineHeight: NAV_ARROW_HEIGHT,
     height: NAV_ARROW_HEIGHT,
     textAlign: 'center',
@@ -616,23 +632,23 @@ const styles = StyleSheet.create({
     width: LEFT_COLUMN_WIDTH,
     height: ROW_HEIGHT + HEADER_ROW_EXTRA_HEIGHT,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,.1)',
+    borderBottomColor: Colors.border,
     borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,.1)',
+    borderRightColor: Colors.border,
     backgroundColor: headersBackground,
   },
   colHeaderClip: {
     flex: 1,
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,.1)',
+    borderBottomColor: Colors.border,
     height: ROW_HEIGHT + HEADER_ROW_EXTRA_HEIGHT,
   },
   rowHeaderClip: {
     width: LEFT_COLUMN_WIDTH,
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
     borderRightWidth: 1,
-    borderRightColor: 'rgba(255,255,255,.1)',
+    borderRightColor: Colors.border,
   },
   headerRow: {
     backgroundColor: headersBackground,
@@ -652,34 +668,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
-  dateMonthDay: {
-    color: '#fff',
-    fontSize: 12,
-    lineHeight: 12,
-  },
   dateWeekday: {
-    color: '#fff',
-    fontSize: 14,
-    lineHeight: 16,
     marginTop: 2,
   },
-  // dateWeekNum: {
-  //   color: '#fff',
-  //   lineHeight: 14,
-  //   marginTop: 2,
-  // },
   activityLabelCell: {
     height: ROW_HEIGHT,
     justifyContent: 'center',
     paddingHorizontal: 8,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,.1)',
+    borderBottomColor: Colors.border,
     backgroundColor: headersBackground,
-  },
-  activityLabelText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
   },
   isLoadingOverlay: {
     position: 'absolute',
@@ -689,7 +687,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#000000aa',
+    backgroundColor: Colors.scrimStrong,
     zIndex: 999,
   },
   hide: {
@@ -701,8 +699,6 @@ const styles = StyleSheet.create({
     height: ROW_HEIGHT,
     paddingHorizontal: CELL_GAP,
     gap: CELL_GAP,
-    // borderBottomWidth: 1,
-    // borderBottomColor: 'rgba(255,255,255,.1)',
   },
   statusCellContainer: {
     width: CELL_WIDTH,
@@ -716,14 +712,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   statusCellComplete: {
-    //backgroundColor: '#ff3d54',
-    backgroundColor: 'rgb(3,141,240)',
-    boxShadow: '0px 0px 8px 1px rgba(3,141,240,0.20)',
+    backgroundColor: Colors.accentBright,
+    boxShadow: `0px 0px 8px 1px ${withAlpha(Colors.accentBright, 0.2)}`,
   },
   statusCellIncomplete: {
-    backgroundColor: 'rgba(155, 155, 155, 0.1)',
-    // borderWidth: 1,
-    borderColor: 'rgba(255,255,255,.1)',
+    backgroundColor: Colors.surfaceDisabled,
+    borderColor: Colors.border,
   },
   statusCellToggling: {
     opacity: 0.5,
@@ -732,23 +726,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     alignSelf: 'center',
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: Colors.surfaceInverse,
     padding: 8,
     borderRadius: 8,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
   },
-  loadingMoreText: {
-    color: '#64748b',
-    fontSize: 14,
-    textAlign: 'center',
-  },
   errorTextSmall: {
-    color: '#d32f2f',
-    fontSize: 14,
+    color: Colors.dangerText,
     textAlign: 'center',
   },
 });

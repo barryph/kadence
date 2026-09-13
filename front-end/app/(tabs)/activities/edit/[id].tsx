@@ -16,6 +16,7 @@ import AlertError from '@/components/alerts/alert-error';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors } from '@/constants/theme';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
@@ -170,18 +171,20 @@ export default function EditActivityPage() {
           <View style={styles.topRow}>
             <View style={styles.titleRow}>
               <Pressable onPress={() => goBackOrHome(router)}>
-                <Ionicons name="arrow-back" size={27} color="white" />
+                <Ionicons
+                  name="arrow-back"
+                  size={27}
+                  color={Colors.textPrimary}
+                />
               </Pressable>
-              <ThemedText type="title" size="large">
-                Edit Activity
-              </ThemedText>
+              <ThemedText variant="title">Edit Activity</ThemedText>
             </View>
             <View style={styles.settingsWrapper} ref={settingsToggleRef}>
               <Pressable onPress={toggleSettingsModal}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
                   size={24}
-                  color="white"
+                  color={Colors.textPrimary}
                   style={styles.settingsDots}
                 />
               </Pressable>
@@ -289,7 +292,7 @@ export default function EditActivityPage() {
               setIsDeleteModalVisible(true);
             }}
           >
-            <ThemedText style={styles.settingsDeleteButton} type="defaultBold">
+            <ThemedText style={styles.settingsDeleteButton} variant="bodyBold">
               Delete
             </ThemedText>
           </Pressable>
@@ -348,20 +351,20 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     zIndex: 999999,
     elevation: 999999,
-    shadowColor: '#000',
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
-    backgroundColor: '#193b5c',
+    backgroundColor: Colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
   },
   settingsDropdownItem: {
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
   settingsDeleteButton: {
-    color: 'rgba(211, 40, 40, 1)',
+    color: Colors.dangerText,
   },
   submitButton: {
     marginTop: 30,

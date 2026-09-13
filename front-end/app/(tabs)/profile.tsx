@@ -7,6 +7,7 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import AlertError from '@/components/alerts/alert-error';
 import DeleteAccountModal from '@/components/auth/delete-account-modal';
+import { Colors } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
 
 function Profile() {
@@ -36,14 +37,14 @@ function Profile() {
       <Background showRed={false} />
       <Container style={styles.content}>
         <View style={styles.detailsContainer}>
-          <ThemedText style={styles.title} type="title" size="large">
+          <ThemedText style={styles.title} variant="title">
             Profile
           </ThemedText>
           <View style={styles.card}>
-            <ThemedText size="small" style={styles.label}>
+            <ThemedText variant="eyebrow" style={styles.label}>
               Email
             </ThemedText>
-            <ThemedText type="defaultBold">{user.email}</ThemedText>
+            <ThemedText variant="bodyBold">{user.email}</ThemedText>
           </View>
         </View>
 
@@ -106,27 +107,24 @@ const styles = StyleSheet.create({
   },
   label: {
     opacity: 0.6,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontSize: 13,
   },
   error: {
     marginTop: 8,
   },
   logoutButton: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: Colors.surfaceTranslucentStrong,
   },
   logoutButtonText: {
-    color: '#fff',
+    color: Colors.textPrimary,
   },
   dangerZone: {
     marginTop: 24,
   },
   deleteButton: {
-    backgroundColor: '#c62828',
+    backgroundColor: Colors.dangerStrong,
   },
   deleteButtonText: {
-    color: '#fff',
+    color: Colors.textPrimary,
   },
 });
 

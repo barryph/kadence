@@ -16,6 +16,7 @@ import Button from '@/components/base/button';
 import Background from '@/components/backgrounds/background';
 import { ThemedText } from '@/components/base/themed-text';
 import type { GuideStep } from '@/components/guide/types';
+import { Colors, withAlpha } from '@/constants/theme';
 
 /** Horizontal travel (px) for the step slide transition. */
 const SLIDE = 42;
@@ -191,8 +192,8 @@ export function GuideModalBody({
 
       <View style={styles.headerRow}>
         <ThemedText
-          size="small"
-          type="default"
+          variant="bodySmall"
+          letterSpacing={0.5}
           style={styles.stepCounter}
           accessibilityRole="header"
         >
@@ -323,14 +324,13 @@ function StepView({ step, mediaKey }: { step: GuideStep; mediaKey: number }) {
     <View style={styles.stepBody}>
       <MediaFrame media={step.media} mediaKey={mediaKey} />
       <ThemedText
-        type="defaultBold"
-        size="medium"
+        variant="heading"
         style={styles.stepTitle}
         accessibilityRole="header"
       >
         {step.title}
       </ThemedText>
-      <ThemedText type="default" style={styles.stepDescription}>
+      <ThemedText variant="body" style={styles.stepDescription}>
         {step.description}
       </ThemedText>
     </View>
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    backgroundColor: Colors.scrimStrong,
   },
   backdropFill: {
     ...StyleSheet.absoluteFillObject,
@@ -380,9 +380,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   stepCounter: {
-    color: 'rgba(255,255,255,0.55)',
-    fontSize: 13,
-    letterSpacing: 0.5,
+    color: withAlpha(Colors.textPrimary, 0.55),
   },
   closeButton: {
     width: 36,
@@ -390,11 +388,10 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: Colors.surfaceTranslucent,
   },
   closeIcon: {
-    color: '#fff',
-    fontSize: 16,
+    color: Colors.textPrimary,
   },
   content: {
     height: CONTENT_HEIGHT,
@@ -408,16 +405,13 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   stepTitle: {
-    color: '#fff',
     textAlign: 'center',
     marginTop: 5,
     paddingHorizontal: 8,
   },
   stepDescription: {
-    color: '#c6cfe0',
+    color: Colors.textSecondary,
     textAlign: 'center',
-    fontSize: 15,
-    lineHeight: 22,
   },
   paginationRow: {
     alignItems: 'center',
@@ -430,7 +424,7 @@ const styles = StyleSheet.create({
     width: ACTIVE_DOT_W,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.textPrimary,
     marginHorizontal: DOT_MARGIN,
   },
   dot: {
@@ -438,7 +432,7 @@ const styles = StyleSheet.create({
     width: DOT_W,
     height: DOT_W,
     borderRadius: DOT_W / 2,
-    backgroundColor: 'rgba(255,255,255,0.22)',
+    backgroundColor: withAlpha(Colors.textPrimary, 0.22),
   },
   actions: {
     flexDirection: 'row',
@@ -454,8 +448,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   backText: {
-    color: '#9ba1a6',
-    fontSize: 16,
+    color: Colors.icon,
     letterSpacing: -0.2,
   },
   continueWrapper: {

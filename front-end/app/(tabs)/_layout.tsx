@@ -32,7 +32,11 @@ export default function TabLayout() {
           onPress={() => router.push('/profile')}
           style={styles.headerButton}
         >
-          <MaterialIcons name="account-circle" size={24} color="#d8ecff" />
+          <MaterialIcons
+            name="account-circle"
+            size={24}
+            color={Colors.iconAccent}
+          />
         </Pressable>
       </SafeAreaView>
     ),
@@ -41,11 +45,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#fff',
+        tabBarActiveTintColor: Colors.textPrimary,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          backgroundColor: Colors.dark.navbar,
+          backgroundColor: Colors.navbar,
           borderTopWidth: 0,
         },
       }}
@@ -153,7 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerButton: {
-    backgroundColor: 'rgba(255,255,255,.11)',
+    backgroundColor: Colors.surfaceTranslucentStrong,
     borderRadius: 12,
     height: 40,
     width: 40,

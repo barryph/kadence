@@ -10,6 +10,7 @@ import ErrorScreen from '@/components/base/error-screen';
 import ListItemShell from '@/components/list-item-shell';
 import { ThemedText } from '@/components/base/themed-text';
 import GoalProgressBar from '@/components/goals/goal-progress-bar';
+import { Colors } from '@/constants/theme';
 import { useGoalsQuery } from '@/hooks/queries/use-goals';
 import { useStaleRefetchOnFocus } from '@/hooks/queries/use-stale-refetch-on-focus';
 import { queryKeys } from '@/lib/query/keys';
@@ -51,14 +52,14 @@ export default function GoalsScreen() {
       <ScrollView>
         <Container style={styles.scrollContent}>
           <View>
-            <ThemedText style={styles.title} type="defaultBold" size="medium">
+            <ThemedText style={styles.title} variant="heading" font="system">
               Monitor Your Frequency
             </ThemedText>
           </View>
 
           {goals.length === 0 ? (
             <ListItemShell style={styles.emptyShell}>
-              <ThemedText size="small" style={styles.emptyText}>
+              <ThemedText variant="bodySmall" style={styles.emptyText}>
                 No goals yet. Set a weekly target when creating or editing an
                 activity to start tracking your cadence.
               </ThemedText>
@@ -78,7 +79,9 @@ export default function GoalsScreen() {
                     >
                       <View style={styles.itemRow}>
                         <ThemedText
-                          type="defaultBold"
+                          variant="bodyBold"
+                          size="xl"
+                          lineHeight={28}
                           style={styles.itemName}
                           numberOfLines={1}
                         >
@@ -88,12 +91,12 @@ export default function GoalsScreen() {
                         <View style={styles.itemRight}>
                           {goal.currentWeekCount >= goal.targetPerWeek ? (
                             <ProgressBadge
-                              color="#52f2a8"
+                              color={Colors.success}
                               icon={
                                 <Ionicons
                                   name="checkmark-circle"
                                   size={14}
-                                  color="#52f2a8"
+                                  color={Colors.success}
                                 />
                               }
                             >
@@ -101,12 +104,12 @@ export default function GoalsScreen() {
                             </ProgressBadge>
                           ) : (
                             <ProgressBadge
-                              color="rgb(236, 232, 30)"
+                              color={Colors.warning}
                               icon={
                                 <MaterialCommunityIcons
                                   name="progress-clock"
                                   size={14}
-                                  color="rgb(236, 232, 30)"
+                                  color={Colors.warning}
                                 />
                               }
                             >
@@ -116,15 +119,13 @@ export default function GoalsScreen() {
                         </View>
                       </View>
                       <View style={styles.bottomRow}>
-                        <ThemedText size="extraSmall">
+                        <ThemedText variant="caption">
                           See Stats &rarr;
                         </ThemedText>
                         <ThemedText
-                          size="small"
+                          variant="bodySmall"
                           style={
-                            met
-                              ? styles.metText
-                              : { color: 'rgb(236, 232, 30)' }
+                            met ? styles.metText : { color: Colors.warning }
                           }
                         >
                           {formatGoalProgress(
@@ -161,8 +162,6 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 10,
-    fontFamily: '"system-ui"',
-    fontWeight: 700,
   },
   subTitle: {
     marginTop: 8,
@@ -181,8 +180,6 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   itemName: {
-    fontSize: 18,
-    lineHeight: 28,
     flexShrink: 1,
   },
   itemRight: {
@@ -191,7 +188,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   metText: {
-    color: '#52f2a8',
+    color: Colors.success,
   },
   progressBar: {
     marginTop: 6,
@@ -202,7 +199,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     opacity: 0.7,
-    lineHeight: 20,
   },
   bottomRow: {
     marginTop: 0,

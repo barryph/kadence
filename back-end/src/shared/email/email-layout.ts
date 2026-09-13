@@ -95,6 +95,7 @@ interface CtaStyle {
   gradient: string;
   /** Card-composited equivalent of the glow at 10%. */
   ring: string;
+  boxShadow: string;
 }
 
 const CTA_STYLES: Record<
@@ -105,11 +106,14 @@ const CTA_STYLES: Record<
     fill: PALETTE.blue,
     gradient: `linear-gradient(135deg,${PALETTE.blue} 0%,${PALETTE.blueLight} 48%,${PALETTE.cyan} 100%)`,
     ring: '#081833',
+    boxShadow:
+      'box-shadow:0 18px 38px rgba(0,90,255,0.42),0 8px 18px rgba(0,0,0,0.36)',
   },
   danger: {
     fill: '#e02040',
     gradient: `linear-gradient(135deg,#e02040 0%,${PALETTE.red} 55%,#ff7a5c 100%)`,
     ring: '#211222',
+    boxShadow: '0 18px 38px rgba(255, 0, 0, 0.42),0 8px 18px rgba(0,0,0,0.36)',
   },
 };
 
@@ -149,7 +153,8 @@ function renderCallout(callout: EmailCallout): string {
 }
 
 function renderCta(cta: EmailCallToAction): string {
-  const { fill, gradient, ring } = CTA_STYLES[cta.variant ?? 'primary'];
+  const { fill, gradient, ring, boxShadow } =
+    CTA_STYLES[cta.variant ?? 'primary'];
   const url = escapeHtml(cta.url);
   const label = escapeHtml(cta.label).replace(/ /g, '&nbsp;');
   const arrow = `${label}&nbsp;&#8594;`;
@@ -171,7 +176,7 @@ function renderCta(cta: EmailCallToAction): string {
                         </v:roundrect>
                       <![endif]-->
                       <!--[if !mso]><!-- -->
-                      <a href="${url}" style="display:block;padding:17px 24px;font-family:${MONO};font-size:13px;line-height:18px;font-weight:700;letter-spacing:2px;color:#ffffff;text-decoration:none;border-radius:9px;box-shadow:0 18px 38px rgba(0,90,255,0.42),0 8px 18px rgba(0,0,0,0.36);">${arrow}</a>
+                      <a href="${url}" style="display:block;padding:17px 24px;font-family:${MONO};font-size:13px;line-height:18px;font-weight:700;letter-spacing:2px;color:#ffffff;text-decoration:none;border-radius:9px;box-shadow:${boxShadow};">${arrow}</a>
                       <!--<![endif]-->
                     </td>
                   </tr>

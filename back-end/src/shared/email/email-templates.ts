@@ -20,7 +20,7 @@ export function renderPasswordResetEmail(resetUrl: string): EmailContent {
     callout: {
       variant: 'expiry',
       label: 'Expires in 20 minutes',
-      detail: 'Single use · then it stops working',
+      detail: 'The link is single use, expiring in 20 minutes',
     },
     cta: { label: 'Reset password', url: resetUrl },
     footnote:
@@ -37,12 +37,12 @@ export function renderAccountDeletionEmail(
     eyebrow: 'Account deletion',
     heading: 'Confirm account deletion',
     paragraphs: [
-      'We got a request to permanently delete your Kadence account and all of its data. This cannot be undone.',
+      'We got a request to permanently delete your Kadence account and all of its data. Deleting your account cannot be undone.',
     ],
     callout: {
       variant: 'danger',
       label: 'Permanent & irreversible',
-      detail: `Link expires in ${expiresInMinutes} minutes · single use`,
+      detail: `Link expires in ${expiresInMinutes} minutes`,
     },
     cta: { label: 'Confirm deletion', url: deletionUrl, variant: 'danger' },
     footnote:
@@ -61,7 +61,7 @@ export function renderAccountDeletedEmail(): EmailContent {
     ],
     callout: {
       variant: 'success',
-      label: 'Deletion complete',
+      label: 'Your account has been deleted',
     },
     footnote:
       "If you didn't request this, contact support as soon as possible.",

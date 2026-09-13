@@ -349,7 +349,7 @@ export function renderEmailHtml(body: EmailBody): string {
                   <tr>
                     <td bgcolor="${PALETTE.card}" style="background-color:${PALETTE.card};padding:22px 32px 28px;border-top:1px solid rgba(255,255,255,0.07);">
                       <p style="margin:0;font-family:${MONO};font-size:10px;line-height:16px;letter-spacing:1.4px;color:rgba(255,255,255,0.46);">
-                        KADENCE &middot; HABIT TRACKING, WITHOUT THE NOISE
+                        KADENCE &middot; EXERCISE TRACKING, ON YOUR SCHEDULE
                       </p>
                     </td>
                   </tr>

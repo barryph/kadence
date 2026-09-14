@@ -410,7 +410,9 @@ export function renderEmailText(body: EmailBody): string {
   }
 
   if (body.cta) {
-    parts.push('', body.cta.url);
+    // The HTML paints this as a button; plain text has no button, so keep the
+    // label beside the URL and the link still says what it does.
+    parts.push('', `${body.cta.label}: ${body.cta.url}`);
   }
 
   if (body.footnote) {

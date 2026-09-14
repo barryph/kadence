@@ -5,12 +5,14 @@ import {
   fireEvent,
   waitFor,
 } from '@testing-library/react-native';
+import { Linking } from 'react-native';
 import { TestSafeAreaProvider } from '@/test/setup/test-safe-area';
 import ProfileScreen from '@/app/(tabs)/profile';
 import { testUser } from '@/test/setup/fixtures/users';
 import { setMockAuth, getMockAuth } from '@/test/setup/mock-auth';
 import { ApiError } from '@/lib/query/unwrap';
 import { ErrorCode } from '@/api/api.types';
+import { PRIVACY_POLICY_URL } from '@/constants/urls';
 
 jest.mock('@/context/auth-context', () =>
   require('@/test/setup/mock-auth').createAuthContextMock(),
@@ -186,5 +188,26 @@ describe('Profile screen logout', () => {
     // The user can retry without leaving the screen.
     await fireEvent.press(screen.getByText('Logout'));
     expect(auth.logout).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('Profile screen privacy policy', () => {
+  beforeEach(() => {
+    setMockAuth({ user: testUser, isAuthenticated: true });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('opens the Privacy Policy externally', async () => {
+    const openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
+
+    await renderProfile();
+    await fireEvent.press(
+      screen.getByRole('link', { name: 'Privacy Policy' }),
+    );
+
+    expect(openURL).toHaveBeenCalledWith(PRIVACY_POLICY_URL);
   });
 });

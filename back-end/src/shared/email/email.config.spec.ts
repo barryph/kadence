@@ -36,7 +36,7 @@ describe('loadEmailConfig', () => {
 
     expect(config).toEqual({
       resendApiKey: null,
-      from: 'Kadence <notifications@mail.barryph.com>',
+      from: 'Kadence <notifications@mail.kadence.barryph.com>',
       replyTo: DEFAULT_EMAIL_REPLY_TO,
       passwordResetUrl: DEFAULT_EMAIL_PASSWORD_RESET_URL,
       passwordResetDeepLink: DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK,

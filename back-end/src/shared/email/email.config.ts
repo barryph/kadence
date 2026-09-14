@@ -4,7 +4,8 @@
  * so this is environment-specific configuration rather than a hard-coded
  * constant; the default is the project's Kadence sender.
  */
-export const DEFAULT_EMAIL_FROM = 'Kadence <notifications@mail.barryph.com>';
+export const DEFAULT_EMAIL_FROM =
+  'Kadence <notifications@mail.kadence.barryph.com>';
 
 /**
  * Public HTTPS link embedded in password reset emails. It points at this

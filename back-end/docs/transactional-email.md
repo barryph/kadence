@@ -27,7 +27,7 @@ All values are read from the environment by
 | Variable | Required | Default | Purpose |
 | --- | --- | --- | --- |
 | `RESEND_API_KEY` | yes | — | Resend API key ([create one](https://resend.com/api-keys)). The API refuses to start without it. |
-| `EMAIL_FROM` | no | `Kadence <notifications@mail.barryph.com>` | `from` identity for every email. Resend only accepts an address on a verified sending domain. |
+| `EMAIL_FROM` | no | `Kadence <notifications@mail.kadence.barryph.com>` | `from` identity for every email. Resend only accepts an address on a verified sending domain. |
 | `EMAIL_REPLY_TO` | no | `support+codecompletelabs@gmail.com` | `Reply-To` on every email. |
 | `EMAIL_PASSWORD_RESET_URL` | no | `https://kadence.barryph.com/reset-password` | Public HTTPS link the reset token is appended to as `?token=`. Must stay on the verified sending domain (see below). |
 | `EMAIL_PASSWORD_RESET_DEEP_LINK` | no | `kadence://reset-password` | Custom-scheme deep link the handoff endpoint redirects into. Must match the app's URL scheme (`front-end/app.json`) and the `reset-password` route. |

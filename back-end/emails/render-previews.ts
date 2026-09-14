@@ -21,7 +21,7 @@ const emails = [
   [
     'password-reset',
     renderPasswordResetEmail(
-      'kadence://reset-password?token=7f3a9c1e5b8d2a406f1c9e7b3d5a8204c6e1f9a2',
+      'https://kadence.barryph.com/reset-password?token=7f3a9c1e5b8d2a406f1c9e7b3d5a8204c6e1f9a2',
     ),
   ],
   [

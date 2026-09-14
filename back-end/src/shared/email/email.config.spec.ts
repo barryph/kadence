@@ -1,6 +1,8 @@
 import {
   DEFAULT_EMAIL_FROM,
+  DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK,
   DEFAULT_EMAIL_PASSWORD_RESET_URL,
+  DEFAULT_EMAIL_REPLY_TO,
   loadEmailConfig,
 } from './email.config';
 
@@ -9,6 +11,7 @@ const ENV_KEYS = [
   'EMAIL_FROM',
   'EMAIL_REPLY_TO',
   'EMAIL_PASSWORD_RESET_URL',
+  'EMAIL_PASSWORD_RESET_DEEP_LINK',
 ] as const;
 
 describe('loadEmailConfig', () => {
@@ -24,7 +27,7 @@ describe('loadEmailConfig', () => {
     }
   });
 
-  it('defaults to the Kadence sender and the app reset deep link', () => {
+  it('defaults to the Kadence sender, HTTPS reset link and app deep link', () => {
     for (const key of ENV_KEYS) {
       delete process.env[key];
     }
@@ -34,10 +37,18 @@ describe('loadEmailConfig', () => {
     expect(config).toEqual({
       resendApiKey: null,
       from: 'Kadence <notifications@mail.barryph.com>',
-      replyTo: null,
+      replyTo: DEFAULT_EMAIL_REPLY_TO,
       passwordResetUrl: DEFAULT_EMAIL_PASSWORD_RESET_URL,
+      passwordResetDeepLink: DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK,
     });
     expect(config.from).toBe(DEFAULT_EMAIL_FROM);
+    expect(config.replyTo).toBe('support+codecompletelabs@gmail.com');
+    // The emailed link must live on the verified sending domain; a custom
+    // `kadence://` scheme in the body is what triggered the spam filtering.
+    expect(config.passwordResetUrl).toBe(
+      'https://kadence.barryph.com/reset-password',
+    );
+    expect(config.passwordResetDeepLink).toBe('kadence://reset-password');
   });
 
   it('reads overrides from the environment', () => {
@@ -45,6 +56,7 @@ describe('loadEmailConfig', () => {
     process.env.EMAIL_FROM = 'Kadence <no-reply@kadence.app>';
     process.env.EMAIL_REPLY_TO = 'support@kadence.app';
     process.env.EMAIL_PASSWORD_RESET_URL = 'https://app.kadence.dev/reset';
+    process.env.EMAIL_PASSWORD_RESET_DEEP_LINK = 'kadence-dev://reset-password';
 
     const config = loadEmailConfig();
 
@@ -53,6 +65,7 @@ describe('loadEmailConfig', () => {
       from: 'Kadence <no-reply@kadence.app>',
       replyTo: 'support@kadence.app',
       passwordResetUrl: 'https://app.kadence.dev/reset',
+      passwordResetDeepLink: 'kadence-dev://reset-password',
     });
   });
 
@@ -61,13 +74,17 @@ describe('loadEmailConfig', () => {
     process.env.EMAIL_FROM = '';
     process.env.EMAIL_REPLY_TO = '  ';
     process.env.EMAIL_PASSWORD_RESET_URL = '';
+    process.env.EMAIL_PASSWORD_RESET_DEEP_LINK = '   ';
 
     const config = loadEmailConfig();
 
     expect(config.resendApiKey).toBeNull();
     expect(config.from).toBe(DEFAULT_EMAIL_FROM);
-    expect(config.replyTo).toBeNull();
+    expect(config.replyTo).toBe(DEFAULT_EMAIL_REPLY_TO);
     expect(config.passwordResetUrl).toBe(DEFAULT_EMAIL_PASSWORD_RESET_URL);
+    expect(config.passwordResetDeepLink).toBe(
+      DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK,
+    );
   });
 
   it('accepts an explicit environment object', () => {

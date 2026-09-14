@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 import type { EmailConfig } from './email.config';
 import { loadEmailConfig } from './email.config';
 import { EmailDeliveryError } from './email.errors';
+import { appendPasswordResetToken } from './password-reset-link';
 import {
   renderAccountDeletedEmail,
   renderAccountDeletionEmail,
@@ -43,7 +44,12 @@ export class ResendEmailSender implements IEmailSender {
   sendPasswordResetEmail(payload: PasswordResetEmailPayload): Promise<void> {
     return this.send(
       payload.recipientEmail,
-      renderPasswordResetEmail(this.buildPasswordResetUrl(payload.resetToken)),
+      renderPasswordResetEmail(
+        appendPasswordResetToken(
+          this.config.passwordResetUrl,
+          payload.resetToken,
+        ),
+      ),
       'password reset',
     );
   }
@@ -103,12 +109,5 @@ export class ResendEmailSender implements IEmailSender {
       );
       throw new EmailDeliveryError();
     }
-  }
-
-  private buildPasswordResetUrl(resetToken: string): string {
-    const separator = this.config.passwordResetUrl.includes('?') ? '&' : '?';
-    return `${this.config.passwordResetUrl}${separator}token=${encodeURIComponent(
-      resetToken,
-    )}`;
   }
 }

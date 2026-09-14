@@ -7,15 +7,30 @@
 export const DEFAULT_EMAIL_FROM = 'Kadence <notifications@mail.barryph.com>';
 
 /**
- * Deep link embedded in password reset emails. It must match the app's URL
- * scheme (`scheme` in `front-end/app.json`) and the `reset-password` route,
- * which reads the `token` query parameter. (Account-deletion links are built by
- * the account-management module and arrive in the payload fully formed.)
+ * Public HTTPS link embedded in password reset emails. It points at this
+ * backend's `/reset-password` handoff endpoint, which forwards the user into
+ * the app.
+ *
+ * The emailed URL must stay on the verified sending domain: Resend treats a
+ * body link whose scheme and host do not match the From domain as a
+ * link-mismatch spam signal, which is why this is no longer the raw
+ * `kadence://` deep link.
  */
-export const DEFAULT_EMAIL_PASSWORD_RESET_URL = 'kadence://reset-password';
+export const DEFAULT_EMAIL_PASSWORD_RESET_URL =
+  'https://kadence.barryph.com/reset-password';
 
 /**
- * The location where all email replys are delivered to.
+ * Custom-scheme deep link the `/reset-password` handoff endpoint redirects
+ * into. It must match the app's URL scheme (`scheme` in `front-end/app.json`)
+ * and the `reset-password` route, which reads the `token` query parameter.
+ * (Account-deletion links are built by the account-management module and
+ * arrive in the payload fully formed.)
+ */
+export const DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK =
+  'kadence://reset-password';
+
+/**
+ * The location where all email replies are delivered to.
  */
 export const DEFAULT_EMAIL_REPLY_TO = 'support+codecompletelabs@gmail.com';
 
@@ -26,8 +41,10 @@ export interface EmailConfig {
   from: string;
   /** Optional `Reply-To`; omitted from the message when `null`. */
   replyTo: string | null;
-  /** Base deep link the reset token is appended to as `?token=`. */
+  /** Public HTTPS base the reset token is appended to as `?token=`. */
   passwordResetUrl: string;
+  /** Custom-scheme base the handoff endpoint redirects into as `?token=`. */
+  passwordResetDeepLink: string;
 }
 
 function readOptional(raw: string | undefined): string | null {
@@ -50,5 +67,8 @@ export function loadEmailConfig(
     passwordResetUrl:
       readOptional(env.EMAIL_PASSWORD_RESET_URL) ??
       DEFAULT_EMAIL_PASSWORD_RESET_URL,
+    passwordResetDeepLink:
+      readOptional(env.EMAIL_PASSWORD_RESET_DEEP_LINK) ??
+      DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK,
   };
 }

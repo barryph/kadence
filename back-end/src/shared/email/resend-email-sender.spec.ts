@@ -18,6 +18,7 @@ const ENV_KEYS = [
   'EMAIL_FROM',
   'EMAIL_REPLY_TO',
   'EMAIL_PASSWORD_RESET_URL',
+  'EMAIL_PASSWORD_RESET_DEEP_LINK',
 ] as const;
 
 interface SentEmail {
@@ -41,7 +42,8 @@ describe('ResendEmailSender', () => {
     jest.clearAllMocks();
     process.env.RESEND_API_KEY = 're_test_key';
     process.env.EMAIL_FROM = 'Kadence <notifications@mail.barryph.com>';
-    process.env.EMAIL_PASSWORD_RESET_URL = 'kadence://reset-password';
+    process.env.EMAIL_PASSWORD_RESET_URL =
+      'https://kadence.barryph.com/reset-password';
     delete process.env.EMAIL_REPLY_TO;
 
     loggerErrorSpy = jest
@@ -88,12 +90,20 @@ describe('ResendEmailSender', () => {
     expect(sent.from).toBe('Kadence <notifications@mail.barryph.com>');
     expect(sent.to).toBe('user@example.com');
     expect(sent.subject).toBe('Reset your Kadence password');
-    expect(sent.replyTo).toBeUndefined();
-    expect(sent.html).toContain('kadence://reset-password?token=abc123');
-    expect(sent.text).toContain('kadence://reset-password?token=abc123');
+    // Reply-To falls back to the support inbox when the environment omits it.
+    expect(sent.replyTo).toBe('support+codecompletelabs@gmail.com');
+    // The emailed link is the HTTPS handoff URL, never the custom scheme.
+    expect(sent.html).toContain(
+      'https://kadence.barryph.com/reset-password?token=abc123',
+    );
+    expect(sent.text).toContain(
+      'https://kadence.barryph.com/reset-password?token=abc123',
+    );
+    expect(sent.html).not.toContain('kadence://');
+    expect(sent.text).not.toContain('kadence://');
   });
 
-  it('URL-encodes the reset token in the deep link', async () => {
+  it('URL-encodes the reset token in the link', async () => {
     const sender = new ResendEmailSender();
 
     await sender.sendPasswordResetEmail({
@@ -106,7 +116,8 @@ describe('ResendEmailSender', () => {
   });
 
   it('appends the token correctly when the reset URL already has a query', async () => {
-    process.env.EMAIL_PASSWORD_RESET_URL = 'kadence://reset-password?env=dev';
+    process.env.EMAIL_PASSWORD_RESET_URL =
+      'https://kadence.barryph.com/reset-password?env=dev';
     const sender = new ResendEmailSender();
 
     await sender.sendPasswordResetEmail({
@@ -115,7 +126,7 @@ describe('ResendEmailSender', () => {
     });
 
     expect(lastSentEmail().text).toContain(
-      'kadence://reset-password?env=dev&token=abc123',
+      'https://kadence.barryph.com/reset-password?env=dev&token=abc123',
     );
   });
 

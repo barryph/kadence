@@ -32,10 +32,5 @@ export interface IEmailSender {
   sendAccountDeletedEmail(payload: AccountDeletedEmailPayload): Promise<void>;
 }
 
-/** One entry in the no-op sender's in-memory outbox, discriminated by `kind`. */
-export type SentEmail =
-  | ({ kind: 'password-reset' } & PasswordResetEmailPayload)
-  | ({ kind: 'account-deletion' } & AccountDeletionEmailPayload)
-  | ({ kind: 'account-deleted' } & AccountDeletedEmailPayload);
-
+/** Injection token for the app-wide `IEmailSender` binding. */
 export const EMAIL_SENDER = Symbol('EMAIL_SENDER');

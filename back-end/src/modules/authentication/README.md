@@ -32,3 +32,10 @@ every request, a session ends after **between 7 and 14 days without activity**
 
 See `back-end/docs/session-management.md` for the lifetime rules, threat model,
 mobile constraints, and the tests that cover them.
+
+## Transactional email
+
+Password reset emails are sent through Resend, behind the app-wide
+`IEmailSender` port in `src/shared/email/` (shared with the account-management
+module). See `docs/transactional-email.md` for configuration, the error-handling
+contract, and the testing approach.

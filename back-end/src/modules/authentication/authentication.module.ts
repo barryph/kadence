@@ -6,6 +6,7 @@ import { SocialAuthService } from './services/social-auth.service';
 import { ExternalIdentityService } from './services/external-identity.service';
 import { PassportModule } from '@nestjs/passport';
 import { AuthenticationController } from './authentication.controller';
+import { PasswordResetLandingController } from './password-reset-landing.controller';
 import { GoogleProvider } from './infrastructure/providers/google.provider';
 import { AppleProvider } from './infrastructure/providers/apple.provider';
 import ExternalIdentitiesRepo from './repos/external-identities.repository';
@@ -27,7 +28,7 @@ import { SessionLifecycleGuard } from './session/session-lifecycle.guard';
  */
 @Module({
   imports: [UsersModule, PassportModule, EmailModule],
-  controllers: [AuthenticationController],
+  controllers: [AuthenticationController, PasswordResetLandingController],
   providers: [
     AuthenticationService,
     SocialAuthService,

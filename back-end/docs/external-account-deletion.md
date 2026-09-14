@@ -95,13 +95,13 @@ and then fail to burn the link.
 | Deletion link | Only for an address with a real account | Logged, swallowed; the response stays neutral |
 | Deletion confirmed | After a successful external deletion | Logged, swallowed; the deletion already happened and cannot be undone |
 
-Both go through `IEmailSender` (`src/shared/email/email-sender.port.ts`), whose
-default binding captures messages in memory instead of sending them. When
+Both go through `IEmailSender` (`src/shared/email/email-sender.port.ts`), which
+is bound to the Resend-backed `ResendEmailSender`. When
 `ACCOUNT_DELETION_SITE_URL` is unset the link falls back to a `mailto:` to the
 support address, so the flow still completes on any environment.
 
 > The deletion URL is the credential. It is never logged — not by the app, not
-> by the no-op sender.
+> by the sender.
 
 ### What the verification email must say
 
@@ -114,8 +114,9 @@ implementation's job. Whatever template is used must state:
 * that it works **once**, and that a new link can be requested if it expires;
 * that the recipient can ignore it if they did not ask for it.
 
-The current binding is the in-memory `NoopEmailSender`, so no real message is
-composed yet; a production sender must cover the points above.
+The binding is `ResendEmailSender`
+(`src/shared/email/resend-email-sender.ts`); see
+`docs/transactional-email.md` for configuration and error handling.
 
 ---
 

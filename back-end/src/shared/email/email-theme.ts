@@ -70,6 +70,12 @@ export const EmailColors = {
   success: '#52f2a8',
   /** Destructive brand accent: danger callouts and CTA gradient end. */
   danger: '#ff3d54',
+  /**
+   * Error copy on the dark card, lighter than {@link danger} so it clears
+   * WCAG AA. Mirrors the app's `Colors.dangerText` role; the app tunes its own
+   * value against its lighter surfaces.
+   */
+  dangerText: '#ff8a9b',
   /** Danger CTA fill and gradient start. */
   dangerStrong: '#e02040',
   /** Warm end of the danger CTA gradient. */

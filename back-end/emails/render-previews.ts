@@ -9,6 +9,7 @@
  * a real send. Change the sample values below when a template gains a slot.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { EmailColors } from '../src/shared/email/email-theme';
 import {
   renderAccountDeletedEmail,
   renderAccountDeletionEmail,
@@ -43,15 +44,17 @@ for (const [name, content] of emails) {
   );
 }
 
-// A single page with all of them side by side, for one screenshot.
+// A single page with all of them side by side, for one screenshot. The card
+// frame and page copy reuse the email theme; the darker page fill is harness
+// chrome that exists only to separate the cards.
 const sheets = emails
   .map(
     ([name]) =>
-      `<div><div style="padding:0 0 8px 4px;font-size:12px;letter-spacing:2px">${name.toUpperCase()}</div><iframe src="./${name}.html" width="680" height="1200" style="border:1px solid #1a4163;border-radius:8px;background:#050711"></iframe></div>`,
+      `<div><div style="padding:0 0 8px 4px;font-size:12px;letter-spacing:2px">${name.toUpperCase()}</div><iframe src="./${name}.html" width="680" height="1200" style="border:1px solid ${EmailColors.frame};border-radius:8px;background:${EmailColors.canvas}"></iframe></div>`,
   )
   .join('');
 
 writeFileSync(
   `${OUT}/all.html`,
-  `<html><body style="margin:0;background:#02030a;display:flex;gap:18px;padding:24px;align-items:flex-start;font-family:monospace;color:#8fd4ff">${sheets}</body></html>`,
+  `<html><body style="margin:0;background:#02030a;display:flex;gap:18px;padding:24px;align-items:flex-start;font-family:monospace;color:${EmailColors.link}">${sheets}</body></html>`,
 );

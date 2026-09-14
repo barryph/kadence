@@ -33,7 +33,7 @@ describe('loadEmailConfig', () => {
 
     expect(config).toEqual({
       resendApiKey: null,
-      from: 'Kadence <kadence+codecompletelabs@gmail.com>',
+      from: 'Kadence <notifications@mail.barryph.com>',
       replyTo: null,
       passwordResetUrl: DEFAULT_EMAIL_PASSWORD_RESET_URL,
     });

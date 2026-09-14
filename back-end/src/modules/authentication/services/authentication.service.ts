@@ -16,7 +16,7 @@ export class AuthenticationService {
   constructor(
     private usersService: UsersService,
     @Inject(EMAIL_SENDER) private readonly emailSender: IEmailSender,
-  ) {}
+  ) { }
 
   async validateUser(email: string, pass: string): Promise<User> {
     const user = await this.usersService.getByEmail(email);
@@ -43,25 +43,28 @@ export class AuthenticationService {
   }
 
   async forgotPassword(email: string): Promise<void> {
+    console.log('initiating forgot password');
     const resetRequest = await this.usersService.initiatePasswordReset(email);
 
+    console.log('resetRequest', resetRequest);
     if (!resetRequest) {
       return;
     }
 
     try {
+      console.log('send email');
       await this.emailSender.sendPasswordResetEmail({
         recipientEmail: resetRequest.recipientEmail,
         resetToken: resetRequest.resetToken,
       });
+      console.log('sent email');
     } catch (err) {
       // Swallowed on purpose, matching DeletionRequestService. The endpoint
       // answers with one generic message whether or not the address is
       // registered; surfacing a send failure would turn it into an
       // account-existence oracle whenever mail delivery is flaky.
       this.logger.error(
-        `Failed to send the password reset email: ${
-          err instanceof Error ? err.message : String(err)
+        `Failed to send the password reset email: ${err instanceof Error ? err.message : String(err)
         }`,
       );
     }

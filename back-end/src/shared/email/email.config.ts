@@ -4,8 +4,7 @@
  * so this is environment-specific configuration rather than a hard-coded
  * constant; the default is the project's Kadence sender.
  */
-export const DEFAULT_EMAIL_FROM =
-  'Kadence <kadence+codecompletelabs@gmail.com>';
+export const DEFAULT_EMAIL_FROM = 'Kadence <notifications@mail.barryph.com>';
 
 /**
  * Deep link embedded in password reset emails. It must match the app's URL
@@ -14,6 +13,11 @@ export const DEFAULT_EMAIL_FROM =
  * the account-management module and arrive in the payload fully formed.)
  */
 export const DEFAULT_EMAIL_PASSWORD_RESET_URL = 'kadence://reset-password';
+
+/**
+ * The location where all email replys are delivered to.
+ */
+export const DEFAULT_EMAIL_REPLY_TO = 'support+codecompletelabs@gmail.com';
 
 export interface EmailConfig {
   /** Resend API key; `null` when the environment does not configure one. */
@@ -42,7 +46,7 @@ export function loadEmailConfig(
   return {
     resendApiKey: readOptional(env.RESEND_API_KEY),
     from: readOptional(env.EMAIL_FROM) ?? DEFAULT_EMAIL_FROM,
-    replyTo: readOptional(env.EMAIL_REPLY_TO),
+    replyTo: readOptional(env.EMAIL_REPLY_TO) ?? DEFAULT_EMAIL_REPLY_TO,
     passwordResetUrl:
       readOptional(env.EMAIL_PASSWORD_RESET_URL) ??
       DEFAULT_EMAIL_PASSWORD_RESET_URL,

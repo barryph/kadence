@@ -40,7 +40,7 @@ describe('ResendEmailSender', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.RESEND_API_KEY = 're_test_key';
-    process.env.EMAIL_FROM = 'Kadence <kadence+codecompletelabs@gmail.com>';
+    process.env.EMAIL_FROM = 'Kadence <notifications@mail.barryph.com>';
     process.env.EMAIL_PASSWORD_RESET_URL = 'kadence://reset-password';
     delete process.env.EMAIL_REPLY_TO;
 
@@ -85,7 +85,7 @@ describe('ResendEmailSender', () => {
     expect(mockEmails.send).toHaveBeenCalledTimes(1);
 
     const sent = lastSentEmail();
-    expect(sent.from).toBe('Kadence <kadence+codecompletelabs@gmail.com>');
+    expect(sent.from).toBe('Kadence <notifications@mail.barryph.com>');
     expect(sent.to).toBe('user@example.com');
     expect(sent.subject).toBe('Reset your Kadence password');
     expect(sent.replyTo).toBeUndefined();

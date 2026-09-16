@@ -146,9 +146,14 @@ export default function LoginScreen() {
           />
 
           <Link href="/forgot-password" style={styles.linkContainer}>
-            <ThemedText variant="bodySmall" style={styles.linkText}>
+            <ThemedText
+              variant="bodySmall"
+              font="system"
+              style={styles.linkText}
+            >
               <ThemedText
                 variant="bodySmall"
+                font="system"
                 weight="700"
                 style={styles.linkTextBold}
               >
@@ -158,10 +163,15 @@ export default function LoginScreen() {
           </Link>
 
           <Link href="/register" style={styles.linkContainer}>
-            <ThemedText variant="bodySmall" style={styles.linkText}>
+            <ThemedText
+              variant="bodySmall"
+              font="system"
+              style={styles.linkText}
+            >
               Don&apos;t have an account?{' '}
               <ThemedText
                 variant="bodySmall"
+                font="system"
                 weight="700"
                 style={styles.linkTextBold}
               >

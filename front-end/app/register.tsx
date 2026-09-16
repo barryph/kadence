@@ -174,10 +174,15 @@ export default function RegisterScreen() {
           />
 
           <Link href="/login" style={styles.linkContainer}>
-            <ThemedText variant="bodySmall" style={styles.linkText}>
+            <ThemedText
+              variant="bodySmall"
+              font="system"
+              style={styles.linkText}
+            >
               Already have an account?{' '}
               <ThemedText
                 variant="bodySmall"
+                font="system"
                 weight="700"
                 style={styles.linkTextBold}
               >

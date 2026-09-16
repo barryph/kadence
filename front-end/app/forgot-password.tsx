@@ -95,10 +95,15 @@ export default function ForgotPasswordScreen() {
           </Button>
 
           <Link href="/login" style={styles.linkContainer}>
-            <ThemedText variant="bodySmall" style={styles.linkText}>
+            <ThemedText
+              variant="bodySmall"
+              font="system"
+              style={styles.linkText}
+            >
               Remember your password?{' '}
               <ThemedText
                 variant="bodySmall"
+                font="system"
                 weight="700"
                 style={styles.linkTextBold}
               >

@@ -17,6 +17,11 @@ class ErrorMapper {
     ACCOUNT_NOT_FOUND: 'This account no longer exists.',
     PROVIDER_REVOCATION_FAILED:
       "We couldn't disconnect your account from its provider. Nothing was deleted. Please try again.",
+    // A rejected provider credential is a sign-in failure, not an ended
+    // session: without this entry it falls through to the bare-401 →
+    // UNAUTHORIZED mapping, which tells a signed-out user their session expired
+    // and broadcasts a spurious session-end to the auth layer.
+    OAUTH_AUTH_FAILED: 'Sign in failed. Please try again.',
     UNAUTHORIZED: 'Your session has expired. Please sign in again.',
     SESSION_EXPIRED: 'Your session has ended. Please sign in again.',
 

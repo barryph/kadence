@@ -95,6 +95,30 @@ describe('apiClient', () => {
     }
   });
 
+  it('does not end the session when a provider credential is rejected after revocation', async () => {
+    // The user revoked the app's Google access; the next Google sign-in is
+    // rejected. An existing application session must not be disturbed by that.
+    mockFetch.mockReturnValue(
+      jsonResponse(
+        { error: { code: 'OAUTH_AUTH_FAILED', message: 'Authentication failed' } },
+        401,
+      ),
+    );
+
+    const onExpired = jest.fn();
+    const unsubscribe = onSessionExpired(onExpired);
+    try {
+      const result = await apiClient.post('/auth/google', {
+        idToken: 'stale-token',
+      });
+      expect(result.error?.code).toBe(ErrorCode.OAUTH_AUTH_FAILED);
+      expect(result.error?.message).toBe('Sign in failed. Please try again.');
+      expect(onExpired).not.toHaveBeenCalled();
+    } finally {
+      unsubscribe();
+    }
+  });
+
   it('surfaces a mapped error instead of rejecting on a non-JSON body', async () => {
     mockFetch.mockReturnValue(
       Promise.resolve({

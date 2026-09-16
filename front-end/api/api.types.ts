@@ -31,6 +31,15 @@ export const ErrorCode = {
   PROVIDER_REVOCATION_FAILED: 'PROVIDER_REVOCATION_FAILED',
 
   /**
+   * The backend rejected a provider (Google/Apple) credential: expired,
+   * invalid, or no longer resolvable. This is a *sign-in* failure, not an ended
+   * session — revoking the app's Google access means the next credential is
+   * rejected, not that an existing app session has become invalid. It must
+   * never be downgraded to UNAUTHORIZED, which clears local auth state.
+   */
+  OAUTH_AUTH_FAILED: 'OAUTH_AUTH_FAILED',
+
+  /**
    * The session is gone (cookie expired, revoked, or never sent). Distinct from
    * INVALID_CREDENTIALS, which means a sign-in attempt was rejected. Used for
    * the bare 401 the API sends when a request carries no usable session.

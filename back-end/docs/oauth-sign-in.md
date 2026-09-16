@@ -202,6 +202,49 @@ identity model supports it, and it must always require an authenticated session.
 
 ---
 
+## Revocation (access removed from the user's Google Account)
+
+A user can remove Kadence's access from their Google Account at any time without
+signing out of the app. Kadence deliberately does **not** implement Google
+Cross-Account Protection (RISC) or a revocation webhook, so this is not
+observable server-side. The design makes that harmless:
+
+| Concern | Behaviour |
+| --- | --- |
+| Existing app session | Unaffected. It is a server-side cookie credential; no request in the authenticated path calls Google. It keeps renewing/expiring under `docs/session-management.md`. |
+| Post-revocation API use | Continues normally — there is no live Google authorization check that could fail. |
+| Next Google sign-in | Google re-prompts for consent and issues a fresh ID token (same stable `sub`), or rejects/cancels the attempt. The backend verifies whatever it is given, every time. |
+| Rejected / expired ID token | Generic `401 OAUTH_AUTH_FAILED`; no session, no account change. |
+| Account resolution | Always by `(provider, provider_subject)`, so a later success reuses the same account — no duplicate, no lost link. |
+| Identity record | Unchanged by revocation (no RISC), so the Google link survives and resolves to the same user. |
+
+The client caches no ID token and never calls `getTokens()` or
+`signInSilently()`; it asks Google for a fresh credential on each sign-in, so a
+revoked grant cannot be silently replayed from the device.
+
+### Frontend error handling
+
+`401 OAUTH_AUTH_FAILED` is a **sign-in failure**, not an ended session. The
+client maps it to its own `ErrorCode.OAUTH_AUTH_FAILED` so it does not fall
+through to the bare-401 → `UNAUTHORIZED` mapping; a rejected Google sign-in must
+never broadcast `SESSION_EXPIRED` or clear the auth state of an otherwise valid
+session. Native revocation signals (e.g. `SIGN_IN_REQUIRED`) are normalised to a
+friendly "sign in failed" result so the user can simply retry.
+
+### Limitations of not implementing RISC
+
+* The backend never learns that access was revoked: an existing session lives
+  until it expires or is signed out. This is intentional.
+* The web account-deletion flow cannot revoke Google server-side (no Google
+  refresh token is stored); the in-app path calls
+  `GoogleSignin.revokeAccess()` client-side. See
+  `docs/external-account-deletion.md`.
+* The `google` identity record survives revocation, so the app may still attempt
+  the client-side disconnect during account deletion. That attempt is
+  best-effort and its failure never blocks deletion.
+
+---
+
 ## Security assumptions
 
 - The backend is the security boundary. Client-supplied `email`, `userId`,
@@ -269,6 +312,12 @@ or an EAS development build.
   rotation, and no-token-leakage.
 - e2e tests cover the full HTTP + session flow, account resolution, email-match
   no-merge, identity-transfer prevention, session regeneration, token-free
-  sessions, and CORS.
-- Frontend tests cover provider wrappers (success/cancel/fail), auth context
-  (state updates, duplicate prevention), and the login/register screens.
+  sessions, and CORS. A dedicated "Google access revoked" block covers an
+  existing session surviving revocation, a credential Google no longer honours
+  being a clean `OAUTH_AUTH_FAILED` with no account/identity change, a rejected
+  sign-in not ending another device's session, and a later sign-in reusing the
+  same account.
+- Frontend tests cover provider wrappers (success/cancel/fail, including the
+  `SIGN_IN_REQUIRED` revocation signal), auth context (state updates, duplicate
+  prevention), error mapping (a rejected provider credential must not become
+  `UNAUTHORIZED`), and the login/register screens.

@@ -1,5 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface IProps {
   children: React.ReactNode;
@@ -7,8 +8,8 @@ interface IProps {
 
 export default function AlertError({ children }: IProps) {
   return (
-    <View style={styles.errorContainer}>
-      <ThemedText style={styles.errorText} type="defaultSmall" weight="600">
+    <View style={styles.container}>
+      <ThemedText style={styles.text} variant="bodySmall" weight="600">
         {children}
       </ThemedText>
     </View>
@@ -16,17 +17,15 @@ export default function AlertError({ children }: IProps) {
 }
 
 const styles = StyleSheet.create({
-  errorContainer: {
-    padding: 12,
+  container: {
+    padding: Spacing.xl,
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
     borderWidth: 1,
-    borderColor: 'rgb(211, 40, 40)',
-    // backgroundColor: '#ffebeb',
-    backgroundColor: '#861d28',
+    borderColor: Colors.dangerText,
+    backgroundColor: Colors.dangerSurface,
   },
-  errorText: {
-    color: '#fff',
+  text: {
     textAlign: 'center',
   },
 });

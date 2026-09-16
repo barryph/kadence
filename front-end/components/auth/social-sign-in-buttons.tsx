@@ -2,6 +2,7 @@ import { View, StyleSheet, Platform } from 'react-native';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 
 interface SocialSignInButtonsProps {
   onGooglePress: () => void;
@@ -22,7 +23,7 @@ export default function SocialSignInButtons({
     <View style={styles.container}>
       <View style={styles.dividerRow}>
         <View style={styles.divider} />
-        <ThemedText size="small" style={styles.dividerText}>
+        <ThemedText variant="bodySmall" style={styles.dividerText}>
           or continue with
         </ThemedText>
         <View style={styles.divider} />
@@ -56,24 +57,24 @@ export default function SocialSignInButtons({
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 16,
-    gap: 16,
+    marginTop: Spacing['2xl'],
+    gap: Spacing['2xl'],
   },
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: Spacing.xl,
   },
   divider: {
     flex: 1,
     height: StyleSheet.hairlineWidth,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: withAlpha(Colors.textPrimary, 0.3),
   },
   dividerText: {
     opacity: 0.6,
   },
   buttons: {
-    gap: 12,
+    gap: Spacing.xl,
   },
   googleButton: {
     width: '100%',

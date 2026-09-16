@@ -1,11 +1,13 @@
 import { StyleSheet, View } from 'react-native';
 
+import { Colors, Spacing } from '@/constants/theme';
+
 interface IProps {
   backgroundColor?: string;
 }
 
 export default function Dot({ backgroundColor }: IProps) {
-  const bg = backgroundColor || 'rgb(0, 255, 52)';
+  const bg = backgroundColor || Colors.success;
   return <View style={[styles.dot, { backgroundColor: bg }]} />;
 }
 const styles = StyleSheet.create({
@@ -13,6 +15,6 @@ const styles = StyleSheet.create({
     height: 8,
     width: 8,
     borderRadius: 4,
-    marginRight: 8,
+    marginRight: Spacing.md,
   },
 });

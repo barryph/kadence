@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
@@ -15,6 +15,7 @@ import {
   resetPasswordSchema,
   type ResetPasswordFormValues,
 } from '@/components/auth/auth-schemas';
+import { Colors, Spacing } from '@/constants/theme';
 
 const INVALID_TOKEN_MESSAGE = 'Reset token is invalid or expired';
 
@@ -71,14 +72,21 @@ export default function ResetPasswordScreen() {
         >
           <Background />
           <View style={styles.formContainer}>
-            <ThemedText style={styles.title} type="title">
+            <ThemedText variant="display" style={styles.title}>
               Reset Password
             </ThemedText>
             <AlertError>Reset token is missing</AlertError>
             <Link href="/login" style={styles.linkContainer}>
-              <Text style={styles.linkText}>
-                Back to <Text style={styles.linkTextBold}>Log In</Text>
-              </Text>
+              <ThemedText variant="bodySmall" style={styles.linkText}>
+                Back to{' '}
+                <ThemedText
+                  variant="bodySmall"
+                  weight="700"
+                  style={styles.linkTextBold}
+                >
+                  Log In
+                </ThemedText>
+              </ThemedText>
             </Link>
           </View>
         </ScrollView>
@@ -97,7 +105,7 @@ export default function ResetPasswordScreen() {
       >
         <Background />
         <View style={styles.formContainer}>
-          <ThemedText style={styles.title} type="title">
+          <ThemedText variant="display" style={styles.title}>
             Reset Password
           </ThemedText>
 
@@ -132,9 +140,16 @@ export default function ResetPasswordScreen() {
           </Button>
 
           <Link href="/login" style={styles.linkContainer}>
-            <Text style={styles.linkText}>
-              Back to <Text style={styles.linkTextBold}>Log In</Text>
-            </Text>
+            <ThemedText variant="bodySmall" style={styles.linkText}>
+              Back to{' '}
+              <ThemedText
+                variant="bodySmall"
+                weight="700"
+                style={styles.linkTextBold}
+              >
+                Log In
+              </ThemedText>
+            </ThemedText>
           </Link>
         </View>
       </ScrollView>
@@ -145,12 +160,11 @@ export default function ResetPasswordScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 24,
+    padding: Spacing['4xl'],
   },
   formContainer: {
     width: '100%',
@@ -158,23 +172,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    marginBottom: 24,
+    marginBottom: Spacing['4xl'],
     textAlign: 'center',
-    color: '#fff',
   },
   submitButton: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   linkContainer: {
-    marginTop: 24,
+    marginTop: Spacing['4xl'],
     alignSelf: 'center',
   },
   linkText: {
-    color: '#ddd',
-    fontSize: 14,
+    color: Colors.textSecondary,
   },
   linkTextBold: {
-    color: '#0072ff',
-    fontWeight: '700',
+    color: Colors.accent,
   },
 });

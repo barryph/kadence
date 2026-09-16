@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, Link } from 'expo-router';
@@ -18,6 +18,7 @@ import {
   registerSchema,
   type RegisterFormValues,
 } from '@/components/auth/auth-schemas';
+import { Colors, Spacing } from '@/constants/theme';
 
 export default function RegisterScreen() {
   const authContext = useAuth();
@@ -90,7 +91,7 @@ export default function RegisterScreen() {
       >
         <Background />
         <View style={styles.formContainer}>
-          <ThemedText style={styles.title} type="title">
+          <ThemedText variant="display" style={styles.title}>
             Sign Up!
           </ThemedText>
           {errorMessage && <AlertError>{errorMessage}</AlertError>}
@@ -173,10 +174,21 @@ export default function RegisterScreen() {
           />
 
           <Link href="/login" style={styles.linkContainer}>
-            <Text style={styles.linkText}>
+            <ThemedText
+              variant="bodySmall"
+              font="system"
+              style={styles.linkText}
+            >
               Already have an account?{' '}
-              <Text style={styles.linkTextBold}>Log In</Text>
-            </Text>
+              <ThemedText
+                variant="bodySmall"
+                font="system"
+                weight="700"
+                style={styles.linkTextBold}
+              >
+                Log In
+              </ThemedText>
+            </ThemedText>
           </Link>
         </View>
       </ScrollView>
@@ -187,12 +199,11 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 24,
+    padding: Spacing['4xl'],
   },
   formContainer: {
     width: '100%',
@@ -200,23 +211,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    marginBottom: 24,
+    marginBottom: Spacing['4xl'],
     textAlign: 'center',
-    color: '#fff',
   },
   submitButton: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   linkContainer: {
-    marginTop: 24,
+    marginTop: Spacing['4xl'],
     alignSelf: 'center',
   },
   linkText: {
-    color: '#ddd',
-    fontSize: 14,
+    color: Colors.textSecondary,
   },
   linkTextBold: {
-    color: '#0072ff',
-    fontWeight: '700',
+    color: Colors.accent,
   },
 });

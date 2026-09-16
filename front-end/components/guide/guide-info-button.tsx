@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Colors } from '@/constants/theme';
 
 interface GuideInfoButtonProps {
   onPress: () => void;
@@ -22,7 +23,7 @@ export default function GuideInfoButton({
       accessibilityLabel={label}
     >
       <View style={styles.circle}>
-        <MaterialIcons name="info" size={22} color="#d8ecff" />
+        <MaterialIcons name="info" size={22} color={Colors.iconAccent} />
       </View>
     </Pressable>
   );
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: Colors.surfaceTranslucent,
     alignItems: 'center',
     justifyContent: 'center',
   },

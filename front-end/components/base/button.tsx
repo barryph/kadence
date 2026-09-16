@@ -9,6 +9,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, Spacing } from '@/constants/theme';
 
 interface ButtonProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode;
@@ -36,9 +37,9 @@ export default function Button({
       disabled={disabled || isLoading}
     >
       {isLoading ? (
-        <ActivityIndicator color="#fff" />
+        <ActivityIndicator color={Colors.textPrimary} />
       ) : (
-        <ThemedText style={[styles.text, textStyle]} type="defaultSemiBold">
+        <ThemedText style={textStyle} variant="bodyStrong">
           {children}
         </ThemedText>
       )}
@@ -48,19 +49,15 @@ export default function Button({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#0072ff',
-    color: '#fff',
+    backgroundColor: Colors.accent,
     paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing['4xl'],
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
   },
   buttonDisabled: {
-    backgroundColor: '#80b9ff',
-  },
-  text: {
-    color: 'inherit',
+    backgroundColor: Colors.accentSoft,
   },
 });

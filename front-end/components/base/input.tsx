@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, type TextInputProps } from 'react-native';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
+import { FONT_SIZE } from '@/constants/typography';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 import { ThemedText } from './themed-text';
@@ -23,14 +24,12 @@ export default function Input({
       {label && (
         <Label>
           {label}
-          {required && (
-            <ThemedText style={{ color: Colors.required }}>*</ThemedText>
-          )}
+          {required && <ThemedText style={styles.requiredMark}>*</ThemedText>}
         </Label>
       )}
       <TextInput
         style={[styles.input, errorMessage ? styles.inputError : null, style]}
-        placeholderTextColor="#999"
+        placeholderTextColor={Colors.textMuted}
         {...props}
       />
       {errorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
@@ -40,26 +39,23 @@ export default function Input({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
     width: '100%',
   },
-  label: {
-    marginBottom: 8,
-    fontSize: 14,
-    lineHeight: 22,
-    color: '#fff',
+  requiredMark: {
+    color: Colors.dangerText,
   },
   input: {
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
     borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    backgroundColor: Colors.dark.inputBackground,
-    color: '#fff',
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xl,
+    fontSize: FONT_SIZE.lg,
+    backgroundColor: Colors.surfaceTranslucent,
+    color: Colors.textPrimary,
   },
   inputError: {
-    borderColor: '#ff3333',
+    borderColor: Colors.dangerText,
   },
 });

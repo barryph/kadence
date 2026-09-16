@@ -9,6 +9,7 @@ import {
   INSIGHTS_CHART_HEIGHT,
 } from '@/components/insights/insights-chart-kit-config';
 import { formatWeekLabel } from '@/utils/date';
+import { Spacing } from '@/constants/theme';
 
 export interface InsightsLineSeries {
   color: string;
@@ -67,7 +68,7 @@ export default function InsightsLineChartKit({
   if (series.length === 0) {
     return (
       <View style={styles.emptyState}>
-        <ThemedText size="small" style={styles.emptyText}>
+        <ThemedText variant="bodySmall" style={styles.emptyText}>
           {emptyMessage}
         </ThemedText>
       </View>
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
     minHeight: INSIGHTS_CHART_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: Spacing.xl,
   },
   emptyText: {
     opacity: 0.65,

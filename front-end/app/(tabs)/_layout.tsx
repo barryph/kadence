@@ -7,7 +7,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
 
 import { HapticTab } from '@/components/base/haptic-tab';
-import { Colors } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import BlueBackground from '@/components/backgrounds/blue-background';
 import Logo from '@/components/logo';
 
@@ -17,7 +17,7 @@ export default function TabLayout() {
   const headerOptions = {
     headerShown: true,
     headerStyle: {
-      paddingVertical: 40,
+      paddingVertical: Spacing['6xl'],
     },
 
     header: () => (
@@ -32,7 +32,11 @@ export default function TabLayout() {
           onPress={() => router.push('/profile')}
           style={styles.headerButton}
         >
-          <MaterialIcons name="account-circle" size={24} color="#d8ecff" />
+          <MaterialIcons
+            name="account-circle"
+            size={24}
+            color={Colors.iconAccent}
+          />
         </Pressable>
       </SafeAreaView>
     ),
@@ -41,11 +45,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#fff',
+        tabBarActiveTintColor: Colors.textPrimary,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarStyle: {
-          backgroundColor: Colors.dark.navbar,
+          backgroundColor: Colors.navbar,
           borderTopWidth: 0,
         },
       }}
@@ -146,14 +150,14 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingVertical: 10,
+    paddingVertical: Spacing.lg,
     paddingHorizontal: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   headerButton: {
-    backgroundColor: 'rgba(255,255,255,.11)',
+    backgroundColor: Colors.surfaceTranslucentStrong,
     borderRadius: 12,
     height: 40,
     width: 40,

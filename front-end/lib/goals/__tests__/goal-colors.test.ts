@@ -1,3 +1,4 @@
+import { Colors, withAlpha } from '@/constants/theme';
 import {
   getGoalHeatmapColor,
   GOAL_ABOVE_THRESHOLD_COLOR,
@@ -12,12 +13,12 @@ describe('getGoalHeatmapColor', () => {
     expect(getGoalHeatmapColor(3, 3)).toBe(GOAL_ABOVE_THRESHOLD_COLOR);
   });
 
-  it('uses a faint cell for no completions', () => {
-    expect(getGoalHeatmapColor(0, 3)).toMatch(/rgba\(0, 115, 255, 0\.15\)/);
+  it('uses a faint accent cell for no completions', () => {
+    expect(getGoalHeatmapColor(0, 3)).toBe(withAlpha(Colors.accent, 0.15));
   });
 
-  it('uses a scaled blue for weeks below the target', () => {
-    const color = getGoalHeatmapColor(1, 4);
-    expect(color).toMatch(/^rgba\(0, 115, 255,/);
+  it('uses a scaled accent for weeks below the target', () => {
+    const accentPrefix = withAlpha(Colors.accent, 0).replace('0)', '');
+    expect(getGoalHeatmapColor(1, 4).startsWith(accentPrefix)).toBe(true);
   });
 });

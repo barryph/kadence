@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react';
-import {
-  Modal,
-  View,
-  StyleSheet,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
-import Background from '@/components/backgrounds/background';
+import ModalShell from '@/components/base/modal-shell';
 import AlertError from '@/components/alerts/alert-error';
+import { Colors, Spacing } from '@/constants/theme';
 import { useDeleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { ApiError } from '@/lib/query/unwrap';
 
@@ -60,96 +54,65 @@ export default function DeleteActivityModal({
   }
 
   return (
-    <Modal
+    <ModalShell
       visible={visible}
-      transparent
-      animationType="fade"
       onRequestClose={handleClose}
+      dismissDisabled={deleteActivity.isPending}
     >
-      <KeyboardAvoidingView
-        style={styles.backdrop}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <Pressable
-          style={styles.backdropFill}
-          onPress={handleClose}
-          disabled={deleteActivity.isPending}
-        />
-        <View style={styles.card}>
-          <Background />
-          <ThemedText type="subtitle" style={styles.title}>
-            Delete Activity
-          </ThemedText>
-          <ThemedText style={styles.message}>
-            Deleting this activity is permanent and cannot be undone.
-          </ThemedText>
+      <ThemedText variant="subheading" style={styles.title}>
+        Delete Activity
+      </ThemedText>
+      <ThemedText lineHeight={22} style={styles.message}>
+        Deleting this activity is permanent and cannot be undone.
+      </ThemedText>
 
-          {errorMessage ? (
-            <View style={{ marginTop: 10 }}>
-              <AlertError>{errorMessage}</AlertError>
-            </View>
-          ) : null}
-
-          <View style={styles.actions}>
-            <Button
-              disabled={deleteActivity.isPending}
-              onPress={handleClose}
-              style={styles.actionButton}
-            >
-              Cancel
-            </Button>
-            <Button
-              isLoading={deleteActivity.isPending}
-              onPress={handleDelete}
-              style={[styles.actionButton, styles.deleteButton]}
-              textStyle={styles.deleteButtonText}
-            >
-              Delete
-            </Button>
-          </View>
+      {errorMessage ? (
+        <View style={{ marginTop: Spacing.lg }}>
+          <AlertError>{errorMessage}</AlertError>
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+      ) : null}
+
+      <View style={styles.actions}>
+        <Button
+          disabled={deleteActivity.isPending}
+          onPress={handleClose}
+          style={styles.actionButton}
+        >
+          Cancel
+        </Button>
+        <Button
+          isLoading={deleteActivity.isPending}
+          onPress={handleDelete}
+          style={[styles.actionButton, styles.deleteButton]}
+          textStyle={styles.deleteButtonText}
+        >
+          Delete
+        </Button>
+      </View>
+    </ModalShell>
   );
 }
 
 const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-  },
-  backdropFill: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  card: {
-    borderRadius: 12,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    zIndex: 1,
-    overflow: 'hidden',
-  },
   title: {
-    marginTop: 8,
-    marginBottom: 12,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xl,
   },
   message: {
-    lineHeight: 22,
-    color: '#ccc',
+    color: Colors.textSecondary,
   },
   actions: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 20,
+    gap: Spacing.xl,
+    marginTop: Spacing['3xl'],
   },
   actionButton: {
     flex: 1,
   },
   deleteButton: {
-    backgroundColor: '#c62828',
+    backgroundColor: Colors.dangerStrong,
   },
   deleteButtonText: {
-    color: '#fff',
+    color: Colors.textPrimary,
   },
 });

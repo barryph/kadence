@@ -10,6 +10,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Label from '@/components/base/label';
 import InputErrorMessage from '@/components/base/input-error-message.tsx';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import type { ActivityFormValues } from '../activities/activity-schema';
 import { useSheetBackHandler } from '@/hooks/use-sheet-back-handler';
 
@@ -65,7 +66,7 @@ export default function ActivityGoalField() {
               >
                 {selected?.label ?? 'No goal'}
               </ThemedText>
-              <ThemedText style={styles.arrow} selectable={false}>
+              <ThemedText size="2xl" style={styles.arrow} selectable={false}>
                 ›
               </ThemedText>
             </Pressable>
@@ -97,12 +98,16 @@ export default function ActivityGoalField() {
                     >
                       <ThemedText
                         style={styles.sheetItemText}
-                        type={isSelected ? 'defaultSemiBold' : 'default'}
+                        variant={isSelected ? 'bodyStrong' : 'body'}
                       >
                         {option.label}
                       </ThemedText>
                       {isSelected && (
-                        <Ionicons name="checkmark" size={20} color="#fff" />
+                        <Ionicons
+                          name="checkmark"
+                          size={20}
+                          color={Colors.textPrimary}
+                        />
                       )}
                     </Pressable>
                   );
@@ -118,46 +123,45 @@ export default function ActivityGoalField() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 16,
+    marginBottom: Spacing['2xl'],
     width: '100%',
   },
   select: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    backgroundColor: 'rgba(255,255,255,.055)',
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.xl,
+    backgroundColor: Colors.surfaceTranslucent,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
     borderRadius: 8,
   },
   placeholder: {
-    color: '#999',
+    color: Colors.textMuted,
   },
   arrow: {
-    fontSize: 20,
-    color: '#999',
+    color: Colors.textMuted,
     transform: [{ rotate: '90deg' }],
   },
   sheetBackground: {
-    backgroundColor: 'rgb(22, 50, 81)',
+    backgroundColor: Colors.surfaceSelected,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
   },
   sheetHandle: {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: withAlpha(Colors.textPrimary, 0.3),
   },
   sheetContent: {
-    paddingVertical: 8,
-    paddingBottom: 24,
+    paddingVertical: Spacing.md,
+    paddingBottom: Spacing['4xl'],
   },
   sheetItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xl,
   },
   sheetItemText: {
     flex: 1,

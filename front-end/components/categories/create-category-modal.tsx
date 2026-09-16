@@ -6,6 +6,7 @@ import CategoryModal, { CategoryFormValues } from './category-modal';
 import { useCreateCategoryMutation } from '@/hooks/mutations/use-category-mutations';
 import { ApiError } from '@/lib/query/unwrap';
 import type { ApiResponse } from '@/api/api.types';
+import { Spacing } from '@/constants/theme';
 
 interface CreateCategoryModalProps {
   onSave: (category: ICategory) => void;
@@ -38,7 +39,7 @@ export default function CreateCategoryModal({
   return (
     <CategoryModal
       title={() => (
-        <ThemedText size="medium" style={styles.title}>
+        <ThemedText variant="heading" style={styles.title}>
           Create A Category
         </ThemedText>
       )}
@@ -51,7 +52,6 @@ export default function CreateCategoryModal({
 
 const styles = StyleSheet.create({
   title: {
-    marginBottom: 16,
-    fontWeight: 700,
+    marginBottom: Spacing['2xl'],
   },
 });

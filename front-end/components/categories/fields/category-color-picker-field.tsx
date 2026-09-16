@@ -9,22 +9,9 @@ import ColorPicker, {
   ColorFormatsObject,
 } from 'reanimated-color-picker';
 import Label from '@/components/base/label';
+import { CategoryColors, Spacing } from '@/constants/theme';
 import { CategoryFormValues } from '../category-modal';
 
-const categorySwatchColors = [
-  '#0073FF', // Electric Blue
-  '#00C2FF', // Cyan
-  '#00D4A8', // Teal
-  '#20C997', // Emerald
-  '#A3E635', // Lime
-  '#FACC15', // Yellow
-  '#FF8A1F', // Orange
-  '#EF4444', // Red
-  '#FB7185', // Coral
-  '#F472B6', // Pink
-  '#A855F7', // Purple
-  '#6366F1', // Indigo
-];
 export default function CategoryColorPickerField() {
   const { control } = useFormContext<CategoryFormValues>();
 
@@ -43,14 +30,14 @@ export default function CategoryColorPickerField() {
             value={field.value}
           >
             <Preview
-              style={{ marginBottom: 12, height: 30 }}
+              style={{ marginBottom: Spacing.xl, height: 30 }}
               hideInitialColor={true}
             />
 
             <View>
               <Panel1 style={{ height: 150 }} />
               <HueSlider
-                style={{ marginTop: 12 }}
+                style={{ marginTop: Spacing.xl }}
                 sliderThickness={20}
                 thumbSize={25}
               />
@@ -60,7 +47,7 @@ export default function CategoryColorPickerField() {
               <OpacitySlider sliderThickness={20} thumbSize={25} />
             </View>
 
-            <Swatches style={{ marginTop: 14 }} colors={categorySwatchColors} />
+            <Swatches style={{ marginTop: 14 }} colors={[...CategoryColors]} />
           </ColorPicker>
         </>
       )}

@@ -1,8 +1,9 @@
 import type { IActivityEvent } from '@/api/api.events';
 import type { IActivity } from '@/api/api.activity';
+import { Colors } from '@/constants/theme';
 import { getWeekStartMonday } from '@/utils/date';
 
-export const DEFAULT_ACTIVITY_COLOR = '#0073FF';
+export const DEFAULT_ACTIVITY_COLOR = Colors.accent;
 
 export interface ActivityWeeklyDataPoint {
   weekStart: string;

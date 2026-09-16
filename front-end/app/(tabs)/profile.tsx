@@ -7,6 +7,7 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import AlertError from '@/components/alerts/alert-error';
 import DeleteAccountModal from '@/components/auth/delete-account-modal';
+import { Colors, Spacing } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
 
 function Profile() {
@@ -36,14 +37,14 @@ function Profile() {
       <Background showRed={false} />
       <Container style={styles.content}>
         <View style={styles.detailsContainer}>
-          <ThemedText style={styles.title} type="title" size="large">
+          <ThemedText style={styles.title} variant="title">
             Profile
           </ThemedText>
           <View style={styles.card}>
-            <ThemedText size="small" style={styles.label}>
+            <ThemedText variant="eyebrow" style={styles.label}>
               Email
             </ThemedText>
-            <ThemedText type="defaultBold">{user.email}</ThemedText>
+            <ThemedText variant="bodyBold">{user.email}</ThemedText>
           </View>
         </View>
 
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: Spacing['5xl'],
     minHeight: '100%',
     justifyContent: 'space-between',
   },
@@ -96,37 +97,34 @@ const styles = StyleSheet.create({
     paddingBottom: 25,
   },
   title: {
-    marginTop: 10,
-    marginBottom: 20,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing['3xl'],
   },
   card: {
     paddingTop: 14,
-    paddingBottom: 12,
-    gap: 2,
+    paddingBottom: Spacing.xl,
+    gap: Spacing.xxs,
   },
   label: {
     opacity: 0.6,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontSize: 13,
   },
   error: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   logoutButton: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: Colors.surfaceTranslucentStrong,
   },
   logoutButtonText: {
-    color: '#fff',
+    color: Colors.textPrimary,
   },
   dangerZone: {
-    marginTop: 24,
+    marginTop: Spacing['4xl'],
   },
   deleteButton: {
-    backgroundColor: '#c62828',
+    backgroundColor: Colors.dangerStrong,
   },
   deleteButtonText: {
-    color: '#fff',
+    color: Colors.textPrimary,
   },
 });
 

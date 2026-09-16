@@ -16,6 +16,7 @@ import AlertError from '@/components/alerts/alert-error';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, Shadows, Spacing } from '@/constants/theme';
 import { useActivityForm } from '@/components/activities/use-activity-form';
 import ActivityCategoryField from '@/components/activities/fields/activity-category-field';
 import ActivityIntervalField from '@/components/activities/fields/activity-interval-field';
@@ -170,18 +171,20 @@ export default function EditActivityPage() {
           <View style={styles.topRow}>
             <View style={styles.titleRow}>
               <Pressable onPress={() => goBackOrHome(router)}>
-                <Ionicons name="arrow-back" size={27} color="white" />
+                <Ionicons
+                  name="arrow-back"
+                  size={27}
+                  color={Colors.textPrimary}
+                />
               </Pressable>
-              <ThemedText type="title" size="large">
-                Edit Activity
-              </ThemedText>
+              <ThemedText variant="title">Edit Activity</ThemedText>
             </View>
             <View style={styles.settingsWrapper} ref={settingsToggleRef}>
               <Pressable onPress={toggleSettingsModal}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
                   size={24}
-                  color="white"
+                  color={Colors.textPrimary}
                   style={styles.settingsDots}
                 />
               </Pressable>
@@ -209,30 +212,42 @@ export default function EditActivityPage() {
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: 10 }}
+                  style={{ marginBottom: Spacing.lg }}
                 />
-                <Skeleton height={40} style={{ marginBottom: 20 }} />
+                <Skeleton
+                  height={40}
+                  style={{ marginBottom: Spacing['3xl'] }}
+                />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: 10 }}
+                  style={{ marginBottom: Spacing.lg }}
                 />
-                <Skeleton height={40} style={{ marginBottom: 20 }} />
+                <Skeleton
+                  height={40}
+                  style={{ marginBottom: Spacing['3xl'] }}
+                />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: 10 }}
+                  style={{ marginBottom: Spacing.lg }}
                 />
-                <Skeleton height={40} style={{ marginBottom: 20 }} />
+                <Skeleton
+                  height={40}
+                  style={{ marginBottom: Spacing['3xl'] }}
+                />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: 10 }}
+                  style={{ marginBottom: Spacing.lg }}
                 />
-                <Skeleton height={40} style={{ marginBottom: 20 }} />
+                <Skeleton
+                  height={40}
+                  style={{ marginBottom: Spacing['3xl'] }}
+                />
               </>
             ) : (
               <>
@@ -246,7 +261,7 @@ export default function EditActivityPage() {
                 </FormProvider>
 
                 {errorMessage && (
-                  <View style={{ marginTop: 10 }}>
+                  <View style={{ marginTop: Spacing.lg }}>
                     <AlertError>{errorMessage}</AlertError>
                   </View>
                 )}
@@ -289,7 +304,7 @@ export default function EditActivityPage() {
               setIsDeleteModalVisible(true);
             }}
           >
-            <ThemedText style={styles.settingsDeleteButton} type="defaultBold">
+            <ThemedText style={styles.settingsDeleteButton} variant="bodyBold">
               Delete
             </ThemedText>
           </Pressable>
@@ -301,18 +316,18 @@ export default function EditActivityPage() {
 
 const styles = StyleSheet.create({
   loadError: {
-    gap: 12,
+    gap: Spacing.xl,
   },
   retryButton: {
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   flex: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing['2xl'],
     paddingTop: 14,
-    paddingBottom: 32,
+    paddingBottom: Spacing['5xl'],
   },
   form: {
     zIndex: 0,
@@ -321,7 +336,7 @@ const styles = StyleSheet.create({
   topRow: {
     zIndex: 1,
     elevation: 1,
-    marginTop: 20,
+    marginTop: Spacing['3xl'],
     marginBottom: 25,
     flexDirection: 'row',
     alignItems: 'center',
@@ -331,37 +346,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: Spacing.xl,
   },
   settingsWrapper: {
     zIndex: 10,
     elevation: 10,
   },
   settingsDots: {
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.md,
   },
   settingsDropdown: {
     position: 'absolute',
     width: 150,
-    marginTop: 12,
+    marginTop: Spacing.xl,
     borderRadius: 8,
     overflow: 'hidden',
     zIndex: 999999,
     elevation: 999999,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    backgroundColor: '#193b5c',
+    ...Shadows.menu,
+    backgroundColor: Colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: Colors.border,
   },
   settingsDropdownItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: Spacing.xl,
+    paddingHorizontal: Spacing['2xl'],
   },
   settingsDeleteButton: {
-    color: 'rgba(211, 40, 40, 1)',
+    color: Colors.dangerText,
   },
   submitButton: {
     marginTop: 30,

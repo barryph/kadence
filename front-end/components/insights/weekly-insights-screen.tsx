@@ -5,6 +5,7 @@ import Container from '@/components/base/container';
 import LoaderScreen from '@/components/base/loader-screen';
 import ErrorScreen from '@/components/base/error-screen';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, Spacing } from '@/constants/theme';
 import FilterList, {
   type FilterListItem,
 } from '@/components/filter-list/filter-list';
@@ -75,14 +76,16 @@ export default function WeeklyInsightsScreen({
         <Container style={styles.scrollContent}>
           <View style={styles.titleRow}>
             <Pressable onPress={() => goBackOrHome(router)}>
-              <Ionicons name="arrow-back" size={27} color="white" />
+              <Ionicons
+                name="arrow-back"
+                size={27}
+                color={Colors.textPrimary}
+              />
             </Pressable>
-            <ThemedText type="title" size="medium">
-              {title}
-            </ThemedText>
+            <ThemedText variant="heading">{title}</ThemedText>
           </View>
 
-          <ThemedText size="small" style={styles.subtitle}>
+          <ThemedText variant="bodySmall" style={styles.subtitle}>
             Number of days you&apos;ve logged per week, over the last{' '}
             {weekCount} weeks.
           </ThemedText>
@@ -97,7 +100,7 @@ export default function WeeklyInsightsScreen({
 
           {showNoItems ? (
             <ListItemShell style={styles.messageShell}>
-              <ThemedText size="small" style={styles.messageText}>
+              <ThemedText variant="bodySmall" style={styles.messageText}>
                 {noItemsMessage}
               </ThemedText>
             </ListItemShell>
@@ -105,7 +108,7 @@ export default function WeeklyInsightsScreen({
             <View style={styles.chartShell}>
               {showNoActivity ? (
                 <View style={styles.emptyChartMessage}>
-                  <ThemedText size="small" style={styles.messageText}>
+                  <ThemedText variant="bodySmall" style={styles.messageText}>
                     {noActivityMessage}
                   </ThemedText>
                 </View>
@@ -129,40 +132,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    gap: 12,
-    paddingBottom: 40,
+    gap: Spacing.xl,
+    paddingBottom: Spacing['6xl'],
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginTop: 10,
-    marginBottom: 2,
+    gap: Spacing.xl,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.xxs,
   },
   subtitle: {
     opacity: 0.65,
-    lineHeight: 20,
   },
   filterList: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   chartShell: {
     paddingVertical: 0,
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   messageShell: {
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing['2xl'],
     paddingVertical: 18,
-    marginTop: 4,
+    marginTop: Spacing.xs,
   },
   messageText: {
     opacity: 0.7,
-    lineHeight: 20,
   },
   emptyChartMessage: {
     minHeight: 220,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: Spacing.md,
   },
 });

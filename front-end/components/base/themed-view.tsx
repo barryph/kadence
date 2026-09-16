@@ -1,21 +1,20 @@
-import { View, type ViewProps } from 'react-native';
+import { StyleSheet, View, type ViewProps } from 'react-native';
 
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
-export type ThemedViewProps = ViewProps & {
-  lightColor?: string;
-  darkColor?: string;
-};
-
-export function ThemedView({
-  style,
-  lightColor,
-  darkColor,
-  ...otherProps
-}: ThemedViewProps) {
-  const backgroundColor = useThemeColor(
-    { light: lightColor, dark: darkColor },
-    'background',
-  );
-  return <View style={[{ backgroundColor }, style]} {...otherProps} />;
+/**
+ * A view on the app's opaque screen background.
+ *
+ * The app is dark-only, so there is no light/dark resolution here; use
+ * `@/components/backgrounds/background` instead when the gradient canvas is
+ * wanted.
+ */
+export function ThemedView({ style, ...otherProps }: ViewProps) {
+  return <View style={[styles.view, style]} {...otherProps} />;
 }
+
+const styles = StyleSheet.create({
+  view: {
+    backgroundColor: Colors.background,
+  },
+});

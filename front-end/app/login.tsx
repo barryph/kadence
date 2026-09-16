@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, Link } from 'expo-router';
@@ -18,6 +18,7 @@ import {
   loginSchema,
   type LoginFormValues,
 } from '@/components/auth/auth-schemas';
+import { Colors, Spacing } from '@/constants/theme';
 
 export default function LoginScreen() {
   const authContext = useAuth();
@@ -81,7 +82,7 @@ export default function LoginScreen() {
       >
         <Background />
         <View style={styles.formContainer}>
-          <ThemedText style={styles.title} type="title">
+          <ThemedText variant="display" style={styles.title}>
             Login!
           </ThemedText>
 
@@ -145,16 +146,38 @@ export default function LoginScreen() {
           />
 
           <Link href="/forgot-password" style={styles.linkContainer}>
-            <Text style={styles.linkText}>
-              <Text style={styles.linkTextBold}>Forgot Password?</Text>
-            </Text>
+            <ThemedText
+              variant="bodySmall"
+              font="system"
+              style={styles.linkText}
+            >
+              <ThemedText
+                variant="bodySmall"
+                font="system"
+                weight="700"
+                style={styles.linkTextBold}
+              >
+                Forgot Password?
+              </ThemedText>
+            </ThemedText>
           </Link>
 
           <Link href="/register" style={styles.linkContainer}>
-            <Text style={styles.linkText}>
+            <ThemedText
+              variant="bodySmall"
+              font="system"
+              style={styles.linkText}
+            >
               Don&apos;t have an account?{' '}
-              <Text style={styles.linkTextBold}>Sign Up</Text>
-            </Text>
+              <ThemedText
+                variant="bodySmall"
+                font="system"
+                weight="700"
+                style={styles.linkTextBold}
+              >
+                Sign Up
+              </ThemedText>
+            </ThemedText>
           </Link>
         </View>
       </ScrollView>
@@ -169,7 +192,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 24,
+    padding: Spacing['4xl'],
   },
   formContainer: {
     width: '100%',
@@ -177,23 +200,20 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    marginBottom: 24,
+    marginBottom: Spacing['4xl'],
     textAlign: 'center',
-    color: '#fff',
   },
   submitButton: {
-    marginTop: 8,
+    marginTop: Spacing.md,
   },
   linkContainer: {
-    marginTop: 24,
+    marginTop: Spacing['4xl'],
     alignSelf: 'center',
   },
   linkText: {
-    color: '#ddd',
-    fontSize: 14,
+    color: Colors.textSecondary,
   },
   linkTextBold: {
-    color: '#0072ff',
-    fontWeight: '700',
+    color: Colors.accent,
   },
 });

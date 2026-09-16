@@ -5,6 +5,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import GuideMediaIcon from '@/components/guide/guide-media-icon';
 import type { GuideStep } from '@/components/guide/types';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 
 function GuideGif({ source }: { source: ImageSource }) {
   const image = useImage(source);
@@ -17,10 +18,10 @@ function GuideGif({ source }: { source: ImageSource }) {
       style={{
         width: '100%',
         aspectRatio,
-        marginTop: 8,
+        marginTop: Spacing.md,
         marginBottom: 0,
         borderWidth: 1,
-        borderColor: '#087cff1a',
+        borderColor: withAlpha(Colors.accentGlow, 0.1),
         borderRadius: 10,
       }}
     />
@@ -40,13 +41,13 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
       "Kadence is designed to adapt to real life. Most programs are a fixed plan, life isn't.",
     media: (
       <GuideMediaIcon
-        accent="#087cff"
+        accent={Colors.accentGlow}
         label="Welcome"
         icon={
           <MaterialCommunityIcons
             name="human-greeting"
             size={26}
-            color="#d8ecff"
+            color={Colors.iconAccent}
           />
         }
       />
@@ -58,9 +59,9 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
       "Tap the 'Add Activity' button to create an activity. Pick a name, category and how often you want to do it.",
     media: (
       <GuideMediaIcon
-        accent="#087cff"
+        accent={Colors.accentGlow}
         label="Add an activity"
-        icon={<Ionicons name="add" size={26} color="#d8ecff" />}
+        icon={<Ionicons name="add" size={26} color={Colors.iconAccent} />}
       />
     ),
   },
@@ -92,40 +93,16 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
     description: 'Jump in and get started. I hope you enjoy the app!',
     media: (
       <GuideMediaIcon
-        accent="#087cff"
+        accent={Colors.accentGlow}
         label="Get started"
         icon={
           <MaterialCommunityIcons
             name="robot-happy"
             size={26}
-            color="#d8ecff"
+            color={Colors.iconAccent}
           />
         }
       />
     ),
   },
-  // {
-  //   title: 'Work the list',
-  //   description:
-  //     'Tap an activity to queue it, swipe left to edit it, and swipe right to mark it done.',
-  //   media: (
-  //     <GuideMediaIcon
-  //       accent="#00c2a8"
-  //       label="Swipe to complete"
-  //       icon={<Ionicons name="checkmark-circle" size={26} color="#52f2a8" />}
-  //     />
-  //   ),
-  // },
-  // {
-  //   title: 'Watch the timeline fill',
-  //   description:
-  //     'Your completed days build up on the Timeline — each colored cell is a step closer to a streak.',
-  //   media: (
-  //     <GuideMediaIcon
-  //       accent="#38d8ff"
-  //       label="Your timeline"
-  //       icon={<FontAwesome6 name="bars-staggered" size={24} color="#d8ecff" />}
-  //     />
-  //   ),
-  // },
 ];

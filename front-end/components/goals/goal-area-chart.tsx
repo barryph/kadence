@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import { LineChart, type LineChartSeries } from 'react-native-chart-kit/v2';
 import { ThemedText } from '@/components/base/themed-text';
+import { Colors, Spacing, withAlpha } from '@/constants/theme';
 import {
   buildInsightsChartTheme,
   formatIntegerYLabel,
@@ -84,7 +85,7 @@ export default function GoalAreaChart({
     () => [
       {
         y: targetPerWeek,
-        color: 'rgba(255,255,255,0.4)',
+        color: withAlpha(Colors.textPrimary, 0.4),
         strokeDasharray: [6, 5],
         strokeWidth: 1.5,
       },
@@ -107,7 +108,7 @@ export default function GoalAreaChart({
   if (data.length === 0) {
     return (
       <View style={styles.emptyState}>
-        <ThemedText size="small" style={styles.emptyText}>
+        <ThemedText variant="bodySmall" style={styles.emptyText}>
           No completion history yet. Complete this activity to see weekly
           performance here.
         </ThemedText>
@@ -150,11 +151,10 @@ const styles = StyleSheet.create({
     minHeight: INSIGHTS_CHART_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: Spacing.xl,
   },
   emptyText: {
     opacity: 0.65,
     textAlign: 'center',
-    lineHeight: 18,
   },
 });

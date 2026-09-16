@@ -16,7 +16,17 @@
  *   link. It is not logged, persisted, or echoed into the inline script; the
  *   script reads the already-escaped `href` back off the anchor, so no
  *   request-controlled value is interpolated into executable code.
+ *
+ * The page is the last step of the password reset email flow, so it paints
+ * itself from the same theme as that email (`email-theme.ts`) rather than
+ * introducing a second copy of the brand palette.
  */
+
+import {
+  EmailColors,
+  EmailFonts,
+  withAlpha,
+} from 'src/shared/email/email-theme';
 
 export interface PasswordResetLandingPageOptions {
   /**
@@ -79,43 +89,43 @@ const PAGE_STYLES = `
     align-items: center;
     justify-content: center;
     padding: 28px 20px;
-    background-color: #050711;
-    background-image: radial-gradient(circle at 18% 12%, rgba(8,124,255,0.28), transparent 46%), radial-gradient(circle at 84% 8%, rgba(8,216,255,0.16), transparent 40%);
-    color: #ffffff;
-    font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    background-color: ${EmailColors.canvas};
+    background-image: radial-gradient(circle at 18% 12%, ${withAlpha(EmailColors.accentGlow, 0.28)}, transparent 46%), radial-gradient(circle at 84% 8%, ${withAlpha(EmailColors.cyan, 0.16)}, transparent 40%);
+    color: ${EmailColors.textPrimary};
+    font-family: ${EmailFonts.mono};
     -webkit-font-smoothing: antialiased;
   }
   main {
     width: 100%;
     max-width: 420px;
-    background-color: #080d1c;
-    border: 1px solid #1a4163;
+    background-color: ${EmailColors.card};
+    border: 1px solid ${EmailColors.frame};
     border-radius: 16px;
     overflow: hidden;
     text-align: center;
   }
-  .signal { height: 4px; background-image: linear-gradient(90deg, #087cff 0%, #0096ff 42%, #08d8ff 72%, #52f2a8 100%); }
+  .signal { height: 4px; background-image: linear-gradient(90deg, ${EmailColors.accentGlow} 0%, ${EmailColors.accentBright} 42%, ${EmailColors.cyan} 72%, ${EmailColors.success} 100%); }
   .inner { padding: 34px 28px 30px; }
   .wordmark { margin: 0 0 26px; font-size: 17px; font-weight: 700; letter-spacing: 3px; }
-  .wordmark span { color: rgba(255,255,255,0.6); }
+  .wordmark span { color: ${EmailColors.textFaint}; }
   h1 { margin: 0 0 14px; font-size: 23px; line-height: 1.35; letter-spacing: -0.2px; }
-  p { margin: 0 0 22px; font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.72); }
+  p { margin: 0 0 22px; font-size: 14px; line-height: 1.65; color: ${EmailColors.textSecondary}; }
   .button {
     display: block;
     padding: 16px 20px;
     border-radius: 10px;
-    background-image: linear-gradient(135deg, #0072ff 0%, #0096ff 48%, #08d8ff 100%);
-    box-shadow: 0 16px 34px rgba(0,90,255,0.4);
-    color: #ffffff;
+    background-image: linear-gradient(135deg, ${EmailColors.accent} 0%, ${EmailColors.accentBright} 48%, ${EmailColors.cyan} 100%);
+    box-shadow: 0 16px 34px ${EmailColors.accentShadow};
+    color: ${EmailColors.textPrimary};
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 1.6px;
     text-decoration: none;
   }
   .button:active { transform: translateY(1px); }
-  .hint { margin: 20px 0 0; font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.5); }
-  .hint a { color: #8fd4ff; }
-  .error { color: #ff8a9b; }
+  .hint { margin: 20px 0 0; font-size: 12px; line-height: 1.6; color: ${EmailColors.textMuted}; }
+  .hint a { color: ${EmailColors.link}; }
+  .error { color: ${EmailColors.dangerText}; }
 `;
 
 function renderShell(inner: string): string {
@@ -126,7 +136,7 @@ function renderShell(inner: string): string {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="referrer" content="no-referrer" />
     <meta name="robots" content="noindex, nofollow, noarchive" />
-    <meta name="theme-color" content="#050711" />
+    <meta name="theme-color" content="${EmailColors.canvas}" />
     <title>Reset your Kadence password</title>
     <style nonce="{NONCE}">{STYLES}</style>
   </head>

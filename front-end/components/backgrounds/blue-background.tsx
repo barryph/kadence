@@ -1,10 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import { Gradients } from '@/constants/theme';
+
 export default function BlueBackground() {
   return (
     <LinearGradient
-      colors={['#087cfb', '#0290ee', '#09b0d4']}
+      colors={[...Gradients.blueBackdrop]}
       locations={[0, 0.58, 1]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}

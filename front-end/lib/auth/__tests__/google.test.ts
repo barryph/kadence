@@ -69,6 +69,20 @@ describe('signInWithGoogle', () => {
     });
   });
 
+  it('maps a required (revoked) sign-in to a clean failure', async () => {
+    // Google returns SIGN_IN_REQUIRED when the previously granted access is no
+    // longer valid (e.g. revoked from the user's Google Account). The app must
+    // surface the normal "sign in failed" result and let the user retry.
+    const error = new Error('sign in required') as Error & { code?: string };
+    error.code = statusCodes.SIGN_IN_REQUIRED;
+    mockSignIn.mockRejectedValue(error);
+
+    await expect(signInWithGoogle()).rejects.toMatchObject({
+      name: 'SocialAuthError',
+      code: 'failed',
+    });
+  });
+
   it('fails when no id token is returned', async () => {
     mockSignIn.mockResolvedValue({
       type: 'success',

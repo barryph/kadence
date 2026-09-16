@@ -373,4 +373,162 @@ describe('OAuth sign-in (e2e)', () => {
         expect(res.body.data.user).toBeUndefined();
       });
   });
+
+  /**
+   * A user can revoke Kadence's access from their Google Account at any time.
+   * Because no Google tokens are stored and no per-user Google authorization is
+   * checked, revocation is not observable server-side (there is deliberately no
+   * RISC). These tests pin down the required consequences: the existing app
+   * session keeps working, a credential Google no longer honours is a normal
+   * `401 OAUTH_AUTH_FAILED`, and signing in again resolves to the same account.
+   */
+  describe('Google access revoked', () => {
+    const expiredTokenFor = (sub: string) =>
+      googleToken({
+        sub,
+        exp: Math.floor(Date.now() / 1000) - 3600,
+      });
+
+    it('keeps an existing application session working after Google access is revoked', async () => {
+      const agent = request.agent(app.getHttpServer());
+      const signIn = await agent
+        .post('/auth/google')
+        .send({ idToken: googleToken({ sub: 'revoked-session-subject' }) })
+        .expect(200);
+      const userId = signIn.body.data.user.id;
+
+      // The user revokes access and returns to the app. The session is a
+      // server-side cookie credential and does not depend on Google, so it
+      // continues under the normal session rules.
+      await agent
+        .get('/users/protec')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.myData).toBe('this is a secret');
+        });
+
+      await agent
+        .get('/users/current')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.user.id).toBe(userId);
+          // Revocation is invisible without RISC: the Google identity record is
+          // untouched, so the account stays linked and resolves to the same
+          // user on the next successful sign-in.
+          expect(res.body.data.authProviders).toContain('google');
+        });
+    });
+
+    it('rejects a credential Google no longer honours without changing account state', async () => {
+      const agent = request.agent(app.getHttpServer());
+      const signIn = await agent
+        .post('/auth/google')
+        .send({ idToken: googleToken({ sub: 'revoked-reject-subject' }) })
+        .expect(200);
+      const userId = String(signIn.body.data.user.id);
+
+      const db = getTestKnex();
+      const identityBefore = await db('external_identities')
+        .where({
+          provider: 'google',
+          provider_subject: 'revoked-reject-subject',
+        })
+        .first();
+
+      // The user returns and tries again. Google now rejects the stale grant
+      // (modelled as an ID token that expired while they were away), so the
+      // backend must answer a normal authentication failure.
+      const returning = request.agent(app.getHttpServer());
+      await returning
+        .post('/auth/google')
+        .send({ idToken: expiredTokenFor('revoked-reject-subject') })
+        .expect(401)
+        .expect((res) => {
+          expect(res.body.error.code).toBe('OAUTH_AUTH_FAILED');
+        });
+
+      // No session was established for the failed attempt...
+      await returning
+        .get('/users/current')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.user).toBeUndefined();
+        });
+
+      // ...and nothing was created, deleted, or reassigned.
+      const users = await db('users').select('id');
+      expect(users.map((row) => String(row.id))).toEqual([userId]);
+
+      const identityAfter = await db('external_identities')
+        .where({
+          provider: 'google',
+          provider_subject: 'revoked-reject-subject',
+        })
+        .first();
+      expect(identityAfter).toBeDefined();
+      expect(identityAfter.user_id).toBe(identityBefore.user_id);
+    });
+
+    it('does not end an existing session when another device attempts a revoked sign-in', async () => {
+      const signedIn = request.agent(app.getHttpServer());
+      await signedIn
+        .post('/auth/google')
+        .send({ idToken: googleToken({ sub: 'revoked-other-device-subject' }) })
+        .expect(200);
+
+      const otherDevice = request.agent(app.getHttpServer());
+      await otherDevice
+        .post('/auth/google')
+        .send({ idToken: expiredTokenFor('revoked-other-device-subject') })
+        .expect(401);
+
+      // The endpoint is public and unauthenticated, so a rejected sign-in on
+      // one device must not revoke sessions elsewhere.
+      await signedIn
+        .get('/users/current')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.user).toBeDefined();
+        });
+      await signedIn.get('/users/protec').expect(200);
+    });
+
+    it('reuses the same account when the user signs in with Google again after revocation', async () => {
+      const subject = 'revoked-return-subject';
+
+      const first = request.agent(app.getHttpServer());
+      const firstSignIn = await first
+        .post('/auth/google')
+        .send({ idToken: googleToken({ sub: subject }) })
+        .expect(200);
+
+      // A rejected attempt in between (Google no longer honours the old grant).
+      await request(app.getHttpServer())
+        .post('/auth/google')
+        .send({ idToken: expiredTokenFor(subject) })
+        .expect(401);
+
+      // The user grants access again; Google issues a fresh ID token carrying
+      // the same stable `sub`, so the existing identity is found, not a second
+      // account created.
+      const second = request.agent(app.getHttpServer());
+      const secondSignIn = await second
+        .post('/auth/google')
+        .send({ idToken: googleToken({ sub: subject }) })
+        .expect(200);
+
+      expect(secondSignIn.body.data.user.id).toBe(
+        firstSignIn.body.data.user.id,
+      );
+
+      const db = getTestKnex();
+      expect(await db('users')).toHaveLength(1);
+      expect(
+        await db('external_identities').where({
+          provider: 'google',
+          provider_subject: subject,
+        }),
+      ).toHaveLength(1);
+    });
+  });
 });

@@ -68,6 +68,19 @@ describe('errorMapper', () => {
     expect(result.code).toBe(ErrorCode.INVALID_CREDENTIALS);
   });
 
+  it('maps a rejected provider credential to a sign-in failure, not a session ending', () => {
+    // After Google access is revoked, the next Google credential the backend
+    // sees is rejected with 401 OAUTH_AUTH_FAILED. That is a sign-in attempt
+    // failing, not the user's existing application session ending, so it must
+    // not become UNAUTHORIZED (which clears local auth state).
+    const result = errorMapper.mapError(
+      { code: ErrorCode.OAUTH_AUTH_FAILED, message: 'Authentication failed' },
+      401,
+    );
+    expect(result.code).toBe(ErrorCode.OAUTH_AUTH_FAILED);
+    expect(result.message).toBe('Sign in failed. Please try again.');
+  });
+
   it('falls back to generic message when server message is empty', () => {
     const result = errorMapper.mapError({
       code: 'UNKNOWN_CODE',

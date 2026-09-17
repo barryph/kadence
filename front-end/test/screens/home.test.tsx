@@ -228,6 +228,7 @@ describe('Home screen', () => {
   });
 
   it('surfaces a failed completion instead of failing silently', async () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     const mutateAsync = jest
       .fn()
       .mockRejectedValue(
@@ -238,27 +239,33 @@ describe('Home screen', () => {
       );
     mockUseCompleteActivityMutation.mockReturnValue({ mutateAsync });
 
-    await renderHome();
-    await waitFor(() => expect(screen.getAllByText('Morning Run').length).toBeGreaterThan(0));
-
-    await fireEvent.press(screen.getAllByLabelText('swipe to complete')[0]);
-
-    await waitFor(() => {
-      expect(Toast.show).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'error',
-          text1: 'Could not complete activity',
-          text2: 'Something went wrong, please try again.',
-        }),
+    try {
+      await renderHome();
+      await waitFor(() =>
+        expect(screen.getAllByText('Morning Run').length).toBeGreaterThan(0),
       );
-    });
 
-    // The completion was never applied, so the activity is still pending and
-    // the failure is visible rather than a phantom success.
-    expect(screen.getByText('Pending')).toBeTruthy();
-    expect(screen.queryByText('Completed')).toBeNull();
-    expect(Toast.show).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: 'success' }),
-    );
+      await fireEvent.press(screen.getAllByLabelText('swipe to complete')[0]);
+
+      await waitFor(() => {
+        expect(Toast.show).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'error',
+            text1: 'Could not complete activity',
+            text2: 'Something went wrong, please try again.',
+          }),
+        );
+      });
+
+      // The completion was never applied, so the activity is still pending and
+      // the failure is visible rather than a phantom success.
+      expect(screen.getByText('Pending')).toBeTruthy();
+      expect(screen.queryByText('Completed')).toBeNull();
+      expect(Toast.show).not.toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'success' }),
+      );
+    } finally {
+      consoleSpy.mockRestore();
+    }
   });
 });

@@ -55,6 +55,24 @@ describe('Goal insights screen', () => {
     });
   });
 
+  it('reports a missing goal instead of spinning when the route has no id', async () => {
+    // The stats query is disabled without an id, so it never leaves `pending`;
+    // rendering a loader here would spin forever.
+    (useLocalSearchParams as jest.Mock).mockReturnValue({
+      activityId: undefined,
+    });
+    mockUseGoalStatsQuery.mockReturnValue({
+      data: undefined,
+      isPending: true,
+      isError: false,
+    });
+
+    await renderWithProviders(<GoalInsightsScreen />);
+
+    expect(screen.getByText('This goal could not be found.')).toBeTruthy();
+    expect(screen.queryByText('Loading goal insights...')).toBeNull();
+  });
+
   it('renders the target, current-week progress and historical stats', async () => {
     await renderWithProviders(<GoalInsightsScreen />);
 

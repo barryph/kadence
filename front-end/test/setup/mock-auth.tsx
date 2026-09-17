@@ -13,7 +13,7 @@ export interface MockAuthContextValue {
     Promise<ApiResponse<LoginResponse>>,
     [email: string, password: string]
   >;
-  logout: jest.Mock<Promise<void>, []>;
+  logout: jest.Mock<Promise<{ serverSignOutFailed: boolean }>, []>;
   register: jest.Mock<
     Promise<ApiResponse<RegisterResponse>>,
     [email: string, password: string, passwordConfirm: string]
@@ -33,7 +33,7 @@ export function createMockAuthValue(
     isConnectionError: false,
     retrySessionRestore: jest.fn(),
     login: jest.fn().mockResolvedValue({ data: { user: testUser } }),
-    logout: jest.fn().mockResolvedValue(undefined),
+    logout: jest.fn().mockResolvedValue({ serverSignOutFailed: false }),
     register: jest.fn().mockResolvedValue({ data: { user: testUser } }),
     signInWithGoogle: jest.fn().mockResolvedValue({ data: { user: testUser } }),
     signInWithApple: jest.fn().mockResolvedValue({ data: { user: testUser } }),

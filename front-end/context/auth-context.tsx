@@ -30,6 +30,11 @@ import { isSocialAuthError } from '@/lib/auth/errors';
 import { onSessionExpired } from '@/lib/auth/session-expiry';
 import { clearActivityQueue } from '@/lib/storage/activity-queue';
 import {
+  clearSignOutPending,
+  isSignOutPending,
+  markSignOutPending,
+} from '@/lib/storage/sign-out-pending';
+import {
   logLogin,
   logLoginFailed,
   logSignUp,
@@ -54,7 +59,7 @@ interface AuthState {
     email: string,
     password: string,
   ) => Promise<ApiResponse<LoginResponse>>;
-  logout: () => Promise<void>;
+  logout: () => Promise<LogoutResult>;
   register: (
     email: string,
     password: string,
@@ -67,6 +72,15 @@ interface AuthState {
 
 interface AuthProviderProps {
   children: React.ReactNode;
+}
+
+export interface LogoutResult {
+  /**
+   * True when the device signed out locally but the server could not be told,
+   * so the server-side session may still be active until the next launch ends
+   * it. The caller surfaces this; the local sign-out is unaffected.
+   */
+  serverSignOutFailed: boolean;
 }
 
 function toAppError(
@@ -107,6 +121,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const restoreSession = useCallback(async () => {
     setIsLoading(true);
     try {
+      // An earlier sign-out could not reach the server, so its session cookie
+      // is still valid. Never restore that session: finish the sign-out if the
+      // server is reachable now, and stay signed out either way.
+      if (await isSignOutPending()) {
+        const signOut = await authAPI.logout();
+        if (!signOut.error) {
+          await clearSignOutPending();
+        }
+        setUser(null);
+        setIsAuthenticated(false);
+        setIsConnectionError(false);
+        return;
+      }
+
       const response = await usersAPI.getCurrentUser();
 
       if (response.data?.user) {
@@ -175,16 +203,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return response;
   }
 
-  async function logout() {
-    try {
-      await authAPI.logout();
-    } catch (err) {
-      console.error('Error logging out', err);
-      throw err;
-    }
+  /**
+   * Signs the user out.
+   *
+   * The local session is always dropped, even when the server cannot be
+   * reached: a user who taps Logout must not stay signed in because they are
+   * offline. The server call is best-effort, and when it fails a device-local
+   * marker makes the next launch finish the sign-out instead of silently
+   * restoring the still-valid server session from the cookie jar.
+   */
+  async function logout(): Promise<LogoutResult> {
     setUser(null);
     setIsAuthenticated(false);
+    setIsConnectionError(false);
     queryClient.clear();
+
+    let serverSignOutFailed = false;
+    try {
+      const response = await authAPI.logout();
+      serverSignOutFailed = Boolean(response.error);
+    } catch (err) {
+      console.error('Error logging out', err);
+      serverSignOutFailed = true;
+    }
+
+    try {
+      if (serverSignOutFailed) {
+        await markSignOutPending();
+      } else {
+        await clearSignOutPending();
+      }
+    } catch (err) {
+      console.error('Error recording the sign-out state', err);
+    }
+
+    return { serverSignOutFailed };
   }
 
   /**

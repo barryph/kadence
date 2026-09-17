@@ -189,6 +189,28 @@ describe('Profile screen logout', () => {
     await fireEvent.press(screen.getByText('Logout'));
     expect(auth.logout).toHaveBeenCalledTimes(2);
   });
+
+  it('warns that the server was not told when the device signs out offline', async () => {
+    const toast = require('react-native-toast-message').default;
+    toast.show.mockClear();
+    setMockAuth({
+      user: testUser,
+      isAuthenticated: true,
+      logout: jest.fn().mockResolvedValue({ serverSignOutFailed: true }),
+    });
+
+    await renderProfile();
+    await fireEvent.press(screen.getByText('Logout'));
+
+    await waitFor(() => {
+      expect(toast.show).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'error',
+          text1: 'Signed out on this device',
+        }),
+      );
+    });
+  });
 });
 
 describe('Profile screen privacy policy', () => {
@@ -204,9 +226,7 @@ describe('Profile screen privacy policy', () => {
     const openURL = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
 
     await renderProfile();
-    await fireEvent.press(
-      screen.getByRole('link', { name: 'Privacy Policy' }),
-    );
+    await fireEvent.press(screen.getByRole('link', { name: 'Privacy Policy' }));
 
     expect(openURL).toHaveBeenCalledWith(PRIVACY_POLICY_URL);
   });

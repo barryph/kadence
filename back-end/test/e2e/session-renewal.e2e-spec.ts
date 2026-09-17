@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { createTestApp, closeTestApp } from '../helpers/create-test-app';
+import { PROTECTED_PROBE } from '../helpers/protected-probe';
 import { createUserPayload, registerUser } from '../helpers/auth-helpers';
 import { getTestKnex } from '../helpers/test-database';
 import {
@@ -57,14 +58,14 @@ describe('Session rolling renewal (e2e)', () => {
         Date.now() + DEFAULT_IDLE_TTL_MS + 60_000,
       );
 
-      await agent.get('/users/protec').expect(200);
+      await agent.get(PROTECTED_PROBE).expect(200);
     });
 
     it('sends no Set-Cookie before the window is halfway through', async () => {
       const { agent } = await registerUser(app);
       const before = await getOnlyStoredSession();
 
-      const response = await agent.get('/users/protec').expect(200);
+      const response = await agent.get(PROTECTED_PROBE).expect(200);
 
       expect(readSessionCookie(response)).toBeUndefined();
       const after = await getOnlyStoredSession();
@@ -84,7 +85,7 @@ describe('Session rolling renewal (e2e)', () => {
         renewedAt: Date.now() - 8 * ONE_DAY_IN_MS,
       });
 
-      const response = await agent.get('/users/protec').expect(200);
+      const response = await agent.get(PROTECTED_PROBE).expect(200);
 
       const attributes = parseSessionCookieAttributes(response);
       expect(attributes).toBeDefined();
@@ -117,7 +118,7 @@ describe('Session rolling renewal (e2e)', () => {
         renewedAt: Date.now() - 8 * ONE_DAY_IN_MS,
       });
 
-      const response = await agent.get('/users/protec').expect(200);
+      const response = await agent.get(PROTECTED_PROBE).expect(200);
       const cookie = readSessionCookie(response);
 
       expect(cookie).toBeDefined();
@@ -134,14 +135,14 @@ describe('Session rolling renewal (e2e)', () => {
       });
 
       const responses = await Promise.all(
-        Array.from({ length: 5 }, () => agent.get('/users/protec')),
+        Array.from({ length: 5 }, () => agent.get(PROTECTED_PROBE)),
       );
       for (const response of responses) {
         expect(response.status).toBe(200);
       }
 
       // A renewal must never invalidate the session other requests are using.
-      const afterwards = await agent.get('/users/protec').expect(200);
+      const afterwards = await agent.get(PROTECTED_PROBE).expect(200);
       expect(afterwards.body).toEqual({ myData: 'this is a secret' });
     });
 
@@ -155,7 +156,7 @@ describe('Session rolling renewal (e2e)', () => {
         renewedAt: Date.now() - 60_000,
       });
 
-      const response = await agent.get('/users/protec').expect(401);
+      const response = await agent.get(PROTECTED_PROBE).expect(401);
 
       expectSessionExpired(response.body);
       expect(await getStoredSessions()).toHaveLength(0);
@@ -173,7 +174,7 @@ describe('Session rolling renewal (e2e)', () => {
       });
       await setStoredWindowExpiry(sid, new Date(Date.now() - ONE_DAY_IN_MS));
 
-      const response = await agent.get('/users/protec').expect(401);
+      const response = await agent.get(PROTECTED_PROBE).expect(401);
 
       expectSessionExpired(response.body);
       expect(await getStoredSessions()).toHaveLength(0);
@@ -187,7 +188,7 @@ describe('Session rolling renewal (e2e)', () => {
       // reset: the credential is gone server-side, the cookie is not.
       await getTestKnex()('user_sessions').where({ sid }).delete();
 
-      const response = await agent.get('/users/protec').expect(401);
+      const response = await agent.get(PROTECTED_PROBE).expect(401);
       expectSessionExpired(response.body);
 
       // The unauthenticated session probe keeps working (clients rely on it).
@@ -197,7 +198,7 @@ describe('Session rolling renewal (e2e)', () => {
 
     it('reports a session cookie whose signature was not issued by the server', async () => {
       await request(app.getHttpServer())
-        .get('/users/protec')
+        .get(PROTECTED_PROBE)
         .set('Cookie', `${SESSION_COOKIE_NAME}=s%3Aforged-session-id.forged`)
         .expect(401)
         .expect((response) => {
@@ -229,7 +230,7 @@ describe('Session rolling renewal (e2e)', () => {
       // The sign-out response cleared the cookie, so this client is simply
       // unauthenticated...
       await agent
-        .get('/users/protec')
+        .get(PROTECTED_PROBE)
         .expect(401)
         .expect((response) => {
           expect(response.body).toMatchObject({
@@ -240,7 +241,7 @@ describe('Session rolling renewal (e2e)', () => {
       // ...but a client that kept the pre-sign-out cookie is told its session
       // ended, rather than that it never signed in.
       await request(app.getHttpServer())
-        .get('/users/protec')
+        .get(PROTECTED_PROBE)
         .set('Cookie', cookie!)
         .expect(401)
         .expect((response) => {
@@ -296,7 +297,7 @@ describe('Session rolling renewal (e2e)', () => {
       });
 
       await request(app.getHttpServer())
-        .get('/users/protec')
+        .get(PROTECTED_PROBE)
         .set('Cookie', cookie!)
         .expect(401)
         .expect((response) => {
@@ -335,7 +336,7 @@ describe('Session rolling renewal (e2e)', () => {
         .send({ token: rawToken, password: 'new-password-123' })
         .expect(200);
 
-      const response = await agent.get('/users/protec').expect(401);
+      const response = await agent.get(PROTECTED_PROBE).expect(401);
       expectSessionExpired(response.body);
       expect(await getStoredSessions()).toHaveLength(0);
     });
@@ -367,13 +368,13 @@ describe('Session rolling renewal (e2e)', () => {
       const stored = await getOnlyStoredSession();
       expect(stored.sid).toBe(readSessionId(loginCookie!));
       await request(app.getHttpServer())
-        .get('/users/protec')
+        .get(PROTECTED_PROBE)
         .set('Cookie', registerCookie!)
         .expect(401)
         .expect((response) => {
           expectSessionExpired(response.body);
         });
-      await agent.get('/users/protec').expect(200);
+      await agent.get(PROTECTED_PROBE).expect(200);
     });
 
     it('lets a client sign in again with an expired cookie still in its jar', async () => {
@@ -387,14 +388,14 @@ describe('Session rolling renewal (e2e)', () => {
         createdAt: Date.now() - (DEFAULT_ABSOLUTE_TTL_MS + ONE_DAY_IN_MS),
         renewedAt: Date.now() - ONE_DAY_IN_MS,
       });
-      await agent.get('/users/protec').expect(401);
+      await agent.get(PROTECTED_PROBE).expect(401);
 
       // Signing in must not be blocked by the stale credential.
       await agent
         .post('/auth/login')
         .send({ email: payload.email, password: payload.password })
         .expect(200);
-      await agent.get('/users/protec').expect(200);
+      await agent.get(PROTECTED_PROBE).expect(200);
       expect(await getStoredSessions()).toHaveLength(1);
     });
 

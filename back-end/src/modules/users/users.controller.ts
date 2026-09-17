@@ -1,5 +1,4 @@
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
-import { IsAuthedGuard } from '../authentication/is-authed.guard';
+import { Controller, Get, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import ExternalIdentitiesRepo from '../authentication/repos/external-identities.repository';
 import type { UserDTO } from '../users/mappers/userMap';
@@ -9,12 +8,6 @@ export class UsersController {
   constructor(
     private readonly externalIdentitiesRepo: ExternalIdentitiesRepo,
   ) {}
-
-  @UseGuards(IsAuthedGuard)
-  @Get('/protec')
-  protec() {
-    return { myData: 'this is a secret' };
-  }
 
   /**
    * Returns the authenticated user plus the external providers their account

@@ -13,6 +13,11 @@ Personal habit tracker: `back-end/` (NestJS 11 API + PostgreSQL) and `front-end/
 * Worktrees lack the gitignored `front-end/.env` and `back-end/.env`: after creating a worktree, create a symlink to the primary tree's copy, e.g. `ln -s <repo-root>/front-end/.env <worktree>/back-end/.env` and `ln -s <repo-root>/back-end/`.
 * Run tests, lint, typecheck, and builds from the worktree.
 
+## Code comments
+
+* When writing something intended for human consumption, (comment, commit message, reply to prompt) aim to use as few words as possible. Pick words meticulously to reduce the volume to a minimum. Be down to the point. Less is more.
+* Do not remove existing `TODO` comments or commented-out code unless instructed to, or the `TODO` is for the task you are currently completing. Leave unrelated dead comments and stale `TODO`s in place; flag them instead of deleting them.
+
 ## back-end/ — NestJS API
 
 * DDD + Clean Architecture: features under `src/modules/<feature>/` split into `domain/`, `repos/`, `services/`, `queries/`, `mappers/`, `dtos/`. Shared infra in `src/shared/` (Knex module, `configure-app.ts` wires sessions/Passport/CORS/validation for both `main.ts` and E2E tests).

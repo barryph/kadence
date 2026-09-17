@@ -1,8 +1,5 @@
 export type SocialAuthErrorCode =
-  | 'cancelled'
-  | 'unavailable'
-  | 'network'
-  | 'failed';
+  'cancelled' | 'unavailable' | 'network' | 'failed';
 
 export class SocialAuthError extends Error {
   readonly code: SocialAuthErrorCode;

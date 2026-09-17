@@ -61,7 +61,8 @@ class ErrorMapper {
     return {
       code: ErrorCode.GENERIC_ERROR,
       message:
-        serverError.message || 'An unexpected error occurred. Please try again.',
+        serverError.message ||
+        'An unexpected error occurred. Please try again.',
     };
   }
 }

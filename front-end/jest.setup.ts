@@ -65,27 +65,28 @@ jest.mock('@gorhom/bottom-sheet', () => {
     children?: React.ReactNode;
   }) => React.createElement(View, null, children);
 
-  const BottomSheetModal = forwardRef(
-    (
-      { children }: { children?: React.ReactNode },
-      ref: React.Ref<any>,
-    ) => {
-      const [visible, setVisible] = useState(false);
-      useImperativeHandle(ref, () => ({
-        present: () => setVisible(true),
-        dismiss: () => setVisible(false),
-        snapToIndex: jest.fn(),
-        snapToPosition: jest.fn(),
-        collapse: jest.fn(),
-        expand: jest.fn(),
-        close: () => setVisible(false),
-        forceClose: jest.fn(),
-      }));
-      return visible ? React.createElement(View, null, children) : null;
-    },
-  );
+  const BottomSheetModal = forwardRef(function BottomSheetModal(
+    { children }: { children?: React.ReactNode },
+    ref: React.Ref<any>,
+  ) {
+    const [visible, setVisible] = useState(false);
+    useImperativeHandle(ref, () => ({
+      present: () => setVisible(true),
+      dismiss: () => setVisible(false),
+      snapToIndex: jest.fn(),
+      snapToPosition: jest.fn(),
+      collapse: jest.fn(),
+      expand: jest.fn(),
+      close: () => setVisible(false),
+      forceClose: jest.fn(),
+    }));
+    return visible ? React.createElement(View, null, children) : null;
+  });
 
-  const BottomSheet = forwardRef((props: any, ref: React.Ref<any>) => {
+  const BottomSheet = forwardRef(function BottomSheet(
+    props: any,
+    ref: React.Ref<any>,
+  ) {
     const [visible, setVisible] = useState(true);
     useImperativeHandle(ref, () => ({
       present: () => setVisible(true),
@@ -231,8 +232,8 @@ jest.mock('expo-crypto', () => {
       callCount += 1;
       return bytes;
     }),
-    digestStringAsync: jest.fn(async (_algorithm: string, value: string) =>
-      `sha256-of-${value}`,
+    digestStringAsync: jest.fn(
+      async (_algorithm: string, value: string) => `sha256-of-${value}`,
     ),
     CryptoDigestAlgorithm: { SHA256: 'SHA256' },
   };

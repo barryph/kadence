@@ -58,7 +58,10 @@ describe('date parameters sent to the API', () => {
       `http://localhost:3000/activities/7?today=${DEVICE_TODAY}`,
     );
 
-    await activitiesAPI.createActivity({ name: 'Run', interval: 1 }, DEVICE_TODAY);
+    await activitiesAPI.createActivity(
+      { name: 'Run', interval: 1 },
+      DEVICE_TODAY,
+    );
     expect(lastUrl()).toBe(
       `http://localhost:3000/activities?today=${DEVICE_TODAY}`,
     );

@@ -55,7 +55,9 @@ describe('errorMapper', () => {
       401,
     );
     expect(result.code).toBe(ErrorCode.UNAUTHORIZED);
-    expect(result.message).toBe('Your session has expired. Please sign in again.');
+    expect(result.message).toBe(
+      'Your session has expired. Please sign in again.',
+    );
   });
 
   it('keeps a labelled 401 as the credential error it is', () => {

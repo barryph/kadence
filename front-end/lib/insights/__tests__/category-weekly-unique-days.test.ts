@@ -68,8 +68,9 @@ describe('aggregateCategoryWeeklyUniqueDays', () => {
       weekStarts,
     );
 
-    expect(series.every((item) => item.data.every((point) => point.value === 0)))
-      .toBe(true);
+    expect(
+      series.every((item) => item.data.every((point) => point.value === 0)),
+    ).toBe(true);
   });
 });
 

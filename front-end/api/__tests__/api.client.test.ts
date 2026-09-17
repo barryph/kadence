@@ -51,7 +51,9 @@ describe('apiClient', () => {
         require('../api.client') as typeof import('../api.client');
       const result = await unconfiguredClient.get('/activities');
 
-      expect(result.error?.message).toMatch(/missing its server configuration/i);
+      expect(result.error?.message).toMatch(
+        /missing its server configuration/i,
+      );
       expect(mockFetch).not.toHaveBeenCalled();
       expect(result.error?.code).toBe(ErrorCode.GENERIC_ERROR);
     } finally {
@@ -62,7 +64,10 @@ describe('apiClient', () => {
 
   it('notifies the auth layer when the session is gone', async () => {
     mockFetch.mockReturnValue(
-      jsonResponse({ error: { statusCode: 401, message: 'Not authenticated' } }, 401),
+      jsonResponse(
+        { error: { statusCode: 401, message: 'Not authenticated' } },
+        401,
+      ),
     );
 
     const onExpired = jest.fn();
@@ -100,7 +105,12 @@ describe('apiClient', () => {
     // rejected. An existing application session must not be disturbed by that.
     mockFetch.mockReturnValue(
       jsonResponse(
-        { error: { code: 'OAUTH_AUTH_FAILED', message: 'Authentication failed' } },
+        {
+          error: {
+            code: 'OAUTH_AUTH_FAILED',
+            message: 'Authentication failed',
+          },
+        },
         401,
       ),
     );
@@ -182,7 +192,10 @@ describe('apiClient', () => {
     const listener = jest.fn();
     const unsubscribe = onSessionExpired(listener);
     mockFetch.mockReturnValue(
-      jsonResponse({ error: { code: 'SESSION_EXPIRED', message: 'ended' } }, 401),
+      jsonResponse(
+        { error: { code: 'SESSION_EXPIRED', message: 'ended' } },
+        401,
+      ),
     );
 
     try {
@@ -196,9 +209,7 @@ describe('apiClient', () => {
   });
 
   it('returns generic error on non-OK response without error payload', async () => {
-    mockFetch.mockReturnValue(
-      jsonResponse({ data: null }, 500),
-    );
+    mockFetch.mockReturnValue(jsonResponse({ data: null }, 500));
 
     const result = await apiClient.get('/activities');
 
@@ -207,7 +218,11 @@ describe('apiClient', () => {
 
   it('returns undefined data on successful DELETE', async () => {
     mockFetch.mockReturnValue(
-      Promise.resolve({ ok: true, status: 204, json: () => Promise.resolve({}) }),
+      Promise.resolve({
+        ok: true,
+        status: 204,
+        json: () => Promise.resolve({}),
+      }),
     );
 
     const result = await apiClient.delete('/auth/logout');
@@ -218,7 +233,11 @@ describe('apiClient', () => {
 
   it('returns error on failed DELETE', async () => {
     mockFetch.mockReturnValue(
-      Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) }),
+      Promise.resolve({
+        ok: false,
+        status: 500,
+        json: () => Promise.resolve({}),
+      }),
     );
 
     const result = await apiClient.delete('/auth/logout');
@@ -227,7 +246,9 @@ describe('apiClient', () => {
   });
 
   it('returns network error on fetch TypeError', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
     mockFetch.mockRejectedValue(new TypeError('Network request failed'));
 
     const result = await apiClient.get('/activities');

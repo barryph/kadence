@@ -26,9 +26,9 @@ describe('activity queue storage', () => {
     resetActivityQueueCache();
 
     await expect(loadActivityQueue('user-1')).resolves.toEqual([3, 1, 2]);
-    expect(await AsyncStorage.getItem(storageKeys.activityQueue('user-1'))).toBe(
-      JSON.stringify([3, 1, 2]),
-    );
+    expect(
+      await AsyncStorage.getItem(storageKeys.activityQueue('user-1')),
+    ).toBe(JSON.stringify([3, 1, 2]));
   });
 
   it('skips AsyncStorage writes when the queue is unchanged', async () => {
@@ -75,9 +75,9 @@ describe('activity queue storage', () => {
     ]);
 
     expect(getCachedActivityQueue('user-1')).toEqual([2]);
-    expect(await AsyncStorage.getItem(storageKeys.activityQueue('user-1'))).toBe(
-      JSON.stringify([2]),
-    );
+    expect(
+      await AsyncStorage.getItem(storageKeys.activityQueue('user-1')),
+    ).toBe(JSON.stringify([2]));
   });
 
   it('coalesces rapid concurrent saves into one AsyncStorage write', async () => {

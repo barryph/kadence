@@ -22,4 +22,7 @@ export const testActivityAlt: IActivityClient = {
   queued: true,
 };
 
-export const testActivities: IActivityClient[] = [testActivity, testActivityAlt];
+export const testActivities: IActivityClient[] = [
+  testActivity,
+  testActivityAlt,
+];

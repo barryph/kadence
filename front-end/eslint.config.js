@@ -7,6 +7,14 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ['dist/*'],
+    ignores: [
+      'dist/*',
+      // Generated, not source: expo prebuild output, Expo's type shim and its
+      // cache. They are gitignored and would otherwise be linted by `eslint .`.
+      'android/*',
+      'ios/*',
+      '.expo/*',
+      'expo-env.d.ts',
+    ],
   },
 ]);

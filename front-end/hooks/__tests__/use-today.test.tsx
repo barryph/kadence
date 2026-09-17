@@ -69,7 +69,7 @@ describe('useToday', () => {
   it('resyncs when the app returns to the foreground', async () => {
     jest.setSystemTime(new Date(2026, 2, 2, 9, 0, 0));
 
-    const listeners: Array<(state: string) => void> = [];
+    const listeners: ((state: string) => void)[] = [];
     const addEventListener = jest
       .spyOn(AppState, 'addEventListener')
       .mockImplementation((_event, handler) => {
@@ -94,7 +94,7 @@ describe('useToday', () => {
   it('ignores background and inactive transitions', async () => {
     jest.setSystemTime(new Date(2026, 2, 2, 9, 0, 0));
 
-    const listeners: Array<(state: string) => void> = [];
+    const listeners: ((state: string) => void)[] = [];
     jest.spyOn(AppState, 'addEventListener').mockImplementation((_event, h) => {
       listeners.push(h as (state: string) => void);
       return { remove: jest.fn() } as never;

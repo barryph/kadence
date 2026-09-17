@@ -104,6 +104,31 @@ describe('RootLayoutNav auth gate', () => {
     });
   });
 
+  it('leaves the reset-password link reachable for a signed-in user', async () => {
+    // Opening the emailed link while a session exists on this device must show
+    // the form, not redirect home and silently drop the single-use token.
+    setMockAuth({ isAuthenticated: true, isLoading: false });
+    (useSegments as jest.Mock).mockReturnValue(['reset-password']);
+
+    const { getAllByText } = await render(<RootLayoutNav />);
+
+    await waitFor(() => {
+      expect(getAllByText('stack-screen').length).toBeGreaterThan(0);
+    });
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  it('leaves the reset-password link reachable when signed out', async () => {
+    setMockAuth({ isAuthenticated: false, isLoading: false, user: null });
+    (useSegments as jest.Mock).mockReturnValue(['reset-password']);
+
+    await render(<RootLayoutNav />);
+
+    await waitFor(() => {
+      expect(mockReplace).not.toHaveBeenCalled();
+    });
+  });
+
   it('offers a retry instead of the login screen when the session cannot be restored', async () => {
     // Offline boot: the server was unreachable, so we do not know whether the
     // user is signed in. Sending them to login would be wrong - signing in

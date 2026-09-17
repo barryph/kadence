@@ -21,11 +21,16 @@ export function RootLayoutNav() {
   useScreenTracking();
   useAnalyticsIdentity();
 
-  const inAuthGroup =
+  const isAuthScreen =
     segments[0] === 'login' ||
     segments[0] === 'register' ||
-    segments[0] === 'forgot-password' ||
-    segments[0] === 'reset-password';
+    segments[0] === 'forgot-password';
+
+  // `reset-password` is deliberately outside the auth group. It is reached from
+  // the emailed `kadence://reset-password?token=...` link, and bouncing a
+  // signed-in user to home would discard the single-use token without ever
+  // showing the form.
+  const isResetPassword = segments[0] === 'reset-password';
 
   useEffect(() => {
     if (isLoading) return;
@@ -35,9 +40,9 @@ export function RootLayoutNav() {
     // would land on a form that cannot succeed. Stay put and offer a retry.
     if (isConnectionError && !isAuthenticated) return;
 
-    if (!isAuthenticated && !inAuthGroup) {
+    if (!isAuthenticated && !isAuthScreen && !isResetPassword) {
       router.replace('/login');
-    } else if (isAuthenticated && inAuthGroup) {
+    } else if (isAuthenticated && isAuthScreen) {
       router.replace('/');
     } else {
       setIsReady(true);
@@ -48,7 +53,8 @@ export function RootLayoutNav() {
     isConnectionError,
     segments,
     router,
-    inAuthGroup,
+    isAuthScreen,
+    isResetPassword,
   ]);
 
   if (isConnectionError && !isAuthenticated) {

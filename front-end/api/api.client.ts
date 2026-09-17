@@ -30,6 +30,28 @@ if (!BASE_URL && __DEV__) {
 }
 
 /**
+ * How long a single request may take before it is aborted. Exported so tests
+ * and callers can reason about the bound instead of duplicating it.
+ */
+export const REQUEST_TIMEOUT_MS = 20_000;
+
+const TIMEOUT_MESSAGE =
+  'The server took too long to respond. Please try again.';
+
+/**
+ * An aborted `fetch` rejects with a `DOMException`/`Error` named `AbortError`,
+ * not a `TypeError`. Without this the abort escaped `request()` as a thrown
+ * rejection instead of an `ApiResponse` error.
+ */
+function isAbortError(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    (error as { name?: string }).name === 'AbortError'
+  );
+}
+
+/**
  * Reads the JSON body, tolerating responses that are not JSON.
  *
  * Reverse proxies return text/HTML for 502/504, and a failed `response.json()`
@@ -80,20 +102,40 @@ class APIClient {
     url: string,
     options: RequestInit = {},
   ): Promise<ApiResponse<T>> {
-    try {
-      if (!BASE_URL) {
-        return {
-          error: {
-            code: ErrorCode.GENERIC_ERROR,
-            message: MISSING_CONFIG_MESSAGE,
-          },
-        };
-      }
+    if (!BASE_URL) {
+      return {
+        error: {
+          code: ErrorCode.GENERIC_ERROR,
+          message: MISSING_CONFIG_MESSAGE,
+        },
+      };
+    }
 
+    // React Native's Android networking is built on OkHttp with connect/read
+    // timeouts of 0, i.e. "wait forever". A connection that is accepted but
+    // never answered (captive portal, half-open socket, a proxy that stalled)
+    // therefore never settles, and anything awaiting it - including the boot
+    // session check - hangs indefinitely instead of failing. Bound every
+    // request instead and report the timeout as a network failure.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const externalSignal = options.signal;
+    const onExternalAbort = () => controller.abort();
+
+    if (externalSignal) {
+      if (externalSignal.aborted) {
+        controller.abort();
+      } else {
+        externalSignal.addEventListener('abort', onExternalAbort);
+      }
+    }
+
+    try {
       const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`;
       const response = await fetch(fullUrl, {
         // Set your default options here
         ...options,
+        signal: controller.signal,
         credentials: 'include',
         headers: new Headers({
           'Content-Type': 'application/json',
@@ -120,6 +162,20 @@ class APIClient {
         data: json.data!,
       };
     } catch (error) {
+      // An abort is ours (timeout) or the caller's. Either way the request
+      // never produced a response, which is a connectivity failure from the
+      // user's point of view.
+      if (isAbortError(error)) {
+        return {
+          error: {
+            code: ErrorCode.NETWORK_ERROR,
+            message: externalSignal?.aborted
+              ? 'The request was cancelled.'
+              : TIMEOUT_MESSAGE,
+          },
+        };
+      }
+
       // Fetch only throws an error for specific network conditions, or permission/configuration issues
       // Network error
       if (error instanceof TypeError) {
@@ -131,6 +187,9 @@ class APIClient {
         };
       }
       throw error;
+    } finally {
+      clearTimeout(timeoutId);
+      externalSignal?.removeEventListener('abort', onExternalAbort);
     }
   }
 

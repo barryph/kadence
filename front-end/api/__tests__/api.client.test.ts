@@ -1,4 +1,4 @@
-import { apiClient } from '../api.client';
+import { apiClient, REQUEST_TIMEOUT_MS } from '../api.client';
 import { ErrorCode } from '../api.types';
 import { onSessionExpired } from '@/lib/auth/session-expiry';
 
@@ -251,5 +251,47 @@ describe('apiClient', () => {
         body: JSON.stringify({ name: 'Run', interval: 7 }),
       }),
     );
+  });
+
+  /** A fetch that only settles when its signal is aborted. */
+  function hangingFetch() {
+    return (_url: string, init: RequestInit) =>
+      new Promise((_resolve, reject) => {
+        init.signal?.addEventListener('abort', () => {
+          const abortError = new Error('Aborted');
+          abortError.name = 'AbortError';
+          reject(abortError);
+        });
+      });
+  }
+
+  it('aborts a request that never answers instead of hanging forever', async () => {
+    jest.useFakeTimers();
+    mockFetch.mockImplementation(hangingFetch());
+
+    try {
+      const pending = apiClient.get('/activities');
+      jest.advanceTimersByTime(REQUEST_TIMEOUT_MS);
+
+      const result = await pending;
+
+      expect(result.error?.code).toBe(ErrorCode.NETWORK_ERROR);
+      expect(result.error?.message).toMatch(/took too long/i);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it('honours a caller-supplied abort signal', async () => {
+    const controller = new AbortController();
+    mockFetch.mockImplementation(hangingFetch());
+
+    const pending = apiClient.get('/activities', { signal: controller.signal });
+    controller.abort();
+
+    const result = await pending;
+
+    expect(result.error?.code).toBe(ErrorCode.NETWORK_ERROR);
+    expect(result.error?.message).toMatch(/cancelled/i);
   });
 });

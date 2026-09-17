@@ -59,6 +59,7 @@ resolve the environment and the keystore, and still consumes a remote
 `versionCode`.
 
 - [ ] **[R]** Confirm the EAS production env has its variables: `eas env:list --environment production` (must include `EXPO_PUBLIC_SERVER_URL` and `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`; these are baked into the bundle at build time and cannot be fixed later).
+- [ ] **[R]** Select JDK 17 in this shell (see Setup): `export JAVA_HOME=/usr/lib/jvm/java-17-openjdk`. Gradle 8.14 rejects the machine's default JDK 26, and the remote `versionCode` is consumed before that failure is visible.
 - [ ] **[R]** Build. This increments the remote `versionCode`, pulls the production keystore from the Expo server, and takes ~10–20 minutes:
       ```
       cd front-end
@@ -92,7 +93,12 @@ always a new higher build.
 Local build prerequisites:
 
 - [ ] **[1x]** `eas login`, `eas-cli` ≥ 18.11.0.
-- [ ] **[1x]** JDK 17 (`java-17-openjdk` is installed) and Android SDK at `$ANDROID_HOME` with a matching `build-tools` and `platforms` version. `--local` runs Gradle, so a JDK newer than 17 will likely fail.
+- [ ] **[1x]** JDK 17 and Android SDK at `$ANDROID_HOME` with a matching `build-tools` and `platforms` version. `--local` runs Gradle, and the JDK must be selected explicitly — the machine's default `java` is JDK 26, which Gradle 8.14 (the wrapper version) does not support, and `JAVA_HOME` is normally unset. Before every local build:
+      ```
+      export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+      "$JAVA_HOME/bin/java" -version   # expect 17.x
+      ```
+      `eas build --local` inherits `JAVA_HOME` from the shell, so run it in the same shell (or prefix the command with the export).
 - [ ] **[1x]** The npm cache is writable — `--local` fetches `eas-cli-local-build-plugin` through npm at build time. A read-only `~/.npm/_cacache` fails the build after the versionCode has already been incremented.
 - [ ] **[1x]** `front-end` dependencies installed (`pnpm install`) and the production keystore available from Expo (confirm with `eas credentials --platform android`).
 

@@ -51,7 +51,17 @@ export default function FilterList({
           {items.map((item) => {
             const isActive = selectedIds === item.id;
             return (
-              <Pressable key={item.id} onPress={() => onItemPress(item.id)}>
+              <Pressable
+                key={item.id}
+                onPress={() => onItemPress(item.id)}
+                // A filter pill is a toggle, so expose it as a button that is
+                // either selected or not, and keep a 44pt-ish touch target
+                // around the 26pt visual pill.
+                accessibilityRole="button"
+                accessibilityState={{ selected: isActive }}
+                accessibilityLabel={item.name}
+                hitSlop={8}
+              >
                 <ThemedText
                   variant="bodySmall"
                   weight="600"

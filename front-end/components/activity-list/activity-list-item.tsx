@@ -41,6 +41,26 @@ export default function ActivityListItem({
       }}
     >
       <Pressable
+        accessibilityRole="button"
+        // Edit and Complete are swipe-only gestures, which assistive tech
+        // cannot perform. Expose them as accessibility actions on the row, so
+        // screen-reader users have a non-gesture route to the same operations.
+        accessibilityActions={[
+          { name: 'edit', label: 'Edit activity' },
+          ...(completedToday
+            ? []
+            : [{ name: 'complete', label: 'Complete activity' }]),
+        ]}
+        onAccessibilityAction={(event) => {
+          switch (event.nativeEvent.actionName) {
+            case 'edit':
+              onEdit(activity);
+              break;
+            case 'complete':
+              if (!completedToday) onComplete(activity.id);
+              break;
+          }
+        }}
         onPress={() => {
           if (!completedToday) onClick(activity);
         }}

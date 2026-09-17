@@ -185,7 +185,12 @@ export default function EditActivityPage() {
         >
           <View style={styles.topRow}>
             <View style={styles.titleRow}>
-              <Pressable onPress={leaveGuard.requestLeave}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Go back"
+                onPress={leaveGuard.requestLeave}
+                hitSlop={8}
+              >
                 <Ionicons
                   name="arrow-back"
                   size={27}

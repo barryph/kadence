@@ -86,7 +86,12 @@ export default function CreateActivityPage() {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.topRow}>
-            <Pressable onPress={leaveGuard.requestLeave} hitSlop={8}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              onPress={leaveGuard.requestLeave}
+              hitSlop={8}
+            >
               <Ionicons
                 name="arrow-back"
                 size={27}

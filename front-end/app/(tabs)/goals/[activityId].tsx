@@ -72,7 +72,12 @@ export default function GoalInsightsScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.topRow}>
-          <Pressable onPress={() => goBackOrHome(router)} hitSlop={8}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            onPress={() => goBackOrHome(router)}
+            hitSlop={8}
+          >
             <Ionicons name="arrow-back" size={27} color={Colors.textPrimary} />
           </Pressable>
           <ThemedText variant="bodyBold">Goal Insights</ThemedText>

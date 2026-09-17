@@ -212,6 +212,9 @@ export function GuideModalBody({
           onPress={onClose}
           accessibilityRole="button"
           accessibilityLabel="Close guide"
+          // The close glyph is small; give it a touch target closer to the
+          // 44pt guideline without changing the layout.
+          hitSlop={10}
           style={styles.closeButton}
         >
           <ThemedText style={styles.closeIcon}>✕</ThemedText>
@@ -250,6 +253,8 @@ export function GuideModalBody({
               accessibilityRole="tab"
               accessibilityLabel={`Go to step ${index + 1} of ${steps.length}: ${dot.title}`}
               accessibilityState={{ selected: index === activeIndex }}
+              // The dots are only 8px wide; widen the touch target.
+              hitSlop={12}
               style={[
                 styles.dot,
                 index === activeIndex && { width: ACTIVE_DOT_W },

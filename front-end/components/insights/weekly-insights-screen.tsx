@@ -75,7 +75,12 @@ export default function WeeklyInsightsScreen({
       <ScrollView>
         <Container style={styles.scrollContent}>
           <View style={styles.titleRow}>
-            <Pressable onPress={() => goBackOrHome(router)}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              onPress={() => goBackOrHome(router)}
+              hitSlop={8}
+            >
               <Ionicons
                 name="arrow-back"
                 size={27}

@@ -7,6 +7,7 @@ import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
 import AlertError from '@/components/alerts/alert-error';
 import DeleteAccountModal from '@/components/auth/delete-account-modal';
+import PrivacyPolicyLink from '@/components/privacy-policy-link';
 import { Colors, Spacing } from '@/constants/theme';
 import { useAuth } from '@/context/auth-context';
 
@@ -46,6 +47,8 @@ function Profile() {
             </ThemedText>
             <ThemedText variant="bodyBold">{user.email}</ThemedText>
           </View>
+
+          <PrivacyPolicyLink style={styles.privacyLink} />
         </View>
 
         <View>
@@ -104,6 +107,11 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: Spacing.xl,
     gap: Spacing.xxs,
+  },
+  privacyLink: {
+    marginTop: Spacing.xl,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 0,
   },
   label: {
     opacity: 0.6,

@@ -44,7 +44,9 @@ export default function GoalInsightsScreen() {
     return <LoaderScreen text="Loading goal insights..." />;
   }
 
-  if (isError) {
+  // Keep the stats already on screen when a silent focus refetch fails; only a
+  // failure with nothing cached is terminal.
+  if (isError && !stats) {
     return (
       <ErrorScreen
         message="Unable to load goal insights."

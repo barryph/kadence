@@ -13,6 +13,12 @@ import {
 import { getLastNWeekRange } from '@/utils/date';
 import { useToday } from '@/hooks/use-today';
 
+/**
+ * Stable fallback for a query with no data yet, so the array identity does
+ * not change on every render and invalidate downstream memoisation.
+ */
+const EMPTY_LIST: never[] = [];
+
 const WEEK_COUNT = 8;
 
 export default function ActivityInsightsScreen() {
@@ -25,17 +31,19 @@ export default function ActivityInsightsScreen() {
     [today],
   );
   const {
-    data: activities = [],
+    data: activitiesData,
     isPending: isActivitiesPending,
     isError: isActivitiesError,
     refetch: refetchActivities,
   } = useActivitiesQuery();
   const {
-    data: events = [],
+    data: eventsData,
     isPending: isEventsPending,
     isError: isEventsError,
     refetch: refetchEvents,
   } = useActivityEventsQuery(weekRange.from, weekRange.to);
+  const activities = activitiesData ?? EMPTY_LIST;
+  const events = eventsData ?? EMPTY_LIST;
 
   const [activeActivityId, setActiveActivityId] = useState<number | null>(null);
 
@@ -83,7 +91,11 @@ export default function ActivityInsightsScreen() {
       weekStarts={weekRange.weekStarts}
       weekCount={WEEK_COUNT}
       isLoading={isActivitiesPending || isEventsPending}
-      isError={isActivitiesError || isEventsError}
+      // A failed refetch over cached data must not blank the charts; only a
+      // failure with nothing to draw is terminal.
+      isError={
+        (isActivitiesError && !activitiesData) || (isEventsError && !eventsData)
+      }
       errorMessage="Unable to load activity insights."
       onRetry={() => {
         void refetchActivities();

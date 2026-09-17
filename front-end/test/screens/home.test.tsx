@@ -207,12 +207,47 @@ describe('Home screen', () => {
     expect(screen.queryByText('Activities Center')).toBeNull();
   });
 
+  it('shows an error screen when nothing could be loaded', async () => {
+    mockUseActivitiesQuery.mockReturnValue({
+      data: undefined,
+      isPending: false,
+      isError: true,
+    });
+
+    await renderHome();
+
+    await waitFor(() => {
+      expect(screen.getByText('Unable to load activities.')).toBeTruthy();
+    });
+  });
+
+  it('keeps the cached list when a background refetch fails', async () => {
+    // refetchOnWindowFocus and the date-keyed query rolling over at local
+    // midnight both refetch without the user asking. A failure there must not
+    // replace a populated screen with an error.
+    mockUseActivitiesQuery.mockReturnValue({
+      data: testActivities,
+      isPending: false,
+      isError: true,
+    });
+
+    await renderHome();
+
+    await waitFor(() => {
+      expect(screen.getByText('Activities Center')).toBeTruthy();
+      expect(screen.getByText('Morning Run')).toBeTruthy();
+    });
+    expect(screen.queryByText('Unable to load activities.')).toBeNull();
+  });
+
   it('reports a successful completion', async () => {
     const mutateAsync = jest.fn().mockResolvedValue({});
     mockUseCompleteActivityMutation.mockReturnValue({ mutateAsync });
 
     await renderHome();
-    await waitFor(() => expect(screen.getAllByText('Morning Run').length).toBeGreaterThan(0));
+    await waitFor(() =>
+      expect(screen.getAllByText('Morning Run').length).toBeGreaterThan(0),
+    );
 
     await fireEvent.press(screen.getAllByLabelText('swipe to complete')[0]);
 
@@ -228,15 +263,15 @@ describe('Home screen', () => {
   });
 
   it('surfaces a failed completion instead of failing silently', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    const mutateAsync = jest
-      .fn()
-      .mockRejectedValue(
-        new ApiError({
-          code: 'GENERIC_ERROR',
-          message: 'Something went wrong, please try again.',
-        }),
-      );
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const mutateAsync = jest.fn().mockRejectedValue(
+      new ApiError({
+        code: 'GENERIC_ERROR',
+        message: 'Something went wrong, please try again.',
+      }),
+    );
     mockUseCompleteActivityMutation.mockReturnValue({ mutateAsync });
 
     try {

@@ -41,6 +41,12 @@ import {
   logOnboardingStepView,
 } from '@/lib/analytics/analytics';
 
+/**
+ * Stable fallback for a query with no data yet, so the array identity does
+ * not change on every render and invalidate downstream memoisation.
+ */
+const EMPTY_LIST: never[] = [];
+
 function sortActivities(acts: IActivityClient[] = []) {
   return [...acts].sort((a, b) => {
     // queued items go first
@@ -119,17 +125,18 @@ export default function Dashboard() {
 function DashboardContent({ userId }: { userId: string }) {
   const router = useRouter();
   const {
-    data: activities = [],
+    data: activitiesData,
     isPending: isActivitiesPending,
     isError: isActivitiesError,
     refetch: refetchActivities,
   } = useActivitiesQuery();
   const {
-    data: categories = [],
+    data: categoriesData,
     isPending: isCategoriesPending,
-    isError: isCategoriesError,
     refetch: refetchCategories,
   } = useCategoriesQuery();
+  const activities = activitiesData ?? EMPTY_LIST;
+  const categories = categoriesData ?? EMPTY_LIST;
   // The user's local date, refreshed at their midnight: everything below
   // ("completed today", the current month's timeline) is relative to it.
   const today = useToday();
@@ -261,7 +268,12 @@ function DashboardContent({ userId }: { userId: string }) {
     return <LoaderScreen text="Loading activities..." />;
   }
 
-  if (isActivitiesError || isCategoriesError) {
+  // Only a failure with nothing cached is terminal. A background refetch that
+  // fails (a focus refetch, or the date-keyed query rolling over at local
+  // midnight while offline) must keep the list that is already on screen -
+  // TanStack retains it, and replacing it with an error screen loses usable
+  // data for a refresh the user never asked for.
+  if (isActivitiesError && !activitiesData) {
     return (
       <ErrorScreen
         message="Unable to load activities."

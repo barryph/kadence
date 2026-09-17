@@ -25,20 +25,27 @@ import { useEditCategoryMutation } from '@/hooks/mutations/use-category-mutation
 import { ApiError } from '@/lib/query/unwrap';
 import type { ApiResponse } from '@/api/api.types';
 
+/**
+ * Stable fallback for a query with no data yet, so the array identity does
+ * not change on every render and invalidate downstream memoisation.
+ */
+const EMPTY_LIST: never[] = [];
+
 export default function Categories() {
   const router = useRouter();
   const {
-    data: activities = [],
+    data: activitiesData,
     isPending: isActivitiesPending,
-    isError: isActivitiesError,
     refetch: refetchActivities,
   } = useActivitiesQuery();
   const {
-    data: categories = [],
+    data: categoriesData,
     isPending: isCategoriesPending,
     isError: isCategoriesError,
     refetch: refetchCategories,
   } = useCategoriesQuery();
+  const activities = activitiesData ?? EMPTY_LIST;
+  const categories = categoriesData ?? EMPTY_LIST;
   const editCategory = useEditCategoryMutation();
 
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
@@ -112,7 +119,9 @@ export default function Categories() {
     return <LoaderScreen text="Loading..." />;
   }
 
-  if (isActivitiesError || isCategoriesError) {
+  // Only a failure with nothing cached is terminal: a silent refetch that fails
+  // must keep the categories already on screen.
+  if (isCategoriesError && !categoriesData) {
     return (
       <ErrorScreen
         message="Unable to load categories."

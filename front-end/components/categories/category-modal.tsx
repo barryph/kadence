@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -51,21 +51,38 @@ export default function CategoryModal({
 }: CategoryModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Mirrors `isLoading` synchronously: two taps can arrive before React has
+  // re-rendered the Save button as disabled, and the state value read from the
+  // first render's closure would still be `false` for the second.
+  const submitInFlight = useRef(false);
   const form = useCategoryForm(initialValues);
 
   async function handleSubmit(values: CategoryFormValues) {
+    if (submitInFlight.current) return;
+    submitInFlight.current = true;
+
     setIsLoading(true);
     setErrorMessage(null);
 
-    const response = await onSubmit(values);
+    try {
+      const response = await onSubmit(values);
 
-    if (response.error) {
-      setErrorMessage(response.error.message);
+      if (response.error) {
+        setErrorMessage(response.error.message);
+        return;
+      }
+
+      onSave(response.data?.category);
+    } catch (error) {
+      // `onSubmit` can reject with something other than an ApiError (an edit
+      // with no selected category, for instance). Without this the modal stayed
+      // in its loading state forever, with no message and an unusable Cancel.
+      console.error('Error saving category', error);
+      setErrorMessage('Something went wrong, please try again.');
+    } finally {
+      submitInFlight.current = false;
       setIsLoading(false);
-      return;
     }
-
-    onSave(response.data?.category);
   }
 
   return (
@@ -84,13 +101,14 @@ export default function CategoryModal({
 
       <View style={styles.actions}>
         <Button
-          isLoading={isLoading}
+          disabled={isLoading}
           onPress={onClose}
           style={styles.actionButton}
         >
           Cancel
         </Button>
         <Button
+          isLoading={isLoading}
           onPress={form.handleSubmit(handleSubmit)}
           style={styles.actionButton}
         >

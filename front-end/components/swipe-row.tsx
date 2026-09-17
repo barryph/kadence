@@ -49,12 +49,14 @@ export default function SwipeRow({
   }, [disableSwipeRight, swipeRightDisabled]);
 
   const triggerSwipeRight = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Haptics are cosmetic and reject on devices without a haptic engine;
+    // swallow the rejection so it never becomes an unhandled one.
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     onSwipeRight();
   };
 
   const triggerSwipeLeft = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     onSwipeLeft();
   };
 

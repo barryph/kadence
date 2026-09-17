@@ -5,6 +5,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { ThemedText } from '@/components/base/themed-text';
 import { Spacing } from '@/constants/theme';
 import { PRIVACY_POLICY_URL } from '@/constants/urls';
@@ -21,13 +22,28 @@ interface PrivacyPolicyLinkProps {
  * choose where the link sits.
  */
 export default function PrivacyPolicyLink({ style }: PrivacyPolicyLinkProps) {
+  async function openPolicy() {
+    try {
+      await Linking.openURL(PRIVACY_POLICY_URL);
+    } catch (error) {
+      // No browser can handle the URL. The promise used to be dropped, so
+      // tapping the link did nothing at all with no explanation.
+      console.error('Failed to open the privacy policy', error);
+      Toast.show({
+        type: 'error',
+        text1: "Couldn't open the Privacy Policy",
+        text2: 'Please try again from a browser.',
+      });
+    }
+  }
+
   return (
     <Pressable
       accessibilityRole="link"
       accessibilityLabel="Privacy Policy"
       hitSlop={8}
       onPress={() => {
-        void Linking.openURL(PRIVACY_POLICY_URL);
+        void openPolicy();
       }}
       style={({ pressed }) => [styles.link, pressed && styles.pressed, style]}
     >

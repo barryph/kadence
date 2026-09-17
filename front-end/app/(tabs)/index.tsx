@@ -27,6 +27,8 @@ import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useTimelineQuery } from '@/hooks/queries/use-timeline';
 import { useCompleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { useActivityQueue } from '@/hooks/use-activity-queue';
+import { useIsOffline } from '@/hooks/use-is-offline';
+import { ApiError } from '@/lib/query/unwrap';
 import { useGuide } from '@/hooks/use-guide';
 import GuideModal from '@/components/guide/guide-modal';
 import GuideInfoButton from '@/components/guide/guide-info-button';
@@ -83,6 +85,21 @@ const ACTIVITY_SECTIONS = [
   { title: 'Completed', key: 'completed' },
 ] as const;
 
+/**
+ * Explanation shown when a swipe-to-complete fails. Connectivity gets its own
+ * wording because "check your connection" is actionable only when the device
+ * actually knows it has no connection.
+ */
+function getCompletionErrorMessage(error: unknown, isOffline: boolean): string {
+  if (isOffline) {
+    return "You're offline. Reconnect and try again.";
+  }
+  if (error instanceof ApiError) {
+    return error.message;
+  }
+  return 'Please check your connection and try again.';
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
 
@@ -119,6 +136,7 @@ function DashboardContent({ userId }: { userId: string }) {
   } = useActivityQueue(userId);
 
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
+  const isOffline = useIsOffline();
 
   // Home onboarding guide — auto-shows on first visit; the info (i) icon reopens it.
   const guide = useGuide({ pageId: 'home' });
@@ -192,7 +210,17 @@ function DashboardContent({ userId }: { userId: string }) {
         text1: 'Activity Completed',
       });
     } catch (error) {
+      // A completion is never applied optimistically, so the row is still
+      // showing the activity as incomplete and it stays in the local queue —
+      // i.e. the UI already reflects the real state. What was missing was any
+      // sign that the swipe failed, so the user is told instead of being left
+      // with a success-looking haptic and no recorded completion.
       console.error('Error completing activity', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Could not complete activity',
+        text2: getCompletionErrorMessage(error, isOffline),
+      });
     }
   }
 

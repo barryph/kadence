@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
+import ErrorScreen from '@/components/base/error-screen';
 import { useScreenTracking } from '@/lib/analytics/use-screen-tracking';
 import { useAnalyticsIdentity } from '@/lib/analytics/use-analytics-identity';
 
@@ -9,7 +10,8 @@ import { useAnalyticsIdentity } from '@/lib/analytics/use-analytics-identity';
  * Redirects unauthenticated users to auth screens and authenticated users away from them.
  */
 export function RootLayoutNav() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isConnectionError, retrySessionRestore } =
+    useAuth();
   const segments = useSegments();
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
@@ -28,6 +30,11 @@ export function RootLayoutNav() {
   useEffect(() => {
     if (isLoading) return;
 
+    // The server could not be reached to restore the session. Redirecting to
+    // sign-in would be wrong: signing in needs the same server, so the user
+    // would land on a form that cannot succeed. Stay put and offer a retry.
+    if (isConnectionError && !isAuthenticated) return;
+
     if (!isAuthenticated && !inAuthGroup) {
       router.replace('/login');
     } else if (isAuthenticated && inAuthGroup) {
@@ -35,7 +42,23 @@ export function RootLayoutNav() {
     } else {
       setIsReady(true);
     }
-  }, [isAuthenticated, isLoading, segments, router, inAuthGroup]);
+  }, [
+    isAuthenticated,
+    isLoading,
+    isConnectionError,
+    segments,
+    router,
+    inAuthGroup,
+  ]);
+
+  if (isConnectionError && !isAuthenticated) {
+    return (
+      <ErrorScreen
+        message="Unable to reach Kadence. Check your connection and try again."
+        onRetry={retrySessionRestore}
+      />
+    );
+  }
 
   // Keep the navigator mounted while the session-gate effect redirects: the
   // `replace` action must reach a navigator that still registers the target

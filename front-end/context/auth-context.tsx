@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   authAPI,
   type LoginResponse,
@@ -34,6 +41,15 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: IUser | null;
+  /**
+   * True when the session could not be restored because the server could not be
+   * reached (offline, timed out, 5xx). Deliberately distinct from "signed out":
+   * sending the user to the login screen would be wrong, because signing in
+   * needs the same server. The host shows a retryable connection error instead.
+   */
+  isConnectionError: boolean;
+  /** Retries the boot session restore after a connection error. */
+  retrySessionRestore: () => void;
   login: (
     email: string,
     password: string,
@@ -60,12 +76,21 @@ function toAppError(
   return { error: { code, message } };
 }
 
+/**
+ * A 401 means the server actively told us there is no usable session; every
+ * other failure means we could not ask. Only the former is a sign-out.
+ */
+function isSessionEndedError(code: AppError['code']): boolean {
+  return code === ErrorCode.UNAUTHORIZED || code === ErrorCode.SESSION_EXPIRED;
+}
+
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<IUser | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isConnectionError, setIsConnectionError] = useState(false);
   // Prevents duplicate simultaneous sign-in requests.
   const socialAuthInFlight = useRef(false);
   // Mirrors `isAuthenticated` so the session-expiry handler can read the latest
@@ -73,32 +98,57 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const isAuthenticatedRef = useRef(isAuthenticated);
   isAuthenticatedRef.current = isAuthenticated;
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const response = await usersAPI.getCurrentUser();
-        if (response.data?.user) {
-          setUser(response.data.user);
-          setIsAuthenticated(true);
-        }
-      } catch (err) {
-        console.error('Error fetching user:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  /**
+   * Restores the session from the server on boot. A failure to reach the server
+   * is *not* a signed-out user: it is surfaced as `isConnectionError` so the
+   * navigation guard can offer a retry instead of a login screen that cannot
+   * succeed without connectivity.
+   */
+  const restoreSession = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await usersAPI.getCurrentUser();
 
-    fetchUser();
+      if (response.data?.user) {
+        setUser(response.data.user);
+        setIsAuthenticated(true);
+        setIsConnectionError(false);
+        return;
+      }
+
+      if (response.error && !isSessionEndedError(response.error.code)) {
+        setIsConnectionError(true);
+        return;
+      }
+
+      // Either a successful response with no user or an explicit 401: the user
+      // is simply not signed in.
+      setIsConnectionError(false);
+    } catch (err) {
+      console.error('Error fetching user:', err);
+      setIsConnectionError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void restoreSession();
+  }, [restoreSession]);
+
+  const retrySessionRestore = useCallback(() => {
+    void restoreSession();
+  }, [restoreSession]);
 
   /**
    * The server can end a session while the app is running: it expired, it was
    * signed out on another device, or a password reset revoked it — and a bare
    * 401 (no usable session presented at all) is reported the same way. The
    * credential is already dead, so clear the auth state and let the navigation
-   * guard send the user back to sign-in — but keep the user's local data, so
-   * anything queued offline still syncs once they sign in again. The
-   * `isAuthenticated` guard keeps the boot-time `getCurrentUser` 401 from
+   * guard send the user back to sign-in. Local device data is kept: it is this
+   * account's selection state, and clearing it would discard the user's list for
+   * no reason. (Offline *writes* are not queued; the app expects a connection.)
+   * The `isAuthenticated` guard keeps the boot-time `getCurrentUser` 401 from
    * disturbing a fresh, signed-out launch.
    */
   useEffect(() => {
@@ -119,6 +169,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } else {
       setUser(response.data.user);
       setIsAuthenticated(true);
+      setIsConnectionError(false);
       logLogin('password');
     }
     return response;
@@ -197,14 +248,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   /**
    * Drops local auth state only. Used when the server ends the session — an
-   * expired or revoked credential is dead, but the user and their data are not:
-   * the offline activity queue must survive so it can sync after signing in
-   * again. Clearing it here would silently discard activity the user recorded
-   * but the server never received.
+   * expired or revoked credential is dead, but the user is not: the local
+   * activity queue is this account's own selection state and is kept so the
+   * user's list is still there when they sign back in. (Offline *writes* are
+   * not queued or replayed; the app expects a connection while it is used.)
    */
   function clearSessionState() {
     setUser(null);
     setIsAuthenticated(false);
+    setIsConnectionError(false);
     queryClient.clear();
   }
 
@@ -237,6 +289,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } else {
       setUser(response.data.user);
       setIsAuthenticated(true);
+      setIsConnectionError(false);
       logSignUp('password');
     }
     return response;
@@ -307,6 +360,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       setUser(response.data.user);
       setIsAuthenticated(true);
+      setIsConnectionError(false);
       logLogin(method);
       return response;
     } finally {
@@ -373,6 +427,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isAuthenticated,
         isLoading,
         user,
+        isConnectionError,
+        retrySessionRestore,
         login,
         logout,
         register,

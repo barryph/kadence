@@ -40,6 +40,14 @@ function AuthConsumer() {
   return <Text>{user?.email}</Text>;
 }
 
+function ConnectionConsumer() {
+  const { isAuthenticated, isLoading, isConnectionError } = useAuth();
+  if (isLoading) return <Text>Loading...</Text>;
+  if (isConnectionError) return <Text>Connection problem</Text>;
+  if (!isAuthenticated) return <Text>Not authenticated</Text>;
+  return <Text>Authenticated</Text>;
+}
+
 describe('AuthProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -73,23 +81,76 @@ describe('AuthProvider', () => {
     });
   });
 
-  it('remains unauthenticated when current user fetch fails', async () => {
-    const consoleSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-    mockGetCurrentUser.mockRejectedValue(new Error('Unauthorized'));
+  it('reports a connection error rather than signing the user out when the server is unreachable', async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      error: {
+        code: 'NETWORK_ERROR',
+        message: 'Network error. Please check your connection.',
+      },
+    });
 
     await render(
       <AuthProvider>
-        <AuthConsumer />
+        <ConnectionConsumer />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Connection problem')).toBeTruthy();
+    });
+    expect(screen.queryByText('Not authenticated')).toBeNull();
+  });
+
+  it('stays signed out (not a connection error) on an explicit 401', async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      error: { code: 'UNAUTHORIZED', message: 'Not authenticated' },
+    });
+
+    await render(
+      <AuthProvider>
+        <ConnectionConsumer />
       </AuthProvider>,
     );
 
     await waitFor(() => {
       expect(screen.getByText('Not authenticated')).toBeTruthy();
     });
+    expect(screen.queryByText('Connection problem')).toBeNull();
+  });
 
-    consoleSpy.mockRestore();
+  it('restores the session when the connection error is retried', async () => {
+    mockGetCurrentUser
+      .mockResolvedValueOnce({
+        error: { code: 'NETWORK_ERROR', message: 'offline' },
+      })
+      .mockResolvedValueOnce({
+        data: { user: testUser, authProviders: [] },
+      });
+
+    let authRef: ReturnType<typeof useAuth> | undefined;
+    function RetryTrigger() {
+      authRef = useAuth();
+      return <Text>{authRef.isConnectionError ? 'offline' : 'online'}</Text>;
+    }
+
+    await render(
+      <AuthProvider>
+        <RetryTrigger />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('offline')).toBeTruthy();
+    });
+
+    await act(async () => {
+      authRef!.retrySessionRestore();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('online')).toBeTruthy();
+    });
+    expect(authRef!.isAuthenticated).toBe(true);
   });
 
   it('login updates auth state on success', async () => {

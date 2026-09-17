@@ -7,6 +7,8 @@ export interface MockAuthContextValue {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: IUser | null;
+  isConnectionError: boolean;
+  retrySessionRestore: jest.Mock<void, []>;
   login: jest.Mock<
     Promise<ApiResponse<LoginResponse>>,
     [email: string, password: string]
@@ -28,6 +30,8 @@ export function createMockAuthValue(
     isAuthenticated: true,
     isLoading: false,
     user: testUser,
+    isConnectionError: false,
+    retrySessionRestore: jest.fn(),
     login: jest.fn().mockResolvedValue({ data: { user: testUser } }),
     logout: jest.fn().mockResolvedValue(undefined),
     register: jest.fn().mockResolvedValue({ data: { user: testUser } }),

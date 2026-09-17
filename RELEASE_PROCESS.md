@@ -29,7 +29,7 @@ one-time setup.
       cd front-end
       eas build:version:get --platform android --profile production
       ```
-      Current production `versionCode` is 3, so the next build is 4. Never lower it.
+      Current production `versionCode` is 4, so the next build is 5. Never lower it.
 
 ## 3. Check
 
@@ -52,14 +52,20 @@ one-time setup.
       ```
       Expect `package` = `com.codecompletelabs.kadence`, `googleServicesFile` = `./firebase/android/google-services.json`, `extra.appVariant` = `production`.
 
-## 4. Build
+## 4. Build locally
 
-- [ ] **[R]** Confirm the EAS production env still has its variables: `eas env:list --environment production` (must include `EXPO_PUBLIC_SERVER_URL` and `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`; `EXPO_PUBLIC_*` is inlined at build time and cannot be fixed later).
-- [ ] **[R]** Build, then wait for `Status: finished` and download the `.aab`:
+Builds run on this machine, not in EAS's cloud. `--local` still contacts Expo to
+resolve the environment and the keystore, and still consumes a remote
+`versionCode`.
+
+- [ ] **[R]** Confirm the EAS production env has its variables: `eas env:list --environment production` (must include `EXPO_PUBLIC_SERVER_URL` and `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`; these are baked into the bundle at build time and cannot be fixed later).
+- [ ] **[R]** Build. This increments the remote `versionCode`, pulls the production keystore from the Expo server, and takes ~10–20 minutes:
       ```
       cd front-end
-      eas build --profile production --platform android
+      eas build --profile production --platform android --local \
+        --output ./build/kadence-production.aab
       ```
+- [ ] **[R]** Check the final line for `Build successful` and confirm the printed `versionCode` matches what `eas build:version:get --profile production` returned.
 
 ## 5. Submit and roll out
 
@@ -79,11 +85,19 @@ always a new higher build.
 - [ ] **[R]** Halt the rolled-out release in Play Console.
 - [ ] **[C]** Backend is the cause: roll the backend back to the previous revision.
 - [ ] **[R]** Revert the bad commit on `main` via a PR.
-- [ ] **[R]** Fix, re-run step 3, `eas build --profile production --platform android`, submit, and resume a staged rollout. Do not reuse the failed versionCode.
+- [ ] **[R]** Fix, re-run step 3, rebuild with `--local` (step 4), submit, and resume a staged rollout. Do not reuse the failed versionCode.
 
 ## Setup (do once)
 
+Local build prerequisites:
+
 - [ ] **[1x]** `eas login`, `eas-cli` ≥ 18.11.0.
+- [ ] **[1x]** JDK 17 (`java-17-openjdk` is installed) and Android SDK at `$ANDROID_HOME` with a matching `build-tools` and `platforms` version. `--local` runs Gradle, so a JDK newer than 17 will likely fail.
+- [ ] **[1x]** The npm cache is writable — `--local` fetches `eas-cli-local-build-plugin` through npm at build time. A read-only `~/.npm/_cacache` fails the build after the versionCode has already been incremented.
+- [ ] **[1x]** `front-end` dependencies installed (`pnpm install`) and the production keystore available from Expo (confirm with `eas credentials --platform android`).
+
+Project setup:
+
 - [ ] **[1x]** Play Console access to `com.codecompletelabs.kadence`; Play service-account JSON if you want `eas submit` instead of manual upload.
 - [ ] **[1x]** Google Cloud OAuth clients for `com.codecompletelabs.kadence` and the EAS signing SHA-1 (`eas credentials`). `back-end/docs/oauth-sign-in.md` still says `com.barryph.kadence` — verify which the client actually uses.
 - [ ] **[1x]** EAS production environment variables `EXPO_PUBLIC_SERVER_URL` and `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` (already set; `preview` too).

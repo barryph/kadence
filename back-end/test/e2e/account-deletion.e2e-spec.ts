@@ -20,7 +20,7 @@ import {
 } from '../helpers/test-jwks';
 
 const GOOGLE_CLIENT_ID = 'test-server-client-id.apps.googleusercontent.com';
-const APPLE_BUNDLE_ID = 'com.barryph.kadence';
+const APPLE_BUNDLE_ID = 'com.codecompletelabs.kadence';
 
 describe('Account deletion (e2e)', () => {
   let app: INestApplication<App>;

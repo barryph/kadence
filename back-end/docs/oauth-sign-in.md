@@ -63,7 +63,7 @@ Existing cookie-based session (regenerate + login)  -- identical to email/passwo
 | Variable | Description |
 | --- | --- |
 | `GOOGLE_SERVER_CLIENT_IDS` | Comma-separated Google **web/server client IDs**. The audience the backend accepts in a Google ID token. Backend-only. |
-| `APPLE_CLIENT_IDS` | Comma-separated Sign in with Apple client IDs. For a native iOS app these are the bundle identifiers, e.g. `com.barryph.kadence.dev,com.barryph.kadence.preview,com.barryph.kadence`. |
+| `APPLE_CLIENT_IDS` | Comma-separated Sign in with Apple client IDs. For a native iOS app these are the bundle identifiers, e.g. `com.codecompletelabs.kadence.dev,com.codecompletelabs.kadence.preview,com.codecompletelabs.kadence`. |
 | `APPLE_JWKS_URL` | Apple's JWKS endpoint. Default `https://appleid.apple.com/auth/keys`. Overridable only for tests. |
 | `GOOGLE_JWKS_URL` | Google's signing-certificates endpoint. Default `https://www.googleapis.com/oauth2/v1/certs`. Overridable only for tests. |
 | `SESSION_SECRET` | Already required. Must be a long, random, unguessable value. |
@@ -97,11 +97,11 @@ Public values (embedded in the app bundle — treat as public):
    `email`, `profile` (default OIDC scopes — no additional Google API access).
    Add your email as a test user while in testing mode.
 3. **Credentials → Create credentials → OAuth client ID**:
-   - **Android**: type Android. Add the app package name (`com.barryph.kadence`
+   - **Android**: type Android. Add the app package name (`com.codecompletelabs.kadence`
      for production, plus `.dev` / `.preview` variants) and the **SHA-1**
      signing-certificate fingerprint for each build variant.
      To find your SHA-1 certificate fingerprint run `eas credentials`.
-   - **iOS**: type iOS. Add the bundle identifier (`com.barryph.kadence` etc.).
+   - **iOS**: type iOS. Add the bundle identifier (`com.codecompletelabs.kadence` etc.).
      Take note of the **iOS client ID** and the **reversed client ID**
      (`com.googleusercontent.apps.<client-id>`) — the reversed ID becomes
      `GOOGLE_IOS_URL_SCHEME`.
@@ -133,7 +133,7 @@ Public values (embedded in the app bundle — treat as public):
    server-side token refresh (not currently used — no Apple private key is
    required by the current implementation).
 3. The backend audience (`APPLE_CLIENT_IDS`) is the app's bundle identifier
-   (`com.barryph.kadence`, plus dev/preview variants if you want sign-in to work
+   (`com.codecompletelabs.kadence`, plus dev/preview variants if you want sign-in to work
    across build variants).
 4. Add `expo-apple-authentication` (already in `app.json` via `app.config.ts`);
    its config plugin adds the `com.apple.developer.applesignin` entitlement

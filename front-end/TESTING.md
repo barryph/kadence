@@ -81,6 +81,8 @@ setMockAuth({ isAuthenticated: false, user: null }); // override per test
 
 ## Maestro E2E
 
+Maestro is "the playwright of mobile".
+
 Maestro flows live in `.maestro/flows/` and run against a **local or staging backend** with cookie-session auth.
 
 ### Prerequisites

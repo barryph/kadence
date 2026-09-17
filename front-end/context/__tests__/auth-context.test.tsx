@@ -432,7 +432,7 @@ describe('AuthProvider account deletion', () => {
     // No identifier is ever sent to the backend.
     expect(mockDeleteAccount).toHaveBeenCalledWith();
     expect(await screen.findByText('logged out')).toBeTruthy();
-    // The account is gone, so its queued offline activity goes with it.
+    // The account is gone, so its locally stored activity queue goes with it.
     expect(mockClearActivityQueue).toHaveBeenCalledWith(testUser.id);
   });
 
@@ -548,8 +548,10 @@ describe('AuthProvider account deletion', () => {
     });
 
     expect(await screen.findByText('Not authenticated')).toBeTruthy();
-    // A session ending is not account deletion: the offline queue is the
-    // user's data and must survive so it can sync after signing in again.
+    // A session ending is not account deletion: the local activity queue is
+    // the user's selection state and must survive so it is still there when
+    // they sign back in. (Offline writes are not queued: the app expects a
+    // connection while it is used.)
     expect(mockClearActivityQueue).not.toHaveBeenCalled();
   });
 

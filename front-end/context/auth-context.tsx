@@ -197,9 +197,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * The disconnect itself is best-effort — the app holds no Google API scopes
    * beyond OIDC identity, and failures must not block account deletion.
    *
-   * On success all local auth state and the user's offline queue are cleared;
-   * the navigation guard then redirects to the login screen. Throws `ApiError`
-   * on failure so the UI can surface the reason; the account is left intact.
+   * On success all local auth state and the account's locally stored activity
+   * queue are cleared; the navigation guard then redirects to the login screen.
+   * Throws `ApiError` on failure so the UI can surface the reason; the account
+   * is left intact.
    */
   async function deleteAccount(): Promise<void> {
     // Resolved once: the lookup is a network round-trip against an endpoint the

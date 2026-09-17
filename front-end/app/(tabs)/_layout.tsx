@@ -1,12 +1,13 @@
 import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
 
 import { HapticTab } from '@/components/base/haptic-tab';
+import OfflineBanner from '@/components/base/offline-banner';
 import { Colors, Spacing } from '@/constants/theme';
 import BlueBackground from '@/components/backgrounds/blue-background';
 import Logo from '@/components/logo';
@@ -23,21 +24,27 @@ export default function TabLayout() {
     header: () => (
       <SafeAreaView edges={['top']} style={styles.header}>
         <BlueBackground />
-        <Logo />
+        <View style={styles.headerRow}>
+          <Logo />
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Account"
-          hitSlop={8}
-          onPress={() => router.push('/profile')}
-          style={styles.headerButton}
-        >
-          <MaterialIcons
-            name="account-circle"
-            size={24}
-            color={Colors.iconAccent}
-          />
-        </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Account"
+            hitSlop={8}
+            onPress={() => router.push('/profile')}
+            style={styles.headerButton}
+          >
+            <MaterialIcons
+              name="account-circle"
+              size={24}
+              color={Colors.iconAccent}
+            />
+          </Pressable>
+        </View>
+
+        {/* The app is server-backed and queues no writes, so an offline user
+            needs to know before they try to do anything. */}
+        <OfflineBanner />
       </SafeAreaView>
     ),
   };
@@ -151,6 +158,8 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   header: {
     paddingVertical: Spacing.lg,
+  },
+  headerRow: {
     paddingHorizontal: 15,
     flexDirection: 'row',
     justifyContent: 'space-between',

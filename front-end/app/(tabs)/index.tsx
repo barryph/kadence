@@ -86,6 +86,14 @@ const ACTIVITY_SECTIONS = [
 ] as const;
 
 /**
+ * Step titles and count are fixed for the home guide. Kept at module scope so
+ * the onboarding analytics effect depends only on whether the guide is open,
+ * instead of a fresh array identity on every render.
+ */
+const HOME_GUIDE_STEP_NAMES = HOME_GUIDE_STEPS.map((step) => step.title);
+const HOME_GUIDE_STEP_COUNT = HOME_GUIDE_STEPS.length;
+
+/**
  * Explanation shown when a swipe-to-complete fails. Connectivity gets its own
  * wording because "check your connection" is actionable only when the device
  * actually knows it has no connection.
@@ -144,19 +152,19 @@ function DashboardContent({ userId }: { userId: string }) {
   // --- Onboarding funnel analytics -------------------------------------------
   // The guide IS onboarding. We measure: start, per-step view, per-step
   // completion, completion, and skip (dismissal without finishing).
-  const stepCount = HOME_GUIDE_STEPS.length;
-  const stepNames = HOME_GUIDE_STEPS.map((s) => s.title);
+  const stepCount = HOME_GUIDE_STEP_COUNT;
   // Index of the step currently (or last) being viewed, so we can derive
   // "step complete" whenever the user moves forward.
   const viewedStepRef = useRef(0);
 
-  // Guide opened → funnel starts on the first step.
+  // Guide opened → funnel starts on the first step. `HOME_GUIDE_STEP_NAMES`
+  // and `stepCount` are module constants, so this fires once per open.
   useEffect(() => {
     if (!guide.isOpen) return;
     viewedStepRef.current = 0;
     logOnboardingStart('home');
-    logOnboardingStepView(0, stepNames[0] ?? '', stepCount);
-  }, [guide.isOpen, stepCount, stepNames]);
+    logOnboardingStepView(0, HOME_GUIDE_STEP_NAMES[0] ?? '', stepCount);
+  }, [guide.isOpen, stepCount]);
 
   function handleOnboardingStepChange(index: number) {
     if (index > viewedStepRef.current) {
@@ -164,7 +172,7 @@ function DashboardContent({ userId }: { userId: string }) {
       logOnboardingStepComplete(viewedStepRef.current, stepCount);
     }
     viewedStepRef.current = index;
-    logOnboardingStepView(index, stepNames[index] ?? '', stepCount);
+    logOnboardingStepView(index, HOME_GUIDE_STEP_NAMES[index] ?? '', stepCount);
   }
 
   function handleOnboardingDismiss() {

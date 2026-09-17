@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Dimensions, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
@@ -146,14 +146,23 @@ export function GuideModalBody({
   const page = useSharedValue(0);
   const pillX = useSharedValue(0);
 
+  // Held in a ref so the reset effect below can depend on `visible` alone.
+  // Hosts pass a fresh callback identity on every render (it is a plain
+  // function inside their component), and depending on it reset the guide to
+  // step one every time the host re-rendered - the initial queries settling,
+  // a focus refetch or the midnight `today` update was enough to yank the user
+  // back mid-onboarding.
+  const onStepChangeRef = useRef(onStepChange);
+  onStepChangeRef.current = onStepChange;
+
   // Reset to the first step each time the guide is (re)opened — keyed on the
   // `visible` flag. Shared values stay live across reopens.
   useEffect(() => {
     if (!visible) return;
     setActiveIndex(0);
     bumpMediaKey(0);
-    onStepChange?.(0);
-  }, [visible, onStepChange]);
+    onStepChangeRef.current?.(0);
+  }, [visible]);
 
   // Mirror the reset into the animation values (deps listed so `react-hooks`
   // is satisfied; the shared objects keep a stable identity in production).

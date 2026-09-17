@@ -3,15 +3,21 @@ env:
   TEST_EMAIL: ${TEST_EMAIL || "test@kadence.dev"}
   TEST_PASSWORD: ${TEST_PASSWORD || "testpassword123"}
 ---
-- launchApp
+# A clean launch makes this flow deterministic: it always exercises signed-out
+# -> sign-in rather than depending on whatever session was left behind.
+- launchApp:
+    clearState: true
 - runFlow:
     when:
       visible: "Login!"
     file: subflows/login.yaml
-- assertVisible: "Activities In Motion"
+- assertVisible: "Activities Center"
 - tapOn: "Timeline"
-- assertVisible: "RUN"
+# The timeline's month navigation renders on every load, data or not.
+- assertVisible: "←"
 - tapOn: "Categories"
-- assertVisible: "Categories"
-- tapOn: "Home"
-- assertVisible: "Activities In Motion"
+- assertVisible: "Create Category"
+- tapOn: "Goals"
+- assertVisible: "Monitor Your Frequency"
+- tapOn: "Activities"
+- assertVisible: "Activities Center"

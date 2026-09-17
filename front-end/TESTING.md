@@ -92,10 +92,13 @@ Maestro flows live in `.maestro/flows/` and run against a **local or staging bac
    cd ../back-end
    pnpm run start:dev
    ```
-2. **Test user** seeded in the database (`test@kadence.dev` / `testpassword123`, or override via env vars)
+2. **Test user** registered in the database (`test@kadence.dev` / `testpassword123`, or override via env vars). The seed only creates `test@mail.com`, so register this account first.
 3. **App built and installed** on emulator/device (dev client or release build)
 4. **Maestro CLI** installed: https://maestro.mobile.dev/docs/getting-started
 5. **`EXPO_PUBLIC_SERVER_URL`** pointing at the backend (see `.env.example`)
+
+The flows target the **preview** build (`com.codecompletelabs.kadence.preview`);
+change `appId` in `.maestro/flows/*.yaml` if you are testing another variant.
 
 ### Running flows
 
@@ -113,14 +116,19 @@ maestro test .maestro/flows/login-logout.yaml
 TEST_EMAIL=user@example.com TEST_PASSWORD=secret pnpm run test:maestro
 ```
 
+`smoke-tabs` and `login-logout` launch with `clearState: true`, so they always
+start signed out and are safe to re-run. `launchApp` without `clearState` (the
+other two) keeps the installed app's state, so they do not re-trigger the
+first-run guide.
+
 ### Flows
 
 | Flow | File | Validates |
 |------|------|-----------|
-| Tab smoke | `smoke-tabs.yaml` | Launch, login, Home/Timeline/Categories render |
-| Auth session | `login-logout.yaml` | Login → Home → account page logout → Login |
+| Tab smoke | `smoke-tabs.yaml` | Launch, login, Home/Timeline/Categories/Goals render |
+| Auth session | `login-logout.yaml` | Login → Home → profile → logout → Login |
 | Activity lifecycle | `create-complete-activity.yaml` | Create activity → appears on Home |
-| Timeline toggle | `timeline-toggle.yaml` | Timeline grid loads, cell interaction |
+| Timeline toggle | `timeline-toggle.yaml` | Timeline loads, month navigation works |
 
 ### CI note
 

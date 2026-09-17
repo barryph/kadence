@@ -1,3 +1,8 @@
+appId: com.codecompletelabs.kadence
+env:
+  TEST_EMAIL: ${TEST_EMAIL || "test@kadence.dev"}
+  TEST_PASSWORD: ${TEST_PASSWORD || "testpassword123"}
+---
 - tapOn:
     id: "menu-button"
     optional: true

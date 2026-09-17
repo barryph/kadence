@@ -66,7 +66,7 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
     ),
   },
   {
-    title: 'Queue activitites',
+    title: 'Queue activities',
     description:
       'Tap an activity to queue it. Queued activities move to the top.',
     media: (

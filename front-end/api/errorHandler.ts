@@ -32,7 +32,9 @@ class ErrorMapper {
 
     // Generic errors
     GENERIC_ERROR: 'Something went wrong, please try again.',
-    NETWORK_ERROR: 'Something went wrong, please try again.',
+    // Matches the wording the API client uses when a request never reached the
+    // server, so the same failure is not described two different ways.
+    NETWORK_ERROR: 'Network error. Please check your connection.',
   };
 
   mapError(serverError: ServerError, httpStatus?: number): AppError {
@@ -59,7 +61,7 @@ class ErrorMapper {
     return {
       code: ErrorCode.GENERIC_ERROR,
       message:
-        serverError.message || 'An unexpected error occured. Please try again.',
+        serverError.message || 'An unexpected error occurred. Please try again.',
     };
   }
 }

@@ -87,7 +87,7 @@ describe('errorMapper', () => {
       message: '',
     });
     expect(result.message).toBe(
-      'An unexpected error occured. Please try again.',
+      'An unexpected error occurred. Please try again.',
     );
   });
 });

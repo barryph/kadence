@@ -6,6 +6,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react-native';
+import { BackHandler } from 'react-native';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { TestSafeAreaProvider } from '@/test/setup/test-safe-area';
 import EditActivityPage from '@/app/(tabs)/activities/edit/[id]';
@@ -67,12 +68,25 @@ function renderEditPage() {
 }
 
 function queryActivity(id: string) {
-  return { data: id === '1' ? squats : reading, isPending: false, isError: false };
+  return {
+    data: id === '1' ? squats : reading,
+    isPending: false,
+    isError: false,
+  };
 }
 
 describe('Edit Activity page', () => {
+  let backHandlerSpy: jest.SpyInstance;
+
   beforeEach(() => {
-    mockUseActivityQuery.mockReturnValue({ data: undefined, isPending: true, isError: false });
+    // Wraps the real implementation so the tests can inspect (and invoke) the
+    // handler the unsaved-changes guard registers.
+    backHandlerSpy = jest.spyOn(BackHandler, 'addEventListener');
+    mockUseActivityQuery.mockReturnValue({
+      data: undefined,
+      isPending: true,
+      isError: false,
+    });
     mockUseCategoriesQuery.mockReturnValue({
       data: categories,
       isPending: false,
@@ -83,6 +97,51 @@ describe('Edit Activity page', () => {
     mockUseFocusEffect.mockImplementation(() => {});
     mockUseEditActivityMutation.mockReturnValue({ mutateAsync: jest.fn() });
     (useLocalSearchParams as jest.Mock).mockReturnValue({ id: '1' });
+  });
+
+  afterEach(() => {
+    backHandlerSpy.mockRestore();
+  });
+
+  it('asks before leaving when the form has unsaved edits', async () => {
+    mockUseActivityQuery.mockReturnValue(queryActivity('1'));
+
+    await renderEditPage();
+    await waitFor(() =>
+      expect(screen.getByDisplayValue('Squats')).toBeTruthy(),
+    );
+
+    // Edit a field so the guard arms, then press the hardware back button.
+    await fireEvent.changeText(screen.getByDisplayValue('Squats'), 'Squats!');
+
+    const handler = (BackHandler.addEventListener as jest.Mock).mock.calls.find(
+      ([event]) => event === 'hardwareBackPress',
+    )?.[1] as (() => boolean) | undefined;
+
+    expect(handler).toBeDefined();
+    await act(async () => {
+      expect(handler!()).toBe(true);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Discard changes?')).toBeTruthy();
+    });
+  });
+
+  it('does not intercept back when nothing has been edited', async () => {
+    mockUseActivityQuery.mockReturnValue(queryActivity('1'));
+
+    await renderEditPage();
+    await waitFor(() =>
+      expect(screen.getByDisplayValue('Squats')).toBeTruthy(),
+    );
+
+    const handler = (BackHandler.addEventListener as jest.Mock).mock.calls.find(
+      ([event]) => event === 'hardwareBackPress',
+    );
+
+    expect(handler).toBeUndefined();
+    expect(screen.queryByText('Discard changes?')).toBeNull();
   });
 
   it('populates the form from the current activity', async () => {

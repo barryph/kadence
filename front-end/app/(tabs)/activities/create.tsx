@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,6 +13,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import AlertError from '@/components/alerts/alert-error';
 import Background from '@/components/backgrounds/background';
 import Button from '@/components/base/button';
+import DiscardChangesModal from '@/components/activities/discard-changes-modal';
 import { ThemedText } from '@/components/base/themed-text';
 import { Colors, Spacing } from '@/constants/theme';
 import { useActivityForm } from '@/components/activities/use-activity-form';
@@ -25,6 +26,7 @@ import ActivityGoalField from '@/components/goals/activity-goal-field';
 import { ActivityFormValues } from '@/components/activities/activity-schema';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useCreateActivityMutation } from '@/hooks/mutations/use-activity-mutations';
+import { useUnsavedChangesGuard } from '@/hooks/use-unsaved-changes-guard';
 import { formatDateISO } from '@/utils/date';
 import { ApiError } from '@/lib/query/unwrap';
 import { goBackOrHome } from '@/lib/navigation/back';
@@ -35,6 +37,17 @@ export default function CreateActivityPage() {
   const form = useActivityForm();
   const { data: categories = [] } = useCategoriesQuery();
   const createActivity = useCreateActivityMutation();
+
+  // Leaving with a half-filled form (hardware back, or the header arrow) asks
+  // first; discarding resets so the draft cannot reappear on the next visit.
+  const discardAndLeave = useCallback(() => {
+    form.reset();
+    goBackOrHome(router);
+  }, [form, router]);
+  const leaveGuard = useUnsavedChangesGuard(
+    form.formState.isDirty,
+    discardAndLeave,
+  );
 
   async function handleSubmit(values: ActivityFormValues) {
     setErrorMessage(null);
@@ -73,7 +86,7 @@ export default function CreateActivityPage() {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.topRow}>
-            <Pressable onPress={() => goBackOrHome(router)} hitSlop={8}>
+            <Pressable onPress={leaveGuard.requestLeave} hitSlop={8}>
               <Ionicons
                 name="arrow-back"
                 size={27}
@@ -109,6 +122,12 @@ export default function CreateActivityPage() {
           </Button>
         </KeyboardAvoidingView>
       </ScrollView>
+
+      <DiscardChangesModal
+        visible={leaveGuard.isConfirmVisible}
+        onKeepEditing={leaveGuard.cancelLeave}
+        onDiscard={leaveGuard.confirmLeave}
+      />
     </View>
   );
 }

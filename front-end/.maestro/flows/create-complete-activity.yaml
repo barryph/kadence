@@ -1,4 +1,4 @@
-appId: com.codecompletelabs.kadence
+appId: com.codecompletelabs.kadence.preview
 env:
   TEST_EMAIL: ${TEST_EMAIL || "test@kadence.dev"}
   TEST_PASSWORD: ${TEST_PASSWORD || "testpassword123"}

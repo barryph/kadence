@@ -149,9 +149,7 @@ export function GuideModalBody({
   // Held in a ref so the reset effect below can depend on `visible` alone.
   // Hosts pass a fresh callback identity on every render (it is a plain
   // function inside their component), and depending on it reset the guide to
-  // step one every time the host re-rendered - the initial queries settling,
-  // a focus refetch or the midnight `today` update was enough to yank the user
-  // back mid-onboarding.
+  // step one every time the host re-rendered.
   const onStepChangeRef = useRef(onStepChange);
   onStepChangeRef.current = onStepChange;
 

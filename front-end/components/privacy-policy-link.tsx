@@ -32,7 +32,6 @@ export default function PrivacyPolicyLink({ style }: PrivacyPolicyLinkProps) {
       Toast.show({
         type: 'error',
         text1: "Couldn't open the Privacy Policy",
-        text2: 'Please try again from a browser.',
       });
     }
   }

@@ -38,8 +38,7 @@ export default function CreateActivityPage() {
   const { data: categories = [] } = useCategoriesQuery();
   const createActivity = useCreateActivityMutation();
 
-  // Leaving with a half-filled form (hardware back, or the header arrow) asks
-  // first; discarding resets so the draft cannot reappear on the next visit.
+  // Asks user if they are sure before leaving a half-filled form
   const discardAndLeave = useCallback(() => {
     form.reset();
     goBackOrHome(router);

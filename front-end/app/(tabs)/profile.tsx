@@ -35,7 +35,7 @@ function Profile() {
           type: 'error',
           text1: 'Signed out on this device',
           text2:
-            "We couldn't reach the server, so this account may still be signed in elsewhere.",
+            "We couldn't reach the server, but you have been signed out on this device.",
         });
       }
     } catch {

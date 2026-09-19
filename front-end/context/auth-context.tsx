@@ -76,9 +76,8 @@ interface AuthProviderProps {
 
 export interface LogoutResult {
   /**
-   * True when the device signed out locally but the server could not be told,
-   * so the server-side session may still be active until the next launch ends
-   * it. The caller surfaces this; the local sign-out is unaffected.
+   * True when the device signed out locally but the server could not be reached,
+   * so the server-side session may still be active.
    */
   serverSignOutFailed: boolean;
 }
@@ -122,8 +121,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(true);
     try {
       // An earlier sign-out could not reach the server, so its session cookie
-      // is still valid. Never restore that session: finish the sign-out if the
-      // server is reachable now, and stay signed out either way.
+      // may still be valid. Never restore that session: finish the sign-out if
+      // the server is reachable now, and stay signed out either way.
       if (await isSignOutPending()) {
         const signOut = await authAPI.logout();
         if (!signOut.error) {
@@ -170,12 +169,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   /**
    * The server can end a session while the app is running: it expired, it was
-   * signed out on another device, or a password reset revoked it — and a bare
+   * signed out on another device, or a password reset revoked it, and a bare
    * 401 (no usable session presented at all) is reported the same way. The
    * credential is already dead, so clear the auth state and let the navigation
-   * guard send the user back to sign-in. Local device data is kept: it is this
-   * account's selection state, and clearing it would discard the user's list for
-   * no reason. (Offline *writes* are not queued; the app expects a connection.)
+   * guard send the user back to sign-in.
    * The `isAuthenticated` guard keeps the boot-time `getCurrentUser` 401 from
    * disturbing a fresh, signed-out launch.
    */
@@ -250,8 +247,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * The disconnect itself is best-effort — the app holds no Google API scopes
    * beyond OIDC identity, and failures must not block account deletion.
    *
-   * On success all local auth state and the account's locally stored activity
-   * queue are cleared; the navigation guard then redirects to the login screen.
+   * On success the navigation guard then redirects to the login screen.
    * Throws `ApiError` on failure so the UI can surface the reason; the account
    * is left intact.
    */

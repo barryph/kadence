@@ -30,7 +30,7 @@ export function RootLayoutNav() {
   // the emailed `kadence://reset-password?token=...` link, and bouncing a
   // signed-in user to home would discard the single-use token without ever
   // showing the form.
-  const isResetPassword = segments[0] === 'reset-password';
+  const isResetPasswordScreen = segments[0] === 'reset-password';
 
   useEffect(() => {
     if (isLoading) return;
@@ -40,7 +40,7 @@ export function RootLayoutNav() {
     // would land on a form that cannot succeed. Stay put and offer a retry.
     if (isConnectionError && !isAuthenticated) return;
 
-    if (!isAuthenticated && !isAuthScreen && !isResetPassword) {
+    if (!isAuthenticated && !isAuthScreen && !isResetPasswordScreen) {
       router.replace('/login');
     } else if (isAuthenticated && isAuthScreen) {
       router.replace('/');
@@ -54,7 +54,7 @@ export function RootLayoutNav() {
     segments,
     router,
     isAuthScreen,
-    isResetPassword,
+    isResetPasswordScreen,
   ]);
 
   if (isConnectionError && !isAuthenticated) {

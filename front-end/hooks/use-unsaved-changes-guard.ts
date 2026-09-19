@@ -15,10 +15,8 @@ export interface UnsavedChangesGuard {
 /**
  * Guards leaving a form with unsaved edits.
  *
- * Android's hardware back would otherwise walk out of a half-filled activity
- * form with no warning (the create/edit screens live inside the tab navigator
- * and stay mounted, so the draft was silently kept and could later be saved as
- * if it were the current edit). While the form is dirty, back opens a
+ * Leaving would otherwise abandon of a half-filled activity
+ * form with no warning. While the form is dirty, back opens a
  * confirmation instead; confirming resets the form and then runs `onLeave`.
  *
  * The caller must use `requestLeave` for its own back control too, and render a

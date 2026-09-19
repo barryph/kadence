@@ -111,12 +111,9 @@ class APIClient {
       };
     }
 
-    // React Native's Android networking is built on OkHttp with connect/read
-    // timeouts of 0, i.e. "wait forever". A connection that is accepted but
-    // never answered (captive portal, half-open socket, a proxy that stalled)
-    // therefore never settles, and anything awaiting it - including the boot
-    // session check - hangs indefinitely instead of failing. Bound every
-    // request instead and report the timeout as a network failure.
+    // React Native's networking will by default "wait forever".
+    //  A connection that is accepted but never answered hangs indefinitely
+    //  instead of failing. Bound every request instead and report the timeout as a network failure.
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     const externalSignal = options.signal;

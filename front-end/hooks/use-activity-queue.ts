@@ -49,10 +49,10 @@ export function useActivityQueue(userId: string) {
         setQueuedIds(next);
       })
       .catch((error) => {
-        // The stored selection could not be read (unavailable or corrupt
-        // storage). That is not a reason to block the screen: the activities
-        // themselves come from the server, so continue with an empty queue
-        // rather than leaving the dashboard on a loader forever.
+        // The stored "actitivity queue status" could not be read. That is not a
+        // reason to block the screen: the activities themselves come from the
+        // server, so continue with an empty queue rather than leaving the
+        // dashboard on a loader forever.
         console.error('Failed to load the activity queue', error);
       })
       .finally(() => {
@@ -69,8 +69,8 @@ export function useActivityQueue(userId: string) {
     return {
       queuedIds: new Set<number>(),
       isHydrated: false,
-      toggleQueuedActivity: () => {},
-      removeFromQueue: () => {},
+      toggleQueuedActivity: () => { },
+      removeFromQueue: () => { },
     };
   }
 

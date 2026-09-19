@@ -92,15 +92,14 @@ const ACTIVITY_SECTIONS = [
 ] as const;
 
 /**
- * Step titles and count are fixed for the home guide. Kept at module scope so
- * the onboarding analytics effect depends only on whether the guide is open,
- * instead of a fresh array identity on every render.
+ * Step titles and count are fixed. Kept at module scope so
+ * the onboarding analytics effect depends only on whether the guide is open.
  */
 const HOME_GUIDE_STEP_NAMES = HOME_GUIDE_STEPS.map((step) => step.title);
 const HOME_GUIDE_STEP_COUNT = HOME_GUIDE_STEPS.length;
 
 /**
- * Explanation shown when a swipe-to-complete fails. Connectivity gets its own
+ * Message shown when a swipe-to-complete fails. Connectivity gets its own
  * wording because "check your connection" is actionable only when the device
  * actually knows it has no connection.
  */
@@ -225,11 +224,6 @@ function DashboardContent({ userId }: { userId: string }) {
         text1: 'Activity Completed',
       });
     } catch (error) {
-      // A completion is never applied optimistically, so the row is still
-      // showing the activity as incomplete and it stays in the local queue —
-      // i.e. the UI already reflects the real state. What was missing was any
-      // sign that the swipe failed, so the user is told instead of being left
-      // with a success-looking haptic and no recorded completion.
       console.error('Error completing activity', error);
       Toast.show({
         type: 'error',

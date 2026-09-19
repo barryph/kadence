@@ -14,9 +14,9 @@ const RETRYABLE_ERROR_CODES = new Set<TErrorCode>([
 ]);
 
 /**
- * Retries only transient failures.
+ * Retries only certain response codes.
  *
- * Retrying a definitive rejection is wasted time and a worse error experience:
+ * Retrying a definitive rejection is wasted time, and a worse user experience:
  * it delays the message by the backoff, and for a 401 it re-broadcasts
  * "session ended" on every attempt.
  */

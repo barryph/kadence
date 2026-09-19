@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, Link } from 'expo-router';
+import { Redirect, useRouter, Link } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
 import Input from '@/components/base/input';
 import Button from '@/components/base/button';
@@ -36,6 +36,13 @@ export default function RegisterScreen() {
       passwordConfirm: '',
     },
   });
+
+  // A signed-in user belongs in the app, not on the sign-up form. The guard
+  // lives on the screen so it cannot misjudge another route: `AuthProvider`
+  // holds this screen back until the session restore finishes.
+  if (authContext.isAuthenticated) {
+    return <Redirect href="/" />;
+  }
 
   async function onSubmit({
     email,

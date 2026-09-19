@@ -6,7 +6,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react-native';
-import { Stack, useSegments } from 'expo-router';
+import { Stack } from 'expo-router';
 import { RootLayoutNav } from '@/components/root-layout-nav';
 import { mockReplace } from '@/test/setup/navigation-mocks';
 import { resetMockAuth, setMockAuth } from '@/test/setup/mock-auth';
@@ -15,87 +15,26 @@ jest.mock('@/context/auth-context', () =>
   require('@/test/setup/mock-auth').createAuthContextMock(),
 );
 
-describe('RootLayoutNav auth gate', () => {
+/**
+ * The root layout owns the stack and the "session could not be restored" case
+ * only. Auth gating lives on the routes: `(tabs)` sends signed-out users to
+ * sign-in, and the sign-in screens send signed-in users home. A root gate that
+ * read `useSegments()` broke cold-start deep links on Android, so these tests
+ * pin that the layout never redirects on its own.
+ */
+describe('RootLayoutNav', () => {
   beforeEach(() => {
     mockReplace.mockClear();
     resetMockAuth();
-    (useSegments as jest.Mock).mockReturnValue([]);
     // Emit a sentinel from Stack.Screen so tests can observe whether the
-    // protected navigator is actually mounted (the default mock renders nothing).
+    // navigator is actually mounted (the default mock renders nothing).
     (Stack as any).Screen = function StackScreenSentinel() {
       return React.createElement(Text, null, 'stack-screen');
     };
   });
 
-  it('redirects unauthenticated users to login', async () => {
+  it('mounts the navigator for a signed-out user', async () => {
     setMockAuth({ isAuthenticated: false, isLoading: false, user: null });
-    (useSegments as jest.Mock).mockReturnValue(['(tabs)']);
-
-    await render(<RootLayoutNav />);
-
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/login');
-    });
-  });
-
-  it('does not redirect while loading', async () => {
-    setMockAuth({ isAuthenticated: false, isLoading: true, user: null });
-    (useSegments as jest.Mock).mockReturnValue(['(tabs)']);
-
-    await render(<RootLayoutNav />);
-
-    await waitFor(() => {
-      expect(mockReplace).not.toHaveBeenCalled();
-    });
-  });
-
-  it('redirects authenticated users away from auth screens', async () => {
-    setMockAuth({ isAuthenticated: true, isLoading: false });
-    (useSegments as jest.Mock).mockReturnValue(['login']);
-
-    await render(<RootLayoutNav />);
-
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/');
-    });
-  });
-
-  it('allows unauthenticated users on auth screens', async () => {
-    setMockAuth({ isAuthenticated: false, isLoading: false, user: null });
-    (useSegments as jest.Mock).mockReturnValue(['login']);
-
-    await render(<RootLayoutNav />);
-
-    await waitFor(() => {
-      expect(mockReplace).not.toHaveBeenCalled();
-    });
-  });
-
-  it('keeps the navigator mounted when the session is invalidated on a protected route', async () => {
-    // Logged in on a protected route (e.g. account deletion from the profile
-    // screen): the gate is ready and the Stack is rendered.
-    setMockAuth({ isAuthenticated: true, isLoading: false });
-    (useSegments as jest.Mock).mockReturnValue(['(tabs)']);
-
-    const { getAllByText, rerender } = await render(<RootLayoutNav />);
-    await waitFor(() => {
-      expect(getAllByText('stack-screen').length).toBeGreaterThan(0);
-    });
-
-    // Session invalidated: the navigator must stay mounted while the gate
-    // redirects, or the replace action is dropped as unhandled.
-    setMockAuth({ isAuthenticated: false, isLoading: false, user: null });
-    rerender(<RootLayoutNav />);
-
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/login');
-    });
-    expect(getAllByText('stack-screen').length).toBeGreaterThan(0);
-  });
-
-  it('renders protected screens when authenticated on a protected route', async () => {
-    setMockAuth({ isAuthenticated: true, isLoading: false });
-    (useSegments as jest.Mock).mockReturnValue(['(tabs)']);
 
     const { getAllByText } = await render(<RootLayoutNav />);
 
@@ -104,23 +43,18 @@ describe('RootLayoutNav auth gate', () => {
     });
   });
 
-  it('leaves the reset-password link reachable for a signed-in user', async () => {
-    // Opening the emailed link while a session exists on this device must show
-    // the form, not redirect home and silently drop the single-use token.
+  it('mounts the navigator for a signed-in user', async () => {
     setMockAuth({ isAuthenticated: true, isLoading: false });
-    (useSegments as jest.Mock).mockReturnValue(['reset-password']);
 
     const { getAllByText } = await render(<RootLayoutNav />);
 
     await waitFor(() => {
       expect(getAllByText('stack-screen').length).toBeGreaterThan(0);
     });
-    expect(mockReplace).not.toHaveBeenCalled();
   });
 
-  it('leaves the reset-password link reachable when signed out', async () => {
+  it('never redirects on its own; the routes own their guards', async () => {
     setMockAuth({ isAuthenticated: false, isLoading: false, user: null });
-    (useSegments as jest.Mock).mockReturnValue(['reset-password']);
 
     await render(<RootLayoutNav />);
 
@@ -132,7 +66,7 @@ describe('RootLayoutNav auth gate', () => {
   it('offers a retry instead of the login screen when the session cannot be restored', async () => {
     // Offline boot: the server was unreachable, so we do not know whether the
     // user is signed in. Sending them to login would be wrong - signing in
-    // needs the same server - so the gate shows a retryable error.
+    // needs the same server - so the layout shows a retryable error.
     const retrySessionRestore = jest.fn();
     setMockAuth({
       isAuthenticated: false,
@@ -141,16 +75,12 @@ describe('RootLayoutNav auth gate', () => {
       isConnectionError: true,
       retrySessionRestore,
     });
-    (useSegments as jest.Mock).mockReturnValue(['(tabs)']);
 
     await render(<RootLayoutNav />);
 
     const retry = await screen.findByText('Try again');
-    await waitFor(() => {
-      expect(mockReplace).not.toHaveBeenCalled();
-    });
-
     await fireEvent.press(retry);
     expect(retrySessionRestore).toHaveBeenCalledTimes(1);
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 });

@@ -143,7 +143,7 @@ describe('Session rolling renewal (e2e)', () => {
 
       // A renewal must never invalidate the session other requests are using.
       const afterwards = await agent.get(PROTECTED_PROBE).expect(200);
-      expect(afterwards.body).toEqual({ myData: 'this is a secret' });
+      expect(afterwards.body).toEqual({ data: { activities: [] } });
     });
 
     it('does not let a client talk its way past the absolute cap', async () => {

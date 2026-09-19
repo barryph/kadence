@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from 'expo-router';
+import { Redirect, Tabs, useRouter } from 'expo-router';
 import React from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,12 +8,23 @@ import Feather from '@expo/vector-icons/Feather';
 
 import { HapticTab } from '@/components/base/haptic-tab';
 import OfflineBanner from '@/components/base/offline-banner';
+import { useAuth } from '@/context/auth-context';
 import { Colors, Spacing } from '@/constants/theme';
 import BlueBackground from '@/components/backgrounds/blue-background';
 import Logo from '@/components/logo';
 
 export default function TabLayout() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+
+  // Guard the protected group at the group itself: this layout only renders
+  // when one of its routes is the current one, so a deep link elsewhere (e.g.
+  // `reset-password`) can never be misread as a protected route and bounced.
+  // `AuthProvider` withholds it until the session restore finishes, so
+  // `isAuthenticated` is never a guess.
+  if (!isAuthenticated) {
+    return <Redirect href="/login" />;
+  }
 
   const headerOptions = {
     headerShown: true,

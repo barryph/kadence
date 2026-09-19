@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Pressable, Text } from 'react-native';
 import {
   fireEvent,
   render,
@@ -92,6 +92,42 @@ describe('GuideModalBody', () => {
     await render(<GuideModalBody steps={steps} onClose={jest.fn()} />);
 
     expect(screen.getAllByLabelText(/Go to step/).length).toBe(steps.length);
+  });
+
+  it('keeps the active step when the host re-renders with a new callback', async () => {
+    // The host (the Home screen) passes a plain function for `onStepChange`,
+    // so every host render produces a new identity. That must not be treated
+    // as "the guide was reopened": doing so reset the user to step one on
+    // every background refetch.
+    function Host() {
+      const [, setTick] = useState(0);
+
+      return (
+        <>
+          <Pressable
+            accessibilityLabel="rerender host"
+            onPress={() => setTick((tick) => tick + 1)}
+          >
+            <Text>rerender</Text>
+          </Pressable>
+          <GuideModalBody
+            steps={steps}
+            onClose={jest.fn()}
+            onStepChange={() => {}}
+          />
+        </>
+      );
+    }
+
+    await render(<Host />);
+
+    await pressLabel('Go to next step');
+    await waitFor(() => expect(screen.getByText('Step 2 of 3')).toBeTruthy());
+
+    await fireEvent.press(screen.getByLabelText('rerender host'));
+
+    await waitFor(() => expect(screen.getByText('Step 2 of 3')).toBeTruthy());
+    expect(screen.queryByText('Step 1 of 3')).toBeNull();
   });
 });
 

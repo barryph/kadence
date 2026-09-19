@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { createTestApp, closeTestApp } from '../helpers/create-test-app';
+import { PROTECTED_PROBE } from '../helpers/protected-probe';
 import {
   createUserPayload,
   registerAndLogin,
@@ -87,7 +88,7 @@ describe('Auth (e2e)', () => {
       .send({ token: rawToken, password: 'newpassword123' })
       .expect(200);
 
-    await session.agent.get('/users/protec').expect(401);
+    await session.agent.get(PROTECTED_PROBE).expect(401);
 
     const loginAgent = request.agent(app.getHttpServer());
     await loginAgent

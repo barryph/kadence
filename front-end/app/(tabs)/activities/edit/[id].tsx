@@ -26,9 +26,11 @@ import ActivityGoalField from '@/components/goals/activity-goal-field';
 import { ActivityFormValues } from '@/components/activities/activity-schema';
 import Skeleton from '@/components/ui/skeleton';
 import DeleteActivityModal from '@/components/activities/delete-activity-modal';
+import DiscardChangesModal from '@/components/activities/discard-changes-modal';
 import { useActivityQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useEditActivityMutation } from '@/hooks/mutations/use-activity-mutations';
+import { useUnsavedChangesGuard } from '@/hooks/use-unsaved-changes-guard';
 import { ApiError } from '@/lib/query/unwrap';
 import { goBackOrHome } from '@/lib/navigation/back';
 
@@ -97,6 +99,19 @@ export default function EditActivityPage() {
 
   const formReady =
     !isString(activityId) || initializedForId === String(activityId);
+
+  // Leaving with unsaved edits asks first. Discarding clears the initialization
+  // guard so the effect above restores the server's values: this screen stays
+  // mounted as a tab, and an abandoned draft would otherwise be saved later as
+  // if it were the current edit.
+  const discardAndLeave = useCallback(() => {
+    setInitializedForId(null);
+    goBackOrHome(router);
+  }, [router]);
+  const leaveGuard = useUnsavedChangesGuard(
+    form.formState.isDirty,
+    discardAndLeave,
+  );
 
   async function handleSubmit(values: ActivityFormValues) {
     if (!isString(activityId)) {
@@ -170,7 +185,12 @@ export default function EditActivityPage() {
         >
           <View style={styles.topRow}>
             <View style={styles.titleRow}>
-              <Pressable onPress={() => goBackOrHome(router)}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Go back"
+                onPress={leaveGuard.requestLeave}
+                hitSlop={8}
+              >
                 <Ionicons
                   name="arrow-back"
                   size={27}
@@ -287,6 +307,12 @@ export default function EditActivityPage() {
           setIsDeleteModalVisible(false);
           goBackOrHome(router);
         }}
+      />
+
+      <DiscardChangesModal
+        visible={leaveGuard.isConfirmVisible}
+        onKeepEditing={leaveGuard.cancelLeave}
+        onDiscard={leaveGuard.confirmLeave}
       />
 
       {showSettingsDropdown && (

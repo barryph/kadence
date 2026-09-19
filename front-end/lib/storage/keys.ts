@@ -15,4 +15,10 @@ export const storageKeys = {
    * `first_activity_completed` analytics event).
    */
   userCompletedActivity: (userId: string) => `user-completed:v1:${userId}`,
+  /**
+   * Device-scoped (not per user): set when an explicit sign-out could not reach
+   * the server, so the next launch finishes the sign-out instead of quietly
+   * restoring the still-valid session.
+   */
+  signOutPending: 'sign-out-pending:v1',
 } as const;

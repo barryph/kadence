@@ -62,7 +62,9 @@ describe('activities date scoping', () => {
       </TestQueryProvider>,
     );
 
-    await waitFor(() => expect(screen.getByTestId('days')).toHaveTextContent('2'));
+    await waitFor(() =>
+      expect(screen.getByTestId('days')).toHaveTextContent('2'),
+    );
     expect(mockGetAll).toHaveBeenCalledWith(TODAY);
   });
 
@@ -78,7 +80,9 @@ describe('activities date scoping', () => {
       </TestQueryProvider>,
     );
 
-    await waitFor(() => expect(screen.getByTestId('days')).toHaveTextContent('2'));
+    await waitFor(() =>
+      expect(screen.getByTestId('days')).toHaveTextContent('2'),
+    );
     expect(mockGetAll).toHaveBeenCalledTimes(1);
 
     // Midnight passes: the same screen keeps rendering, but the countdown it
@@ -93,7 +97,9 @@ describe('activities date scoping', () => {
       </TestQueryProvider>,
     );
 
-    await waitFor(() => expect(screen.getByTestId('days')).toHaveTextContent('1'));
+    await waitFor(() =>
+      expect(screen.getByTestId('days')).toHaveTextContent('1'),
+    );
     expect(mockGetAll).toHaveBeenCalledTimes(2);
     expect(mockGetAll).toHaveBeenLastCalledWith(TOMORROW);
   });

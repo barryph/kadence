@@ -1,11 +1,18 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react-native';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react-native';
+import Toast from 'react-native-toast-message';
 import { TestSafeAreaProvider } from '@/test/setup/test-safe-area';
 import { TestQueryProvider } from '@/test/setup/test-query-client';
 import HomeScreen from '@/app/(tabs)/index';
 import { useActivitiesQuery } from '@/hooks/queries/use-activities';
 import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useTimelineQuery } from '@/hooks/queries/use-timeline';
+import { useCompleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { testActivities } from '@/test/setup/fixtures/activities';
 import { testCategories } from '@/test/setup/fixtures/categories';
 import {
@@ -13,18 +20,61 @@ import {
   saveActivityQueue,
 } from '@/lib/storage/activity-queue';
 import { setMockAuth } from '@/test/setup/mock-auth';
+import { ApiError } from '@/lib/query/unwrap';
 import { YYYYMMDD } from '@/utils/date';
 
 jest.mock('@/hooks/queries/use-activities');
 jest.mock('@/hooks/queries/use-categories');
 jest.mock('@/hooks/queries/use-timeline');
+jest.mock('@/hooks/mutations/use-activity-mutations');
 jest.mock('@/context/auth-context', () =>
   require('@/test/setup/mock-auth').createAuthContextMock(),
 );
 
+/**
+ * Swipes are driven by native gestures and worklets that do not run under
+ * jest. The row itself is covered elsewhere, so this stand-in exposes the two
+ * swipe callbacks as pressable controls: that keeps the screen's completion
+ * success/failure handling testable without simulating a pan.
+ */
+jest.mock('@/components/swipe-row', () => {
+  const React = require('react');
+  const { Pressable, Text, View } = require('react-native');
+
+  return {
+    __esModule: true,
+    default: ({
+      children,
+      onSwipeLeft,
+      onSwipeRight,
+    }: {
+      children?: React.ReactNode;
+      onSwipeLeft: () => void;
+      onSwipeRight: () => void;
+    }) =>
+      React.createElement(
+        View,
+        null,
+        React.createElement(
+          Pressable,
+          { accessibilityLabel: 'swipe to complete', onPress: onSwipeRight },
+          React.createElement(Text, null, 'complete'),
+        ),
+        React.createElement(
+          Pressable,
+          { accessibilityLabel: 'swipe to edit', onPress: onSwipeLeft },
+          React.createElement(Text, null, 'edit'),
+        ),
+        children,
+      ),
+  };
+});
+
 const mockUseActivitiesQuery = useActivitiesQuery as jest.Mock;
 const mockUseCategoriesQuery = useCategoriesQuery as jest.Mock;
 const mockUseTimelineQuery = useTimelineQuery as jest.Mock;
+const mockUseCompleteActivityMutation =
+  useCompleteActivityMutation as jest.Mock;
 
 function renderWithProviders(ui: React.ReactElement) {
   return render(
@@ -57,6 +107,10 @@ describe('Home screen', () => {
       isPending: false,
       isError: false,
     });
+    mockUseCompleteActivityMutation.mockReturnValue({
+      mutateAsync: jest.fn().mockResolvedValue({}),
+    });
+    (Toast.show as jest.Mock).mockClear();
   });
 
   it('shows activity list after data loads', async () => {
@@ -151,5 +205,102 @@ describe('Home screen', () => {
     await renderHome();
 
     expect(screen.queryByText('Activities Center')).toBeNull();
+  });
+
+  it('shows an error screen when nothing could be loaded', async () => {
+    mockUseActivitiesQuery.mockReturnValue({
+      data: undefined,
+      isPending: false,
+      isError: true,
+    });
+
+    await renderHome();
+
+    await waitFor(() => {
+      expect(screen.getByText('Unable to load activities.')).toBeTruthy();
+    });
+  });
+
+  it('keeps the cached list when a background refetch fails', async () => {
+    // refetchOnWindowFocus and the date-keyed query rolling over at local
+    // midnight both refetch without the user asking. A failure there must not
+    // replace a populated screen with an error.
+    mockUseActivitiesQuery.mockReturnValue({
+      data: testActivities,
+      isPending: false,
+      isError: true,
+    });
+
+    await renderHome();
+
+    await waitFor(() => {
+      expect(screen.getByText('Activities Center')).toBeTruthy();
+      expect(screen.getByText('Morning Run')).toBeTruthy();
+    });
+    expect(screen.queryByText('Unable to load activities.')).toBeNull();
+  });
+
+  it('reports a successful completion', async () => {
+    const mutateAsync = jest.fn().mockResolvedValue({});
+    mockUseCompleteActivityMutation.mockReturnValue({ mutateAsync });
+
+    await renderHome();
+    await waitFor(() =>
+      expect(screen.getAllByText('Morning Run').length).toBeGreaterThan(0),
+    );
+
+    await fireEvent.press(screen.getAllByLabelText('swipe to complete')[0]);
+
+    await waitFor(() => {
+      expect(mutateAsync).toHaveBeenCalledWith({
+        activityId: expect.any(Number),
+        date: YYYYMMDD(),
+      });
+      expect(Toast.show).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'success' }),
+      );
+    });
+  });
+
+  it('surfaces a failed completion instead of failing silently', async () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    const mutateAsync = jest.fn().mockRejectedValue(
+      new ApiError({
+        code: 'GENERIC_ERROR',
+        message: 'Something went wrong, please try again.',
+      }),
+    );
+    mockUseCompleteActivityMutation.mockReturnValue({ mutateAsync });
+
+    try {
+      await renderHome();
+      await waitFor(() =>
+        expect(screen.getAllByText('Morning Run').length).toBeGreaterThan(0),
+      );
+
+      await fireEvent.press(screen.getAllByLabelText('swipe to complete')[0]);
+
+      await waitFor(() => {
+        expect(Toast.show).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'error',
+            text1: 'Could not complete activity',
+            text2: 'Something went wrong, please try again.',
+          }),
+        );
+      });
+
+      // The completion was never applied, so the activity is still pending and
+      // the failure is visible rather than a phantom success.
+      expect(screen.getByText('Pending')).toBeTruthy();
+      expect(screen.queryByText('Completed')).toBeNull();
+      expect(Toast.show).not.toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'success' }),
+      );
+    } finally {
+      consoleSpy.mockRestore();
+    }
   });
 });

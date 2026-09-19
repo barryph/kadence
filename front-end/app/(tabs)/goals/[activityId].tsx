@@ -27,24 +27,31 @@ export default function GoalInsightsScreen() {
   const { activityId } = useLocalSearchParams();
   const router = useRouter();
   const today = useToday();
+  const goalActivityId = isString(activityId) ? activityId : undefined;
   const {
     data: stats,
     isPending,
     isError,
     refetch: refetchStats,
-  } = useGoalStatsQuery(isString(activityId) ? activityId : undefined, today);
+  } = useGoalStatsQuery(goalActivityId, today);
 
   // Refresh silently when returning to this screen with stale stats, e.g.
   // after an activity was completed on another screen. Fresh data is kept.
-  useStaleRefetchOnFocus(
-    queryKeys.goals.detail(isString(activityId) ? activityId : '', today),
-  );
+  useStaleRefetchOnFocus(queryKeys.goals.detail(goalActivityId ?? '', today));
+
+  // Without a usable route param the query stays disabled, so `isPending` would
+  // never resolve: this used to render a spinner forever for a terminal state.
+  if (!goalActivityId) {
+    return <ErrorScreen message="This goal could not be found." />;
+  }
 
   if (isPending) {
     return <LoaderScreen text="Loading goal insights..." />;
   }
 
-  if (isError) {
+  // Keep the stats already on screen when a silent focus refetch fails; only a
+  // failure with nothing cached is terminal.
+  if (isError && !stats) {
     return (
       <ErrorScreen
         message="Unable to load goal insights."
@@ -54,7 +61,7 @@ export default function GoalInsightsScreen() {
   }
 
   if (!stats) {
-    return <LoaderScreen text="Goal not found." />;
+    return <ErrorScreen message="This goal could not be found." />;
   }
 
   const NUMBER_OF_WEEKS_REPORTED = stats.weeklyPerformance?.length || 0;
@@ -65,7 +72,12 @@ export default function GoalInsightsScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.topRow}>
-          <Pressable onPress={() => goBackOrHome(router)} hitSlop={8}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            onPress={() => goBackOrHome(router)}
+            hitSlop={8}
+          >
             <Ionicons name="arrow-back" size={27} color={Colors.textPrimary} />
           </Pressable>
           <ThemedText variant="bodyBold">Goal Insights</ThemedText>

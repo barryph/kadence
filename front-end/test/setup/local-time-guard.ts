@@ -30,7 +30,7 @@ export function withoutAmbientTime<T>(fn: () => T): T {
           'Ambient clock read: new Date() depends on the host timezone.',
         );
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
       super(...(args as []));
     }
 

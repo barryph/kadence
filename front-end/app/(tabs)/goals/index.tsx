@@ -18,15 +18,22 @@ import { formatGoalProgress, isGoalMet } from '@/lib/goals/goal-progress';
 import { useToday } from '@/hooks/use-today';
 import ProgressBadge from '@/components/progress-badge';
 
+/**
+ * Stable fallback for a query with no data yet, so the array identity does
+ * not change on every render and invalidate downstream memoisation.
+ */
+const EMPTY_LIST: never[] = [];
+
 export default function GoalsScreen() {
   const router = useRouter();
   const today = useToday();
   const {
-    data: goals = [],
+    data: goalsData,
     isPending,
     isError,
     refetch: refetchGoals,
   } = useGoalsQuery(today);
+  const goals = goalsData ?? EMPTY_LIST;
 
   // Refresh silently when returning to the tab with stale data, e.g. after an
   // activity was completed on another screen. Fresh data is not refetched.
@@ -36,7 +43,9 @@ export default function GoalsScreen() {
     return <LoaderScreen text="Loading goals..." />;
   }
 
-  if (isError) {
+  // Keep the goals already on screen when a silent focus refetch fails; only a
+  // failure with nothing cached is terminal.
+  if (isError && !goalsData) {
     return (
       <ErrorScreen
         message="Unable to load goals."

@@ -27,6 +27,8 @@ import { useCategoriesQuery } from '@/hooks/queries/use-categories';
 import { useTimelineQuery } from '@/hooks/queries/use-timeline';
 import { useCompleteActivityMutation } from '@/hooks/mutations/use-activity-mutations';
 import { useActivityQueue } from '@/hooks/use-activity-queue';
+import { useIsOffline } from '@/hooks/use-is-offline';
+import { ApiError } from '@/lib/query/unwrap';
 import { useGuide } from '@/hooks/use-guide';
 import GuideModal from '@/components/guide/guide-modal';
 import GuideInfoButton from '@/components/guide/guide-info-button';
@@ -38,6 +40,12 @@ import {
   logOnboardingStepComplete,
   logOnboardingStepView,
 } from '@/lib/analytics/analytics';
+
+/**
+ * Stable fallback for a query with no data yet, so the array identity does
+ * not change on every render and invalidate downstream memoisation.
+ */
+const EMPTY_LIST: never[] = [];
 
 function sortActivities(acts: IActivityClient[] = []) {
   return [...acts].sort((a, b) => {
@@ -83,6 +91,28 @@ const ACTIVITY_SECTIONS = [
   { title: 'Completed', key: 'completed' },
 ] as const;
 
+/**
+ * Step titles and count are fixed. Kept at module scope so
+ * the onboarding analytics effect depends only on whether the guide is open.
+ */
+const HOME_GUIDE_STEP_NAMES = HOME_GUIDE_STEPS.map((step) => step.title);
+const HOME_GUIDE_STEP_COUNT = HOME_GUIDE_STEPS.length;
+
+/**
+ * Message shown when a swipe-to-complete fails. Connectivity gets its own
+ * wording because "check your connection" is actionable only when the device
+ * actually knows it has no connection.
+ */
+function getCompletionErrorMessage(error: unknown, isOffline: boolean): string {
+  if (isOffline) {
+    return "You're offline. Reconnect and try again.";
+  }
+  if (error instanceof ApiError) {
+    return error.message;
+  }
+  return 'Please check your connection and try again.';
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
 
@@ -94,17 +124,18 @@ export default function Dashboard() {
 function DashboardContent({ userId }: { userId: string }) {
   const router = useRouter();
   const {
-    data: activities = [],
+    data: activitiesData,
     isPending: isActivitiesPending,
     isError: isActivitiesError,
     refetch: refetchActivities,
   } = useActivitiesQuery();
   const {
-    data: categories = [],
+    data: categoriesData,
     isPending: isCategoriesPending,
-    isError: isCategoriesError,
     refetch: refetchCategories,
   } = useCategoriesQuery();
+  const activities = activitiesData ?? EMPTY_LIST;
+  const categories = categoriesData ?? EMPTY_LIST;
   // The user's local date, refreshed at their midnight: everything below
   // ("completed today", the current month's timeline) is relative to it.
   const today = useToday();
@@ -119,6 +150,7 @@ function DashboardContent({ userId }: { userId: string }) {
   } = useActivityQueue(userId);
 
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
+  const isOffline = useIsOffline();
 
   // Home onboarding guide — auto-shows on first visit; the info (i) icon reopens it.
   const guide = useGuide({ pageId: 'home' });
@@ -126,19 +158,19 @@ function DashboardContent({ userId }: { userId: string }) {
   // --- Onboarding funnel analytics -------------------------------------------
   // The guide IS onboarding. We measure: start, per-step view, per-step
   // completion, completion, and skip (dismissal without finishing).
-  const stepCount = HOME_GUIDE_STEPS.length;
-  const stepNames = HOME_GUIDE_STEPS.map((s) => s.title);
+  const stepCount = HOME_GUIDE_STEP_COUNT;
   // Index of the step currently (or last) being viewed, so we can derive
   // "step complete" whenever the user moves forward.
   const viewedStepRef = useRef(0);
 
-  // Guide opened → funnel starts on the first step.
+  // Guide opened → funnel starts on the first step. `HOME_GUIDE_STEP_NAMES`
+  // and `stepCount` are module constants, so this fires once per open.
   useEffect(() => {
     if (!guide.isOpen) return;
     viewedStepRef.current = 0;
     logOnboardingStart('home');
-    logOnboardingStepView(0, stepNames[0] ?? '', stepCount);
-  }, [guide.isOpen, stepCount, stepNames]);
+    logOnboardingStepView(0, HOME_GUIDE_STEP_NAMES[0] ?? '', stepCount);
+  }, [guide.isOpen, stepCount]);
 
   function handleOnboardingStepChange(index: number) {
     if (index > viewedStepRef.current) {
@@ -146,7 +178,7 @@ function DashboardContent({ userId }: { userId: string }) {
       logOnboardingStepComplete(viewedStepRef.current, stepCount);
     }
     viewedStepRef.current = index;
-    logOnboardingStepView(index, stepNames[index] ?? '', stepCount);
+    logOnboardingStepView(index, HOME_GUIDE_STEP_NAMES[index] ?? '', stepCount);
   }
 
   function handleOnboardingDismiss() {
@@ -193,6 +225,11 @@ function DashboardContent({ userId }: { userId: string }) {
       });
     } catch (error) {
       console.error('Error completing activity', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Could not complete activity',
+        text2: getCompletionErrorMessage(error, isOffline),
+      });
     }
   }
 
@@ -225,7 +262,12 @@ function DashboardContent({ userId }: { userId: string }) {
     return <LoaderScreen text="Loading activities..." />;
   }
 
-  if (isActivitiesError || isCategoriesError) {
+  // Only a failure with nothing cached is terminal. A background refetch that
+  // fails (a focus refetch, or the date-keyed query rolling over at local
+  // midnight while offline) must keep the list that is already on screen -
+  // TanStack retains it, and replacing it with an error screen loses usable
+  // data for a refresh the user never asked for.
+  if (isActivitiesError && !activitiesData) {
     return (
       <ErrorScreen
         message="Unable to load activities."

@@ -9,14 +9,14 @@ env:
     when:
       visible: "Login!"
     file: subflows/login.yaml
-- assertVisible: "Activities In Motion"
+- assertVisible: "Activities Center"
 - tapOn: "Add Activity"
-- assertVisible: "New activity"
+- assertVisible: "New Activity"
 - tapOn: "Squat"
 - inputText: ${ACTIVITY_NAME}
 - tapOn: "TCKR"
 - inputText: "E2E"
-- tapOn: "Interval (days)"
-- inputText: "7"
+# The repeat frequency defaults to 1 and is not tapped here: its label and its
+# placeholder are the same string, so a text target is ambiguous.
 - tapOn: "Create"
 - assertVisible: ${ACTIVITY_NAME}

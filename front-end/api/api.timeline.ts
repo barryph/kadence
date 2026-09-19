@@ -4,11 +4,11 @@ export interface GetTimelineResponse {
   timeline: ITimeline;
 }
 
-export type ITimelineItem = string[]; // an array of YYYY-MM-DD dates that the event occured on
+export type ITimelineItem = string[]; // an array of YYYY-MM-DD dates the event occurred on
 export interface ITimeline {
   [key: string]: ITimelineItem; // keyed by activity id
 }
-export type ITimelineSetItem = Set<string>; // a set of YYYY-MM-DD dates that the event occured on
+export type ITimelineSetItem = Set<string>; // a set of YYYY-MM-DD dates the event occurred on
 export interface ITimelineSet {
   [key: string]: ITimelineSetItem; // keyed by activity id
 }

@@ -11,7 +11,7 @@ interface GetAllCategoriesByUserResponse {
   categories: ICategory[];
 }
 
-interface CreateCategoryDTO extends Omit<Omit<ICategory, 'id'>, 'userId'> { }
+interface CreateCategoryDTO extends Omit<Omit<ICategory, 'id'>, 'userId'> {}
 
 interface CreateCategoryResponse {
   category: ICategory;

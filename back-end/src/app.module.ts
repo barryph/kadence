@@ -39,7 +39,7 @@ const isTestMode = process.env.NODE_ENV === 'test';
         {
           // Default, per-client (IP) limit applied globally by ThrottlerGuard.
           ttl: 60000,
-          limit: 100,
+          limit: 200,
         },
         {
           // Address-scoped limit for the public deletion-request endpoint,

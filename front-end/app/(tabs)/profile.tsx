@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 import Background from '@/components/backgrounds/background';
 import Container from '@/components/base/container';
@@ -25,8 +26,18 @@ function Profile() {
     setLogoutError(null);
 
     try {
-      await logout();
-      // Clearing auth state makes the navigation guard redirect to /login.
+      const { serverSignOutFailed } = await logout();
+      // Clearing auth state makes the navigation guard redirect to /login. The
+      // device is signed out either way; only say so when the server could not
+      // be told, since the session there may outlive this sign-out.
+      if (serverSignOutFailed) {
+        Toast.show({
+          type: 'error',
+          text1: 'Signed out on this device',
+          text2:
+            "We couldn't reach the server, but you have been signed out on this device.",
+        });
+      }
     } catch {
       setLogoutError('Something went wrong, please try again.');
       setIsLoggingOut(false);

@@ -9,4 +9,13 @@ env:
 - tapOn: "Password"
 - inputText: ${TEST_PASSWORD}
 - tapOn: "Enter"
-- assertVisible: "Activities In Motion"
+# A fresh install opens the home guide automatically and it covers the tab bar.
+# Dismiss it (the first "Close guide" match is the backdrop); no-op once seen.
+- runFlow:
+    when:
+      visible: "Close guide"
+    commands:
+      - tapOn:
+          text: "Close guide"
+          index: 0
+- assertVisible: "Activities Center"

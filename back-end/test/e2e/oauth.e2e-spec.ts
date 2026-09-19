@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { createTestApp, closeTestApp } from '../helpers/create-test-app';
+import { PROTECTED_PROBE } from '../helpers/protected-probe';
 import { getTestKnex } from '../helpers/test-database';
 import {
   createTestSigningKey,
@@ -401,10 +402,12 @@ describe('OAuth sign-in (e2e)', () => {
       // server-side cookie credential and does not depend on Google, so it
       // continues under the normal session rules.
       await agent
-        .get('/users/protec')
+        .get(PROTECTED_PROBE)
         .expect(200)
         .expect((res) => {
-          expect(res.body.myData).toBe('this is a secret');
+          // A real guarded endpoint, not a placeholder: the account has no
+          // activities yet, so the list is empty.
+          expect(res.body.data.activities).toEqual([]);
         });
 
       await agent
@@ -490,7 +493,7 @@ describe('OAuth sign-in (e2e)', () => {
         .expect((res) => {
           expect(res.body.data.user).toBeDefined();
         });
-      await signedIn.get('/users/protec').expect(200);
+      await signedIn.get(PROTECTED_PROBE).expect(200);
     });
 
     it('reuses the same account when the user signs in with Google again after revocation', async () => {

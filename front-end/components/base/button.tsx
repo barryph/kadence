@@ -28,6 +28,9 @@ export default function Button({
 }: ButtonProps) {
   return (
     <Pressable
+      // Explicit role so assistive tech announces these as buttons rather than
+      // as unlabelled touchables. Callers can still override it via props.
+      accessibilityRole="button"
       {...props}
       style={[
         styles.button,

@@ -56,11 +56,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     // (com.googleusercontent.apps.<client-id>) before building iOS.
     ...(googleIosUrlScheme
       ? ([
-        [
-          '@react-native-google-signin/google-signin',
-          { iosUrlScheme: googleIosUrlScheme },
-        ],
-      ] as [string, { iosUrlScheme: string }][])
+          [
+            '@react-native-google-signin/google-signin',
+            { iosUrlScheme: googleIosUrlScheme },
+          ],
+        ] as [string, { iosUrlScheme: string }][])
       : []),
     // React Native Firebase (see /firebase/README for setup).
     '@react-native-firebase/app',

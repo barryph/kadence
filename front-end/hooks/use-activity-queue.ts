@@ -41,13 +41,24 @@ export function useActivityQueue(userId: string) {
     let cancelled = false;
     setIsHydrated(false);
 
-    void loadActivityQueue(userId).then((ids) => {
-      if (cancelled) return;
-      const next = new Set(ids);
-      queuedIdsRef.current = next;
-      setQueuedIds(next);
-      setIsHydrated(true);
-    });
+    void loadActivityQueue(userId)
+      .then((ids) => {
+        if (cancelled) return;
+        const next = new Set(ids);
+        queuedIdsRef.current = next;
+        setQueuedIds(next);
+      })
+      .catch((error) => {
+        // The stored "actitivity queue status" could not be read. That is not a
+        // reason to block the screen: the activities themselves come from the
+        // server, so continue with an empty queue rather than leaving the
+        // dashboard on a loader forever.
+        console.error('Failed to load the activity queue', error);
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setIsHydrated(true);
+      });
 
     return () => {
       cancelled = true;
@@ -66,7 +77,11 @@ export function useActivityQueue(userId: string) {
   function commitQueue(next: Set<number>) {
     queuedIdsRef.current = next;
     setQueuedIds(next);
-    void saveActivityQueue(userId, next);
+    void saveActivityQueue(userId, next).catch((error) => {
+      // Best-effort persistence: the in-memory queue is already updated, so a
+      // failed write must not surface as an unhandled rejection.
+      console.error('Failed to persist the activity queue', error);
+    });
   }
 
   function toggleQueuedActivity(activityId: number) {

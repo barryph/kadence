@@ -1,6 +1,11 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { render, waitFor } from '@testing-library/react-native';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react-native';
 import { Stack, useSegments } from 'expo-router';
 import { RootLayoutNav } from '@/components/root-layout-nav';
 import { mockReplace } from '@/test/setup/navigation-mocks';
@@ -97,5 +102,55 @@ describe('RootLayoutNav auth gate', () => {
     await waitFor(() => {
       expect(getAllByText('stack-screen').length).toBeGreaterThan(0);
     });
+  });
+
+  it('leaves the reset-password link reachable for a signed-in user', async () => {
+    // Opening the emailed link while a session exists on this device must show
+    // the form, not redirect home and silently drop the single-use token.
+    setMockAuth({ isAuthenticated: true, isLoading: false });
+    (useSegments as jest.Mock).mockReturnValue(['reset-password']);
+
+    const { getAllByText } = await render(<RootLayoutNav />);
+
+    await waitFor(() => {
+      expect(getAllByText('stack-screen').length).toBeGreaterThan(0);
+    });
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  it('leaves the reset-password link reachable when signed out', async () => {
+    setMockAuth({ isAuthenticated: false, isLoading: false, user: null });
+    (useSegments as jest.Mock).mockReturnValue(['reset-password']);
+
+    await render(<RootLayoutNav />);
+
+    await waitFor(() => {
+      expect(mockReplace).not.toHaveBeenCalled();
+    });
+  });
+
+  it('offers a retry instead of the login screen when the session cannot be restored', async () => {
+    // Offline boot: the server was unreachable, so we do not know whether the
+    // user is signed in. Sending them to login would be wrong - signing in
+    // needs the same server - so the gate shows a retryable error.
+    const retrySessionRestore = jest.fn();
+    setMockAuth({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      isConnectionError: true,
+      retrySessionRestore,
+    });
+    (useSegments as jest.Mock).mockReturnValue(['(tabs)']);
+
+    await render(<RootLayoutNav />);
+
+    const retry = await screen.findByText('Try again');
+    await waitFor(() => {
+      expect(mockReplace).not.toHaveBeenCalled();
+    });
+
+    await fireEvent.press(retry);
+    expect(retrySessionRestore).toHaveBeenCalledTimes(1);
   });
 });

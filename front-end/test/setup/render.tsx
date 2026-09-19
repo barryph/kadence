@@ -1,10 +1,7 @@
 import React, { type ReactElement } from 'react';
 import { render, type RenderOptions } from '@testing-library/react-native';
 import { TestSafeAreaProvider } from './test-safe-area';
-import {
-  setMockAuth,
-  type MockAuthContextValue,
-} from './mock-auth';
+import { setMockAuth, type MockAuthContextValue } from './mock-auth';
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   auth?: Partial<MockAuthContextValue>;

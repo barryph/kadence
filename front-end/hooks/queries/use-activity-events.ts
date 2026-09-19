@@ -9,7 +9,11 @@ async function fetchActivityEvents(from: string, to: string) {
   return data.events;
 }
 
-export function useActivityEventsQuery(from: string, to: string, enabled = true) {
+export function useActivityEventsQuery(
+  from: string,
+  to: string,
+  enabled = true,
+) {
   return useQuery({
     queryKey: queryKeys.events.range(from, to),
     queryFn: () => fetchActivityEvents(from, to),

@@ -527,6 +527,12 @@ function TimelineScreen() {
                                 isCompleted,
                               )
                             }
+                            hitSlop={{
+                              left: CELL_GAP / 2,
+                              right: CELL_GAP / 2,
+                              top: CELL_GAP,
+                              bottom: CELL_GAP,
+                            }}
                             style={[
                               styles.statusCell,
                               isCompleted

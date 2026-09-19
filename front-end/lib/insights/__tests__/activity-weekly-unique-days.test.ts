@@ -79,7 +79,11 @@ describe('aggregateActivityWeeklyUniqueDays', () => {
   });
 
   it('uses the default color when an activity has no category', () => {
-    const series = aggregateActivityWeeklyUniqueDays([], activities, weekStarts);
+    const series = aggregateActivityWeeklyUniqueDays(
+      [],
+      activities,
+      weekStarts,
+    );
 
     expect(series[1].color).toBe(DEFAULT_ACTIVITY_COLOR);
   });

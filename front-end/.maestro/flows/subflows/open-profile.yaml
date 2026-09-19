@@ -3,19 +3,10 @@ env:
   TEST_EMAIL: ${TEST_EMAIL || "test@kadence.dev"}
   TEST_PASSWORD: ${TEST_PASSWORD || "testpassword123"}
 ---
-- tapOn:
-    id: "menu-button"
-    optional: true
-- tapOn:
-    text: ".*[Bb]ars.*"
-    optional: true
-- tapOn:
-    point: "90%,8%"
-    optional: true
-- tapOn: "Profile"
+# Opens the Profile screen from the tab header. The account button carries the
+# accessibility label "Account", so it is addressed by label instead of by a
+# screen coordinate (the old point also targeted a drawer that no longer exists,
+# and a "menu-button" test id that was never rendered).
+- tapOn: "Account"
 - assertVisible: "Profile"
-- tapOn:
-    point: "90%,8%"
-    optional: true
-- tapOn: "Profile"
 - assertVisible: ${TEST_EMAIL}

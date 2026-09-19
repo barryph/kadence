@@ -15,9 +15,20 @@ jest.mock('@/lib/auth/apple');
 jest.mock('@/lib/storage/activity-queue', () => ({
   clearActivityQueue: jest.fn().mockResolvedValue(undefined),
 }));
+jest.mock('@/lib/storage/sign-out-pending', () => ({
+  markSignOutPending: jest.fn().mockResolvedValue(undefined),
+  isSignOutPending: jest.fn().mockResolvedValue(false),
+  clearSignOutPending: jest.fn().mockResolvedValue(undefined),
+}));
 
 const mockClearActivityQueue = require('@/lib/storage/activity-queue')
   .clearActivityQueue as jest.Mock;
+const mockMarkSignOutPending = require('@/lib/storage/sign-out-pending')
+  .markSignOutPending as jest.Mock;
+const mockIsSignOutPending = require('@/lib/storage/sign-out-pending')
+  .isSignOutPending as jest.Mock;
+const mockClearSignOutPending = require('@/lib/storage/sign-out-pending')
+  .clearSignOutPending as jest.Mock;
 
 const mockGetCurrentUser = usersAPI.getCurrentUser as jest.Mock;
 const mockLogin = authAPI.login as jest.Mock;
@@ -33,11 +44,28 @@ const revokeGoogleAccess = require('@/lib/auth/google')
 const appleSignInClient = require('@/lib/auth/apple')
   .signInWithApple as jest.Mock;
 
+// `jest.clearAllMocks()` in the describes below clears calls but keeps
+// implementations, so the sign-out marker's default has to be restored here or
+// one test's `true` leaks into every later test.
+beforeEach(() => {
+  mockIsSignOutPending.mockResolvedValue(false);
+  mockMarkSignOutPending.mockResolvedValue(undefined);
+  mockClearSignOutPending.mockResolvedValue(undefined);
+});
+
 function AuthConsumer() {
   const { isAuthenticated, isLoading, user } = useAuth();
   if (isLoading) return <Text>Loading...</Text>;
   if (!isAuthenticated) return <Text>Not authenticated</Text>;
   return <Text>{user?.email}</Text>;
+}
+
+function ConnectionConsumer() {
+  const { isAuthenticated, isLoading, isConnectionError } = useAuth();
+  if (isLoading) return <Text>Loading...</Text>;
+  if (isConnectionError) return <Text>Connection problem</Text>;
+  if (!isAuthenticated) return <Text>Not authenticated</Text>;
+  return <Text>Authenticated</Text>;
 }
 
 describe('AuthProvider', () => {
@@ -73,23 +101,76 @@ describe('AuthProvider', () => {
     });
   });
 
-  it('remains unauthenticated when current user fetch fails', async () => {
-    const consoleSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-    mockGetCurrentUser.mockRejectedValue(new Error('Unauthorized'));
+  it('reports a connection error rather than signing the user out when the server is unreachable', async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      error: {
+        code: 'NETWORK_ERROR',
+        message: 'Network error. Please check your connection.',
+      },
+    });
 
     await render(
       <AuthProvider>
-        <AuthConsumer />
+        <ConnectionConsumer />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Connection problem')).toBeTruthy();
+    });
+    expect(screen.queryByText('Not authenticated')).toBeNull();
+  });
+
+  it('stays signed out (not a connection error) on an explicit 401', async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      error: { code: 'UNAUTHORIZED', message: 'Not authenticated' },
+    });
+
+    await render(
+      <AuthProvider>
+        <ConnectionConsumer />
       </AuthProvider>,
     );
 
     await waitFor(() => {
       expect(screen.getByText('Not authenticated')).toBeTruthy();
     });
+    expect(screen.queryByText('Connection problem')).toBeNull();
+  });
 
-    consoleSpy.mockRestore();
+  it('restores the session when the connection error is retried', async () => {
+    mockGetCurrentUser
+      .mockResolvedValueOnce({
+        error: { code: 'NETWORK_ERROR', message: 'offline' },
+      })
+      .mockResolvedValueOnce({
+        data: { user: testUser, authProviders: [] },
+      });
+
+    let authRef: ReturnType<typeof useAuth> | undefined;
+    function RetryTrigger() {
+      authRef = useAuth();
+      return <Text>{authRef.isConnectionError ? 'offline' : 'online'}</Text>;
+    }
+
+    await render(
+      <AuthProvider>
+        <RetryTrigger />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('offline')).toBeTruthy();
+    });
+
+    await act(async () => {
+      authRef!.retrySessionRestore();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('online')).toBeTruthy();
+    });
+    expect(authRef!.isAuthenticated).toBe(true);
   });
 
   it('login updates auth state on success', async () => {
@@ -156,6 +237,77 @@ describe('AuthProvider', () => {
     });
 
     expect(await screen.findByText('logged out')).toBeTruthy();
+    expect(mockClearSignOutPending).toHaveBeenCalled();
+  });
+
+  it('signs out locally and records a pending sign-out when the server is unreachable', async () => {
+    mockGetCurrentUser.mockResolvedValue({
+      data: { user: testUser, authProviders: [] },
+    });
+    mockLogout.mockResolvedValue({
+      error: {
+        code: 'NETWORK_ERROR',
+        message: 'Network error. Please check your connection.',
+      },
+    });
+
+    let authRef: ReturnType<typeof useAuth> | undefined;
+    function LogoutTrigger() {
+      authRef = useAuth();
+      return (
+        <Text>
+          {authRef.isAuthenticated ? authRef.user?.email : 'logged out'}
+        </Text>
+      );
+    }
+
+    await render(
+      <AuthProvider>
+        <LogoutTrigger />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(testUser.email)).toBeTruthy();
+    });
+
+    let result: { serverSignOutFailed: boolean } | undefined;
+    await act(async () => {
+      result = await authRef!.logout();
+    });
+
+    // The device is signed out regardless of connectivity...
+    expect(await screen.findByText('logged out')).toBeTruthy();
+    expect(result?.serverSignOutFailed).toBe(true);
+    // ...and the surviving server session is not allowed to sign the user back
+    // in on the next launch.
+    expect(mockMarkSignOutPending).toHaveBeenCalled();
+  });
+
+  it('does not restore a session after a sign-out the server never saw', async () => {
+    // The cookie jar still holds a valid session, so an unguarded boot would
+    // sign the user straight back in.
+    mockIsSignOutPending.mockResolvedValue(true);
+    mockGetCurrentUser.mockResolvedValue({
+      data: { user: testUser, authProviders: [] },
+    });
+    mockLogout.mockResolvedValue({ data: undefined });
+
+    await render(
+      <AuthProvider>
+        <AuthConsumer />
+      </AuthProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Not authenticated')).toBeTruthy();
+    });
+
+    // The interrupted sign-out is completed against the server, and the boot
+    // session check is skipped entirely.
+    expect(mockLogout).toHaveBeenCalledTimes(1);
+    expect(mockGetCurrentUser).not.toHaveBeenCalled();
+    expect(mockClearSignOutPending).toHaveBeenCalled();
   });
 
   it('register updates auth state on success', async () => {
@@ -371,7 +523,7 @@ describe('AuthProvider account deletion', () => {
     // No identifier is ever sent to the backend.
     expect(mockDeleteAccount).toHaveBeenCalledWith();
     expect(await screen.findByText('logged out')).toBeTruthy();
-    // The account is gone, so its queued offline activity goes with it.
+    // The account is gone, so its locally stored activity queue goes with it.
     expect(mockClearActivityQueue).toHaveBeenCalledWith(testUser.id);
   });
 
@@ -487,8 +639,10 @@ describe('AuthProvider account deletion', () => {
     });
 
     expect(await screen.findByText('Not authenticated')).toBeTruthy();
-    // A session ending is not account deletion: the offline queue is the
-    // user's data and must survive so it can sync after signing in again.
+    // A session ending is not account deletion: the local activity queue is
+    // the user's selection state and must survive so it is still there when
+    // they sign back in. (Offline writes are not queued: the app expects a
+    // connection while it is used.)
     expect(mockClearActivityQueue).not.toHaveBeenCalled();
   });
 

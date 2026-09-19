@@ -16,10 +16,9 @@ type AuthenticatedRequest = Request & {
  *
  * Example usage on a controller:
  * @UseGuards(IsAuthedGuard)
- * @Get('/protec')
- * protec() {
- *   console.log('my secret route');
- *   return { myData: 'this is a secret' };
+ * @Get('/current')
+ * current() {
+ *   return { data: { user } };
  * }
  */
 @Injectable()

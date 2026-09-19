@@ -9,8 +9,10 @@ env:
       visible: "Login!"
     file: subflows/login.yaml
 - tapOn: "Timeline"
-- assertVisible: "RUN"
-- tapOn:
-    point: "50%,35%"
-- tapOn:
-    point: "50%,35%"
+# The month navigation renders on every load, with or without data. It replaces
+# the old raw-coordinate taps, which hit a grid cell whose position depends on
+# the signed-in user's activities.
+- assertVisible: "←"
+- tapOn: "←"
+- tapOn: "→"
+- assertVisible: "←"

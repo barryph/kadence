@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 /**
  * Build a QueryClient for use inside a single test.

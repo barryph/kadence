@@ -69,12 +69,12 @@ const isTestMode = process.env.NODE_ENV === 'test';
     ...(isTestMode
       ? []
       : [
-        // Applies the throttle globally by binding the ThrottlerGuard Guard to every endpoint
-        {
-          provide: APP_GUARD,
-          useClass: ThrottlerGuard,
-        },
-      ]),
+          // Applies the throttle globally by binding the ThrottlerGuard Guard to every endpoint
+          {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+          },
+        ]),
   ],
 })
-export class AppModule { }
+export class AppModule {}

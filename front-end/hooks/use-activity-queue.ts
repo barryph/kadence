@@ -69,8 +69,8 @@ export function useActivityQueue(userId: string) {
     return {
       queuedIds: new Set<number>(),
       isHydrated: false,
-      toggleQueuedActivity: () => { },
-      removeFromQueue: () => { },
+      toggleQueuedActivity: () => {},
+      removeFromQueue: () => {},
     };
   }
 

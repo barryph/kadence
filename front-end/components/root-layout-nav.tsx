@@ -1,62 +1,37 @@
-import { useEffect, useState } from 'react';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useAuth } from '@/context/auth-context';
 import ErrorScreen from '@/components/base/error-screen';
 import { useScreenTracking } from '@/lib/analytics/use-screen-tracking';
 import { useAnalyticsIdentity } from '@/lib/analytics/use-analytics-identity';
 
 /**
- * Root navigation stack + session gate.
- * Redirects unauthenticated users to auth screens and authenticated users away from them.
+ * Root navigation stack.
+ *
+ * Auth gating belongs to the routes themselves: the `(tabs)` group sends
+ * signed-out users to `/login`, and the sign-in screens send signed-in users
+ * home. `reset-password` stays unguarded so the emailed link works signed in or
+ * out.
+ *
+ * This layout deliberately makes no routing decision from `useSegments()`. It
+ * used to redirect from here, which broke cold-start deep links on Android:
+ * the launch URL is applied asynchronously there, so on the first pass
+ * `useSegments()` still reported the default `/` with no segments while the
+ * session was restoring, and `kadence://reset-password?token=...` was sent to
+ * `/login` before the navigator had rehydrated the route. A guard on the route
+ * itself cannot make that mistake, because a screen that is not on the current
+ * route never renders.
  */
 export function RootLayoutNav() {
-  const { isAuthenticated, isLoading, isConnectionError, retrySessionRestore } =
-    useAuth();
-  const segments = useSegments();
-  const router = useRouter();
-  const [isReady, setIsReady] = useState(false);
+  const { isAuthenticated, isConnectionError, retrySessionRestore } = useAuth();
 
   // Analytics: log screen views on route changes and keep the user id in
   // sync with the authenticated session (opaque id only, never an email).
   useScreenTracking();
   useAnalyticsIdentity();
 
-  const isAuthScreen =
-    segments[0] === 'login' ||
-    segments[0] === 'register' ||
-    segments[0] === 'forgot-password';
-
-  // `reset-password` is deliberately outside the auth group. It is reached from
-  // the emailed `kadence://reset-password?token=...` link, and bouncing a
-  // signed-in user to home would discard the single-use token without ever
-  // showing the form.
-  const isResetPasswordScreen = segments[0] === 'reset-password';
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    // The server could not be reached to restore the session. Redirecting to
-    // sign-in would be wrong: signing in needs the same server, so the user
-    // would land on a form that cannot succeed. Stay put and offer a retry.
-    if (isConnectionError && !isAuthenticated) return;
-
-    if (!isAuthenticated && !isAuthScreen && !isResetPasswordScreen) {
-      router.replace('/login');
-    } else if (isAuthenticated && isAuthScreen) {
-      router.replace('/');
-    } else {
-      setIsReady(true);
-    }
-  }, [
-    isAuthenticated,
-    isLoading,
-    isConnectionError,
-    segments,
-    router,
-    isAuthScreen,
-    isResetPasswordScreen,
-  ]);
-
+  // The server could not be reached to restore the session. Redirecting to
+  // sign-in would be wrong: signing in needs the same server, so the user
+  // would land on a form that cannot succeed. Stay put and offer a retry.
   if (isConnectionError && !isAuthenticated) {
     return (
       <ErrorScreen
@@ -65,13 +40,6 @@ export function RootLayoutNav() {
       />
     );
   }
-
-  // Keep the navigator mounted while the session-gate effect redirects: the
-  // `replace` action must reach a navigator that still registers the target
-  // route, or it is dropped as unhandled. Protected screens are safe to render
-  // briefly against a logged-out user because they return null when `user` is
-  // absent, so no user-dependent hook runs.
-  if (!isReady) return null;
 
   return (
     <Stack>

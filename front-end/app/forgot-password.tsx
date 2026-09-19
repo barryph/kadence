@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { View, StyleSheet, Platform, ScrollView } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from 'expo-router';
+import { Redirect, Link } from 'expo-router';
 import { authAPI } from '@/api/api.auth';
+import { useAuth } from '@/context/auth-context';
 import Input from '@/components/base/input';
 import Button from '@/components/base/button';
 import { ThemedText } from '@/components/base/themed-text';
@@ -21,6 +22,7 @@ const SUCCESS_MESSAGE =
   'If an account with that email exists, a password reset link has been sent. Please check your email.';
 
 export default function ForgotPasswordScreen() {
+  const { isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -31,6 +33,13 @@ export default function ForgotPasswordScreen() {
       email: '',
     },
   });
+
+  // A signed-in user has no reason to request a reset link. The guard lives on
+  // the screen so it cannot misjudge another route: `AuthProvider` holds this
+  // screen back until the session restore finishes.
+  if (isAuthenticated) {
+    return <Redirect href="/" />;
+  }
 
   async function onSubmit({ email }: ForgotPasswordFormValues) {
     setIsLoading(true);

@@ -19,6 +19,14 @@ import { Colors, Spacing } from '@/constants/theme';
 
 const INVALID_TOKEN_MESSAGE = 'Reset token is invalid or expired';
 
+/**
+ * Password reset links open `kadence://reset-password?token=...`. Expo Router
+ * maps that scheme to this route and passes the query on to
+ * `useLocalSearchParams`, both when the link launches the app and when it
+ * arrives while the app runs, so no manual `Linking` listener is needed here.
+ * The route is registered outside the auth gate (see `RootLayoutNav`) so the
+ * single-use token is never dropped by a redirect.
+ */
 export default function ResetPasswordScreen() {
   const router = useRouter();
   const { token } = useLocalSearchParams<{ token?: string }>();

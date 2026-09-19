@@ -13,6 +13,12 @@ jest.mock('expo-router', () => ({
   // simulate screen focus (see test/goals-sync.test.tsx).
   useFocusEffect: jest.fn(),
   Link: ({ children }: { children: React.ReactNode }) => children,
+  // Route guards redirect during render. Record the target through the shared
+  // navigation mock so tests can assert where a guard sent the user.
+  Redirect: ({ href }: { href: string }) => {
+    mockReplace(href);
+    return null;
+  },
   Stack: Object.assign(
     ({ children }: { children: React.ReactNode }) => children,
     { Screen: () => null },

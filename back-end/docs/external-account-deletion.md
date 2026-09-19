@@ -143,22 +143,33 @@ The deletion site is a static page (not served by this API). It must:
 
 ## Rate limiting
 
-`ThrottlerGuard` is registered globally, so every endpoint has a per-client (IP)
-limit. That alone is not enough here: one client can aim many requests at a
-single victim's address, which is the spam vector that matters.
+`ThrottlerModule` registers a single global policy: the `default` throttler at
+**200 requests/minute per client** (`app.module.ts`). Every endpoint gets it,
+and endpoints that need a tighter cap override it inline with `@Throttle`.
 
-The request endpoint therefore carries **two** limits:
+The request endpoint is limited on **two independent axes**:
 
 | Limit | Default | Key |
 | --- | --- | --- |
 | Per client | 5 / minute | client IP |
 | Per address, per client | 3 / 15 minutes | `${clientIp}:${sha256(normalisedEmail)}` |
 
-`DeletionRequestThrottlerGuard`
-(`infrastructure/deletion-request-throttler.guard.ts`) derives the address-
-scoped key and hashes the address: the throttle store is not a place to
-accumulate a list of real email addresses. The confirm endpoint has a modest
-per-client cap as hygiene only — a 256-bit token is not guessable.
+The per-client limit is the `default` throttler, overridden inline on the route
+and enforced by the global guard. The address limit is a named throttler
+(`accountDeletionAddress`) owned by `DeletionRequestThrottlerGuard`
+(`infrastructure/deletion-request-throttler.guard.ts`), which derives the
+address-scoped key and hashes the address: the throttle store is not a place to
+accumulate a list of real email addresses.
+
+That named throttler is deliberately **not** listed in `ThrottlerModule`:
+`ThrottlerGuard` applies every globally registered throttler to every route, so
+registering it there capped the whole API at 3 / 15 minutes. Instead the guard's
+`onModuleInit` narrows its own `throttlers` to the address entry, which keeps the
+two axes distinct (the address budget does not double as a per-IP budget) and
+means it only ever runs on the one route the guard is attached to.
+
+The confirm endpoint has a modest per-client cap as hygiene only — a 256-bit
+token is not guessable.
 
 Known limit of the design: the address budget is scoped **per client**, so a
 distributed attacker rotating source IPs could still send more than three mails
@@ -166,8 +177,9 @@ to one address. Bounding that properly needs a shared (e.g. Redis) store keyed
 on the address alone, which this deployment does not have; the per-client limit
 plus the 30-minute token window keeps the practical abuse window small.
 
-Rate limits are disabled when `NODE_ENV=test`, so the numeric limits are covered
-by unit tests of the tracker rather than by end-to-end assertions.
+Rate limits are disabled when `NODE_ENV=test`, so the policies are covered by
+unit tests that drive the real guards (`src/app.module.spec.ts`), not by
+end-to-end assertions.
 
 ---
 

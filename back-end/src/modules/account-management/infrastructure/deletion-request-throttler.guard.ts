@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { createHash } from 'node:crypto';
+import {
+  DELETION_ADDRESS_THROTTLER,
+  DELETION_REQUEST_ADDRESS_LIMIT,
+  DELETION_REQUEST_ADDRESS_TTL_MS,
+} from './deletion.constants';
 
 /**
  * Derives the throttle key for the public deletion-request endpoint.
  *
  * The per-client limit (IP) is the default `ThrottlerGuard` behaviour and is
  * left alone. What that cannot do is stop a single client asking for a link to
- * *one address* over and over, which is the spam vector that matters here — so
+ * *one address* over and over, which is the spam vector that matters here - so
  * the submitted address is folded into the key, sharded by client, for the
  * address-scoped throttler only.
  *
@@ -51,6 +56,27 @@ function extractEmail(body: unknown): string | null {
  */
 @Injectable()
 export class DeletionRequestThrottlerGuard extends ThrottlerGuard {
+  /**
+   * This guard owns the address dimension and nothing else.
+   *
+   * The named throttler is deliberately not listed in `ThrottlerModule`:
+   * `ThrottlerGuard` applies every globally registered throttler to every
+   * route, so registering it there would cap the whole API at the address
+   * limit. Replacing `throttlers` with just the address entry keeps the global
+   * `default` (per IP) out of this guard, so the two dimensions stay distinct
+   * instead of the address budget doubling as a per-IP budget.
+   */
+  async onModuleInit(): Promise<void> {
+    await super.onModuleInit();
+    this.throttlers = [
+      {
+        name: DELETION_ADDRESS_THROTTLER,
+        ttl: DELETION_REQUEST_ADDRESS_TTL_MS,
+        limit: DELETION_REQUEST_ADDRESS_LIMIT,
+      },
+    ];
+  }
+
   protected async getTracker(req: Record<string, unknown>): Promise<string> {
     const clientKey = await super.getTracker(req);
     return deletionThrottleTracker(clientKey, req.body);

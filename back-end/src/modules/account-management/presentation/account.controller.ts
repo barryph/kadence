@@ -115,6 +115,10 @@ export class AccountDeletionController {
    */
   @Post('/')
   @HttpCode(200)
+  // Two independent budgets: the `default` one is per client (IP) and read by
+  // the global guard; the address one is per normalized email and read by
+  // DeletionRequestThrottlerGuard, which owns that named throttler on its own
+  // instance so it never leaks onto other routes.
   @UseGuards(DeletionRequestThrottlerGuard)
   @Throttle({
     default: {

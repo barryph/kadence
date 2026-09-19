@@ -11,13 +11,12 @@ import { ActivityGoalsModule } from './modules/activity-goals/activityGoals.modu
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { SessionLifecycleGuard } from './modules/authentication/session/session-lifecycle.guard';
-import {
-  DELETION_ADDRESS_THROTTLER,
-  DELETION_REQUEST_ADDRESS_LIMIT,
-  DELETION_REQUEST_ADDRESS_TTL_MS,
-} from './modules/account-management/infrastructure/deletion.constants';
 
 const isTestMode = process.env.NODE_ENV === 'test';
+
+/** The one global rate-limit policy: 200 requests/minute per client. */
+export const GLOBAL_THROTTLE_TTL_MS = 60_000;
+export const GLOBAL_THROTTLE_LIMIT = 200;
 
 @Module({
   imports: [
@@ -28,27 +27,19 @@ const isTestMode = process.env.NODE_ENV === 'test';
     ActivitiesModule,
     CategoriesModule,
     ActivityGoalsModule,
+    // One global policy: 200 req/min per client. Endpoints that need a tighter
+    // cap (auth, account deletion) override it inline with `@Throttle`. Nothing
+    // is registered by name: `ThrottlerGuard` applies every registered
+    // throttler to every route, so a named one would leak onto the whole API.
     ThrottlerModule.forRoot({
-      // Disables every throttler in test mode, including route-level guards
-      // such as DeletionRequestThrottlerGuard that are not skipped by the
-      // conditional APP_GUARD registration below. Without this, e2e specs share
-      // one rate-limit budget and fail on request count rather than behaviour.
-      // The limits themselves are covered by unit tests of the tracker.
+      // Disables throttling in test mode. Without this, e2e specs share one
+      // rate-limit budget and fail on request count rather than behaviour.
       skipIf: () => isTestMode,
       throttlers: [
         {
           // Default, per-client (IP) limit applied globally by ThrottlerGuard.
-          ttl: 60000,
-          limit: 200,
-        },
-        {
-          // Address-scoped limit for the public deletion-request endpoint,
-          // which a per-client limit cannot provide: one client can aim many
-          // requests at a single victim's address. The key is derived from the
-          // submitted email by DeletionRequestThrottlerGuard.
-          name: DELETION_ADDRESS_THROTTLER,
-          ttl: DELETION_REQUEST_ADDRESS_TTL_MS,
-          limit: DELETION_REQUEST_ADDRESS_LIMIT,
+          ttl: GLOBAL_THROTTLE_TTL_MS,
+          limit: GLOBAL_THROTTLE_LIMIT,
         },
       ],
     }),

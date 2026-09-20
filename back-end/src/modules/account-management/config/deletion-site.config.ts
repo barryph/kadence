@@ -38,7 +38,7 @@ export function buildDeleteAccountLink(
   if (siteUrl) {
     return {
       kind: 'web',
-      url: `${siteUrl}/delete?token=${encodeURIComponent(token)}`,
+      url: `${siteUrl}/delete-account/confirm/?token=${encodeURIComponent(token)}`,
     };
   }
 

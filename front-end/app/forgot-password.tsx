@@ -19,7 +19,7 @@ import {
 import { Colors, Spacing } from '@/constants/theme';
 
 const SUCCESS_MESSAGE =
-  'If an account with that email exists, a password reset link has been sent. Please check your email.';
+  "If an account with that email exists, a password reset link has been sent to your email address. If you don't see the email, check your spam folder.";
 
 export default function ForgotPasswordScreen() {
   const { isAuthenticated } = useAuth();

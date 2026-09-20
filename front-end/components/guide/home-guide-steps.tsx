@@ -36,9 +36,9 @@ function GuideGif({ source }: { source: ImageSource }) {
  */
 export const HOME_GUIDE_STEPS: GuideStep[] = [
   {
-    title: 'Welcome to Kadence',
+    title: 'Welcome',
     description:
-      'Kadence is designed to adapt to real life. Most programs are a fixed plan, life, not so much.',
+      'Kadence is designed to adapt to real life. Most programs are a fixed plan, Kadence is flexible.',
     media: (
       <GuideMediaIcon
         accent={Colors.accentGlow}
@@ -54,9 +54,8 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
     ),
   },
   {
-    title: 'Add your first activity',
-    description:
-      "Tap the 'Add Activity' button to create an activity. Pick a name, category and how often you want to do it.",
+    title: 'Your first activity',
+    description: "Tap the 'Add Activity' button to get started.",
     media: (
       <GuideMediaIcon
         accent={Colors.accentGlow}
@@ -75,7 +74,7 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
   },
   {
     title: 'Manage activities',
-    description: 'Swipe left to edit, swipe right to mark an activity done.',
+    description: 'Swipe left to edit, swipe right to complete it.',
     media: (
       <GuideGif source={require('../../assets/demos/activity-swipes.gif')} />
     ),
@@ -83,14 +82,14 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
   {
     title: 'Log past workouts',
     description:
-      'Previous days can be logged from the timeline tab. Tap a cell to toggle it.',
+      'Log previous days from the Timeline. Tap a cell to toggle it.',
     media: (
       <GuideGif source={require('../../assets/demos/timeline-toggle.gif')} />
     ),
   },
   {
     title: "That's it!",
-    description: 'Jump in and get started. I hope you enjoy the app!',
+    description: 'Jump in and get started!',
     media: (
       <GuideMediaIcon
         accent={Colors.accentGlow}

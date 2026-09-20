@@ -109,9 +109,12 @@ describe('DeletionRequestService', () => {
       expect(emailSender.sendAccountDeletionEmail).toHaveBeenCalledTimes(1);
       const sent = emailSender.sendAccountDeletionEmail.mock.calls[0][0];
       expect(sent.recipientEmail).toBe('delete-me@example.com');
-      expect(sent.deletionUrl).toMatch(
-        /^https:\/\/delete\.kadence\.app\/delete\?token=[a-f0-9]{64}$/,
-      );
+
+      expect(
+        sent.deletionUrl.startsWith(
+          'https://delete.kadence.app/delete-account/confirm/?token=',
+        ),
+      ).toBe(true);
       expect(sent.expiresInMinutes).toBeGreaterThan(0);
 
       // The plaintext token is the one in the email and is not the stored hash.

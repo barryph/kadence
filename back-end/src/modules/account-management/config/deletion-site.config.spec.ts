@@ -57,7 +57,9 @@ describe('deletion-site.config', () => {
 
       expect(link.kind).toBe('web');
       expect(
-        link.url.startsWith('https://delete.kadence.app/delete?token='),
+        link.url.startsWith(
+          'https://delete.kadence.app/delete-account/confirm/?token=',
+        ),
       ).toBe(true);
       // The token is URL-encoded, so it round-trips through the link intact.
       expect(new URL(link.url).searchParams.get('token')).toBe(

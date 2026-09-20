@@ -97,7 +97,9 @@ describe('External account deletion (e2e)', () => {
         throw new Error('expected an account-deletion email to be sent');
       }
       expect(sent.deletionUrl).toMatch(
-        new RegExp(`^${DELETION_SITE_URL}/delete\\?token=[a-f0-9]{64}$`),
+        new RegExp(
+          `^${DELETION_SITE_URL}/delete-account/confirm/\\?token=[a-f0-9]{64}$`,
+        ),
       );
       expect(sent.expiresInMinutes).toBeGreaterThan(0);
     });

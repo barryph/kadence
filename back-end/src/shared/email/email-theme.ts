@@ -1,119 +1,101 @@
 /**
  * Kadence email theme.
  *
- * Mirrors `front-end/constants/theme.ts` group for group and, where a concept
- * is shared, token for token, so the app and the transactional emails can be
- * compared and evolved together. The two files are intentionally independent
- * copies rather than a shared package: the frontend is React Native and this is
- * inline HTML, and the coupling would cost more than it saves until more tokens
- * genuinely overlap. When you change a shared colour, change both.
+ * Security email is read by people who are worried about being phished, so the
+ * palette follows the public account site (`kadence-static/src/styles/global.css`)
+ * rather than the dark in-app theme: a white card, near-black text, one
+ * accessible blue for links and primary actions, and red reserved for
+ * destructive ones. The static site is the light end of the same product, which
+ * is why its values are copied here token for token instead of invented.
  *
- * Email-client constraints worth remembering while reading this file:
- * - Outlook ignores rgba and gradients, so every translucent fill that matters
- *   has a solid counterpart below (the colour composited over the card).
- * - Text colours are tuned to clear WCAG AA (4.5:1) on the card colour.
+ * Deliberate differences from the site:
+ * - Every value is a solid hex. Gradients and translucent fills are the most
+ *   common cause of a broken render in Outlook, and a flat colour is also the
+ *   honest one for a message whose job is to look trustworthy.
+ * - Text sits on the card, so the WCAG AA (4.5:1) pairings are checked against
+ *   `card` and the callout surfaces, not against the page canvas.
+ *
+ * The in-app palette (`front-end/constants/theme.ts`) is dark-only and shares
+ * no values with this file, so the two no longer mirror each other.
  */
 
 export const EmailColors = {
   // --- Canvas -------------------------------------------------------------
-  /** Deepest background; base of the email's vertical gradient. */
-  canvas: '#050711',
-  /** Midpoint of the vertical canvas gradient. */
-  canvasMid: '#0b1020',
+  /** Page behind the card; the site's subtle grey. */
+  canvas: '#f8fafc',
 
   // --- Surfaces -----------------------------------------------------------
   /** The message card itself; all text is tuned against this colour. */
-  card: '#080d1c',
-  /** 1px gradient hairline around the card (flat fallback). */
-  frame: '#1a4163',
-  /** Inset surface for the fallback URL box. */
-  surface: '#101524',
-  /** Composited fills behind each callout variant, for clients without rgba. */
-  calloutExpirySurface: '#08192a',
-  calloutSuccessSurface: '#0c1b24',
-  calloutDangerSurface: '#17101f',
-  /** Composited glow rings behind the CTA button, for clients without rgba. */
-  ctaRing: '#081833',
-  ctaDangerRing: '#211222',
+  card: '#ffffff',
+  /** Neutral inset fill, e.g. the fallback URL box. */
+  surface: '#f1f5f9',
+  /** Fill behind the expiry callout. */
+  warningSurface: '#fffbeb',
+  /** Fill behind a resolved-outcome callout. */
+  successSurface: '#f0fdf4',
+  /** Fill behind a destructive callout. */
+  dangerSurface: '#fef2f2',
 
   // --- Borders & dividers -------------------------------------------------
-  /** Default hairline: card header/footer rules and inset borders. */
-  border: 'rgba(255, 255, 255, 0.07)',
+  /** Default hairline around the card, the inset box and the footer rule. */
+  border: '#e5e7eb',
+  /** Stronger border for controls that need to read as interactive. */
+  borderStrong: '#d1d5db',
 
   // --- Text ---------------------------------------------------------------
   /** Headings and the wordmark. */
-  textPrimary: '#ffffff',
+  textPrimary: '#111111',
   /** Body paragraphs. */
-  textSecondary: 'rgba(255, 255, 255, 0.72)',
-  /** Dimmed wordmark suffix. */
-  textFaint: 'rgba(255, 255, 255, 0.60)',
-  /** Footnotes and callout detail lines. */
-  textMuted: 'rgba(255, 255, 255, 0.50)',
-  /** Footer and postscript copy. */
-  textSubtle: 'rgba(255, 255, 255, 0.46)',
+  textSecondary: '#334155',
+  /** Callout detail lines and secondary notes. */
+  textMuted: '#4b5563',
+  /** Footnotes, the badge and the wordmark suffix. */
+  textSubtle: '#6b7280',
 
-  // --- Accent -------------------------------------------------------------
-  /** Primary action colour; CTA fill and gradient start. */
-  accent: '#0072ff',
-  /** Brand gradient start and bloom anchor. */
-  accentGlow: '#087cff',
-  /** Mid stop of accent gradients. */
-  accentBright: '#0096ff',
-  /** Secondary brand hue used in gradients and the header status dot. */
-  cyan: '#08d8ff',
-  /** Eyebrow labels and links. */
-  eyebrow: '#8fd4ff',
-  link: '#8fd4ff',
+  // --- Brand --------------------------------------------------------------
+  /** Primary action fill, links and the accent bar. */
+  brand: '#0a4d9c',
+  /** Tinted badge fill. */
+  brandSoft: '#e8effa',
+  /** Badge border. */
+  brandBorder: '#a9c4e6',
+  /** Thin accent bar at the top of the card. */
+  brandBar: '#0a4d9c',
+  /** Inline links. */
+  link: '#0a4d9c',
 
   // --- Status -------------------------------------------------------------
   /** Success accent: resolved-outcome callouts. */
-  success: '#52f2a8',
-  /** Destructive brand accent: danger callouts and CTA gradient end. */
-  danger: '#ff3d54',
-  /**
-   * Error copy on the dark card, lighter than {@link danger} so it clears
-   * WCAG AA. Mirrors the app's `Colors.dangerText` role; the app tunes its own
-   * value against its lighter surfaces.
-   */
-  dangerText: '#ff8a9b',
-  /** Danger CTA fill and gradient start. */
-  dangerStrong: '#e02040',
-  /** Warm end of the danger CTA gradient. */
-  dangerBright: '#ff7a5c',
+  success: '#15803d',
+  /** Destructive accent: danger callouts and the destructive button. */
+  danger: '#c62828',
+  /** Error and destructive copy that must clear 4.5:1 on white. */
+  dangerText: '#b3261e',
+  /** Expiry accent. */
+  warning: '#92400e',
 
   // --- Objects ------------------------------------------------------------
-  /** CTA glow, tinted for the primary button. */
-  accentShadow: 'rgba(0, 90, 255, 0.42)',
-  /** CTA glow, tinted for the destructive button. */
-  dangerShadow: 'rgba(255, 0, 0, 0.42)',
-  /** Neutral drop shadow beneath a CTA. */
-  shadow: 'rgba(0, 0, 0, 0.36)',
+  /**
+   * The card's shadow, matching the site's `--shadow-card`. A client that
+   * flattens it loses decoration, not hierarchy: the border still bounds the
+   * card, so nothing else is allowed to depend on this.
+   */
+  cardShadow:
+    '0 1px 2px rgba(16, 24, 40, 0.08), 0 16px 40px -28px rgba(16, 24, 40, 0.35)',
 } as const;
 
 /**
- * Font stacks used by the email shell.
+ * Type stacks.
  *
- * `mono` is the real brand face where a client loads the Google font; the other
- * two are the fallbacks used in plain-monospace contexts and in Word/Outlook,
- * which ignores web fonts entirely.
+ * The site and the app both use the platform UI face, so the email does too:
+ * one stack, no web font. A remote font is an extra network request that some
+ * clients strip and some spam filters weigh, and it buys nothing a security
+ * email needs.
+ *
+ * `mono` is only for the wordmark, which mirrors the app logotype's letterform
+ * treatment, and it resolves to an installed face everywhere.
  */
 export const EmailFonts = {
-  mono: "'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace",
-  monoSystem:
-    "ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace",
-  fallback: "'Courier New', Courier, monospace",
+  sans: "ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif",
+  mono: "ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace",
 } as const;
-
-/**
- * Composites a hex colour into an `rgba()` string at the given opacity.
- *
- * Kept byte-for-byte in step with the frontend helper of the same name so a
- * token can be described identically on both sides.
- */
-export function withAlpha(hex: string, opacity: number): string {
-  const value = hex.replace('#', '');
-  const r = parseInt(value.slice(0, 2), 16);
-  const g = parseInt(value.slice(2, 4), 16);
-  const b = parseInt(value.slice(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-}

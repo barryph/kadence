@@ -28,7 +28,7 @@ describe('transactional email plain-text alternatives', () => {
     const email = renderAccountDeletionEmail(deletionUrl, 30);
 
     expect(email.text).toContain('Confirm account deletion');
-    expect(email.text).toContain('Permanent & irreversible');
+    expect(email.text).toContain('Permanent and irreversible');
     expect(email.text).toContain('Link expires in 30 minutes');
     expect(email.text).toContain(`Confirm deletion: ${deletionUrl}`);
     expect(email.text).not.toMatch(containsHtml);

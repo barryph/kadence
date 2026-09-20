@@ -7,6 +7,10 @@ export type { EmailContent };
  * plain-text fallback) belongs to `email-layout.ts`; these only describe the
  * copy that differs. Adding an email is a new function here plus a port method,
  * not a new HTML document.
+ *
+ * The copy rules are the same ones the shell follows: short sentences, no
+ * jargon, the expiry stated as a fact, and a plain "ignore this" line for the
+ * recipient who did not ask for the email.
  */
 
 export function renderPasswordResetEmail(resetUrl: string): EmailContent {
@@ -20,7 +24,7 @@ export function renderPasswordResetEmail(resetUrl: string): EmailContent {
     callout: {
       variant: 'expiry',
       label: 'Expires in 20 minutes',
-      detail: 'The link is single use, expiring in 20 minutes',
+      detail: 'Single use. If it expires, request a new link.',
     },
     cta: { label: 'Reset password', url: resetUrl },
     footnote:
@@ -41,8 +45,8 @@ export function renderAccountDeletionEmail(
     ],
     callout: {
       variant: 'danger',
-      label: 'Permanent & irreversible',
-      detail: `Link expires in ${expiresInMinutes} minutes`,
+      label: 'Permanent and irreversible',
+      detail: `Link expires in ${expiresInMinutes} minutes. Nothing is deleted until you confirm.`,
     },
     cta: { label: 'Confirm deletion', url: deletionUrl, variant: 'danger' },
     footnote:
@@ -61,7 +65,7 @@ export function renderAccountDeletedEmail(): EmailContent {
     ],
     callout: {
       variant: 'success',
-      label: 'Your account has been deleted',
+      label: 'Account deleted',
     },
     footnote:
       "If you didn't request this, contact support as soon as possible.",

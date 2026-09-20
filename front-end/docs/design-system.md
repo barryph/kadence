@@ -30,9 +30,11 @@ scheme.
 One-off colours that are not part of the brand or a semantic state stay next
 to their component.
 
-`back-end/src/shared/email/email-theme.ts` mirrors these groups for the
-transactional emails. Change a shared colour in both files; the parity test in
-`constants/__tests__/theme-parity.test.ts` guards the shared brand tokens.
+`back-end/src/shared/email/email-theme.ts` is separate: transactional email is
+security email, so it follows the light palette of the public account site
+(`kadence-static/src/styles/global.css`) rather than the dark app. The two
+palettes share no values; `constants/__tests__/theme-parity.test.ts` guards that
+the email side stays light and does not reabsorb the app surfaces.
 
 ## Spacing
 

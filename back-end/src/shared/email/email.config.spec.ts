@@ -2,8 +2,8 @@ import {
   DEFAULT_EMAIL_FROM,
   DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK,
   DEFAULT_EMAIL_PASSWORD_RESET_URL,
-  DEFAULT_EMAIL_REPLY_TO,
   loadEmailConfig,
+  SUPPORT_EMAIL,
 } from './email.config';
 
 const ENV_KEYS = [
@@ -37,7 +37,7 @@ describe('loadEmailConfig', () => {
     expect(config).toEqual({
       resendApiKey: null,
       from: 'Kadence <notifications@mail.kadence.barryph.com>',
-      replyTo: DEFAULT_EMAIL_REPLY_TO,
+      replyTo: SUPPORT_EMAIL,
       passwordResetUrl: DEFAULT_EMAIL_PASSWORD_RESET_URL,
       passwordResetDeepLink: DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK,
     });
@@ -54,7 +54,6 @@ describe('loadEmailConfig', () => {
   it('reads overrides from the environment', () => {
     process.env.RESEND_API_KEY = '  re_test_key  ';
     process.env.EMAIL_FROM = 'Kadence <no-reply@kadence.app>';
-    process.env.EMAIL_REPLY_TO = 'support@kadence.app';
     process.env.EMAIL_PASSWORD_RESET_URL = 'https://app.kadence.dev/reset';
     process.env.EMAIL_PASSWORD_RESET_DEEP_LINK = 'kadence-dev://reset-password';
 
@@ -63,10 +62,18 @@ describe('loadEmailConfig', () => {
     expect(config).toEqual({
       resendApiKey: 're_test_key',
       from: 'Kadence <no-reply@kadence.app>',
-      replyTo: 'support@kadence.app',
+      replyTo: SUPPORT_EMAIL,
       passwordResetUrl: 'https://app.kadence.dev/reset',
       passwordResetDeepLink: 'kadence-dev://reset-password',
     });
+  });
+
+  it('keeps Reply-To pinned to the support address', () => {
+    // Every email replies to the support inbox, so a stale EMAIL_REPLY_TO
+    // override must not be able to point replies somewhere else.
+    process.env.EMAIL_REPLY_TO = 'support@kadence.app';
+
+    expect(loadEmailConfig().replyTo).toBe(SUPPORT_EMAIL);
   });
 
   it('treats blank values as unset and falls back to defaults', () => {
@@ -80,7 +87,7 @@ describe('loadEmailConfig', () => {
 
     expect(config.resendApiKey).toBeNull();
     expect(config.from).toBe(DEFAULT_EMAIL_FROM);
-    expect(config.replyTo).toBe(DEFAULT_EMAIL_REPLY_TO);
+    expect(config.replyTo).toBe(SUPPORT_EMAIL);
     expect(config.passwordResetUrl).toBe(DEFAULT_EMAIL_PASSWORD_RESET_URL);
     expect(config.passwordResetDeepLink).toBe(
       DEFAULT_EMAIL_PASSWORD_RESET_DEEP_LINK,

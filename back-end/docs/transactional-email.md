@@ -66,9 +66,14 @@ All values are read from the environment by
 | --- | --- | --- | --- |
 | `RESEND_API_KEY` | yes | — | Resend API key ([create one](https://resend.com/api-keys)). The API refuses to start without it. |
 | `EMAIL_FROM` | no | `Kadence <notifications@mail.kadence.barryph.com>` | `from` identity for every email. Resend only accepts an address on a verified sending domain. |
-| `EMAIL_REPLY_TO` | no | `support+codecompletelabs@gmail.com` | `Reply-To` on every email. |
 | `EMAIL_PASSWORD_RESET_URL` | no | `https://kadence.barryph.com/reset-password` | Public HTTPS link the reset token is appended to as `?token=`. Must stay on the verified sending domain (see below). |
 | `EMAIL_PASSWORD_RESET_DEEP_LINK` | no | `kadence://reset-password` | Custom-scheme deep link the handoff endpoint redirects into. Must match the app's URL scheme (`front-end/app.json`) and the `reset-password` route. |
+
+`from` is the only address that varies by environment. The support address is a
+constant (`SUPPORT_EMAIL` in `email.config.ts`): every email sets it as
+`Reply-To`, the footer links to it, and the account-deletion `mailto:` fallback
+targets it. There is no env override, so replies cannot be pointed elsewhere by
+a stale `.env`.
 
 Account-deletion links are built by the account-management module
 (`buildDeleteAccountLink`) and arrive in the payload fully formed, so they need

@@ -130,7 +130,7 @@ describe('ResendEmailSender', () => {
     );
   });
 
-  it('honours sender and reply-to overrides', async () => {
+  it('honours the sender override and keeps Reply-To on support', async () => {
     process.env.EMAIL_FROM = 'Kadence <no-reply@kadence.app>';
     process.env.EMAIL_REPLY_TO = 'support@kadence.app';
     const sender = new ResendEmailSender();
@@ -142,7 +142,7 @@ describe('ResendEmailSender', () => {
 
     const sent = lastSentEmail();
     expect(sent.from).toBe('Kadence <no-reply@kadence.app>');
-    expect(sent.replyTo).toBe('support@kadence.app');
+    expect(sent.replyTo).toBe('support+codecompletelabs@gmail.com');
   });
 
   it('sends the account deletion link with its expiry', async () => {

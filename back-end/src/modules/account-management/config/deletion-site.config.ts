@@ -1,9 +1,4 @@
-/**
- * Address the deletion-link email is sent from, and the display name shown in
- * the mailbox. Both are envelope-only concerns; no secrets are involved.
- */
-export const ACCOUNT_DELETION_EMAIL_FROM = 'no-reply@kadence.app';
-export const ACCOUNT_DELETION_EMAIL_FROM_NAME = 'Kadence';
+import { SUPPORT_EMAIL } from '../../../shared/email/email.config';
 
 /**
  * The account-deletion site: a static page, outside the app, that satisfies
@@ -11,15 +6,9 @@ export const ACCOUNT_DELETION_EMAIL_FROM_NAME = 'Kadence';
  * backend does not serve it; it only links to it.
  *
  * When it is not configured the verification email carries a `mailto:` link to
- * the support address instead, so the flow still completes on every
+ * the shared support address instead, so the flow still completes on every
  * environment (including local development and CI).
  */
-export function getAccountDeletionSupportEmail(): string {
-  return (
-    process.env.ACCOUNT_DELETION_SUPPORT_EMAIL?.trim() || 'support@kadence.app'
-  );
-}
-
 export interface DeleteAccountLink {
   /** `web` when the static site is configured, `mailto` otherwise. */
   kind: 'web' | 'mailto';
@@ -50,7 +39,7 @@ export function buildDeleteAccountLink(
   ].join('\n');
   return {
     kind: 'mailto',
-    url: `mailto:${getAccountDeletionSupportEmail()}?subject=${encodeURIComponent(
+    url: `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
       subject,
     )}&body=${encodeURIComponent(body)}`,
   };

@@ -21,6 +21,7 @@
  *   the subject.
  */
 
+import { SUPPORT_EMAIL } from './email.config';
 import { EmailColors, EmailFonts } from './email-theme';
 
 /** Fully-rendered email, ready for `emails.send()`. */
@@ -299,7 +300,7 @@ ${renderFootnote(footnote, '28px')}`
             <!-- Footer -->
             <tr>
               <td bgcolor="${EmailColors.surface}" style="background-color:${EmailColors.surface};padding:18px ${CARD_GUTTER}px;border-top:1px solid ${EmailColors.border};border-radius:0 0 ${CARD_RADIUS}px ${CARD_RADIUS}px;font-family:${EmailFonts.sans};font-size:12px;line-height:19px;color:${EmailColors.textMuted};">
-                <strong style="color:${EmailColors.textSecondary};">Kadence</strong> account management &middot; <a href="mailto:support+codecompletelabs@gmail.com" style="color:${EmailColors.link};text-decoration:underline;">support@kadence.barryph.com</a>
+                <strong style="color:${EmailColors.textSecondary};">Kadence</strong> account management &middot; <a href="mailto:${SUPPORT_EMAIL}" style="color:${EmailColors.link};text-decoration:underline;">${SUPPORT_EMAIL}</a>
               </td>
             </tr>
 

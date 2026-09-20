@@ -1,23 +1,17 @@
+import { SUPPORT_EMAIL } from '../../../shared/email/email.config';
 import {
   buildDeleteAccountLink,
-  getAccountDeletionSupportEmail,
   resolveAccountDeletionSiteUrl,
 } from './deletion-site.config';
 
 describe('deletion-site.config', () => {
   const originalSiteUrl = process.env.ACCOUNT_DELETION_SITE_URL;
-  const originalSupport = process.env.ACCOUNT_DELETION_SUPPORT_EMAIL;
 
   afterEach(() => {
     if (originalSiteUrl === undefined) {
       delete process.env.ACCOUNT_DELETION_SITE_URL;
     } else {
       process.env.ACCOUNT_DELETION_SITE_URL = originalSiteUrl;
-    }
-    if (originalSupport === undefined) {
-      delete process.env.ACCOUNT_DELETION_SUPPORT_EMAIL;
-    } else {
-      process.env.ACCOUNT_DELETION_SUPPORT_EMAIL = originalSupport;
     }
   });
 
@@ -73,22 +67,14 @@ describe('deletion-site.config', () => {
 
     it('falls back to a support mailto when no site is configured', () => {
       delete process.env.ACCOUNT_DELETION_SITE_URL;
-      process.env.ACCOUNT_DELETION_SUPPORT_EMAIL = 'help@kadence.app';
 
       const link = buildDeleteAccountLink('a@example.com', 'abc123');
 
       expect(link.kind).toBe('mailto');
       const decoded = decodeURIComponent(link.url);
-      expect(decoded.startsWith('mailto:help@kadence.app')).toBe(true);
+      expect(decoded.startsWith(`mailto:${SUPPORT_EMAIL}`)).toBe(true);
       expect(decoded).toContain('permanently');
       expect(decoded).toContain('abc123');
-    });
-
-    it('uses a default support address when none is configured', () => {
-      delete process.env.ACCOUNT_DELETION_SITE_URL;
-      delete process.env.ACCOUNT_DELETION_SUPPORT_EMAIL;
-
-      expect(getAccountDeletionSupportEmail()).toBe('support@kadence.app');
     });
   });
 });

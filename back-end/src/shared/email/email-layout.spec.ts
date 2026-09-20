@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from './email.config';
 import { renderEmailHtml, type EmailBody } from './email-layout';
 
 const BODY: EmailBody = {
@@ -59,8 +60,17 @@ describe('email shell', () => {
     );
 
     expect(new Set(hrefs)).toEqual(
-      new Set([BODY.cta?.url, 'mailto:support+codecompletelabs@gmail.com']),
+      new Set([BODY.cta?.url, `mailto:${SUPPORT_EMAIL}`]),
     );
+  });
+
+  it('shows the same support address it links to', () => {
+    const html = renderEmailHtml(BODY);
+
+    // The footer used to link the support mailbox but print a different
+    // address, which invites replies to somewhere nobody reads.
+    expect(html).toContain(`<a href="mailto:${SUPPORT_EMAIL}"`);
+    expect(html).toContain(`>${SUPPORT_EMAIL}</a>`);
   });
 
   it('stays table-based and inline-styled for old rendering engines', () => {

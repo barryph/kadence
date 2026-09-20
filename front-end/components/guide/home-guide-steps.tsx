@@ -38,7 +38,7 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
   {
     title: 'Welcome to Kadence',
     description:
-      "Kadence is designed to adapt to real life. Most programs are a fixed plan, life isn't.",
+      'Kadence is designed to adapt to real life. Most programs are a fixed plan, life, not so much.',
     media: (
       <GuideMediaIcon
         accent={Colors.accentGlow}

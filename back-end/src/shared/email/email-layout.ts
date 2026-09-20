@@ -2,24 +2,27 @@
  * The single Kadence email shell.
  *
  * Every transactional email renders through {@link renderEmailHtml}, so the
- * brand (canvas gradient, cyan/blue bloom, signal bar, wordmark, CTA, footer)
- * is defined exactly once and templates supply only their own copy. The visual
- * language mirrors the app: `email-theme.ts` holds the palette (structured like
- * `front-end/constants/theme.ts`) and `components/backgrounds/background.tsx`
- * is the reference for the bloom.
+ * brand (wordmark, accent bar, badge, CTA, footer) is defined once and templates
+ * supply only their own copy. The look follows the public account site
+ * (`kadence-static/src/styles/global.css`): a white card on a light page, one
+ * system typeface, a single blue for actions and a flat red for destructive
+ * ones. `email-theme.ts` holds the palette.
  *
- * Email-client constraints that shaped this file:
- * - Table layout, every declaration inline; no JS, no images, no <style>
- *   dependency (the only one is MSO-conditional), so it survives Gmail,
- *   Apple Mail, Outlook and Yahoo.
- * - Every translucent fill carries a solid `bgcolor` equivalent, because
- *   Outlook's engine ignores rgba and gradients. The solid tokens in
- *   `email-theme.ts` are those rgba fills composited over the card colour, so
- *   both paths look the same.
- * - Text colours are tuned to clear WCAG AA (4.5:1) on that card colour.
+ * Security email has to survive three audiences at once - the recipient, the
+ * spam filter, and a mail client written before CSS was - so the shell is
+ * deliberately plain:
+ * - Table layout, every declaration inline, no web font, no image, no external
+ *   request of any kind. The only conditional markup is the Outlook VML button.
+ * - Solid colours only: no gradient and no translucency. The one rgba value,
+ *   the card shadow, is decoration a client may drop without losing meaning.
+ * - Text clears WCAG AA (4.5:1) against the surface it sits on.
+ * - One obvious primary action, plus a plain-text URL for clients that strip
+ *   the button, and a preheader that previews the message instead of repeating
+ *   the subject.
  */
 
-import { EmailColors, EmailFonts, withAlpha } from './email-theme';
+import { SUPPORT_EMAIL } from './email.config';
+import { EmailColors, EmailFonts } from './email-theme';
 
 /** Fully-rendered email, ready for `emails.send()`. */
 export interface EmailContent {
@@ -31,7 +34,7 @@ export interface EmailContent {
 
 /**
  * A highlighted aside in the body. `variant` selects the accent so the tone
- * matches the message: cyan for neutral/expiry facts, green for a resolved
+ * matches the message: amber for neutral/expiry facts, green for a resolved
  * outcome, red for a destructive one.
  */
 export interface EmailCallout {
@@ -41,7 +44,7 @@ export interface EmailCallout {
   detail?: string;
 }
 
-/** The call to action. `variant` colours the button gradient and glow. */
+/** The call to action. `variant` picks the accessible fill for the button. */
 export interface EmailCallToAction {
   label: string;
   url: string;
@@ -52,7 +55,7 @@ export interface EmailCallToAction {
 export interface EmailBody {
   /** Inbox preview line; hidden in the body. */
   preheader: string;
-  /** Small mono label above the heading, e.g. `PASSWORD RESET`. */
+  /** Short context label shown as the badge, e.g. `Password reset`. */
   eyebrow: string;
   heading: string;
   /** Plain-text paragraphs; escaped when rendered to HTML. */
@@ -62,53 +65,25 @@ export interface EmailBody {
   footnote?: string;
 }
 
-interface Accent {
-  /** Accent colour used for the callout rule, border and label text. */
-  accent: string;
-  /** Card-composited equivalent of `accent` at 6%, for clients without rgba. */
-  surface: string;
-}
+/** Card geometry, shared by the shell and the conditional Outlook rules. */
+const CARD_WIDTH = 600;
+const CARD_GUTTER = 28;
+const CARD_RADIUS = 12;
 
-const CALLOUT_ACCENTS: Record<EmailCallout['variant'], Accent> = {
-  expiry: {
-    accent: EmailColors.cyan,
-    surface: EmailColors.calloutExpirySurface,
-  },
-  success: {
-    accent: EmailColors.success,
-    surface: EmailColors.calloutSuccessSurface,
-  },
-  danger: {
-    accent: EmailColors.danger,
-    surface: EmailColors.calloutDangerSurface,
-  },
+/** Callout accents: rule and label colour, plus the flat fill. */
+const CALLOUT_ACCENTS: Record<
+  EmailCallout['variant'],
+  { accent: string; surface: string }
+> = {
+  expiry: { accent: EmailColors.warning, surface: EmailColors.warningSurface },
+  success: { accent: EmailColors.success, surface: EmailColors.successSurface },
+  danger: { accent: EmailColors.danger, surface: EmailColors.dangerSurface },
 };
 
-interface CtaStyle {
-  /** Solid fill for Outlook's VML button (no gradient support). */
-  fill: string;
-  gradient: string;
-  /** Card-composited equivalent of the glow at 10%. */
-  ring: string;
-  boxShadow: string;
-}
-
-const CTA_STYLES: Record<
-  NonNullable<EmailCallToAction['variant']>,
-  CtaStyle
-> = {
-  primary: {
-    fill: EmailColors.accent,
-    gradient: `linear-gradient(135deg,${EmailColors.accent} 0%,${EmailColors.accentBright} 48%,${EmailColors.cyan} 100%)`,
-    ring: EmailColors.ctaRing,
-    boxShadow: `box-shadow:0 18px 38px ${EmailColors.accentShadow},0 8px 18px ${EmailColors.shadow}`,
-  },
-  danger: {
-    fill: EmailColors.dangerStrong,
-    gradient: `linear-gradient(135deg,${EmailColors.dangerStrong} 0%,${EmailColors.danger} 55%,${EmailColors.dangerBright} 100%)`,
-    ring: EmailColors.ctaDangerRing,
-    boxShadow: `0 18px 38px ${EmailColors.dangerShadow},0 8px 18px ${EmailColors.shadow}`,
-  },
+/** Button fills: the border and the VML fill use the same accessible colour. */
+const CTA_FILLS: Record<NonNullable<EmailCallToAction['variant']>, string> = {
+  primary: EmailColors.brand,
+  danger: EmailColors.danger,
 };
 
 function escapeHtml(value: string): string {
@@ -123,258 +98,89 @@ function renderParagraphs(paragraphs: string[]): string {
   return paragraphs
     .map(
       (paragraph) =>
-        `<p style="margin:0 0 14px;font-size:15px;line-height:25px;color:${EmailColors.textSecondary};">${escapeHtml(paragraph)}</p>`,
+        `<p style="margin:0 0 16px;font-size:15px;line-height:24px;color:${EmailColors.textSecondary};">${escapeHtml(paragraph)}</p>`,
     )
     .join('\n');
+}
+
+/**
+ * The context pill beside the wordmark, matching the site's `.badge`. Its
+ * label is always the template's eyebrow, so nothing here is per-email.
+ */
+function renderBadge(eyebrow: string): string {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="right">
+                    <tr>
+                      <td bgcolor="${EmailColors.brandSoft}" style="background-color:${EmailColors.brandSoft};border:1px solid ${EmailColors.brandBorder};border-radius:999px;padding:5px 12px;font-family:${EmailFonts.sans};font-size:12px;line-height:16px;font-weight:600;color:${EmailColors.brand};white-space:nowrap;">
+                        ${escapeHtml(eyebrow)}
+                      </td>
+                    </tr>
+                  </table>`;
 }
 
 function renderCallout(callout: EmailCallout): string {
   const { accent, surface } = CALLOUT_ACCENTS[callout.variant];
   const detail = callout.detail
-    ? `
-      <br />
-      <span style="font-weight:400;letter-spacing:0.6px;color:${EmailColors.textMuted};">${escapeHtml(callout.detail)}</span>`
+    ? `<br /><span style="font-weight:400;color:${EmailColors.textMuted};">${escapeHtml(callout.detail)}</span>`
     : '';
 
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:22px 0 28px;">
-      <tr>
-        <td bgcolor="${surface}" style="background-color:${surface};border-left:2px solid ${accent};border-radius:0 8px 8px 0;padding:13px 16px;font-family:${EmailFonts.mono};font-size:12px;line-height:18px;font-weight:600;letter-spacing:1.6px;color:${EmailColors.textSecondary};">
-          ${escapeHtml(callout.label)}${detail}
-        </td>
-      </tr>
-    </table>`;
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${surface}" style="width:100%;background-color:${surface};border:1px solid ${accent};border-left-width:3px;border-radius:8px;margin:4px 0 24px;">
+                  <tr>
+                    <td style="padding:13px 16px;font-family:${EmailFonts.sans};font-size:14px;line-height:22px;font-weight:600;color:${accent};">
+                      ${escapeHtml(callout.label)}${detail}
+                    </td>
+                  </tr>
+                </table>`;
 }
 
+/**
+ * The one primary action. Width is pinned for Outlook (which does not honour
+ * `max-width`) and left fluid elsewhere so the target stays comfortable on a
+ * phone. VML replaces the padding-based anchor only in Word's engine.
+ */
 function renderCta(cta: EmailCallToAction): string {
-  const { fill, gradient, ring, boxShadow } =
-    CTA_STYLES[cta.variant ?? 'primary'];
+  const fill = CTA_FILLS[cta.variant ?? 'primary'];
   const url = escapeHtml(cta.url);
-  const label = escapeHtml(cta.label).replace(/ /g, '&nbsp;');
-  const arrow = `${label}&nbsp;&#8594;`;
+  const label = escapeHtml(cta.label);
 
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-      <tr>
-        <td style="padding:0 32px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-            <tr>
-              <td align="center" bgcolor="${ring}" style="background-color:${ring};border-radius:12px;padding:3px;">
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:0 0 24px;">
                   <tr>
-                    <td align="center" bgcolor="${fill}" style="background-color:${fill};background-image:${gradient};border-radius:9px;">
+                    <td align="center" bgcolor="${fill}" style="background-color:${fill};border:1px solid ${fill};border-radius:8px;">
                       <!--[if mso]>
-                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:52px;v-text-anchor:middle;width:528px;" arcsize="18%" strokecolor="${fill}" fillcolor="${fill}">
+                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${url}" style="height:48px;v-text-anchor:middle;width:${CARD_WIDTH - CARD_GUTTER * 2}px;" arcsize="17%" strokecolor="${fill}" fillcolor="${fill}">
                           <w:anchorlock />
-                          <center style="color:${EmailColors.textPrimary};font-family:${EmailFonts.fallback};font-size:13px;font-weight:bold;letter-spacing:2px;">${arrow}</center>
+                          <center style="color:#ffffff;font-family:${EmailFonts.sans};font-size:16px;font-weight:bold;">${label}</center>
                         </v:roundrect>
                       <![endif]-->
                       <!--[if !mso]><!-- -->
-                      <a href="${url}" style="display:block;padding:17px 24px;font-family:${EmailFonts.mono};font-size:13px;line-height:18px;font-weight:700;letter-spacing:2px;color:${EmailColors.textPrimary};text-decoration:none;border-radius:9px;box-shadow:${boxShadow};">${arrow}</a>
+                      <a href="${url}" style="display:block;padding:14px 24px;font-family:${EmailFonts.sans};font-size:16px;line-height:20px;font-weight:600;color:#ffffff;text-decoration:none;">${label}</a>
                       <!--<![endif]-->
                     </td>
                   </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>`;
+                </table>`;
 }
 
+/**
+ * The URL for clients that block or flatten the button. Kept visible rather
+ * than hidden behind a disclosure: a reader who cannot see where a security
+ * link goes should not be asked to click it, and a plain fallback is one less
+ * thing for a filter to find suspicious.
+ */
 function renderFallbackUrl(url: string): string {
   const escaped = escapeHtml(url);
 
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-      <tr>
-        <td style="padding:20px 32px 34px;">
-          <p style="margin:0 0 12px;font-size:12px;line-height:19px;color:${EmailColors.textMuted};">
-            Button not working? Copy the link below into your browser.
-          </p>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-            <tr>
-              <td bgcolor="${EmailColors.surface}" style="background-color:${EmailColors.surface};border:1px solid ${EmailColors.border};border-radius:8px;padding:12px 14px;font-family:${EmailFonts.monoSystem};font-size:11px;line-height:18px;word-break:break-all;word-wrap:break-word;color:${EmailColors.link};">
-                <a href="${escaped}" style="color:${EmailColors.link};text-decoration:none;word-break:break-all;word-wrap:break-word;">${escaped}</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>`;
-}
-
-/**
- * Builds the brand shell around a template's copy. All template strings are
- * escaped here, so callers pass plain text and never HTML.
- */
-export function renderEmailHtml(body: EmailBody): string {
-  const { preheader, eyebrow, heading, paragraphs, callout, cta, footnote } =
-    body;
-
-  // Without a URL block the body is shorter, so the footnote takes over the
-  // bottom padding instead of leaving the shell with a dangling gap.
-  const bodyTail = cta
-    ? `${renderCta(cta)}
-
-      ${renderFallbackUrl(cta.url)}
-
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-        <tr>
-          <td style="padding:0 32px;">
-            ${renderFootnote(footnote, '0')}
-          </td>
-        </tr>
-      </table>`
-    : `
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-        <tr>
-          <td style="padding:0 32px;">
-            ${renderFootnote(footnote, '34px')}
-          </td>
-        </tr>
-      </table>`;
-
-  return `
-<!DOCTYPE html>
-<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="x-apple-disable-message-reformatting" />
-    <meta name="color-scheme" content="dark light" />
-    <meta name="supported-color-schemes" content="dark light" />
-    <meta name="theme-color" content="${EmailColors.canvas}" />
-    <title>${escapeHtml(heading)}</title>
-    <!-- Progressive enhancement: the app's real typeface where remote fonts load. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-    <!--[if mso]>
-      <style>
-        /* Word's engine ignores web fonts; pin the closest available monospace. */
-        * { font-family: ${EmailFonts.fallback} !important; }
-      </style>
-      <noscript>
-        <xml>
-          <o:OfficeDocumentSettings>
-            <o:PixelsPerInch>96</o:PixelsPerInch>
-          </o:OfficeDocumentSettings>
-        </xml>
-      </noscript>
-    <![endif]-->
-  </head>
-
-  <body style="margin:0;padding:0;width:100%;background-color:${EmailColors.canvas};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
-
-    <!-- Preheader: shown in the inbox preview, never in the body. -->
-    <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:${EmailColors.canvas};opacity:0;">
-      ${escapeHtml(preheader)}
-      &#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;
-    </div>
-
-    <!-- Outer canvas: the app's base gradient. -->
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${EmailColors.canvas}" style="background-color:${EmailColors.canvas};background-image:linear-gradient(180deg,${EmailColors.canvas} 0%,${EmailColors.canvasMid} 52%,${EmailColors.canvas} 100%);width:100%;">
-      <tr>
-        <td align="center" style="padding:40px 16px;">
-
-          <!-- Card frame: 1px gradient hairline, degrading to the flat border. -->
-          <!--[if mso]>
-          <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td width="600">
-          <![endif]-->
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${EmailColors.frame}" style="width:100%;max-width:600px;background-color:${EmailColors.frame};background-image:linear-gradient(135deg,${withAlpha(EmailColors.accentGlow, 0.55)} 0%,${withAlpha(EmailColors.frame, 0.35)} 46%,${withAlpha(EmailColors.textPrimary, 0.1)} 100%);border-radius:16px;">
-            <tr>
-              <td style="padding:1px;">
-
-                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${EmailColors.card}" style="width:100%;background-color:${EmailColors.card};border-radius:15px;">
-
-                  <!-- Top signal bar: the app's "goal met" gradient. -->
+                <p style="margin:0 0 8px;font-size:13px;line-height:20px;color:${EmailColors.textMuted};">
+                  If the button does not work, copy this link into your browser:
+                </p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${EmailColors.surface}" style="width:100%;background-color:${EmailColors.surface};border:1px solid ${EmailColors.border};border-radius:8px;margin:0 0 24px;">
                   <tr>
-                    <td bgcolor="${EmailColors.accentGlow}" height="4" style="height:4px;line-height:4px;font-size:0;background-color:${EmailColors.accentGlow};background-image:linear-gradient(90deg,${EmailColors.accentGlow} 0%,${EmailColors.accentBright} 42%,${EmailColors.cyan} 72%,${EmailColors.success} 100%);border-radius:15px 15px 0 0;">&nbsp;</td>
-                  </tr>
-
-                  <!--
-                    Header + body share one gradient cell: the app paints radial
-                    blooms over its base gradient, so this fakes the top-left blue
-                    and top-right cyan bloom with corner linear gradients.
-                  -->
-                  <tr>
-                    <td bgcolor="${EmailColors.card}" style="background-color:${EmailColors.card};background-image:linear-gradient(135deg,${withAlpha(EmailColors.accentGlow, 0.3)} 0%,${withAlpha(EmailColors.accentGlow, 0.05)} 30%,${withAlpha(EmailColors.accentGlow, 0)} 52%),linear-gradient(225deg,${withAlpha(EmailColors.cyan, 0.15)} 0%,${withAlpha(EmailColors.cyan, 0)} 38%);font-family:${EmailFonts.mono};">
-
-                      <!-- Header -->
-                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-                        <tr>
-                          <td style="padding:28px 32px;border-bottom:1px solid ${EmailColors.border};">
-                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-                              <tr>
-                                <td align="left" style="font-family:${EmailFonts.mono};font-size:19px;line-height:24px;font-weight:700;letter-spacing:3px;color:${EmailColors.textPrimary};">
-                                  KAD<span style="color:${EmailColors.textFaint};">ENCE</span>
-                                </td>
-                                <td align="right" style="font-family:${EmailFonts.mono};font-size:10px;line-height:14px;font-weight:600;letter-spacing:2px;color:${EmailColors.eyebrow};white-space:nowrap;">
-                                  <span style="color:${EmailColors.cyan};">&#9679;</span>&nbsp;SECURITY
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-
-                      <!-- Body -->
-                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-                        <tr>
-                          <td style="padding:34px 32px 0;">
-
-                            <p style="margin:0 0 16px;font-size:11px;line-height:16px;font-weight:600;letter-spacing:2.5px;color:${EmailColors.eyebrow};">
-                              <span style="color:${EmailColors.accentGlow};">&#9646;</span>&nbsp;${escapeHtml(eyebrow).replace(/ /g, '&nbsp;')}
-                            </p>
-
-                            <h1 style="margin:0 0 18px;font-size:29px;line-height:37px;font-weight:700;letter-spacing:-0.3px;color:${EmailColors.textPrimary};">
-                              ${escapeHtml(heading)}
-                            </h1>
-
-                            ${renderParagraphs(paragraphs)}
-                            ${callout ? `\n${renderCallout(callout)}\n` : ''}
-                          </td>
-                        </tr>
-                      </table>
-
-                    ${bodyTail}
-
+                    <td style="padding:12px 14px;font-family:${EmailFonts.mono};font-size:12px;line-height:19px;color:${EmailColors.link};word-break:break-all;word-wrap:break-word;">
+                      <a href="${escaped}" style="color:${EmailColors.link};text-decoration:none;word-break:break-all;word-wrap:break-word;">${escaped}</a>
                     </td>
                   </tr>
-
-                  <!-- Footer -->
-                  <tr>
-                    <td bgcolor="${EmailColors.card}" style="background-color:${EmailColors.card};padding:22px 32px 28px;border-top:1px solid ${EmailColors.border};">
-                      <p style="margin:0;font-family:${EmailFonts.mono};font-size:10px;line-height:16px;letter-spacing:1.4px;color:${EmailColors.textSubtle};">
-                        KADENCE &middot; EXERCISE TRACKING, ON YOUR SCHEDULE
-                      </p>
-                    </td>
-                  </tr>
-
-                </table>
-              </td>
-            </tr>
-          </table>
-          <!--[if mso]>
-          </td></tr></table>
-          <![endif]-->
-
-          <!-- Postscript -->
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
-            <tr>
-              <td align="center" style="padding:18px 8px 0;font-family:${EmailFonts.mono};font-size:10px;line-height:16px;letter-spacing:1.2px;color:${EmailColors.textSubtle};">
-                SENT BY KADENCE
-              </td>
-            </tr>
-          </table>
-
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>`;
+                </table>`;
 }
 
 function renderFootnote(
@@ -386,9 +192,137 @@ function renderFootnote(
   }
 
   return `
-    <p style="margin:0 0 ${bottomPadding};font-family:${EmailFonts.mono};font-size:12px;line-height:19px;color:${EmailColors.textMuted};">
-      ${escapeHtml(footnote)}
-    </p>`;
+                <p style="margin:0 0 ${bottomPadding};font-size:13px;line-height:21px;color:${EmailColors.textMuted};">
+                  ${escapeHtml(footnote)}
+                </p>`;
+}
+
+/**
+ * Builds the shell around a template's copy. All template strings are escaped
+ * here, so callers pass plain text and never HTML.
+ */
+export function renderEmailHtml(body: EmailBody): string {
+  const { preheader, eyebrow, heading, paragraphs, callout, cta, footnote } =
+    body;
+
+  // Without a CTA the footnote takes over the bottom gap the URL block leaves.
+  const action = cta
+    ? `${renderCta(cta)}
+${renderFallbackUrl(cta.url)}
+${renderFootnote(footnote, '28px')}`
+    : renderFootnote(footnote, '28px');
+
+  return `<!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <!-- Light-only on purpose: there is no dark variant to half-support. -->
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <meta name="theme-color" content="${EmailColors.canvas}" />
+    <title>${escapeHtml(heading)}</title>
+    <!--[if mso]>
+      <noscript>
+        <xml>
+          <o:OfficeDocumentSettings>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+          </o:OfficeDocumentSettings>
+        </xml>
+      </noscript>
+    <![endif]-->
+    <!-- Outlook needs the width pinned; every other client reads the table. -->
+    <!--[if mso]>
+      <style>
+        .kadence-card { width: ${CARD_WIDTH}px; }
+      </style>
+    <![endif]-->
+  </head>
+
+  <body style="margin:0;padding:0;width:100%;background-color:${EmailColors.canvas};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+
+    <!-- Preheader: shown in the inbox preview, never in the body. -->
+    <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:${EmailColors.canvas};opacity:0;">
+      ${escapeHtml(preheader)}
+      &#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${EmailColors.canvas}" style="width:100%;background-color:${EmailColors.canvas};">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+
+          <!--
+            The card is a plain block box, not a table: Chromium (and every
+            client built on it) ignores border-radius on a display:table, which
+            would leave the accent bar and the shadow spilling past square
+            corners. The table inside supplies the layout. The conditional
+            table pins the width for Outlook, which has no max-width.
+          -->
+          <!--[if mso]>
+          <table role="presentation" width="${CARD_WIDTH}" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td width="${CARD_WIDTH}">
+          <![endif]-->
+          <div class="kadence-card" style="box-sizing:border-box;width:100%;max-width:${CARD_WIDTH}px;margin:0 auto;background-color:${EmailColors.card};border:1px solid ${EmailColors.border};border-radius:${CARD_RADIUS}px;box-shadow:${EmailColors.cardShadow};">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${EmailColors.card}" style="width:100%;background-color:${EmailColors.card};border-radius:${CARD_RADIUS}px;">
+
+            <!-- Accent bar: the one brand flourish, and it is a flat colour. -->
+            <tr>
+              <td bgcolor="${EmailColors.brandBar}" height="3" style="height:3px;line-height:3px;font-size:0;background-color:${EmailColors.brandBar};border-radius:${CARD_RADIUS}px ${CARD_RADIUS}px 0 0;">&nbsp;</td>
+            </tr>
+
+            <!-- Header: the app wordmark, plus the message's own context. -->
+            <tr>
+              <td style="padding:20px ${CARD_GUTTER}px;border-bottom:1px solid ${EmailColors.border};">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+                  <tr>
+                    <td align="left" valign="middle" style="font-family:${EmailFonts.mono};font-size:17px;line-height:22px;font-weight:700;letter-spacing:2px;color:${EmailColors.textPrimary};">
+                      KAD<span style="color:${EmailColors.textSubtle};">ENCE</span>
+                    </td>
+                    <td align="right" valign="middle" style="font-size:0;line-height:0;">
+                      ${renderBadge(eyebrow)}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:28px ${CARD_GUTTER}px 0;">
+                <h1 style="margin:0 0 16px;font-family:${EmailFonts.sans};font-size:22px;line-height:30px;font-weight:700;letter-spacing:-0.2px;color:${EmailColors.textPrimary};">
+                  ${escapeHtml(heading)}
+                </h1>
+                ${renderParagraphs(paragraphs)}
+                ${callout ? `${renderCallout(callout)}\n` : ''}${action}
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td bgcolor="${EmailColors.surface}" style="background-color:${EmailColors.surface};padding:18px ${CARD_GUTTER}px;border-top:1px solid ${EmailColors.border};border-radius:0 0 ${CARD_RADIUS}px ${CARD_RADIUS}px;font-family:${EmailFonts.sans};font-size:12px;line-height:19px;color:${EmailColors.textMuted};">
+                <strong style="color:${EmailColors.textSecondary};">Kadence</strong> account management &middot; <a href="mailto:${SUPPORT_EMAIL}" style="color:${EmailColors.link};text-decoration:underline;">${SUPPORT_EMAIL}</a>
+              </td>
+            </tr>
+
+          </table>
+          </div>
+          <!--[if mso]>
+          </td></tr></table>
+          <![endif]-->
+
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${CARD_WIDTH}px;margin:0 auto;">
+            <tr>
+              <td align="center" style="padding:16px 8px 0;font-family:${EmailFonts.sans};font-size:12px;line-height:19px;color:${EmailColors.textSubtle};">
+                Sent by Kadence, a product of Code Complete Labs. Kadence will never ask for your password by email.
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
 }
 
 /** Plain-text alternative, built from the same body model. */

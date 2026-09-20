@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import User from 'src/modules/users/domain/user.entity';
 import UserEmail from 'src/modules/users/domain/value-objects/UserEmail';
 import { UsersService } from 'src/modules/users/services/users.service';
+import { SUPPORT_EMAIL } from 'src/shared/email/email.config';
 import { EMAIL_SENDER, IEmailSender } from 'src/shared/email/email-sender.port';
 import {
   AccountNotFoundError,
@@ -108,9 +109,12 @@ describe('DeletionRequestService', () => {
       expect(emailSender.sendAccountDeletionEmail).toHaveBeenCalledTimes(1);
       const sent = emailSender.sendAccountDeletionEmail.mock.calls[0][0];
       expect(sent.recipientEmail).toBe('delete-me@example.com');
-      expect(sent.deletionUrl).toMatch(
-        /^https:\/\/delete\.kadence\.app\/delete\?token=[a-f0-9]{64}$/,
-      );
+
+      expect(
+        sent.deletionUrl.startsWith(
+          'https://delete.kadence.app/delete-account/confirm/?token=',
+        ),
+      ).toBe(true);
       expect(sent.expiresInMinutes).toBeGreaterThan(0);
 
       // The plaintext token is the one in the email and is not the stored hash.
@@ -129,7 +133,7 @@ describe('DeletionRequestService', () => {
       const sent = emailSender.sendAccountDeletionEmail.mock.calls[0][0];
       expect(sent.deletionUrl.startsWith('mailto:')).toBe(true);
       const decoded = decodeURIComponent(sent.deletionUrl);
-      expect(decoded).toContain('support@kadence.app');
+      expect(decoded).toContain(SUPPORT_EMAIL);
       expect(decoded).toContain('permanently delete my Kadence account');
       // The token still has to reach the user, as a 64-char hex value.
       expect(decoded).toMatch(/[a-f0-9]{64}/);

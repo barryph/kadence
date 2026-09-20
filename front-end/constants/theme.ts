@@ -7,9 +7,10 @@
  * needs ("what colour is a border?") instead of a literal value.
  *
  * The transactional email theme lives in
- * `back-end/src/shared/email/email-theme.ts` and deliberately mirrors this file
- * group for group, so the two can be compared side by side. Keep the section
- * order and the shared token names in sync when either changes.
+ * `back-end/src/shared/email/email-theme.ts` but no longer mirrors this file:
+ * the app is dark-only while security email follows the light theme of the
+ * public account site, so the two palettes share no values. Only the brand
+ * accents are common ground.
  *
  * Prefer these tokens over literals in components. A one-off colour that is not
  * part of the brand or a semantic state belongs next to its component instead.
@@ -19,7 +20,7 @@
  */
 export const Colors = {
   // --- Canvas -------------------------------------------------------------
-  /** Deepest background; the base of the app gradient and the email canvas. */
+  /** Deepest background; the base of the app gradient. */
   canvas: '#050711',
   /** Midpoint of the vertical canvas gradient. */
   canvasMid: '#0b1020',
@@ -104,7 +105,7 @@ export const Colors = {
   /** Accent for values that beat their target (e.g. "above goal" heatmap cells). */
   exceeded: '#ff9f43',
 
-  /** Destructive brand accent: overdue bars, danger CTAs. */
+  /** Destructive brand accent: overdue bars and danger CTAs. */
   danger: '#ff3d54',
   /** Error text and invalid field borders. */
   dangerText: '#ff3333',

@@ -18,15 +18,12 @@
  *   request-controlled value is interpolated into executable code.
  *
  * The page is the last step of the password reset email flow, so it paints
- * itself from the same theme as that email (`email-theme.ts`) rather than
- * introducing a second copy of the brand palette.
+ * itself from the same light theme as that email (`email-theme.ts`) rather than
+ * introducing a second copy of the palette. A reader who clicks a white email
+ * should not land on a dark page.
  */
 
-import {
-  EmailColors,
-  EmailFonts,
-  withAlpha,
-} from 'src/shared/email/email-theme';
+import { EmailColors, EmailFonts } from 'src/shared/email/email-theme';
 
 export interface PasswordResetLandingPageOptions {
   /**
@@ -80,7 +77,7 @@ const AUTO_OPEN_SCRIPT = `(function () {
 })();`;
 
 const PAGE_STYLES = `
-  :root { color-scheme: dark; }
+  :root { color-scheme: light; }
   * { box-sizing: border-box; }
   html, body { margin: 0; min-height: 100%; }
   body {
@@ -88,44 +85,58 @@ const PAGE_STYLES = `
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 28px 20px;
+    padding: 24px 16px;
     background-color: ${EmailColors.canvas};
-    background-image: radial-gradient(circle at 18% 12%, ${withAlpha(EmailColors.accentGlow, 0.28)}, transparent 46%), radial-gradient(circle at 84% 8%, ${withAlpha(EmailColors.cyan, 0.16)}, transparent 40%);
     color: ${EmailColors.textPrimary};
-    font-family: ${EmailFonts.mono};
+    font-family: ${EmailFonts.sans};
+    font-size: 16px;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
   main {
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
     background-color: ${EmailColors.card};
-    border: 1px solid ${EmailColors.frame};
-    border-radius: 16px;
+    border: 1px solid ${EmailColors.border};
+    border-radius: 12px;
+    box-shadow: ${EmailColors.cardShadow};
     overflow: hidden;
-    text-align: center;
   }
-  .signal { height: 4px; background-image: linear-gradient(90deg, ${EmailColors.accentGlow} 0%, ${EmailColors.accentBright} 42%, ${EmailColors.cyan} 72%, ${EmailColors.success} 100%); }
-  .inner { padding: 34px 28px 30px; }
-  .wordmark { margin: 0 0 26px; font-size: 17px; font-weight: 700; letter-spacing: 3px; }
-  .wordmark span { color: ${EmailColors.textFaint}; }
-  h1 { margin: 0 0 14px; font-size: 23px; line-height: 1.35; letter-spacing: -0.2px; }
-  p { margin: 0 0 22px; font-size: 14px; line-height: 1.65; color: ${EmailColors.textSecondary}; }
+  .bar { height: 3px; background-color: ${EmailColors.brandBar}; }
+  .inner { padding: 28px; }
+  .wordmark {
+    margin: 0 0 22px;
+    font-family: ${EmailFonts.mono};
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: ${EmailColors.textPrimary};
+  }
+  .wordmark span { color: ${EmailColors.textSubtle}; }
+  h1 {
+    margin: 0 0 12px;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: -0.2px;
+    color: ${EmailColors.textPrimary};
+  }
+  p { margin: 0 0 20px; color: ${EmailColors.textSecondary}; }
   .button {
     display: block;
-    padding: 16px 20px;
-    border-radius: 10px;
-    background-image: linear-gradient(135deg, ${EmailColors.accent} 0%, ${EmailColors.accentBright} 48%, ${EmailColors.cyan} 100%);
-    box-shadow: 0 16px 34px ${EmailColors.accentShadow};
-    color: ${EmailColors.textPrimary};
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.6px;
+    padding: 14px 20px;
+    border-radius: 8px;
+    background-color: ${EmailColors.brand};
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
     text-decoration: none;
   }
   .button:active { transform: translateY(1px); }
-  .hint { margin: 20px 0 0; font-size: 12px; line-height: 1.6; color: ${EmailColors.textMuted}; }
-  .hint a { color: ${EmailColors.link}; }
+  .hint { margin: 18px 0 0; font-size: 13px; line-height: 1.6; color: ${EmailColors.textMuted}; }
+  .hint a { color: ${EmailColors.link}; text-underline-offset: 0.15em; }
   .error { color: ${EmailColors.dangerText}; }
+  :focus-visible { outline: 3px solid ${EmailColors.brand}; outline-offset: 2px; border-radius: 6px; }
 `;
 
 function renderShell(inner: string): string {
@@ -142,7 +153,7 @@ function renderShell(inner: string): string {
   </head>
   <body>
     <main>
-      <div class="signal"></div>
+      <div class="bar"></div>
       <div class="inner">
         <p class="wordmark">KAD<span>ENCE</span></p>
 ${inner}
@@ -166,10 +177,10 @@ export function renderPasswordResetLandingPage({
   const inner = deepLink
     ? `        <h1>Opening Kadence&hellip;</h1>
         <p>Your password reset is ready. We are opening the Kadence app to finish it.</p>
-        <a id="open-kadence" class="button" href="${escapeHtml(deepLink)}" rel="noreferrer">OPEN KADENCE APP &rarr;</a>
-        <p id="install-hint" class="hint" hidden>Nothing happened? Make sure the Kadence app is installed, then tap <strong>Open Kadence App</strong>.</p>
+        <a id="open-kadence" class="button" href="${escapeHtml(deepLink)}" rel="noreferrer">Open Kadence app</a>
+        <p id="install-hint" class="hint" hidden>Nothing happened? Make sure the Kadence app is installed, then tap <strong>Open Kadence app</strong>.</p>
         <noscript>
-          <p class="hint">JavaScript is disabled. Tap <strong>Open Kadence App</strong> above to continue.</p>
+          <p class="hint">JavaScript is disabled. Tap <strong>Open Kadence app</strong> above to continue.</p>
         </noscript>
         <script nonce="${safeNonce}">${AUTO_OPEN_SCRIPT}</script>`
     : `        <h1>Reset link incomplete</h1>

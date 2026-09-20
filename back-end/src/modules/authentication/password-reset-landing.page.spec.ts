@@ -11,7 +11,8 @@ describe('renderPasswordResetLandingPage', () => {
 
     expect(html).toContain('href="kadence://reset-password?token=abc123"');
     expect(html).toContain("document.getElementById('open-kadence')");
-    expect(html).toContain('OPEN KADENCE APP');
+    // The visible label is sentence case, matching the email's CTA.
+    expect(html).toContain('Open Kadence app');
   });
 
   it('escapes a hostile token so it cannot break out of the href', () => {

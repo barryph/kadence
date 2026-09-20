@@ -19,6 +19,44 @@ that imports the Resend SDK, so replacing the provider means adding another
 implementation of the port and changing one provider in `email.module.ts` — no
 application code changes.
 
+## Look, and why it is this plain
+
+Every template renders through the shell in
+`src/shared/email/email-layout.ts`, painted from `email-theme.ts`. The style
+follows the public account site (`kadence-static/src/styles/global.css`): a
+white card on a light page, one system typeface, a single blue for actions and a
+flat red for destructive ones.
+
+The restraint is functional. A password reset or deletion email is read by
+someone deciding whether it is a phishing attempt, so the shell stays on the
+boring side of every trade-off:
+
+- **No external request.** No web font, image, stylesheet or tracking pixel.
+  Every asset request is one a security-conscious reader can question, and some
+  filters weigh them. The wordmark is text.
+- **No gradient or translucency.** Solid colours only, one value per surface.
+  Outlook ignores gradients and rgba, so anything built out of them renders as a
+  fallback anyway. The card shadow is the sole exception and carries no meaning.
+- **Nothing dark-mode-specific.** The document declares `color-scheme: light`
+  and the light palette is the only palette, so a client that inverts colours
+  still shows the card on a dark backdrop rather than a half-themed one.
+- **Table layout with inline styles,** with the one Outlook-only `<style>` block
+  and VML button as the only conditional markup.
+- **One obvious action,** plus the URL in plain text for clients that strip the
+  button, and a preheader that previews the message instead of repeating the
+  subject.
+- **Accessible contrast.** Every text/surface pairing in `email-theme.ts` clears
+  WCAG AA; `email-theme.spec.ts` recomputes the ratios and fails if a change
+  drops one below 4.5:1.
+
+Three tests keep this from drifting: `email-theme.spec.ts` (contrast, solid
+colours, local fonts), `email-layout.spec.ts` (no external requests, the card
+box, escaping) and `email-templates.spec.ts` (copy and the plain-text
+alternative).
+
+`pnpm run email:preview` renders every template to `emails/.preview/` using the
+real renderers, so a preview cannot drift from what Resend receives.
+
 ## Configuration
 
 All values are read from the environment by
@@ -28,9 +66,14 @@ All values are read from the environment by
 | --- | --- | --- | --- |
 | `RESEND_API_KEY` | yes | — | Resend API key ([create one](https://resend.com/api-keys)). The API refuses to start without it. |
 | `EMAIL_FROM` | no | `Kadence <notifications@mail.kadence.barryph.com>` | `from` identity for every email. Resend only accepts an address on a verified sending domain. |
-| `EMAIL_REPLY_TO` | no | `support+codecompletelabs@gmail.com` | `Reply-To` on every email. |
 | `EMAIL_PASSWORD_RESET_URL` | no | `https://kadence.barryph.com/reset-password` | Public HTTPS link the reset token is appended to as `?token=`. Must stay on the verified sending domain (see below). |
 | `EMAIL_PASSWORD_RESET_DEEP_LINK` | no | `kadence://reset-password` | Custom-scheme deep link the handoff endpoint redirects into. Must match the app's URL scheme (`front-end/app.json`) and the `reset-password` route. |
+
+`from` is the only address that varies by environment. The support address is a
+constant (`SUPPORT_EMAIL` in `email.config.ts`): every email sets it as
+`Reply-To`, the footer links to it, and the account-deletion `mailto:` fallback
+targets it. There is no env override, so replies cannot be pointed elsewhere by
+a stale `.env`.
 
 Account-deletion links are built by the account-management module
 (`buildDeleteAccountLink`) and arrive in the payload fully formed, so they need
@@ -108,6 +151,11 @@ The callers decide what a failure means for their endpoint:
   asserts the request payload, reset-link encoding, config overrides, and error
   translation — no network calls.
 - `email.config.spec.ts` covers defaults, overrides, and blank values.
+- `email-theme.spec.ts` recomputes the WCAG AA contrast of every text/surface
+  pairing and rejects rgba or web fonts.
+- `email-layout.spec.ts` covers the shell: light colour scheme, no external
+  request, the card box, escaping, the CTA and URL fallback.
+- `email-templates.spec.ts` covers the copy and the plain-text alternative.
 - `password-reset-landing.page.spec.ts` covers the handoff document: the deep
   link, hostile-token escaping, the missing-token state and the CSP nonce.
 - `password-reset-landing.controller.spec.ts` covers the endpoint's deep-link

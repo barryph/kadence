@@ -85,7 +85,7 @@ export class ResendEmailSender implements IEmailSender {
       const { error } = await this.client.emails.send({
         from: this.config.from,
         to: recipientEmail,
-        ...(this.config.replyTo ? { replyTo: this.config.replyTo } : {}),
+        replyTo: this.config.replyTo,
         subject: content.subject,
         html: content.html,
         text: content.text,

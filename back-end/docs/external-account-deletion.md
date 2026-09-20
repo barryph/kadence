@@ -125,8 +125,10 @@ The binding is `ResendEmailSender`
 | Variable | Required | Meaning |
 | --- | --- | --- |
 | `ACCOUNT_DELETION_SITE_URL` | recommended | Absolute `http(s)` origin of the static deletion site. The emailed link is `${ACCOUNT_DELETION_SITE_URL}/delete?token=…`. Unset ⇒ `mailto:` fallback. A **malformed** value throws at startup rather than emailing a dead link. |
-| `ACCOUNT_DELETION_SUPPORT_EMAIL` | no | Support address used by the `mailto:` fallback. Defaults to `support@kadence.app`. |
 | `CORS_ORIGINS` | yes, in production | Must include the deletion site's origin or the browser will refuse both endpoints. It is a separate origin from the app; mobile clients send no `Origin` and are unaffected. |
+
+The `mailto:` fallback targets the shared support address (`SUPPORT_EMAIL` in
+`src/shared/email/email.config.ts`); it is not separately configured here.
 
 ### Site contract
 

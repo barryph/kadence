@@ -19,7 +19,7 @@ interface IProps {
     backgroundAttachment: 'fixed',
  */
 
-export default function Background({ showRed = true }: IProps) {
+export default function Background({ showRed = false }: IProps) {
   return (
     <View style={StyleSheet.absoluteFill}>
       {/* Base background */}
@@ -48,16 +48,16 @@ export default function Background({ showRed = true }: IProps) {
       />
 
       {/* Red bottom glow */}
-      <LinearGradient
-        colors={['transparent', withAlpha(Colors.danger, 0.12)]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[
-          StyleSheet.absoluteFill,
-          styles.redGlow,
-          !showRed && { opacity: 0 },
-        ]}
-      />
+      {/* <LinearGradient */}
+      {/*   colors={['transparent', withAlpha(Colors.danger, 0.12)]} */}
+      {/*   start={{ x: 0, y: 0 }} */}
+      {/*   end={{ x: 1, y: 1 }} */}
+      {/*   style={[ */}
+      {/*     StyleSheet.absoluteFill, */}
+      {/*     styles.redGlow, */}
+      {/*     !showRed && { opacity: 0 }, */}
+      {/*   ]} */}
+      {/* /> */}
     </View>
   );
 }

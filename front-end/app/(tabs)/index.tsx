@@ -87,7 +87,7 @@ function partitionActivities(acts: IActivityClient[]) {
 
 const ACTIVITY_SECTIONS = [
   { title: 'Queued', key: 'queued' },
-  { title: 'Pending', key: 'available' },
+  { title: 'Due', key: 'available' },
   { title: 'Completed', key: 'completed' },
 ] as const;
 
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     opacity: 0.6,
-    marginBottom: 3,
+    marginBottom: 6,
   },
   sectionGroupSpaced: {
     marginTop: 14,

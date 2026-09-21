@@ -21,7 +21,7 @@ interface IProps {
 
 export default function Background({ showRed = false }: IProps) {
   return (
-    <View style={StyleSheet.absoluteFill}>
+    <View style={[StyleSheet.absoluteFill, { backgroundColor: '#040713' }]}>
       {/* Base background */}
       <LinearGradient
         colors={[Colors.canvas, Colors.canvasMid, Colors.canvas]}

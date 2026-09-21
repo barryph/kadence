@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Pressable, View } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Feather from '@expo/vector-icons/Feather';
 
 import { ThemedText } from '@/components/base/themed-text';
 import { Colors, Gradients, Spacing } from '@/constants/theme';
@@ -36,7 +36,6 @@ export default function ActivityListItem({
   return (
     <ListItemShell
       style={{
-        borderWidth: 0,
         opacity: completedToday ? 0.72 : 1,
       }}
     >
@@ -71,7 +70,7 @@ export default function ActivityListItem({
           disableSwipeRight={completedToday}
           swipeLeftChild={
             <ThemedText variant="heading" style={{ color: Colors.textPrimary }}>
-              <FontAwesome6 name="gear" size={26} />
+              <Feather name="edit-2" size={26} color={Colors.textPrimary} />
             </ThemedText>
           }
           swipeLeftColor="inherit"
@@ -79,7 +78,7 @@ export default function ActivityListItem({
             <ThemedText variant="heading">
               <Ionicons
                 name="checkmark-done"
-                size={24}
+                size={29}
                 color={Colors.textPrimary}
               />
             </ThemedText>
@@ -91,28 +90,9 @@ export default function ActivityListItem({
             <View style={[styles.activityMain]}>
               <View style={styles.activityTitleRow}>
                 <View style={styles.activityNameGroup}>
-                  <ThemedText variant="bodyStrong" lineHeight={28}>
+                  <ThemedText variant="bodyStrong" lineHeight={32} size="xl">
                     {activity.name}
                   </ThemedText>
-                  {activity.category && (
-                    <View
-                      style={[
-                        styles.categoryBadge,
-                        {
-                          borderColor: activity.category.color,
-                          backgroundColor: `${activity.category.color}45`,
-                        },
-                      ]}
-                    >
-                      <ThemedText
-                        variant="caption"
-                        weight="600"
-                        lineHeight={20}
-                      >
-                        {activity.category.name}
-                      </ThemedText>
-                    </View>
-                  )}
                 </View>
                 <View style={styles.activityDetails}>
                   {completedToday ? (
@@ -135,32 +115,54 @@ export default function ActivityListItem({
                       letterSpacing={-0.45}
                       style={styles.activityDetailsText}
                     >
-                      REMAIN:
-                      <ThemedText
-                        variant="bodySmall"
-                        weight="700"
-                        style={styles.activityDetailsSpan}
-                      >
-                        {activity.daysUntil}
-                      </ThemedText>
+                      In {activity.daysUntil} Days
                     </ThemedText>
                   )}
-                  <ThemedText
-                    variant="caption"
-                    weight="500"
-                    letterSpacing={-0.45}
-                    style={styles.activityDetailsText}
-                  >
-                    INTRVL:
-                    <ThemedText
-                      variant="bodySmall"
-                      weight="700"
-                      style={styles.activityDetailsSpan}
-                    >
-                      {activity.interval}
-                    </ThemedText>
-                  </ThemedText>
                 </View>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginBottom: Spacing.sm,
+                  alignItems: 'center',
+                }}
+              >
+                {activity.category && (
+                  <View
+                    style={[
+                      styles.categoryBadge,
+                      {
+                        borderColor: activity.category.color,
+                        backgroundColor: `${activity.category.color}45`,
+                      },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.categoryDot,
+                        { backgroundColor: activity.category.color },
+                      ]}
+                    ></View>
+                    <ThemedText
+                      variant="caption"
+                      weight="500"
+                      lineHeight={22}
+                      style={{ marginTop: -1 }}
+                    >
+                      {activity.category.name}
+                    </ThemedText>
+                  </View>
+                )}
+
+                <ThemedText
+                  variant="caption"
+                  weight="500"
+                  letterSpacing={-0.45}
+                  style={[styles.activityDetailsText, { marginTop: -1 }]}
+                >
+                  Every {activity.interval} Days
+                </ThemedText>
               </View>
 
               <View style={styles.activityBarContainer}>
@@ -214,13 +216,27 @@ export default function ActivityListItem({
               </View>
 
               {activity.goal && activity.goalProgress && (
-                <GoalProgressBar
-                  count={activity.goalProgress.currentWeekCount}
-                  target={activity.goal.targetPerWeek}
-                  height={6}
-                  trackColor={Colors.track}
-                  style={styles.goalProgress}
-                />
+                <View style={{ paddingTop: Spacing.sm }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <ThemedText variant="eyebrow">Weekly Goal</ThemedText>
+                    <ThemedText variant="eyebrow">
+                      {activity.goalProgress.currentWeekCount} of{' '}
+                      {activity.goal.targetPerWeek}
+                    </ThemedText>
+                  </View>
+                  <GoalProgressBar
+                    count={activity.goalProgress.currentWeekCount}
+                    target={activity.goal.targetPerWeek}
+                    height={6}
+                    trackColor={Colors.track}
+                    style={styles.goalProgress}
+                  />
+                </View>
               )}
             </View>
           </View>
@@ -248,11 +264,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   categoryBadge: {
-    marginLeft: Spacing.xl,
-    paddingHorizontal: Spacing.sm,
+    marginRight: Spacing.md,
+    paddingHorizontal: Spacing.md,
     paddingVertical: 0,
     borderRadius: 8,
     borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  categoryDot: {
+    height: 8,
+    width: 8,
+    borderRadius: 2,
   },
   activityDetails: {
     flexDirection: 'row',
@@ -268,7 +292,7 @@ const styles = StyleSheet.create({
   activityBarContainer: {
     // Horizontal margin is for angled dividers. Which doesn't work on android
     // marginHorizontal: 3,
-    height: 12,
+    height: 8,
     backgroundColor: Colors.track,
     position: 'relative',
     overflow: 'hidden',
@@ -286,7 +310,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   activityBarNotchBorder: {
-    borderRightWidth: 2,
+    borderRightWidth: 3,
     borderRightColor: Colors.divider,
   },
   goalProgress: {

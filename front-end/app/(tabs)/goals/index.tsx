@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['6xl'],
   },
   title: {
-    marginTop: Spacing.lg,
+    marginTop: Spacing['2xl'],
   },
   subTitle: {
     marginTop: Spacing.md,
@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
     gap: Spacing.xl,
   },
   item: {
-    paddingHorizontal: 15,
-    paddingVertical: 11,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing['2xl'],
   },
   itemRow: {
     flexDirection: 'row',

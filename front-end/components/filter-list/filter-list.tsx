@@ -89,7 +89,7 @@ export default function FilterList({
 const styles = StyleSheet.create({
   title: {
     opacity: 0.6,
-    marginBottom: 3,
+    marginBottom: 7,
   },
   pillsRow: {
     display: 'flex',

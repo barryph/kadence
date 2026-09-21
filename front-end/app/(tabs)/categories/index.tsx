@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import Background from '@/components/backgrounds/background';
@@ -195,13 +195,7 @@ export default function Categories() {
                         variant="caption"
                       >
                         Used in{' '}
-                        <ThemedText
-                          style={styles.bottomRowText}
-                          variant="caption"
-                          weight="700"
-                        >
-                          {categoryToActivityCountMap[category.id!] || '0'}
-                        </ThemedText>{' '}
+                        {categoryToActivityCountMap[category.id!] || '0'}{' '}
                         {categoryToActivityCountMap[category.id!] !== 1
                           ? 'activities'
                           : 'activity'}
@@ -216,8 +210,8 @@ export default function Categories() {
                       gap: 9,
                     }}
                   >
-                    <AntDesign
-                      name="edit"
+                    <Feather
+                      name="edit-2"
                       size={18}
                       color={Colors.textSecondary}
                     />
@@ -293,7 +287,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: Spacing.lg,
+    marginTop: Spacing['2xl'],
   },
   headline: {
     color: Colors.textPrimary,
@@ -317,7 +311,7 @@ const styles = StyleSheet.create({
   category: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.lg,
+    paddingVertical: Spacing['2xl'],
     paddingHorizontal: Spacing['2xl'],
   },
   leftRow: {
@@ -333,7 +327,7 @@ const styles = StyleSheet.create({
     gap: Spacing['3xl'],
   },
   bottomRowText: {
-    opacity: 0.6,
+    opacity: 0.8,
   },
   settingsButton: {
     paddingVertical: 9,

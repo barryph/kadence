@@ -181,13 +181,23 @@ export default function Categories() {
                 key={category.id}
                 onPress={() => openEditModal(category)}
               >
-                <ListItemShell style={styles.category}>
+                <ListItemShell style={[styles.category, {
+                  borderWidth: 1,
+                  borderColor: category.color,
+                  backgroundColor: `${category.color}45`,
+                }]}>
                   <View style={styles.leftRow}>
                     <View style={styles.topRow}>
+                      <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        borderRadius: 8,
+                      }}>
                       <Dot backgroundColor={category.color} />
                       <ThemedText variant="bodyBold" lineHeight={28}>
                         {category.name}
                       </ThemedText>
+                      </View>
                     </View>
                     <View style={styles.bottomRow}>
                       <ThemedText
@@ -213,7 +223,7 @@ export default function Categories() {
                     <Feather
                       name="edit-2"
                       size={18}
-                      color={Colors.textSecondary}
+                      color={Colors.textPrimary}
                     />
                   </View>
                 </ListItemShell>
@@ -316,6 +326,7 @@ const styles = StyleSheet.create({
   },
   leftRow: {
     flexGrow: 1,
+    gap: 2,
   },
   topRow: {
     flexDirection: 'row',

@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   dot: {
     height: 8,
     width: 8,
-    borderRadius: 4,
+    borderRadius: 2,
     marginRight: Spacing.md,
   },
 });

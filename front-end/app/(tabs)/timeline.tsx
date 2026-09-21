@@ -541,7 +541,7 @@ function TimelineScreen() {
                               isCompleted &&
                                 activity.category?.color && {
                                   backgroundColor: activity.category?.color,
-                                  boxShadow: `0px 0px 8px 1px ${activity.category.color}33`,
+                                  boxShadow: `0px 0px 6px 1px ${activity.category.color}33`,
                                 },
                               isToggling && styles.statusCellToggling,
                             ]}

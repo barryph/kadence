@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 1129.33 1152"
+   width="1129.33"
+   height="1152"
+   role="img"
+   version="1.1"
+   id="svg43"
+   sodipodi:docname="kadence-logo-2-clean-refurbished-2.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   inkscape:export-filename="kadence-logo-2-clean-refurbished-2.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview43"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2"
+     inkscape:cx="555"
+     inkscape:cy="620.25"
+     inkscape:window-width="1832"
+     inkscape:window-height="1040"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="k-mark"
+     inkscape:export-bgcolor="#ffffff00" />
+  <title
+     id="title1">Kadence</title>
+  <defs
+     id="defs26">
+    <linearGradient
+       id="grad-stem"
+       gradientUnits="userSpaceOnUse"
+       x1="284.31"
+       y1="537.32"
+       x2="684.13"
+       y2="411.74">
+      <stop
+         offset="0"
+         stop-color="#0143e1"
+         id="stop1" />
+      <stop
+         offset="1"
+         stop-color="#0086ff"
+         id="stop2" />
+    </linearGradient>
+    <linearGradient
+       id="grad-arm"
+       gradientUnits="userSpaceOnUse"
+       x1="598.89"
+       y1="369.8"
+       x2="802.47"
+       y2="415.8">
+      <stop
+         offset="0"
+         stop-color="#0070fd"
+         id="stop3" />
+      <stop
+         offset="1"
+         stop-color="#01cdfe"
+         id="stop4" />
+    </linearGradient>
+    <linearGradient
+       id="grad-arm-tip"
+       gradientUnits="userSpaceOnUse"
+       x1="810.88"
+       y1="296.43"
+       x2="920.6"
+       y2="336.35">
+      <stop
+         offset="0"
+         stop-color="#01c4fe"
+         id="stop5" />
+      <stop
+         offset="1"
+         stop-color="#11e8fd"
+         id="stop6" />
+    </linearGradient>
+    <linearGradient
+       id="grad-leg"
+       gradientUnits="userSpaceOnUse"
+       x1="607.01"
+       y1="615.51"
+       x2="858.3"
+       y2="583.28">
+      <stop
+         offset="0"
+         stop-color="#009cfd"
+         id="stop7" />
+      <stop
+         offset="1"
+         stop-color="#0ceefd"
+         id="stop8" />
+    </linearGradient>
+    <linearGradient
+       id="grad-bar"
+       gradientUnits="userSpaceOnUse"
+       x1="25.44"
+       y1="836.83"
+       x2="1103.44"
+       y2="836.83">
+      <stop
+         offset="0"
+         stop-color="#01185f"
+         id="stop9" />
+      <stop
+         offset="0.105"
+         stop-color="#0241c0"
+         id="stop10" />
+      <stop
+         offset="0.185"
+         stop-color="#017afb"
+         id="stop11" />
+      <stop
+         offset="0.205"
+         stop-color="#32e1fd"
+         id="stop12" />
+      <stop
+         offset="0.70"
+         stop-color="#32e1fd"
+         id="stop13" />
+      <stop
+         offset="0.75"
+         stop-color="#0156e7"
+         id="stop14" />
+      <stop
+         offset="0.845"
+         stop-color="#0241c0"
+         id="stop15" />
+      <stop
+         offset="0.945"
+         stop-color="#01185f"
+         id="stop16" />
+      <stop
+         offset="1"
+         stop-color="#01185f"
+         id="stop17" />
+    </linearGradient>
+    <linearGradient
+       id="grad-splash"
+       gradientUnits="userSpaceOnUse"
+       x1="563.44"
+       y1="758.83"
+       x2="563.44"
+       y2="914.83">
+      <stop
+         offset="0"
+         stop-color="#01185f"
+         id="stop18" />
+      <stop
+         offset="0.10"
+         stop-color="#001e75"
+         id="stop19" />
+      <stop
+         offset="0.80"
+         stop-color="#001e75"
+         id="stop20" />
+      <stop
+         offset="1"
+         stop-color="#01185f"
+         id="stop21" />
+    </linearGradient>
+    <linearGradient
+       id="grad-halo"
+       gradientUnits="userSpaceOnUse"
+       x1="563.44"
+       y1="816.83"
+       x2="563.44"
+       y2="856.83">
+      <stop
+         offset="0"
+         stop-color="#012a95"
+         id="stop22" />
+      <stop
+         offset="0.5"
+         stop-color="#012891"
+         id="stop23" />
+      <stop
+         offset="1"
+         stop-color="#001e75"
+         id="stop24" />
+    </linearGradient>
+    <linearGradient
+       id="grad-hub"
+       gradientUnits="userSpaceOnUse"
+       x1="563.44"
+       y1="796.83"
+       x2="563.44"
+       y2="876.83">
+      <stop
+         offset="0"
+         stop-color="#006bfa"
+         id="stop25" />
+      <stop
+         offset="1"
+         stop-color="#02bfff"
+         id="stop26" />
+    </linearGradient>
+  </defs>
+  <g
+     id="motion-lines">
+    <rect
+       x="325.65"
+       y="330.57"
+       width="118.8"
+       height="14"
+       rx="7"
+       fill="#0156e7"
+       id="rect26" />
+    <rect
+       x="214.94"
+       y="388.41"
+       width="208.19"
+       height="14"
+       rx="7"
+       fill="#0241c0"
+       id="rect27" />
+    <rect
+       x="316.84"
+       y="446.24"
+       width="84.99"
+       height="14"
+       rx="7"
+       fill="#0241c0"
+       id="rect28" />
+    <rect
+       x="124.84"
+       y="504.08"
+       width="255.68"
+       height="14"
+       rx="7"
+       fill="#0241c0"
+       id="rect29" />
+    <rect
+       x="254.15"
+       y="561.91"
+       width="105.07"
+       height="14"
+       rx="7"
+       fill="#0156e7"
+       id="rect30" />
+    <rect
+       x="208.55"
+       y="619.75"
+       width="129.36"
+       height="14"
+       rx="7"
+       fill="#0241c0"
+       id="rect31" />
+  </g>
+  <g
+     id="k-mark">
+    <path
+       d="M505.24 239.33L643.04 239.33L569.56 438.77L594.57 564.04L544.58 506.57L470.25 708.33L332.45 708.33Z"
+       fill="url(#grad-stem)"
+       id="path31" />
+    <path
+       d="M 568.89709,439.12355 795.94,239.33 h 167.2 l -368.57,324.71 -1.1535,-1.6279 z"
+       fill="url(#grad-arm)"
+       id="path32"
+       sodipodi:nodetypes="cccccc" />
+    <path
+       d="M823.04 239.33L963.14 239.33L784.94 396.32Z"
+       fill="url(#grad-arm-tip)"
+       id="path33" />
+    <path
+       d="M 594.54656,564.01266 687.65437,482.00047 884.51,708.33 H 720.08 Z"
+       fill="url(#grad-leg)"
+       id="path34"
+       sodipodi:nodetypes="ccccc" />
+  </g>
+  <g
+     id="waveform">
+    <path
+       d="m 215.44,836.83 c 0,-2.33 6.34,-4.23 10,-7 3.67,-2.77 10.71,-8.23 16,-13 5.3,-4.77 11.12,-12.04 17,-17 5.89,-4.96 11.26,-8.76 17,-12 5.75,-3.24 10.74,-6.09 16,-7 5.27,-0.91 9.07,0.28 14,1 4.94,0.72 12.05,2.35 18,4 5.96,1.65 12.19,3.51 18,6 5.82,2.49 11.06,6.09 17,9 5.95,2.91 12.79,7.15 20,9 7.22,1.85 16.67,1.83 25,2 8.34,0.17 16.7,-0.17 25,-1 8.31,-0.83 16.85,-1.45 25,-4 8.16,-2.55 16.91,-7.78 25,-12 8.1,-4.22 15.44,-8.63 23,-13 7.57,-4.37 14.65,-9.78 22,-13 7.36,-3.22 13.3,-4.33 20,-6 6.71,-1.67 13.34,-4 20,-4 6.67,0 13.38,2.35 20,4 6.63,1.65 13.36,3.09 20,6 6.65,2.91 14.57,8.7 22,13 7.44,4.3 15.11,8.88 23,13 7.9,4.12 16.47,9.33 25,12 8.54,2.67 16.65,3.17 25,4 8.36,0.83 16.68,1.17 25,1 8.33,-0.17 17.29,-0.02 25,-2 7.72,-1.98 13.66,-5.89 20,-9 6.35,-3.1 10.44289,-6.84355 16.29289,-9.35355 5.86,-2.5 11.60645,-6.09777 17.64645,-7.76777 6.05,-1.67 12.35,-2.81645 18,-3.64645 5.66,-0.82 14.46197,1.19 19.18197,2 6.49777,2.93132 11.65422,6.71198 16.91422,9.68198 5.27,2.97 11.05513,7.74356 16.52513,12.35356 5.48,4.61 7.08289,5.81446 12.79289,10.96446 5.72,5.15 10.88645,11.16777 15.64645,14.76777 4.77,3.6 10,4.67 10,7 0,2.33 -6.33,4.23 -10,7 -3.66,2.77 -10.7,8.23 -16,13 -5.29,4.77 -11.11,12.04 -17,17 -5.88,4.96 -11.25,8.76 -17,12 -5.74,3.24 -13.73,5.09 -19,6 -5.26,0.91 -6.06,0.72 -11,0 -4.93,-0.72 -12.04,-2.35 -18,-4 -5.95,-1.65 -12.18,-3.51 -18,-6 -5.81,-2.49 -11.05,-6.09 -17,-9 -5.94,-2.91 -12.78,-7.15 -20,-9 -7.21,-1.85 -16.66,-1.83 -25,-2 -8.33,-0.17 -16.69,0.17 -25,1 -8.3,0.83 -16.84,1.45 -25,4 -8.15,2.55 -16.9,7.78 -25,12 -8.09,4.22 -15.43,8.63 -23,13 -7.56,4.37 -14.64,9.78 -22,13 -7.35,3.22 -13.29,4.33 -20,6 -6.7,1.67 -13.33,4 -20,4 -6.66,0 -13.37,-2.35 -20,-4 -6.62,-1.65 -13.35,-3.09 -20,-6 -6.64,-2.91 -14.56,-8.7 -22,-13 -7.43,-4.3 -15.1,-8.88 -23,-13 -7.89,-4.12 -16.46,-9.33 -25,-12 -8.53,-2.67 -16.64,-3.17 -25,-4 -8.35,-0.83 -16.67,-1.17 -25,-1 -8.32,0.17 -17.28,0.02 -25,2 -7.71,1.98 -13.65,5.9 -20,9 -6.34,3.11 -11.14,6.5 -17,9 -5.85,2.51 -11.24289,3.26934 -17.29289,4.93934 -6.04,1.67 -7.56703,2.11934 -13.22703,2.93934 -5.82678,0.12289 -6.44158,-0.31132 -12.05546,-1.47487 -4.72,-0.81 -13.97264,-4.92645 -19.24264,-7.89645 -5.26,-2.97 -11.77,-6.32934 -17.25,-10.93934 -5.47,-4.61 -13.46198,-7.66802 -19.18198,-12.81802 -5.71,-5.15 -12.98,-9.15 -17.75,-12.75 -4.76,-3.6 -10,-4.67 -10,-7 z"
+       fill="url(#grad-splash)"
+       id="path35"
+       sodipodi:nodetypes="scccccccccccccccccsccccccsccccccccccsccccccccccsccccccscccccccccccccccccs" />
+    <path
+       d="M223.44 836.83C223.44 832.5 234.85 827.15 241.44 823.83C248.04 820.51 253 818.45 263.44 816.83C273.89 815.21 356.8 815.5 383.44 816.83C410.09 818.16 403.44 819.66 413.44 819.83C423.45 820 431.72 818.32 443.44 817.83C455.17 817.34 483.44 817 503.44 816.83C523.45 816.66 543.44 816.83 563.44 816.83C583.44 816.83 603.45 816.66 623.44 816.83C643.44 817 666.88 817.14 683.44 817.83C700.01 818.52 703.45 820 713.44 819.83C723.44 819.67 730.09 817.5 743.44 816.83C756.8 816.16 839.63 813.13 863.44 816.83C887.26 820.53 878.73 820.44 885.44 823.83C892.16 827.22 903.44 832.5 903.44 836.83C903.44 841.16 892.04 846.51 885.44 849.83C878.85 853.15 873.89 855.21 863.44 856.83C853 858.45 770.09 858.16 743.44 856.83C716.8 855.5 723.45 854 713.44 853.83C703.44 853.66 695.17 855.34 683.44 855.83C671.72 856.32 643.45 856.66 623.44 856.83C603.44 857 583.44 856.83 563.44 856.83C543.44 856.83 523.44 857 503.44 856.83C483.45 856.66 460.01 856.52 443.44 855.83C426.88 855.14 423.44 853.67 413.44 853.83C403.45 854 396.8 856.16 383.44 856.83C370.09 857.5 287.26 860.53 263.44 856.83C239.63 853.13 248.16 853.22 241.44 849.83C234.73 846.44 223.44 841.16 223.44 836.83Z"
+       fill="url(#grad-halo)"
+       id="path36" />
+    <path
+       d="M 32.44,836.83 H 276.44 L 292.65,788.83 L 309.44,879.33 L 328.44,822.33 L 353.44,836.83 H 1096.44"
+       fill="none"
+       stroke="url(#grad-bar)"
+       stroke-width="14"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       id="main-line" />
+    <circle
+       cx="563.44"
+       cy="836.83"
+       r="52.25"
+       fill="#f4fbfd"
+       id="circle36" />
+    <circle
+       cx="563.44"
+       cy="836.83"
+       r="40"
+       fill="url(#grad-hub)"
+       id="circle37" />
+    <circle
+       cx="820.56812"
+       cy="836.83002"
+       r="32.5"
+       fill="#32e1fd"
+       id="circle38" />
+    <circle
+       cx="820.56812"
+       cy="836.83002"
+       r="21.25"
+       fill="#0738ae"
+       id="circle39" />
+    <circle
+       cx="122.24"
+       cy="836.83"
+       r="29.15"
+       fill="#0738ae"
+       id="circle40" />
+    <circle
+       cx="122.24"
+       cy="836.83"
+       r="18.5"
+       fill="#000923"
+       id="circle41" />
+    <circle
+       cx="1004.74"
+       cy="836.83"
+       r="29.15"
+       fill="#0738ae"
+       id="circle42" />
+    <circle
+       cx="1004.74"
+       cy="836.83"
+       r="18.5"
+       fill="#000923"
+       id="circle43" />
+  </g>
+</svg>

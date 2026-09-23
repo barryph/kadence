@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    gap: Spacing['3xl'],
+    gap: Spacing['4xl'],
     paddingBottom: Spacing['6xl'],
   },
   title: {

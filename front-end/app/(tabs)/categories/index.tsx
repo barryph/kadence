@@ -332,7 +332,7 @@ export default function Categories() {
 const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 100,
-    gap: Spacing['3xl'],
+    gap: Spacing['4xl'],
   },
   headlineRow: {
     display: 'flex',

@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     display: 'flex',
-    gap: Spacing.md,
+    gap: Spacing.lg,
     paddingBottom: 100,
   },
   headlineRow: {

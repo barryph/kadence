@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['6xl'],
   },
   title: {
-    marginTop: Spacing['2xl'],
+    marginTop: Spacing['3xl'],
   },
   subTitle: {
     marginTop: Spacing.md,

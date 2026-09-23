@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: Spacing['2xl'],
+    marginTop: Spacing['3xl'],
   },
   headline: {
     color: Colors.textPrimary,

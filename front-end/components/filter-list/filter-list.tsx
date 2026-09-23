@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surfaceTranslucent,
     color: Colors.textFaint,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: Colors.borderFaint,
     paddingHorizontal: 14,
     paddingVertical: 3,
     borderRadius: 16,

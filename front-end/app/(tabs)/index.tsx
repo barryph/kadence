@@ -413,6 +413,7 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
   },
   headline: {
+    marginTop: Spacing.xs,
     color: Colors.textPrimary,
   },
   headlineNoCategories: {

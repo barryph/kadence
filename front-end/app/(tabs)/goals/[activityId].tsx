@@ -15,7 +15,6 @@ import { Colors, Spacing } from '@/constants/theme';
 import { useGoalStatsQuery } from '@/hooks/queries/use-goals';
 import { useStaleRefetchOnFocus } from '@/hooks/queries/use-stale-refetch-on-focus';
 import { queryKeys } from '@/lib/query/keys';
-import { formatGoalProgress } from '@/lib/goals/goal-progress';
 import { useToday } from '@/hooks/use-today';
 import { goBackOrHome } from '@/lib/navigation/back';
 
@@ -92,10 +91,7 @@ export default function GoalInsightsScreen() {
             This week
           </ThemedText>
           <ThemedText variant="bodySmall" style={styles.progressText}>
-            {formatGoalProgress(
-              stats.currentWeekCount,
-              stats.goal.targetPerWeek,
-            )}
+            {stats.currentWeekCount} of {stats.goal.targetPerWeek} this week
           </ThemedText>
           <GoalProgressBar
             count={stats.currentWeekCount}

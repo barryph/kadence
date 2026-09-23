@@ -141,7 +141,7 @@ export default function Categories() {
         <Container style={styles.scrollContent}>
           <View style={styles.headlineRow}>
             <ThemedText style={styles.headline} variant="heading" font="system">
-              Categories
+              Your Categories
             </ThemedText>
 
             <View style={styles.insightsLinks}>
@@ -157,6 +157,15 @@ export default function Categories() {
           </View>
 
           <View style={styles.categories}>
+            <ThemedText
+              variant="eyebrow"
+              weight="400"
+              size="xs"
+              style={{ color: Colors.textSecondary }}
+            >
+              {sortedCategories.length}{' '}
+              {sortedCategories.length !== 1 ? 'Categories' : 'Category'}
+            </ThemedText>
             {sortedCategories.length === 0 && (
               <ListItemShell style={styles.getStartedPill}>
                 <View
@@ -181,31 +190,49 @@ export default function Categories() {
                 key={category.id}
                 onPress={() => openEditModal(category)}
               >
-                <ListItemShell style={[styles.category, {
-                  borderWidth: 1,
-                  borderColor: category.color,
-                  backgroundColor: `${category.color}45`,
-                }]}>
+                <ListItemShell
+                  style={[
+                    styles.category,
+                    {
+                      borderWidth: 1,
+                      borderColor: `${category.color}cc`,
+                      backgroundColor: `${category.color}20`,
+                    },
+                  ]}
+                >
                   <View style={styles.leftRow}>
                     <View style={styles.topRow}>
-                      <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        borderRadius: 8,
-                      }}>
-                      <Dot backgroundColor={category.color} />
-                      <ThemedText variant="bodyBold" lineHeight={28}>
-                        {category.name}
-                      </ThemedText>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          borderRadius: 8,
+                        }}
+                      >
+                        <Dot backgroundColor={category.color} />
+                        <ThemedText variant="bodyBold" lineHeight={28}>
+                          {category.name}
+                        </ThemedText>
                       </View>
                     </View>
                     <View style={styles.bottomRow}>
                       <ThemedText
                         style={styles.bottomRowText}
-                        variant="caption"
+                        variant="eyebrow"
+                        weight="400"
+                        size="xs"
                       >
                         Used in{' '}
+                      </ThemedText>
+                      <ThemedText variant="eyebrow" size="xs">
                         {categoryToActivityCountMap[category.id!] || '0'}{' '}
+                      </ThemedText>
+                      <ThemedText
+                        style={styles.bottomRowText}
+                        variant="eyebrow"
+                        weight="400"
+                        size="xs"
+                      >
                         {categoryToActivityCountMap[category.id!] !== 1
                           ? 'activities'
                           : 'activity'}
@@ -216,15 +243,30 @@ export default function Categories() {
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',
-                      paddingHorizontal: Spacing.sm,
-                      gap: 9,
+                      justifyContent: 'center',
+                      paddingHorizontal: Spacing.xl,
+                      borderLeftWidth: 1,
+                      borderColor: Colors.border,
+                      paddingVertical: Spacing.xl,
                     }}
                   >
-                    <Feather
-                      name="edit-2"
-                      size={18}
-                      color={Colors.textPrimary}
-                    />
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: Colors.border,
+                        borderRadius: 12,
+                        height: 40,
+                        width: 40,
+                      }}
+                    >
+                      <Feather
+                        name="edit-2"
+                        size={18}
+                        color={Colors.textPrimary}
+                      />
+                    </View>
                   </View>
                 </ListItemShell>
               </Pressable>
@@ -290,7 +332,7 @@ export default function Categories() {
 const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 100,
-    gap: Spacing['4xl'],
+    gap: Spacing['3xl'],
   },
   headlineRow: {
     display: 'flex',
@@ -321,10 +363,11 @@ const styles = StyleSheet.create({
   category: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing['2xl'],
-    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: Spacing.xs,
   },
   leftRow: {
+    paddingVertical: Spacing.xl,
+    paddingHorizontal: Spacing['2xl'],
     flexGrow: 1,
     gap: 2,
   },
@@ -335,14 +378,9 @@ const styles = StyleSheet.create({
   bottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing['3xl'],
   },
   bottomRowText: {
-    opacity: 0.8,
-  },
-  settingsButton: {
-    paddingVertical: 9,
-    // paddingHorizontal: 9,
+    opacity: 0.7,
   },
   getStartedPill: {
     paddingTop: 14,

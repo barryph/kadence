@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -14,7 +15,6 @@ import { Colors, Spacing } from '@/constants/theme';
 import { useGoalsQuery } from '@/hooks/queries/use-goals';
 import { useStaleRefetchOnFocus } from '@/hooks/queries/use-stale-refetch-on-focus';
 import { queryKeys } from '@/lib/query/keys';
-import { formatGoalProgress, isGoalMet } from '@/lib/goals/goal-progress';
 import { useToday } from '@/hooks/use-today';
 import ProgressBadge from '@/components/progress-badge';
 
@@ -33,11 +33,19 @@ export default function GoalsScreen() {
     isError,
     refetch: refetchGoals,
   } = useGoalsQuery(today);
+  const [goalsMetCount, setGoalsMetCount] = useState(0);
   const goals = goalsData ?? EMPTY_LIST;
 
   // Refresh silently when returning to the tab with stale data, e.g. after an
   // activity was completed on another screen. Fresh data is not refetched.
   useStaleRefetchOnFocus(queryKeys.goals.all(today));
+
+  useEffect(() => {
+    const count = goals.filter(
+      (goal) => goal.currentWeekCount >= goal.targetPerWeek,
+    ).length;
+    setGoalsMetCount(count);
+  }, [goals]);
 
   if (isPending) {
     return <LoaderScreen text="Loading goals..." />;
@@ -74,85 +82,114 @@ export default function GoalsScreen() {
               </ThemedText>
             </ListItemShell>
           ) : (
-            <View style={styles.list}>
-              {goals.map((goal) => {
-                const met = isGoalMet(
-                  goal.currentWeekCount,
-                  goal.targetPerWeek,
-                );
-                return (
-                  <ListItemShell key={goal.activityId}>
-                    <Pressable
-                      onPress={() => router.push(`/goals/${goal.activityId}`)}
-                      style={styles.item}
-                    >
-                      <View style={styles.itemRow}>
-                        <ThemedText
-                          variant="bodyBold"
-                          size="xl"
-                          lineHeight={28}
-                          style={styles.itemName}
-                          numberOfLines={1}
-                        >
-                          {goal.activityName}
-                        </ThemedText>
+            <View style={{ gap: Spacing.xl }}>
+              <View style={{ flexDirection: 'row', gap: Spacing.lg }}>
+                <ThemedText
+                  variant="eyebrow"
+                  weight="400"
+                  size="xs"
+                  style={{ color: Colors.textSecondary }}
+                >
+                  {goals.length} {goals.length !== 1 ? 'Goals' : 'Goal'}
+                </ThemedText>
+                <ThemedText
+                  variant="eyebrow"
+                  weight="400"
+                  size="xs"
+                  style={{ color: Colors.textSecondary }}
+                >
+                  ·
+                </ThemedText>
+                <ThemedText
+                  variant="eyebrow"
+                  weight="400"
+                  size="xs"
+                  style={{ color: Colors.textSecondary }}
+                >
+                  {goalsMetCount} of {goals.length} met this week
+                </ThemedText>
+              </View>
 
-                        <View style={styles.itemRight}>
-                          {goal.currentWeekCount >= goal.targetPerWeek ? (
-                            <ProgressBadge
-                              color={Colors.success}
-                              icon={
-                                <Ionicons
-                                  name="checkmark-circle"
-                                  size={14}
-                                  color={Colors.success}
-                                />
-                              }
-                            >
-                              DONE
-                            </ProgressBadge>
-                          ) : (
-                            <ProgressBadge
-                              color={Colors.warning}
-                              icon={
-                                <MaterialCommunityIcons
-                                  name="progress-clock"
-                                  size={14}
-                                  color={Colors.warning}
-                                />
-                              }
-                            >
-                              IN PROGRESS
-                            </ProgressBadge>
-                          )}
+              <View style={styles.list}>
+                {goals.map((goal) => {
+                  return (
+                    <ListItemShell key={goal.activityId}>
+                      <Pressable
+                        onPress={() => router.push(`/goals/${goal.activityId}`)}
+                        style={styles.item}
+                      >
+                        <View style={styles.itemRow}>
+                          <ThemedText
+                            variant="bodyBold"
+                            size="xl"
+                            lineHeight={28}
+                            style={styles.itemName}
+                            numberOfLines={1}
+                          >
+                            {goal.activityName}
+                          </ThemedText>
+
+                          <View style={styles.itemRight}>
+                            {goal.currentWeekCount >= goal.targetPerWeek ? (
+                              <ProgressBadge
+                                color={Colors.success}
+                                icon={
+                                  <Ionicons
+                                    name="checkmark-circle"
+                                    size={14}
+                                    color={Colors.success}
+                                  />
+                                }
+                              >
+                                DONE
+                              </ProgressBadge>
+                            ) : (
+                              <ProgressBadge
+                                color={Colors.accentSoft}
+                                icon={
+                                  <MaterialCommunityIcons
+                                    name="progress-clock"
+                                    size={14}
+                                    color={Colors.accentSoft}
+                                  />
+                                }
+                              >
+                                IN PROGRESS
+                              </ProgressBadge>
+                            )}
+                          </View>
                         </View>
-                      </View>
-                      <View style={styles.bottomRow}>
-                        <ThemedText variant="caption">
-                          See Stats &rarr;
-                        </ThemedText>
-                        <ThemedText
-                          variant="bodySmall"
-                          style={
-                            met ? styles.metText : { color: Colors.warning }
-                          }
-                        >
-                          {formatGoalProgress(
-                            goal.currentWeekCount,
-                            goal.targetPerWeek,
-                          )}
-                        </ThemedText>
-                      </View>
-                      <GoalProgressBar
-                        count={goal.currentWeekCount}
-                        target={goal.targetPerWeek}
-                        height={10}
-                        style={styles.progressBar}
-                      />
-                    </Pressable>
-                  </ListItemShell>
-                );
-              })}
+
+                        <View style={styles.progressText}>
+                          <ThemedText variant="bodySmall">
+                            <ThemedText weight="600">
+                              {goal.currentWeekCount}
+                            </ThemedText>{' '}
+                            of {goal.targetPerWeek} this week
+                          </ThemedText>
+                        </View>
+
+                        <GoalProgressBar
+                          count={goal.currentWeekCount}
+                          target={goal.targetPerWeek}
+                          height={6}
+                          style={styles.progressBar}
+                        />
+
+                        <View style={styles.bottomRow}>
+                          <ThemedText
+                            variant="caption"
+                            size="md"
+                            style={{ color: Colors.accentSoft }}
+                          >
+                            See Stats &rarr;
+                          </ThemedText>
+                        </View>
+                      </Pressable>
+                    </ListItemShell>
+                  );
+                })}
+              </View>
             </View>
           )}
         </Container>
@@ -166,7 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    gap: Spacing['4xl'],
+    gap: Spacing['3xl'],
     paddingBottom: Spacing['6xl'],
   },
   title: {
@@ -196,11 +233,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing['2xl'],
   },
-  metText: {
-    color: Colors.success,
-  },
   progressBar: {
-    marginTop: Spacing.sm,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   emptyShell: {
     paddingHorizontal: Spacing['2xl'],
@@ -208,6 +243,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     opacity: 0.7,
+  },
+  progressText: {
+    marginTop: Spacing.xxs,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   bottomRow: {
     marginTop: 0,

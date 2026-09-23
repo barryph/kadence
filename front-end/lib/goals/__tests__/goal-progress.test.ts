@@ -1,8 +1,4 @@
-import {
-  clampGoalProgress,
-  formatGoalProgress,
-  isGoalMet,
-} from '../goal-progress';
+import { clampGoalProgress, isGoalMet } from '../goal-progress';
 
 describe('goal-progress', () => {
   describe('clampGoalProgress', () => {
@@ -38,13 +34,6 @@ describe('goal-progress', () => {
 
     it('is true above the target', () => {
       expect(isGoalMet(5, 3)).toBe(true);
-    });
-  });
-
-  describe('formatGoalProgress', () => {
-    it('formats actual count vs target', () => {
-      expect(formatGoalProgress(2, 3)).toBe('2/3 this week');
-      expect(formatGoalProgress(5, 3)).toBe('5/3 this week');
     });
   });
 });

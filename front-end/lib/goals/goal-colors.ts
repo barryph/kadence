@@ -4,7 +4,7 @@ import { DEFAULT_ACTIVITY_COLOR } from '@/lib/insights/activity-weekly-unique-da
 /** Default activity blue — used below/at the weekly goal target. */
 export const GOAL_BELOW_THRESHOLD_COLOR = DEFAULT_ACTIVITY_COLOR;
 /** Complementary color for performance above the target (neutral valence). */
-export const GOAL_ABOVE_THRESHOLD_COLOR = Colors.exceeded;
+export const GOAL_ABOVE_THRESHOLD_COLOR = Colors.success;
 
 /**
  * Heatmap cell color for a week's performance relative to the goal target.

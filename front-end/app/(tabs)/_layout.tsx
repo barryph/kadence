@@ -79,7 +79,7 @@ export default function TabLayout() {
           ...headerOptions,
           title: 'Activities',
           tabBarIcon: ({ color }) => (
-            <Feather name="activity" size={24} color={color} />
+            <Feather name="activity" size={22} color={color} />
           ),
         }}
       />
@@ -90,7 +90,7 @@ export default function TabLayout() {
           ...headerOptions,
           title: 'Categories',
           tabBarIcon: ({ color }) => (
-            <FontAwesome6 name="layer-group" size={24} color={color} />
+            <FontAwesome6 name="layer-group" size={18} color={color} />
           ),
         }}
       />
@@ -109,7 +109,7 @@ export default function TabLayout() {
           ...headerOptions,
           title: 'Timeline',
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="timeline" size={24} color={color} />
+            <MaterialIcons name="view-week" size={22} color={color} />
           ),
         }}
       />
@@ -119,7 +119,7 @@ export default function TabLayout() {
           ...headerOptions,
           title: 'Goals',
           tabBarIcon: ({ color }) => (
-            <Feather name="target" size={24} color={color} />
+            <Feather name="target" size={22} color={color} />
           ),
         }}
       />

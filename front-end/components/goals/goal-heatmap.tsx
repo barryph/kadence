@@ -47,7 +47,7 @@ export default function GoalHeatmap({ data, targetPerWeek }: GoalHeatmapProps) {
       <View style={styles.legend}>
         <LegendDot color={withAlpha(Colors.accent, 0.15)} label="None" />
         <LegendDot color={GOAL_BELOW_THRESHOLD_COLOR} label="Below" />
-        <LegendDot color={GOAL_ABOVE_THRESHOLD_COLOR} label="Above" />
+        <LegendDot color={GOAL_ABOVE_THRESHOLD_COLOR} label="Met" />
       </View>
     </View>
   );

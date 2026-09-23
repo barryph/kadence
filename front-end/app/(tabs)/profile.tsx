@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 import Background from '@/components/backgrounds/background';
@@ -47,48 +47,53 @@ function Profile() {
   return (
     <View style={styles.container}>
       <Background showRed={false} />
-      <Container style={styles.content}>
-        <View style={styles.detailsContainer}>
-          <ThemedText style={styles.title} variant="title">
-            Profile
-          </ThemedText>
-          <View style={styles.card}>
-            <ThemedText variant="eyebrow" style={styles.label}>
-              Email
+
+      <ScrollView style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }}>
+        <Container style={styles.scrollContent}>
+          <View style={styles.detailsContainer}>
+            <ThemedText style={styles.title} variant="title">
+              Profile
             </ThemedText>
-            <ThemedText variant="bodyBold">{user.email}</ThemedText>
-          </View>
+            <View>
+              <View style={styles.card}>
+                <ThemedText variant="eyebrow" style={styles.label}>
+                  Email
+                </ThemedText>
+                <ThemedText variant="bodyBold">{user.email}</ThemedText>
+              </View>
 
-          <PrivacyPolicyLink style={styles.privacyLink} />
-        </View>
-
-        <View>
-          {logoutError ? (
-            <View style={styles.error}>
-              <AlertError>{logoutError}</AlertError>
+              <PrivacyPolicyLink style={styles.privacyLink} />
             </View>
-          ) : null}
-
-          <Button
-            onPress={handleLogout}
-            isLoading={isLoggingOut}
-            style={styles.logoutButton}
-            textStyle={styles.logoutButtonText}
-          >
-            Logout
-          </Button>
-
-          <View style={styles.dangerZone}>
-            <Button
-              onPress={() => setIsDeleteModalOpen(true)}
-              style={styles.deleteButton}
-              textStyle={styles.deleteButtonText}
-            >
-              Delete Account
-            </Button>
           </View>
-        </View>
-      </Container>
+
+          <View>
+            {logoutError ? (
+              <View style={styles.error}>
+                <AlertError>{logoutError}</AlertError>
+              </View>
+            ) : null}
+
+            <Button
+              onPress={handleLogout}
+              isLoading={isLoggingOut}
+              style={styles.logoutButton}
+              textStyle={styles.logoutButtonText}
+            >
+              Logout
+            </Button>
+
+            <View style={styles.dangerZone}>
+              <Button
+                onPress={() => setIsDeleteModalOpen(true)}
+                style={styles.deleteButton}
+                textStyle={styles.deleteButtonText}
+              >
+                Delete Account
+              </Button>
+            </View>
+          </View>
+        </Container>
+      </ScrollView>
 
       <DeleteAccountModal
         visible={isDeleteModalOpen}
@@ -102,17 +107,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
-    paddingBottom: Spacing['5xl'],
-    minHeight: '100%',
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flex: 1,
     justifyContent: 'space-between',
   },
   detailsContainer: {
-    paddingBottom: 25,
+    gap: Spacing['4xl'],
   },
   title: {
-    marginTop: Spacing.lg,
-    marginBottom: Spacing['3xl'],
+    marginTop: Spacing['3xl'],
   },
   card: {
     paddingTop: 14,
@@ -120,7 +126,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xxs,
   },
   privacyLink: {
-    marginTop: Spacing.xl,
+    marginTop: Spacing.lg,
     alignSelf: 'flex-start',
     paddingHorizontal: 0,
   },

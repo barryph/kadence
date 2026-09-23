@@ -41,7 +41,7 @@ export const Colors = {
   /** Background of timeline headers and other sticky chrome. */
   surfaceHeader: 'rgba(26, 65, 99, 0.3)',
   /** Background of disabled / empty cells. */
-  surfaceDisabled: 'rgba(155, 155, 155, 0.1)',
+  surfaceDisabled: 'rgba(155, 155, 155, 0.05)',
   /** Light overlay used for transient status messages on dark screens. */
   surfaceInverse: 'rgba(255, 255, 255, 0.9)',
   /** Tab bar background. */

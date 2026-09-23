@@ -9,6 +9,8 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import { ReanimatedScrollEvent } from 'react-native-reanimated/lib/typescript/hook/commonTypes';
+import AntDesign from '@expo/vector-icons/AntDesign';
+
 import Background from '@/components/backgrounds/background';
 import Center from '@/components/ui/center';
 import { ThemedText } from '@/components/base/themed-text';
@@ -29,20 +31,19 @@ import { ApiError } from '@/lib/query/unwrap';
 import { getMonthDates, getMonthOf, toLocalDate } from '@/utils/date';
 import { useToday } from '@/hooks/use-today';
 
-// TODO: Make whole block clickable, not only the colored cell
-
-const CELL_WIDTH = 30;
-const CELL_HEIGHT = 12;
+const CELL_WIDTH = 20;
+const CELL_HEIGHT = 20;
 const CELL_GAP = 8;
 const ROW_CONTENT_SIZE = 25;
 const ROW_HEIGHT = ROW_CONTENT_SIZE + CELL_GAP * 2;
-const HEADER_ROW_EXTRA_HEIGHT = 12;
-const LEFT_COLUMN_WIDTH = 60; // To allow the ticker text to show
-const headersBackground = Colors.surfaceHeader;
+const HEADER_ROW_EXTRA_HEIGHT = 4;
+const LEFT_COLUMN_WIDTH = 80; // To allow the ticker text to show
+// const HEADERS_BACKGROUND = Colors.surfaceHeader;
+const HEADERS_BACKGROUND = undefined;
 
 type TimelineDateColumn = {
   full: string;
-  monthDay: string;
+  day: string;
   weekday: string;
 };
 
@@ -58,14 +59,14 @@ function toTimelineDateColumn(dateStr: string): TimelineDateColumn {
   const date = toLocalDate(dateStr);
   return {
     full: dateStr,
-    monthDay: date
+    day: date
       .toLocaleDateString(undefined, {
-        month: 'short',
         day: 'numeric',
       })
       .split(' ')
       .reverse()
-      .join('\n'),
+      .join('\n')
+      .padStart(2, '0'),
     weekday: date.toLocaleDateString(undefined, { weekday: 'short' }),
   };
 }
@@ -379,6 +380,49 @@ function TimelineScreen() {
         <ActivityIndicator color={Colors.textPrimary} />
       </View>
 
+      {/**
+       *
+       * Month Navigation
+       *
+       */}
+      <View style={styles.monthNavigationRow}>
+        <Pressable
+          onPress={() => fetchMonth(monthInView, 'PREV')}
+          disabled={isLoadingTimeline}
+          style={[styles.navArrowButton]}
+        >
+          <AntDesign
+            name="left"
+            size={14}
+            color={Colors.textFaint}
+            style={styles.navArrowButtonIcon}
+          />
+        </Pressable>
+        <ThemedText variant="eyebrow" size="3xl">
+          {formatMonthLabel(monthInView)}
+        </ThemedText>
+        <Pressable
+          onPress={() => fetchMonth(monthInView, 'NEXT')}
+          disabled={isLoadingTimeline || monthInView === currentMonth}
+          style={[
+            styles.navArrowButton,
+            monthInView === currentMonth && styles.navArrowButtonDisabled,
+          ]}
+        >
+          <AntDesign
+            name="right"
+            size={14}
+            color={Colors.textFaint}
+            style={styles.navArrowButtonIcon}
+          />
+        </Pressable>
+      </View>
+
+      {/**
+       *
+       * Filters
+       *
+       */}
       <FilterList
         items={categories
           .filter((category) => category.id !== undefined)
@@ -392,44 +436,17 @@ function TimelineScreen() {
         style={styles.filterList}
       />
 
-      <View style={styles.monthNavigationRow}>
-        <Pressable
-          onPress={() => fetchMonth(monthInView, 'PREV')}
-          disabled={isLoadingTimeline}
-          style={[styles.navArrowButton]}
-        >
-          <ThemedText
-            style={styles.navArrowButtonText}
-            variant="title"
-            weight="600"
-          >
-            &larr;
-          </ThemedText>
-        </Pressable>
-        <ThemedText variant="bodyStrong">
-          {formatMonthLabel(monthInView)}
-        </ThemedText>
-        <Pressable
-          onPress={() => fetchMonth(monthInView, 'NEXT')}
-          disabled={isLoadingTimeline || monthInView === currentMonth}
-          style={[
-            styles.navArrowButton,
-            monthInView === currentMonth && styles.navArrowButtonDisabled,
-          ]}
-        >
-          <ThemedText
-            style={styles.navArrowButtonText}
-            variant="title"
-            weight="600"
-          >
-            &rarr;
-          </ThemedText>
-        </Pressable>
-      </View>
-
       <View style={styles.topRow}>
         {/* Blank corner cell - top left */}
-        <View style={styles.cornerCell}></View>
+        <View style={styles.cornerCell}>
+          <ThemedText
+            variant="eyebrow"
+            size="xs"
+            style={{ color: Colors.textSecondary }}
+          >
+            Activity
+          </ThemedText>
+        </View>
 
         {/* Dates header — clipped so overflow is hidden */}
         <View style={styles.colHeaderClip}>
@@ -442,13 +459,17 @@ function TimelineScreen() {
             <View style={styles.headerDatesContainer}>
               {dateColumns.map((date) => (
                 <View key={date.full} style={[styles.dateCell]}>
-                  <ThemedText variant="caption" lineHeight={12}>
-                    {date.monthDay}
+                  <ThemedText
+                    variant="caption"
+                    lineHeight={12}
+                    style={{ color: Colors.textFaint }}
+                  >
+                    {date.day}
                   </ThemedText>
                   <ThemedText
                     style={styles.dateWeekday}
-                    variant="bodySmall"
-                    weight="600"
+                    weight="400"
+                    size="sm"
                     lineHeight={16}
                   >
                     {date.weekday}
@@ -470,14 +491,36 @@ function TimelineScreen() {
             {tableData &&
               filteredActivities?.map((activity) => (
                 <View key={activity.id} style={styles.activityLabelCell}>
-                  <ThemedText
-                    font="system"
-                    variant="bodySmall"
-                    weight="500"
-                    numberOfLines={1}
-                  >
-                    {activity.ticker || activity.name}
-                  </ThemedText>
+                  <View style={styles.activityLabelCellTextWrapper}>
+                    <ThemedText
+                      font="system"
+                      variant="eyebrow"
+                      size="sm"
+                      weight="700"
+                      numberOfLines={1}
+                    >
+                      {activity.ticker || activity.name}
+                    </ThemedText>
+                    {activity.daysUntil === 0 ? (
+                      <ThemedText
+                        variant="eyebrow"
+                        weight="400"
+                        size="xs"
+                        style={{ color: Colors.textPrimary }}
+                      >
+                        Due now
+                      </ThemedText>
+                    ) : (
+                      <ThemedText
+                        variant="eyebrow"
+                        weight="400"
+                        size="xs"
+                        style={{ color: Colors.textFaint }}
+                      >
+                        Due {activity.daysUntil}D
+                      </ThemedText>
+                    )}
+                  </View>
                 </View>
               ))}
           </Animated.ScrollView>
@@ -539,10 +582,10 @@ function TimelineScreen() {
                                 ? styles.statusCellComplete
                                 : styles.statusCellIncomplete,
                               isCompleted &&
-                                activity.category?.color && {
-                                  backgroundColor: activity.category?.color,
-                                  boxShadow: `0px 0px 6px 1px ${activity.category.color}33`,
-                                },
+                              activity.category?.color && {
+                                backgroundColor: activity.category?.color,
+                                boxShadow: `0px 0px 6px 1px ${activity.category.color}33`,
+                              },
                               isToggling && styles.statusCellToggling,
                             ]}
                           />
@@ -596,7 +639,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.lg,
-    backgroundColor: Colors.surfaceHeader,
+    backgroundColor: HEADERS_BACKGROUND,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
@@ -605,8 +648,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing['2xl'],
-    paddingVertical: Spacing.md,
-    backgroundColor: Colors.surfaceHeader,
+    paddingVertical: Spacing['3xl'],
+    backgroundColor: HEADERS_BACKGROUND,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
@@ -619,7 +662,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: NAV_ARROW_HEIGHT,
   },
-  navArrowButtonText: {
+  navArrowButtonIcon: {
     lineHeight: NAV_ARROW_HEIGHT,
     height: NAV_ARROW_HEIGHT,
     textAlign: 'center',
@@ -641,7 +684,10 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
     borderRightWidth: 1,
     borderRightColor: Colors.border,
-    backgroundColor: headersBackground,
+    backgroundColor: HEADERS_BACKGROUND,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
   },
   colHeaderClip: {
     flex: 1,
@@ -657,7 +703,7 @@ const styles = StyleSheet.create({
     borderRightColor: Colors.border,
   },
   headerRow: {
-    backgroundColor: headersBackground,
+    backgroundColor: HEADERS_BACKGROUND,
     width: '100%',
     zIndex: 20,
   },
@@ -676,14 +722,20 @@ const styles = StyleSheet.create({
   },
   dateWeekday: {
     marginTop: Spacing.xxs,
+    textTransform: 'uppercase',
   },
   activityLabelCell: {
     height: ROW_HEIGHT,
     justifyContent: 'center',
     paddingHorizontal: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    backgroundColor: headersBackground,
+    // borderBottomWidth: 1,
+    // borderBottomColor: Colors.border,
+    backgroundColor: HEADERS_BACKGROUND,
+  },
+  activityLabelCellTextWrapper: {
+    // borderLeftWidth: 2,
+    // borderLeftColor: Colors.accentGlow,
+    // paddingLeft: Spacing.md,
   },
   isLoadingOverlay: {
     position: 'absolute',
@@ -705,6 +757,8 @@ const styles = StyleSheet.create({
     height: ROW_HEIGHT,
     paddingHorizontal: CELL_GAP,
     gap: CELL_GAP,
+    borderBottomWidth: 1,
+    borderColor: Colors.borderFaint,
   },
   statusCellContainer: {
     width: CELL_WIDTH,
@@ -723,7 +777,8 @@ const styles = StyleSheet.create({
   },
   statusCellIncomplete: {
     backgroundColor: Colors.surfaceDisabled,
-    borderColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.borderFaint,
   },
   statusCellToggling: {
     opacity: 0.5,

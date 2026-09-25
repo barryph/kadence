@@ -91,6 +91,30 @@ describe('Goal insights screen', () => {
     });
   });
 
+  it('shows the in-progress badge when the weekly target is not met', async () => {
+    await renderWithProviders(<GoalInsightsScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByText('IN PROGRESS')).toBeTruthy();
+      expect(screen.queryByText('DONE')).toBeNull();
+    });
+  });
+
+  it('shows the done badge once the weekly target is met', async () => {
+    mockUseGoalStatsQuery.mockReturnValue({
+      data: { ...statsFixture, currentWeekCount: 3 },
+      isPending: false,
+      isError: false,
+    });
+
+    await renderWithProviders(<GoalInsightsScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByText('DONE')).toBeTruthy();
+      expect(screen.queryByText('IN PROGRESS')).toBeNull();
+    });
+  });
+
   it('shows an empty message when there is no completion history', async () => {
     mockUseGoalStatsQuery.mockReturnValue({
       data: {

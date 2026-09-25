@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 import Background from '@/components/backgrounds/background';
 import LoaderScreen from '@/components/base/loader-screen';
@@ -11,6 +12,7 @@ import GoalProgressBar from '@/components/goals/goal-progress-bar';
 import GoalAreaChart from '@/components/goals/goal-area-chart';
 import GoalAdherenceRing from '@/components/goals/goal-adherence-ring';
 import GoalHeatmap from '@/components/goals/goal-heatmap';
+import ProgressBadge from '@/components/progress-badge';
 import { Colors, Spacing } from '@/constants/theme';
 import { useGoalStatsQuery } from '@/hooks/queries/use-goals';
 import { useStaleRefetchOnFocus } from '@/hooks/queries/use-stale-refetch-on-focus';
@@ -87,9 +89,38 @@ export default function GoalInsightsScreen() {
         </ThemedText>
 
         <ListItemShell style={styles.section}>
-          <ThemedText style={styles.sectionLabel} variant="eyebrow">
-            This week
-          </ThemedText>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionLabel} variant="eyebrow">
+              This week
+            </ThemedText>
+            {stats.currentWeekCount >= stats.goal.targetPerWeek ? (
+              <ProgressBadge
+                color={Colors.success}
+                icon={
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={14}
+                    color={Colors.success}
+                  />
+                }
+              >
+                DONE
+              </ProgressBadge>
+            ) : (
+              <ProgressBadge
+                color={Colors.accentSoft}
+                icon={
+                  <MaterialCommunityIcons
+                    name="progress-clock"
+                    size={14}
+                    color={Colors.accentSoft}
+                  />
+                }
+              >
+                IN PROGRESS
+              </ProgressBadge>
+            )}
+          </View>
           <ThemedText variant="bodySmall" style={styles.progressText}>
             {stats.currentWeekCount} of {stats.goal.targetPerWeek} this week
           </ThemedText>
@@ -180,6 +211,12 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     opacity: 0.6,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: Spacing.lg,
   },
   sectionHint: {
     opacity: 0.65,

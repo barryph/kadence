@@ -44,7 +44,7 @@ describe('Categories screen', () => {
     await renderCategories();
 
     await waitFor(() => {
-      expect(screen.getByText('Categories')).toBeTruthy();
+      expect(screen.getByText('Your Categories')).toBeTruthy();
       expect(screen.getByText('Fitness')).toBeTruthy();
       expect(screen.getByText('Work')).toBeTruthy();
     });

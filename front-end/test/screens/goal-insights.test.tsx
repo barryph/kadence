@@ -78,7 +78,7 @@ describe('Goal insights screen', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Squats')).toBeTruthy();
-      expect(screen.getByText('2/3 this week')).toBeTruthy();
+      expect(screen.getByText('2 of 3 this week')).toBeTruthy();
       const performanceText = screen.getByText('Performance');
       expect(
         within(performanceText.parent!).getByText('Over the last 3 weeks'),
@@ -132,7 +132,7 @@ describe('Goal insights screen', () => {
     await renderWithProviders(<GoalInsightsScreen />);
 
     await waitFor(() => {
-      expect(screen.getByText('0/3 this week')).toBeTruthy();
+      expect(screen.getByText('0 of 3 this week')).toBeTruthy();
       expect(screen.getByText('—')).toBeTruthy();
       expect(
         screen.getByText(

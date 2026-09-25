@@ -78,7 +78,7 @@ describe('Tab screen smoke tests', () => {
   it('Categories tab mounts', async () => {
     await renderWithProviders(<CategoriesScreen />);
     await waitFor(() => {
-      expect(screen.getByText('Categories')).toBeTruthy();
+      expect(screen.getByText('Your Categories')).toBeTruthy();
     });
   });
 

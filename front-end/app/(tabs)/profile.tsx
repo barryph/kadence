@@ -48,7 +48,10 @@ function Profile() {
     <View style={styles.container}>
       <Background showRed={false} />
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <Container style={styles.scrollContent}>
           <View style={styles.detailsContainer}>
             <ThemedText style={styles.title} variant="title">

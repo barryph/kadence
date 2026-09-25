@@ -100,6 +100,7 @@ export default function LoginScreen() {
             name="email"
             render={({ field, fieldState }) => (
               <Input
+                testID="login-email-input"
                 label="Email"
                 placeholder="Email"
                 value={field.value}
@@ -118,6 +119,7 @@ export default function LoginScreen() {
             name="password"
             render={({ field, fieldState }) => (
               <Input
+                testID="login-password-input"
                 label="Password"
                 placeholder="Password"
                 value={field.value}
@@ -134,6 +136,7 @@ export default function LoginScreen() {
           />
 
           <Button
+            testID="login-submit-button"
             onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
             disabled={socialLoading}

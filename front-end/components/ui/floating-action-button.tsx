@@ -6,14 +6,16 @@ import { Colors, Shadows, Spacing } from '@/constants/theme';
 interface FloatingActionButtonProps {
   label: string;
   onPress: () => void;
+  testID?: string;
 }
 
 export default function FloatingActionButton({
   label,
   onPress,
+  testID,
 }: FloatingActionButtonProps) {
   return (
-    <Pressable style={styles.button} onPress={onPress}>
+    <Pressable testID={testID} style={styles.button} onPress={onPress}>
       <ThemedText variant="bodyStrong">{label}</ThemedText>
     </Pressable>
   );

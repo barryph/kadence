@@ -115,6 +115,7 @@ export default function GoalsScreen() {
                   return (
                     <ListItemShell key={goal.activityId}>
                       <Pressable
+                        testID={`goal-row-${goal.activityId}`}
                         onPress={() => router.push(`/goals/${goal.activityId}`)}
                         style={styles.item}
                       >

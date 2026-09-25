@@ -11,6 +11,7 @@ export default function ActivityIntervalField() {
       name="interval"
       render={({ field, fieldState }) => (
         <Input
+          testID="activity-interval-input"
           label="Repeat frequency (days)"
           placeholder="Repeat frequency (days)"
           keyboardType="number-pad"

@@ -15,6 +15,7 @@ const DAYS_IN_WEEK = 7;
 
 interface IProps {
   activity: IActivityClient;
+  testID?: string;
   onEdit: (activity: IActivityClient) => void;
   onComplete: (id: number) => void;
   onClick: (activity: IActivityClient) => void;
@@ -22,6 +23,7 @@ interface IProps {
 
 export default function ActivityListItem({
   activity,
+  testID,
   onEdit,
   onComplete,
   onClick,
@@ -40,6 +42,7 @@ export default function ActivityListItem({
       }}
     >
       <Pressable
+        testID={testID}
         accessibilityRole="button"
         // Edit and Complete are swipe-only gestures, which assistive tech
         // cannot perform. Expose them as accessibility actions on the row, so

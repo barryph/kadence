@@ -118,6 +118,7 @@ export default function CreateActivityPage() {
           )}
 
           <Button
+            testID="create-activity-submit-button"
             isLoading={createActivity.isPending}
             style={styles.submitButton}
             onPress={form.handleSubmit(handleSubmit)}

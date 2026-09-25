@@ -322,22 +322,10 @@ function DashboardContent({ userId }: { userId: string }) {
             onItemPress={handleCategoryPress}
           />
 
-          <View
-            style={{
-              marginTop: Spacing.sm,
-              display: 'flex',
-              gap: Spacing.md,
-            }}
-          >
+          <View style={styles.sections}>
             {activities.length === 0 && (
               <ListItemShell style={styles.getStartedPill}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    gap: Spacing.xxs,
-                    alignItems: 'center',
-                  }}
-                >
+                <View style={styles.emptyStateRow}>
                   <Dot />
                   <ThemedText variant="bodyBold">
                     Add your first activity
@@ -427,6 +415,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingBottom: Spacing.xl,
     gap: Spacing.xxs,
+  },
+  emptyStateRow: {
+    flexDirection: 'row',
+    gap: Spacing.xxs,
+    alignItems: 'center',
+  },
+  sections: {
+    marginTop: Spacing.sm,
+    display: 'flex',
+    gap: Spacing.md,
   },
   sectionHeader: {
     opacity: 0.6,

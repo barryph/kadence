@@ -1,4 +1,5 @@
 // import { Image } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Image, ImageSource, useImage } from 'expo-image';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -12,20 +13,7 @@ function GuideGif({ source }: { source: ImageSource }) {
   // Calculate aspect ratio once dimensions load
   const aspectRatio = image ? image.width / image.height : 1;
 
-  return (
-    <Image
-      source={image}
-      style={{
-        width: '100%',
-        aspectRatio,
-        marginTop: Spacing.md,
-        marginBottom: 0,
-        borderWidth: 1,
-        borderColor: withAlpha(Colors.accentGlow, 0.1),
-        borderRadius: 10,
-      }}
-    />
-  );
+  return <Image source={image} style={[styles.image, { aspectRatio }]} />;
 }
 
 /**
@@ -105,3 +93,14 @@ export const HOME_GUIDE_STEPS: GuideStep[] = [
     ),
   },
 ];
+
+const styles = StyleSheet.create({
+  image: {
+    width: '100%',
+    marginTop: Spacing.md,
+    marginBottom: 0,
+    borderWidth: 1,
+    borderColor: withAlpha(Colors.accentGlow, 0.1),
+    borderRadius: 10,
+  },
+});

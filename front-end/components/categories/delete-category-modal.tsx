@@ -71,7 +71,7 @@ export default function DeleteCategoryModal({
       </ThemedText>
 
       {errorMessage ? (
-        <View style={{ marginTop: Spacing.lg }}>
+        <View style={styles.errorMessage}>
           <AlertError>{errorMessage}</AlertError>
         </View>
       ) : null}
@@ -108,6 +108,9 @@ const styles = StyleSheet.create({
   messageTwo: {
     paddingTop: Spacing.sm,
     color: Colors.textSecondary,
+  },
+  errorMessage: {
+    marginTop: Spacing.lg,
   },
   actions: {
     flexDirection: 'row',

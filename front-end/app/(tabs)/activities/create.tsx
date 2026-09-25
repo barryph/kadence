@@ -112,7 +112,7 @@ export default function CreateActivityPage() {
           </FormProvider>
 
           {errorMessage && (
-            <View style={{ marginTop: Spacing.lg }}>
+            <View style={styles.errorMessage}>
               <AlertError>{errorMessage}</AlertError>
             </View>
           )}
@@ -155,6 +155,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xl,
+  },
+  errorMessage: {
+    marginTop: Spacing.lg,
   },
   submitButton: {
     marginTop: 15,

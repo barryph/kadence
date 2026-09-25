@@ -173,7 +173,7 @@ export default function EditActivityPage() {
       : null;
 
   return (
-    <View style={{ flex: 1 }} ref={containerRef}>
+    <View style={styles.container} ref={containerRef}>
       <Background />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -232,42 +232,30 @@ export default function EditActivityPage() {
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: Spacing.lg }}
+                  style={styles.skeletonLabel}
                 />
-                <Skeleton
-                  height={40}
-                  style={{ marginBottom: Spacing['3xl'] }}
-                />
+                <Skeleton height={40} style={styles.skeletonInput} />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: Spacing.lg }}
+                  style={styles.skeletonLabel}
                 />
-                <Skeleton
-                  height={40}
-                  style={{ marginBottom: Spacing['3xl'] }}
-                />
+                <Skeleton height={40} style={styles.skeletonInput} />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: Spacing.lg }}
+                  style={styles.skeletonLabel}
                 />
-                <Skeleton
-                  height={40}
-                  style={{ marginBottom: Spacing['3xl'] }}
-                />
+                <Skeleton height={40} style={styles.skeletonInput} />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: Spacing.lg }}
+                  style={styles.skeletonLabel}
                 />
-                <Skeleton
-                  height={40}
-                  style={{ marginBottom: Spacing['3xl'] }}
-                />
+                <Skeleton height={40} style={styles.skeletonInput} />
               </>
             ) : (
               <>
@@ -281,7 +269,7 @@ export default function EditActivityPage() {
                 </FormProvider>
 
                 {errorMessage && (
-                  <View style={{ marginTop: Spacing.lg }}>
+                  <View style={styles.errorMessage}>
                     <AlertError>{errorMessage}</AlertError>
                   </View>
                 )}
@@ -342,11 +330,23 @@ export default function EditActivityPage() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   loadError: {
     gap: Spacing.xl,
   },
   retryButton: {
     marginTop: Spacing.xs,
+  },
+  skeletonLabel: {
+    marginBottom: Spacing.lg,
+  },
+  skeletonInput: {
+    marginBottom: Spacing['3xl'],
+  },
+  errorMessage: {
+    marginTop: Spacing.lg,
   },
   flex: {
     flex: 1,

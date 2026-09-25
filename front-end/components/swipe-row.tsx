@@ -136,7 +136,8 @@ export default function SwipeRow({
           leftBackgroundOpacity,
         ]}
       >
-        <View style={{ opacity: 1 /* children color handled below */ }}>
+        <View>
+          {/* children color handled below */}
           <Text style={{ color: swipeLeftColor }}>{swipeLeftChild}</Text>
         </View>
       </Animated.View>
@@ -155,7 +156,7 @@ export default function SwipeRow({
           rightBackgroundOpacity,
         ]}
       >
-        <View style={{ opacity: 1 }}>
+        <View>
           <Text style={{ color: swipeRightColor }}>{swipeRightChild}</Text>
         </View>
       </Animated.View>

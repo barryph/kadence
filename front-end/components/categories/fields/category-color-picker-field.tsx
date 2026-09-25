@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import ColorPicker, {
   Preview,
   Panel1,
@@ -29,28 +29,45 @@ export default function CategoryColorPickerField() {
             }}
             value={field.value}
           >
-            <Preview
-              style={{ marginBottom: Spacing.xl, height: 30 }}
-              hideInitialColor={true}
-            />
+            <Preview style={styles.preview} hideInitialColor={true} />
 
             <View>
-              <Panel1 style={{ height: 150 }} />
+              <Panel1 style={styles.panel} />
               <HueSlider
-                style={{ marginTop: Spacing.xl }}
+                style={styles.hueSlider}
                 sliderThickness={20}
                 thumbSize={25}
               />
             </View>
 
-            <View style={{ marginTop: 15, marginBottom: 15 }}>
+            <View style={styles.opacitySliderRow}>
               <OpacitySlider sliderThickness={20} thumbSize={25} />
             </View>
 
-            <Swatches style={{ marginTop: 14 }} colors={[...CategoryColors]} />
+            <Swatches style={styles.swatches} colors={[...CategoryColors]} />
           </ColorPicker>
         </>
       )}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  preview: {
+    marginBottom: Spacing.xl,
+    height: 30,
+  },
+  panel: {
+    height: 150,
+  },
+  hueSlider: {
+    marginTop: Spacing.xl,
+  },
+  opacitySliderRow: {
+    marginTop: 15,
+    marginBottom: 15,
+  },
+  swatches: {
+    marginTop: 14,
+  },
+});

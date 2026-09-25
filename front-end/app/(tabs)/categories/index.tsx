@@ -134,7 +134,7 @@ export default function Categories() {
   }
 
   return (
-    <View style={[{ flex: 1 }]}>
+    <View style={styles.container}>
       <Background showRed={false} />
 
       <ScrollView>
@@ -161,20 +161,14 @@ export default function Categories() {
               variant="eyebrow"
               weight="400"
               size="xs"
-              style={{ color: Colors.textSecondary }}
+              style={styles.count}
             >
               {sortedCategories.length}{' '}
               {sortedCategories.length !== 1 ? 'Categories' : 'Category'}
             </ThemedText>
             {sortedCategories.length === 0 && (
               <ListItemShell style={styles.getStartedPill}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    gap: Spacing.xxs,
-                    alignItems: 'center',
-                  }}
-                >
+                <View style={styles.emptyStateRow}>
                   <Dot />
                   <ThemedText variant="bodyBold">
                     Add your first category
@@ -202,13 +196,7 @@ export default function Categories() {
                 >
                   <View style={styles.leftRow}>
                     <View style={styles.topRow}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          borderRadius: 8,
-                        }}
-                      >
+                      <View style={styles.categoryNameRow}>
                         <Dot backgroundColor={category.color} />
                         <ThemedText variant="bodyBold" lineHeight={28}>
                           {category.name}
@@ -239,28 +227,8 @@ export default function Categories() {
                       </ThemedText>
                     </View>
                   </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      paddingHorizontal: Spacing.xl,
-                      borderLeftWidth: 1,
-                      borderColor: Colors.border,
-                      paddingVertical: Spacing.xl,
-                    }}
-                  >
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: Colors.border,
-                        borderRadius: 12,
-                        height: 40,
-                        width: 40,
-                      }}
-                    >
+                  <View style={styles.editButtonContainer}>
+                    <View style={styles.editButton}>
                       <Feather
                         name="edit-2"
                         size={18}
@@ -301,7 +269,7 @@ export default function Categories() {
               </ThemedText>
               <Pressable onPress={() => setIsDeleteModalVisible(true)}>
                 <FontAwesome6
-                  style={{ padding: Spacing.sm }}
+                  style={styles.deleteIcon}
                   name="trash"
                   size={20}
                   color={Colors.textPrimary}
@@ -331,6 +299,9 @@ export default function Categories() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   scrollContent: {
     paddingBottom: 100,
     gap: Spacing['4xl'],
@@ -361,6 +332,9 @@ const styles = StyleSheet.create({
   categories: {
     gap: Spacing.xl,
   },
+  count: {
+    color: Colors.textSecondary,
+  },
   category: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -376,6 +350,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  categoryNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
   bottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -383,10 +362,36 @@ const styles = StyleSheet.create({
   bottomRowText: {
     opacity: 0.7,
   },
+  editButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.xl,
+    borderLeftWidth: 1,
+    borderColor: Colors.border,
+  },
+  editButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 12,
+    height: 40,
+    width: 40,
+  },
   getStartedPill: {
     paddingTop: 14,
     paddingHorizontal: 15,
     paddingBottom: Spacing.xl,
     gap: Spacing.xxs,
+  },
+  emptyStateRow: {
+    flexDirection: 'row',
+    gap: Spacing.xxs,
+    alignItems: 'center',
+  },
+  deleteIcon: {
+    padding: Spacing.sm,
   },
 });

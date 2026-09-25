@@ -50,7 +50,7 @@ function Profile() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.scrollContentGrow}
       >
         <Container style={styles.scrollContent}>
           <View style={styles.detailsContainer}>
@@ -116,6 +116,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     flex: 1,
     justifyContent: 'space-between',
+  },
+  scrollContentGrow: {
+    flexGrow: 1,
   },
   detailsContainer: {
     gap: Spacing['4xl'],

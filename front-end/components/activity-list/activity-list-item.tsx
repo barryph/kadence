@@ -72,7 +72,7 @@ export default function ActivityListItem({
           onSwipeRight={() => onComplete(activity.id)}
           disableSwipeRight={completedToday}
           swipeLeftChild={
-            <ThemedText variant="heading" style={{ color: Colors.textPrimary }}>
+            <ThemedText variant="heading">
               <Feather name="edit-2" size={26} color={Colors.textPrimary} />
             </ThemedText>
           }
@@ -124,13 +124,7 @@ export default function ActivityListItem({
                 </View>
               </View>
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginBottom: Spacing.sm,
-                  alignItems: 'center',
-                }}
-              >
+              <View style={styles.activityMetaRow}>
                 {activity.category && (
                   <View
                     style={[
@@ -151,7 +145,7 @@ export default function ActivityListItem({
                       variant="caption"
                       weight="500"
                       lineHeight={22}
-                      style={{ marginTop: -1 }}
+                      style={styles.metaTextOffset}
                     >
                       {activity.category.name}
                     </ThemedText>
@@ -162,7 +156,7 @@ export default function ActivityListItem({
                   variant="caption"
                   weight="500"
                   letterSpacing={-0.45}
-                  style={[styles.activityDetailsText, { marginTop: -1 }]}
+                  style={[styles.activityDetailsText, styles.metaTextOffset]}
                 >
                   Every {activity.interval} Days
                 </ThemedText>
@@ -183,13 +177,7 @@ export default function ActivityListItem({
                 </View>
 
                 {/* Progress gradient */}
-                <View
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    flexDirection: 'row',
-                  }}
-                >
+                <View style={styles.activityBarFill}>
                   {completedToday ? (
                     <LinearGradient
                       colors={[...Gradients.goalMet]}
@@ -219,13 +207,8 @@ export default function ActivityListItem({
               </View>
 
               {activity.goal && activity.goalProgress && (
-                <View style={{ paddingTop: Spacing.sm }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}
-                  >
+                <View style={styles.goalSection}>
+                  <View style={styles.goalHeaderRow}>
                     <ThemedText variant="eyebrow">Weekly Goal</ThemedText>
                     <ThemedText variant="eyebrow">
                       {activity.goalProgress.currentWeekCount} of{' '}
@@ -287,8 +270,16 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     alignItems: 'center',
   },
+  activityMetaRow: {
+    flexDirection: 'row',
+    marginBottom: Spacing.sm,
+    alignItems: 'center',
+  },
   activityDetailsText: {
     color: Colors.textSubtle,
+  },
+  metaTextOffset: {
+    marginTop: -1,
   },
   activityDetailsSpan: {
     marginLeft: 3,
@@ -309,6 +300,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     zIndex: 2,
   },
+  activityBarFill: {
+    width: '100%',
+    height: '100%',
+    flexDirection: 'row',
+  },
   activityBarNotch: {
     flex: 1,
     height: '100%',
@@ -319,6 +315,13 @@ const styles = StyleSheet.create({
   },
   goalProgress: {
     marginTop: Spacing.sm,
+  },
+  goalSection: {
+    paddingTop: Spacing.sm,
+  },
+  goalHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   goalText: {
     textAlign: 'right',

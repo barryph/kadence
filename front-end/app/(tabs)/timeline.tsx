@@ -439,11 +439,7 @@ function TimelineScreen() {
       <View style={styles.topRow}>
         {/* Blank corner cell - top left */}
         <View style={styles.cornerCell}>
-          <ThemedText
-            variant="eyebrow"
-            size="xs"
-            style={{ color: Colors.textSecondary }}
-          >
+          <ThemedText variant="eyebrow" size="xs" style={styles.cornerLabel}>
             Activity
           </ThemedText>
         </View>
@@ -462,7 +458,7 @@ function TimelineScreen() {
                   <ThemedText
                     variant="caption"
                     lineHeight={12}
-                    style={{ color: Colors.textFaint }}
+                    style={styles.dateNumber}
                   >
                     {date.day}
                   </ThemedText>
@@ -506,7 +502,7 @@ function TimelineScreen() {
                         variant="eyebrow"
                         weight="400"
                         size="xs"
-                        style={{ color: Colors.textPrimary }}
+                        style={styles.dueNowLabel}
                       >
                         Due now
                       </ThemedText>
@@ -515,7 +511,7 @@ function TimelineScreen() {
                         variant="eyebrow"
                         weight="400"
                         size="xs"
-                        style={{ color: Colors.textFaint }}
+                        style={styles.dueLaterLabel}
                       >
                         Due {activity.daysUntil}D
                       </ThemedText>
@@ -689,6 +685,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
   },
+  cornerLabel: {
+    color: Colors.textSecondary,
+  },
   colHeaderClip: {
     flex: 1,
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
@@ -720,6 +719,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
+  dateNumber: {
+    color: Colors.textFaint,
+  },
   dateWeekday: {
     marginTop: Spacing.xxs,
     textTransform: 'uppercase',
@@ -736,6 +738,12 @@ const styles = StyleSheet.create({
     // borderLeftWidth: 2,
     // borderLeftColor: Colors.accentGlow,
     // paddingLeft: Spacing.md,
+  },
+  dueNowLabel: {
+    color: Colors.textPrimary,
+  },
+  dueLaterLabel: {
+    color: Colors.textFaint,
   },
   isLoadingOverlay: {
     position: 'absolute',

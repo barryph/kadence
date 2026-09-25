@@ -82,13 +82,13 @@ export default function GoalsScreen() {
               </ThemedText>
             </ListItemShell>
           ) : (
-            <View style={{ gap: Spacing.xl }}>
-              <View style={{ flexDirection: 'row', gap: Spacing.lg }}>
+            <View style={styles.goalsBody}>
+              <View style={styles.summaryRow}>
                 <ThemedText
                   variant="eyebrow"
                   weight="400"
                   size="xs"
-                  style={{ color: Colors.textSecondary }}
+                  style={styles.summaryText}
                 >
                   {goals.length} {goals.length !== 1 ? 'Goals' : 'Goal'}
                 </ThemedText>
@@ -96,7 +96,7 @@ export default function GoalsScreen() {
                   variant="eyebrow"
                   weight="400"
                   size="xs"
-                  style={{ color: Colors.textSecondary }}
+                  style={styles.summaryText}
                 >
                   ·
                 </ThemedText>
@@ -104,7 +104,7 @@ export default function GoalsScreen() {
                   variant="eyebrow"
                   weight="400"
                   size="xs"
-                  style={{ color: Colors.textSecondary }}
+                  style={styles.summaryText}
                 >
                   {goalsMetCount} of {goals.length} met this week
                 </ThemedText>
@@ -181,7 +181,7 @@ export default function GoalsScreen() {
                           <ThemedText
                             variant="caption"
                             size="md"
-                            style={{ color: Colors.accentSoft }}
+                            style={styles.statsLink}
                           >
                             See Stats &rarr;
                           </ThemedText>
@@ -212,6 +212,19 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     marginTop: Spacing.md,
+  },
+  goalsBody: {
+    gap: Spacing.xl,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    gap: Spacing.lg,
+  },
+  summaryText: {
+    color: Colors.textSecondary,
+  },
+  statsLink: {
+    color: Colors.accentSoft,
   },
   list: {
     gap: Spacing.xl,

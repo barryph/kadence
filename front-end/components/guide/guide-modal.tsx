@@ -235,11 +235,10 @@ export function GuideModalBody({
       <View style={styles.paginationRow}>
         <View
           accessibilityRole="tablist"
-          style={{
-            width: dotsPaginationWidth(steps.length),
-            height: 14,
-            flexDirection: 'row',
-          }}
+          style={[
+            styles.paginationTrack,
+            { width: dotsPaginationWidth(steps.length) },
+          ]}
         >
           <Animated.View
             style={[styles.activeDot, { transform: [{ translateX: pillX }] }]}
@@ -253,10 +252,7 @@ export function GuideModalBody({
               accessibilityState={{ selected: index === activeIndex }}
               // The dots are only 8px wide; widen the touch target.
               hitSlop={12}
-              style={[
-                styles.dot,
-                index === activeIndex && { width: ACTIVE_DOT_W },
-              ]}
+              style={[styles.dot, index === activeIndex && styles.dotActive]}
             />
           ))}
         </View>
@@ -430,6 +426,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: Spacing['2xl'],
   },
+  paginationTrack: {
+    height: 14,
+    flexDirection: 'row',
+  },
   activeDot: {
     position: 'absolute',
     left: 0,
@@ -445,6 +445,9 @@ const styles = StyleSheet.create({
     height: DOT_W,
     borderRadius: DOT_W / 2,
     backgroundColor: withAlpha(Colors.textPrimary, 0.22),
+  },
+  dotActive: {
+    width: ACTIVE_DOT_W,
   },
   actions: {
     flexDirection: 'row',

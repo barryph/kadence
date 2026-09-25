@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: Spacing.lg,
+    marginTop: Spacing.xl,
     marginBottom: 3,
   },
   headlineActions: {
@@ -415,7 +415,6 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
   },
   headline: {
-    marginTop: Spacing.xs,
     color: Colors.textPrimary,
   },
   headlineNoCategories: {

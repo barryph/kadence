@@ -1,0 +1,8 @@
+# Next.js + Tailwind work under pnpm's isolated layout; this project uses pnpm
+# like the rest of the repo (the template shipped a bun lockfile).
+packages: []
+
+allowBuilds:
+  # Next's optional image optimizer. The editor only serves static PNGs, so the
+  # native build is not needed.
+  sharp: false

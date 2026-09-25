@@ -1,0 +1,795 @@
+{
+  "schemaVersion": 2,
+  "appName": "Kadence",
+  "themeId": "deep-space",
+  "connectedCanvas": true,
+  "locales": [
+    "en"
+  ],
+  "locale": "en",
+  "device": "feature-graphic",
+  "orientation": "portrait",
+  "appIcon": "/app-icon.png",
+  "slidesByDevice": {
+    "iphone": [],
+    "android": [
+      {
+        "id": "s_kd_1_android",
+        "layout": "two-devices",
+        "label": {
+          "en": "QUEUE WORKFLOW"
+        },
+        "headline": {
+          "en": "Training that fits\nreal life."
+        },
+        "screenshot": "/screenshots/android/phone/en/01-home-queue-top.png",
+        "transforms": {
+          "caption": {
+            "x": 65,
+            "y": 67,
+            "width": 950,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "deviceSecondary": {
+            "x": 297,
+            "y": 432,
+            "width": 475,
+            "height": 1030,
+            "rotation": 7,
+            "zIndex": 2
+          },
+          "device": {
+            "x": 216,
+            "y": 797,
+            "width": 648,
+            "height": 1404,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        },
+        "screenshotSecondary": "/screenshots/android/phone/en/02-home-queue-end.png"
+      },
+      {
+        "id": "s_kd_2_android",
+        "layout": "device-bottom",
+        "label": {
+          "en": "INTERVAL SCHEDULING"
+        },
+        "headline": {
+          "en": "Choose your\nown rhythm."
+        },
+        "screenshot": "/screenshots/android/phone/en/03-interval-form.png",
+        "transforms": {
+          "caption": {
+            "x": 65,
+            "y": 86,
+            "width": 950,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 184,
+            "y": 701,
+            "width": 713,
+            "height": 1544,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_3_android",
+        "layout": "device-top",
+        "label": {
+          "en": "WEEKLY GOALS"
+        },
+        "headline": {
+          "en": "Set a weekly\ntarget."
+        },
+        "screenshot": "/screenshots/android/phone/en/04-goals-list.png",
+        "transforms": {
+          "caption": {
+            "x": 65,
+            "y": 1373,
+            "width": 950,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 1
+          },
+          "device": {
+            "x": 242,
+            "y": 42,
+            "width": 596,
+            "height": 1292,
+            "rotation": 0,
+            "zIndex": 2
+          }
+        }
+      },
+      {
+        "id": "s_kd_4_android",
+        "layout": "device-bottom",
+        "label": {
+          "en": "ADHERENCE"
+        },
+        "headline": {
+          "en": "See what you\nactually do."
+        },
+        "screenshot": "/screenshots/android/phone/en/05-goal-this-week.png",
+        "transforms": {
+          "caption": {
+            "x": 65,
+            "y": 86,
+            "width": 950,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 184,
+            "y": 701,
+            "width": 713,
+            "height": 1544,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_5_android",
+        "layout": "device-bottom",
+        "label": {
+          "en": "CADENCE"
+        },
+        "headline": {
+          "en": "Watch the\npattern build."
+        },
+        "screenshot": "/screenshots/android/phone/en/06-goal-cadence.png",
+        "transforms": {
+          "caption": {
+            "x": 65,
+            "y": 86,
+            "width": 950,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 184,
+            "y": 701,
+            "width": 713,
+            "height": 1544,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_6_android",
+        "layout": "hero",
+        "label": {
+          "en": "INSIGHTS"
+        },
+        "headline": {
+          "en": "Your week,\none chart."
+        },
+        "screenshot": "/screenshots/android/phone/en/07-insights.png",
+        "transforms": {
+          "caption": {
+            "x": 65,
+            "y": 86,
+            "width": 950,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 130,
+            "y": 682,
+            "width": 821,
+            "height": 1778,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_7_android",
+        "layout": "device-top",
+        "label": {
+          "en": "CALENDAR"
+        },
+        "headline": {
+          "en": "Every rep,\nlogged."
+        },
+        "screenshot": "/screenshots/android/phone/en/08-timeline.png",
+        "transforms": {
+          "caption": {
+            "x": 65,
+            "y": 1373,
+            "width": 950,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 242,
+            "y": 42,
+            "width": 596,
+            "height": 1292,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_8_android",
+        "layout": "no-device",
+        "label": {
+          "en": "BUILT FOR REAL LIFE"
+        },
+        "headline": {
+          "en": "Your week,\nyour rules."
+        },
+        "screenshot": "",
+        "transforms": {
+          "caption": {
+            "x": 76,
+            "y": 730,
+            "width": 929,
+            "height": 499,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "textElements": [
+          {
+            "id": "text:features",
+            "text": {
+              "en": "·  Interval scheduling\n·  Queue workflow\n·  Weekly goals\n·  Adherence rings\n·  Cadence heatmap"
+            },
+            "transform": {
+              "x": 108,
+              "y": 1344,
+              "width": 864,
+              "height": 384,
+              "rotation": 0,
+              "zIndex": 5
+            },
+            "fontSize": 50,
+            "fontWeight": 600,
+            "color": "#C8D4E8",
+            "align": "center"
+          }
+        ]
+      }
+    ],
+    "ipad": [],
+    "android-7": [
+      {
+        "id": "s_kd_1_android-7",
+        "layout": "two-devices",
+        "label": {
+          "en": "QUEUE WORKFLOW"
+        },
+        "headline": {
+          "en": "Training that fits\nreal life."
+        },
+        "screenshot": "/screenshots/tablet-7/en/01-home-queue-top.png",
+        "transforms": {
+          "caption": {
+            "x": 72,
+            "y": 67,
+            "width": 1056,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "deviceSecondary": {
+            "x": 330,
+            "y": 432,
+            "width": 528,
+            "height": 845,
+            "rotation": 7,
+            "zIndex": 2
+          },
+          "device": {
+            "x": 240,
+            "y": 797,
+            "width": 720,
+            "height": 1152,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        },
+        "screenshotSecondary": "/screenshots/tablet-7/en/02-home-queue-end.png"
+      },
+      {
+        "id": "s_kd_2_android-7",
+        "layout": "device-bottom",
+        "label": {
+          "en": "INTERVAL SCHEDULING"
+        },
+        "headline": {
+          "en": "Choose your\nown rhythm."
+        },
+        "screenshot": "/screenshots/tablet-7/en/03-interval-form.png",
+        "transforms": {
+          "caption": {
+            "x": 72,
+            "y": 86,
+            "width": 1056,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 204,
+            "y": 701,
+            "width": 792,
+            "height": 1267,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_3_android-7",
+        "layout": "device-top",
+        "label": {
+          "en": "WEEKLY GOALS"
+        },
+        "headline": {
+          "en": "Set a weekly\ntarget."
+        },
+        "screenshot": "/screenshots/tablet-7/en/04-goals-list.png",
+        "transforms": {
+          "caption": {
+            "x": 72,
+            "y": 1373,
+            "width": 1056,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 204,
+            "y": 42,
+            "width": 792,
+            "height": 1267,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_4_android-7",
+        "layout": "device-bottom",
+        "label": {
+          "en": "ADHERENCE"
+        },
+        "headline": {
+          "en": "See what you\nactually do."
+        },
+        "screenshot": "/screenshots/tablet-7/en/05-goal-this-week.png",
+        "transforms": {
+          "caption": {
+            "x": 72,
+            "y": 86,
+            "width": 1056,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 204,
+            "y": 701,
+            "width": 792,
+            "height": 1267,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_5_android-7",
+        "layout": "device-bottom",
+        "label": {
+          "en": "CADENCE"
+        },
+        "headline": {
+          "en": "Watch the\npattern build."
+        },
+        "screenshot": "/screenshots/tablet-7/en/06-goal-cadence.png",
+        "transforms": {
+          "caption": {
+            "x": 72,
+            "y": 86,
+            "width": 1056,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 204,
+            "y": 701,
+            "width": 792,
+            "height": 1267,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_6_android-7",
+        "layout": "hero",
+        "label": {
+          "en": "INSIGHTS"
+        },
+        "headline": {
+          "en": "Your week,\none chart."
+        },
+        "screenshot": "/screenshots/tablet-7/en/07-insights.png",
+        "transforms": {
+          "caption": {
+            "x": 72,
+            "y": 86,
+            "width": 1056,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 144,
+            "y": 682,
+            "width": 912,
+            "height": 1459,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_7_android-7",
+        "layout": "device-top",
+        "label": {
+          "en": "CALENDAR"
+        },
+        "headline": {
+          "en": "Every rep,\nlogged."
+        },
+        "screenshot": "/screenshots/tablet-7/en/08-timeline.png",
+        "transforms": {
+          "caption": {
+            "x": 72,
+            "y": 1373,
+            "width": 1056,
+            "height": 576,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 204,
+            "y": 42,
+            "width": 792,
+            "height": 1267,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_8_android-7",
+        "layout": "no-device",
+        "label": {
+          "en": "BUILT FOR REAL LIFE"
+        },
+        "headline": {
+          "en": "Your week,\nyour rules."
+        },
+        "screenshot": "",
+        "transforms": {
+          "caption": {
+            "x": 84,
+            "y": 730,
+            "width": 1032,
+            "height": 499,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "textElements": [
+          {
+            "id": "text:features",
+            "text": {
+              "en": "·  Interval scheduling\n·  Queue workflow\n·  Weekly goals\n·  Adherence rings\n·  Cadence heatmap"
+            },
+            "transform": {
+              "x": 120,
+              "y": 1344,
+              "width": 960,
+              "height": 384,
+              "rotation": 0,
+              "zIndex": 5
+            },
+            "fontSize": 55,
+            "fontWeight": 600,
+            "color": "#C8D4E8",
+            "align": "center"
+          }
+        ]
+      }
+    ],
+    "android-10": [
+      {
+        "id": "s_kd_1_android-10",
+        "layout": "two-devices",
+        "label": {
+          "en": "QUEUE WORKFLOW"
+        },
+        "headline": {
+          "en": "Training that fits\nreal life."
+        },
+        "screenshot": "/screenshots/tablet-10/en/01-home-queue-top.png",
+        "transforms": {
+          "caption": {
+            "x": 96,
+            "y": 90,
+            "width": 1408,
+            "height": 768,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "deviceSecondary": {
+            "x": 440,
+            "y": 576,
+            "width": 704,
+            "height": 1126,
+            "rotation": 7,
+            "zIndex": 2
+          },
+          "device": {
+            "x": 320,
+            "y": 1062,
+            "width": 960,
+            "height": 1536,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        },
+        "screenshotSecondary": "/screenshots/tablet-10/en/02-home-queue-end.png"
+      },
+      {
+        "id": "s_kd_2_android-10",
+        "layout": "device-bottom",
+        "label": {
+          "en": "INTERVAL SCHEDULING"
+        },
+        "headline": {
+          "en": "Choose your\nown rhythm."
+        },
+        "screenshot": "/screenshots/tablet-10/en/03-interval-form.png",
+        "transforms": {
+          "caption": {
+            "x": 96,
+            "y": 115,
+            "width": 1408,
+            "height": 768,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 272,
+            "y": 934,
+            "width": 1056,
+            "height": 1690,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_3_android-10",
+        "layout": "device-top",
+        "label": {
+          "en": "WEEKLY GOALS"
+        },
+        "headline": {
+          "en": "Set a weekly\ntarget."
+        },
+        "screenshot": "/screenshots/tablet-10/en/04-goals-list.png",
+        "transforms": {
+          "caption": {
+            "x": 96,
+            "y": 1830,
+            "width": 1408,
+            "height": 768,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 272,
+            "y": 56,
+            "width": 1056,
+            "height": 1690,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_4_android-10",
+        "layout": "device-bottom",
+        "label": {
+          "en": "ADHERENCE"
+        },
+        "headline": {
+          "en": "See what you\nactually do."
+        },
+        "screenshot": "/screenshots/tablet-10/en/05-goal-this-week.png",
+        "transforms": {
+          "caption": {
+            "x": 96,
+            "y": 115,
+            "width": 1408,
+            "height": 768,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 272,
+            "y": 934,
+            "width": 1056,
+            "height": 1690,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_5_android-10",
+        "layout": "device-bottom",
+        "label": {
+          "en": "CADENCE"
+        },
+        "headline": {
+          "en": "Watch the\npattern build."
+        },
+        "screenshot": "/screenshots/tablet-10/en/06-goal-cadence.png",
+        "transforms": {
+          "caption": {
+            "x": 96,
+            "y": 115,
+            "width": 1408,
+            "height": 768,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 272,
+            "y": 934,
+            "width": 1056,
+            "height": 1690,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_6_android-10",
+        "layout": "hero",
+        "label": {
+          "en": "INSIGHTS"
+        },
+        "headline": {
+          "en": "Your week,\none chart."
+        },
+        "screenshot": "/screenshots/tablet-10/en/07-insights.png",
+        "transforms": {
+          "caption": {
+            "x": 96,
+            "y": 115,
+            "width": 1408,
+            "height": 768,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 192,
+            "y": 909,
+            "width": 1216,
+            "height": 1946,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_7_android-10",
+        "layout": "device-top",
+        "label": {
+          "en": "CALENDAR"
+        },
+        "headline": {
+          "en": "Every rep,\nlogged."
+        },
+        "screenshot": "/screenshots/tablet-10/en/08-timeline.png",
+        "transforms": {
+          "caption": {
+            "x": 96,
+            "y": 1830,
+            "width": 1408,
+            "height": 768,
+            "rotation": 0,
+            "zIndex": 4
+          },
+          "device": {
+            "x": 272,
+            "y": 56,
+            "width": 1056,
+            "height": 1690,
+            "rotation": 0,
+            "zIndex": 3
+          }
+        }
+      },
+      {
+        "id": "s_kd_8_android-10",
+        "layout": "no-device",
+        "label": {
+          "en": "BUILT FOR REAL LIFE"
+        },
+        "headline": {
+          "en": "Your week,\nyour rules."
+        },
+        "screenshot": "",
+        "transforms": {
+          "caption": {
+            "x": 112,
+            "y": 973,
+            "width": 1376,
+            "height": 666,
+            "rotation": 0,
+            "zIndex": 4
+          }
+        },
+        "textElements": [
+          {
+            "id": "text:features",
+            "text": {
+              "en": "·  Interval scheduling\n·  Queue workflow\n·  Weekly goals\n·  Adherence rings\n·  Cadence heatmap"
+            },
+            "transform": {
+              "x": 160,
+              "y": 1792,
+              "width": 1280,
+              "height": 512,
+              "rotation": 0,
+              "zIndex": 5
+            },
+            "fontSize": 74,
+            "fontWeight": 600,
+            "color": "#C8D4E8",
+            "align": "center"
+          }
+        ]
+      }
+    ],
+    "feature-graphic": [
+      {
+        "id": "s_kd_fg",
+        "layout": "feature-graphic",
+        "label": {
+          "en": "FITNESS THAT ADAPTS"
+        },
+        "headline": {
+          "en": "Training at your own rhythm.\nFollow your cadence."
+        },
+        "screenshot": ""
+      }
+    ]
+  }
+}

@@ -38,7 +38,7 @@ export default function GuideMediaIcon({
     >
       <View
         style={[
-          styles.iconCircle,
+          styles.iconBackground,
           {
             backgroundColor: `${accent}22`,
           },
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  iconCircle: {
+  iconBackground: {
     width: 46,
     height: 46,
     borderRadius: 23,

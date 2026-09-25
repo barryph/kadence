@@ -9,7 +9,7 @@ interface IProps {
 export default function AlertSuccess({ children }: IProps) {
   return (
     <View style={styles.container}>
-      <ThemedText style={styles.text} variant="bodySmall" weight="600">
+      <ThemedText style={styles.message} variant="bodySmall" weight="600">
         {children}
       </ThemedText>
     </View>
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.successBorder,
     backgroundColor: Colors.successSurface,
   },
-  text: {
+  message: {
     textAlign: 'center',
   },
 });

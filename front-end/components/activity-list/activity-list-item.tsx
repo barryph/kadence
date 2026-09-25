@@ -90,7 +90,7 @@ export default function ActivityListItem({
           queued={activity.queued}
         >
           <View>
-            <View style={[styles.activityMain]}>
+            <View style={[styles.activityBody]}>
               <View style={styles.activityTitleRow}>
                 <View style={styles.activityNameGroup}>
                   <ThemedText variant="bodyStrong" lineHeight={32} size="xl">
@@ -234,7 +234,7 @@ export default function ActivityListItem({
 }
 
 const styles = StyleSheet.create({
-  activityMain: {
+  activityBody: {
     width: '100%',
     paddingTop: 11,
     paddingHorizontal: 15,

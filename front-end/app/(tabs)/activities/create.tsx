@@ -84,7 +84,7 @@ export default function CreateActivityPage() {
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <View style={styles.topRow}>
+          <View style={styles.header}>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Go back"
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: Spacing['5xl'],
   },
-  topRow: {
+  header: {
     marginTop: 15,
     marginBottom: 23,
     flexDirection: 'row',

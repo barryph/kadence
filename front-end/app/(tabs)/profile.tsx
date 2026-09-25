@@ -71,7 +71,7 @@ function Profile() {
 
           <View>
             {logoutError ? (
-              <View style={styles.error}>
+              <View style={styles.errorAlert}>
                 <AlertError>{logoutError}</AlertError>
               </View>
             ) : null}
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   label: {
     opacity: 0.6,
   },
-  error: {
+  errorAlert: {
     marginTop: Spacing.md,
   },
   logoutButton: {

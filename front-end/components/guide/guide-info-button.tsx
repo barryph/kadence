@@ -22,7 +22,7 @@ export default function GuideInfoButton({
       accessibilityRole="button"
       accessibilityLabel={label}
     >
-      <View style={styles.circle}>
+      <View style={styles.button}>
         <MaterialIcons name="info" size={22} color={Colors.iconAccent} />
       </View>
     </Pressable>
@@ -30,7 +30,7 @@ export default function GuideInfoButton({
 }
 
 const styles = StyleSheet.create({
-  circle: {
+  button: {
     width: 40,
     height: 40,
     borderRadius: 12,

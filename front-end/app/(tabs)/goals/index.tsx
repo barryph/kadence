@@ -130,7 +130,7 @@ export default function GoalsScreen() {
                             {goal.activityName}
                           </ThemedText>
 
-                          <View style={styles.itemRight}>
+                          <View style={styles.itemStatus}>
                             {goal.currentWeekCount >= goal.targetPerWeek ? (
                               <ProgressBadge
                                 color={Colors.success}
@@ -177,7 +177,7 @@ export default function GoalsScreen() {
                           style={styles.progressBar}
                         />
 
-                        <View style={styles.bottomRow}>
+                        <View style={styles.statsRow}>
                           <ThemedText
                             variant="caption"
                             size="md"
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   itemName: {
     flexShrink: 1,
   },
-  itemRight: {
+  itemStatus: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing['2xl'],
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  bottomRow: {
+  statsRow: {
     marginTop: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -34,7 +34,7 @@ export default function GoalAdherenceRing({
   );
 
   return (
-    <View style={styles.wrapper}>
+    <View style={styles.container}>
       <View style={styles.ringContainer}>
         <ProgressChart
           data={{
@@ -48,7 +48,7 @@ export default function GoalAdherenceRing({
           theme={theme}
           hideLegend
         />
-        <View style={styles.center}>
+        <View style={styles.valueOverlay}>
           <ThemedText variant="title" style={styles.percent}>
             {percentage === null ? '—' : `${percentage}%`}
           </ThemedText>
@@ -62,7 +62,7 @@ export default function GoalAdherenceRing({
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     alignItems: 'center',
   },
   ringContainer: {
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  center: {
+  valueOverlay: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',

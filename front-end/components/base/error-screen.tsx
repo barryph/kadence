@@ -40,7 +40,7 @@ export default function ErrorScreen({ message, onRetry }: IProps) {
           {isOffline ? OFFLINE_MESSAGE : message}
         </ThemedText>
         {onRetry ? (
-          <Button onPress={onRetry} style={styles.retry}>
+          <Button onPress={onRetry} style={styles.retryButton}>
             Try again
           </Button>
         ) : null}
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.85,
   },
-  retry: {
+  retryButton: {
     marginTop: Spacing.md,
     maxWidth: 220,
   },

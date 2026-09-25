@@ -56,7 +56,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
         <ThemedText variant="bodySmall" style={styles.errorMessage}>
           {error.message}
         </ThemedText>
-        <Button onPress={retry} style={styles.errorRetry}>
+        <Button onPress={retry} style={styles.errorRetryButton}>
           Try again
         </Button>
       </View>
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.85,
   },
-  errorRetry: {
+  errorRetryButton: {
     marginTop: Spacing.md,
     maxWidth: 220,
   },

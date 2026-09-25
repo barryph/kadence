@@ -13,7 +13,7 @@ export default function LoaderScreen({ text }: IProps) {
     <ThemedView style={styles.container}>
       <Background />
       <ActivityIndicator color={Colors.textPrimary} />
-      <ThemedText style={styles.text}>{text}</ThemedText>
+      <ThemedText style={styles.message}>{text}</ThemedText>
     </ThemedView>
   );
 }
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: {
+  message: {
     marginTop: Spacing.lg,
   },
 });

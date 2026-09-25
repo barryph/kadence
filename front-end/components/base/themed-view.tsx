@@ -10,11 +10,11 @@ import { Colors } from '@/constants/theme';
  * wanted.
  */
 export function ThemedView({ style, ...otherProps }: ViewProps) {
-  return <View style={[styles.view, style]} {...otherProps} />;
+  return <View style={[styles.container, style]} {...otherProps} />;
 }
 
 const styles = StyleSheet.create({
-  view: {
+  container: {
     backgroundColor: Colors.background,
   },
 });

@@ -49,7 +49,7 @@ export default function ActivityCategoryField({ categories }: Props) {
         };
 
         return (
-          <View style={styles.wrapper}>
+          <View style={styles.container}>
             <Label>Category</Label>
             <Pressable
               testID="activity-category-select"
@@ -68,7 +68,7 @@ export default function ActivityCategoryField({ categories }: Props) {
                   Choose a Category
                 </ThemedText>
               )}
-              <ThemedText size="2xl" style={styles.arrow} selectable={false}>
+              <ThemedText size="2xl" style={styles.chevron} selectable={false}>
                 ›
               </ThemedText>
             </Pressable>
@@ -166,7 +166,7 @@ export default function ActivityCategoryField({ categories }: Props) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     marginBottom: Spacing['2xl'],
     width: '100%',
   },
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     flex: 1,
   },
-  arrow: {
+  chevron: {
     color: Colors.textMuted,
     transform: [{ rotate: '90deg' }],
   },

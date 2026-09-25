@@ -72,7 +72,7 @@ export default function GoalInsightsScreen() {
       <Background showRed={false} />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.topRow}>
+        <View style={styles.titleRow}>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Go back"
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['6xl'],
     gap: Spacing.xl,
   },
-  topRow: {
+  titleRow: {
     marginTop: Spacing.lg,
     marginBottom: 17,
     flexDirection: 'row',

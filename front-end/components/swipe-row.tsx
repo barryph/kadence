@@ -125,7 +125,7 @@ export default function SwipeRow({
       {/* SWIPE LEFT (Revealed when swiping left, shows on the right side) */}
       <Animated.View
         style={[
-          styles.backgroundLayer,
+          styles.actionBackground,
           {
             ...(swipeLeftBackground && {
               backgroundColor: swipeLeftBackground,
@@ -145,7 +145,7 @@ export default function SwipeRow({
       {/* SWIPE RIGHT (Revealed when swiping right, shows on the left side) */}
       <Animated.View
         style={[
-          styles.backgroundLayer,
+          styles.actionBackground,
           {
             ...(swipeRightBackground && {
               backgroundColor: swipeRightBackground,
@@ -163,7 +163,7 @@ export default function SwipeRow({
 
       {/* FOREGROUND */}
       <GestureDetector gesture={pan}>
-        <Animated.View style={[styles.foregroundLayer, foregroundStyle]}>
+        <Animated.View style={[styles.content, foregroundStyle]}>
           {children}
         </Animated.View>
       </GestureDetector>
@@ -177,13 +177,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     width: '100%',
   },
-  backgroundLayer: {
+  actionBackground: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
   },
-  foregroundLayer: {
+  content: {
     position: 'relative',
     zIndex: 1,
     backgroundColor: 'transparent',

@@ -87,7 +87,7 @@ function partitionActivities(acts: IActivityClient[]) {
 
 const ACTIVITY_SECTIONS = [
   { title: 'Queued', key: 'queued' },
-  { title: 'Due', key: 'available' },
+  { title: 'Pending', key: 'available' },
   { title: 'Completed', key: 'completed' },
 ] as const;
 

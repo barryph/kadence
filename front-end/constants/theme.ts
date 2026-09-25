@@ -180,7 +180,7 @@ export const Gradients = {
   /** Progress bar while the target is still being worked towards. */
   goalInProgress: [Colors.accentGlow, Colors.accentBright, Colors.cyan],
   /** Progress bar once an activity is overdue. */
-  overdue: [Colors.accentGlow, Colors.cyan, Colors.danger],
+  overdue: [Colors.accentGlow, Colors.accentGlow, Colors.danger],
   /** Backdrop of the tab bar. */
   blueBackdrop: ['#087cfb', '#0290ee', '#09b0d4'],
 } as const;

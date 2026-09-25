@@ -187,10 +187,10 @@ export default function ActivityListItem({
                     flexDirection: 'row',
                   }}
                 >
-                  {completedToday || activity.queued ? (
+                  {completedToday ? (
                     <LinearGradient
                       colors={[...Gradients.goalMet]}
-                      locations={[0, 0.62, 1]}
+                      locations={[0, 0.4, 1]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
                       style={{ flex: barFlex }}
@@ -198,7 +198,7 @@ export default function ActivityListItem({
                   ) : activity.daysUntil === 0 ? (
                     <LinearGradient
                       colors={[...Gradients.overdue]}
-                      locations={[0, 0.5, 1]}
+                      locations={[0, 0.4, 0.9]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
                       style={{ flex: barFlex }}
@@ -206,7 +206,7 @@ export default function ActivityListItem({
                   ) : (
                     <LinearGradient
                       colors={[...Gradients.goalInProgress]}
-                      locations={[0, 0.42, 1]}
+                      locations={[0, 0.4, 1]}
                       start={{ x: 0, y: 0.5 }}
                       end={{ x: 1, y: 0.5 }}
                       style={{ flex: barFlex }}
@@ -234,6 +234,7 @@ export default function ActivityListItem({
                     target={activity.goal.targetPerWeek}
                     height={6}
                     trackColor={Colors.track}
+                    colorsWhenMet={completedToday ? 'BLUEGREEN' : 'BLUE'}
                     style={styles.goalProgress}
                   />
                 </View>

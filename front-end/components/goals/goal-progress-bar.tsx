@@ -8,6 +8,7 @@ interface GoalProgressBarProps {
   target: number;
   height?: number;
   trackColor?: string;
+  colorsWhenMet?: 'BLUE' | 'BLUEGREEN';
   style?: ViewStyle;
 }
 
@@ -16,6 +17,7 @@ export default function GoalProgressBar({
   target,
   height = 8,
   trackColor = Colors.border,
+  colorsWhenMet = 'BLUEGREEN',
   style,
 }: GoalProgressBarProps) {
   const progress = clampGoalProgress(count, target);
@@ -28,7 +30,12 @@ export default function GoalProgressBar({
     >
       {progress > 0 && (
         <LinearGradient
-          colors={met ? [...Gradients.goalMet] : [...Gradients.goalInProgress]}
+          colors={
+            met && colorsWhenMet === 'BLUEGREEN'
+              ? [...Gradients.goalMet]
+              : [...Gradients.goalInProgress]
+          }
+          locations={[0, 0.4, 1]}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
           style={[styles.fill, { width: `${progress * 100}%` }]}

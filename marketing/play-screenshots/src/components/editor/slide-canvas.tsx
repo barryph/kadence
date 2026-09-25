@@ -148,6 +148,7 @@ function EditableText({
   multiline = false,
   placeholder,
   onFocus,
+  onBlur,
 }: {
   value: string;
   editable?: boolean;
@@ -156,6 +157,7 @@ function EditableText({
   multiline?: boolean;
   placeholder?: string;
   onFocus?: () => void;
+  onBlur?: () => void;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
@@ -181,6 +183,7 @@ function EditableText({
       data-placeholder={placeholder}
       onInput={handleInput}
       onFocus={() => onFocus?.()}
+      onBlur={() => onBlur?.()}
       onKeyDown={(e) => {
         if (!multiline && e.key === "Enter") {
           e.preventDefault();
@@ -274,8 +277,8 @@ function Caption({
  *
  * Kadence's own screens use a single accent word per heading, so the deck does
  * the same: everything before the last line is plain, the last line is cyan
- * with an electric glow. While the user is editing, the plain editable field is
- * shown instead, so the caret behaves normally.
+ * with an electric glow. The editor preview shows that same render; only the
+ * focused field falls back to plain white text, so the caret behaves normally.
  */
 function Headline({
   slide,
@@ -307,22 +310,10 @@ function Headline({
     color: fg,
   };
 
-  if (editable || !isDeepSpace(theme)) {
-    return (
-      <EditableText
-        value={text}
-        editable={editable}
-        multiline
-        onChange={onChange}
-        onFocus={onFocus}
-        placeholder="Headline goes here"
-        style={style}
-      />
-    );
-  }
+  const [editing, setEditing] = React.useState(false);
 
   const lines = (text || "").split("\n");
-  return (
+  const styledLines = (
     <div style={{ ...style, whiteSpace: "pre-wrap" }}>
       {lines.map((line, index) => {
         const isAccent = index === lines.length - 1 && lines.length > 1;
@@ -344,6 +335,53 @@ function Headline({
           </React.Fragment>
         );
       })}
+    </div>
+  );
+
+  if (!isDeepSpace(theme)) {
+    return (
+      <EditableText
+        value={text}
+        editable={editable}
+        multiline
+        onChange={onChange}
+        onFocus={onFocus}
+        placeholder="Headline goes here"
+        style={style}
+      />
+    );
+  }
+
+  if (!editable) return styledLines;
+
+  // Editing the deep-space headline: the styled render sits behind the
+  // editable field, which keeps its own metrics and stays in flow (so nothing
+  // shifts on click). The field only goes transparent while blurred and
+  // non-empty, so the caret and the empty-state placeholder stay visible.
+  const showOverlay = !editing && text.length > 0;
+  return (
+    <div style={{ position: "relative" }}>
+      {showOverlay ? (
+        <div
+          aria-hidden
+          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+        >
+          {styledLines}
+        </div>
+      ) : null}
+      <EditableText
+        value={text}
+        editable
+        multiline
+        onChange={onChange}
+        onFocus={() => {
+          setEditing(true);
+          onFocus?.();
+        }}
+        onBlur={() => setEditing(false)}
+        placeholder="Headline goes here"
+        style={showOverlay ? { ...style, color: "transparent" } : style}
+      />
     </div>
   );
 }

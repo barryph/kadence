@@ -5,6 +5,27 @@ Personal habit tracker: `back-end/` (NestJS 11 API + PostgreSQL) and `front-end/
 * `front-end/pnpm-workspace.yaml` sets `nodeLinker: hoisted` (Expo SDK 54 supports pnpm's isolated layout, but RN native modules and Jest can break under isolation; hoisted keeps `node_modules` flat like npm did). Since pnpm 11 non-auth settings are read from `pnpm-workspace.yaml`, not `.npmrc`.
 * pnpm blocks dependency build scripts by default (reported as "Ignored build scripts"); only approve the ones you actually need (`allowBuilds` in each package's `pnpm-workspace.yaml`). Keep CI installs consistent via `pnpm install --frozen-lockfile`.
 
+## Running the app locally
+
+Two processes: the API on **3000** and the Expo web dev server on **8081**.
+`EXPO_PUBLIC_SERVER_URL` (`front-end/.env`) points the browser at
+`http://localhost:3000`, so every screen is a cross-origin request. A blocked
+CORS check surfaces as `net::ERR_FAILED` / `TypeError: Failed to fetch`, which
+reads as "the backend is down" - check CORS before debugging the network.
+
+* The API allows `CORS_ORIGINS` when set, else `['http://localhost:8081', 'http://localhost:3000']` in non-production (`src/configure-app.ts`). An app served from any other port, or from `127.0.0.1` rather than `localhost`, is blocked: to a browser those are different origins.
+* `CORS_ORIGINS=*` does **not** work - comma-separated values are matched as exact strings, so a bare `*` allows only the literal origin `*`. List origins explicitly. The harness shell may set it to `*`; `env -u CORS_ORIGINS ...` gets the defaults.
+* 8081/3000 usually belong to the developer, so use spare ports with a matching origin:
+
+```bash
+PORT=8091 CORS_ORIGINS=http://localhost:8090 pnpm run start:dev   # back-end/
+pnpm exec expo start --web --port 8090                            # front-end/
+```
+
+* Start both as managed background jobs, never `cmd &` inside a `bash -c` call (killed when the call ends); read the job output for `Nest application successfully started`.
+* Verify an origin is allowed with `curl -s -D - -o /dev/null -H "Origin: http://localhost:8081" http://localhost:3000/ | grep -i access-control-allow-origin` - no header means it is not.
+* Process inspection is restricted, so a running API may predate your edit: after changing backend config, start a fresh instance on a spare port and test that one.
+
 ## Worktrees (required)
 
 * Always develop in a git worktree; never modify the primary working tree directly, unless specifically specified.

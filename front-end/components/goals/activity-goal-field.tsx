@@ -50,7 +50,7 @@ export default function ActivityGoalField() {
         };
 
         return (
-          <View style={styles.wrapper}>
+          <View style={styles.container}>
             <Label>How many times per week?</Label>
             <Pressable
               testID="activity-goal-select"
@@ -61,13 +61,13 @@ export default function ActivityGoalField() {
             >
               <ThemedText
                 style={
-                  selected?.value === null ? styles.placeholder : undefined
+                  selected?.value === null ? styles.placeholderText : undefined
                 }
                 selectable={false}
               >
                 {selected?.label ?? 'No goal'}
               </ThemedText>
-              <ThemedText size="2xl" style={styles.arrow} selectable={false}>
+              <ThemedText size="2xl" style={styles.chevron} selectable={false}>
                 ›
               </ThemedText>
             </Pressable>
@@ -124,7 +124,7 @@ export default function ActivityGoalField() {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     marginBottom: Spacing['2xl'],
     width: '100%',
   },
@@ -139,10 +139,10 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     borderRadius: 8,
   },
-  placeholder: {
+  placeholderText: {
     color: Colors.textMuted,
   },
-  arrow: {
+  chevron: {
     color: Colors.textMuted,
     transform: [{ rotate: '90deg' }],
   },

@@ -47,7 +47,7 @@ export default function SocialSignInButtons({
               AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
             }
             onPress={onApplePress}
-            style={[styles.appleButton, isLoading && styles.disabled]}
+            style={[styles.appleButton, isLoading && styles.buttonDisabled]}
           />
         )}
       </View>
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 48,
   },
-  disabled: {
+  buttonDisabled: {
     opacity: 0.5,
   },
 });

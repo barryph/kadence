@@ -84,7 +84,7 @@ export default function CreateActivityPage() {
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <View style={styles.topRow}>
+          <View style={styles.header}>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Go back"
@@ -112,7 +112,7 @@ export default function CreateActivityPage() {
           </FormProvider>
 
           {errorMessage && (
-            <View style={{ marginTop: Spacing.lg }}>
+            <View style={styles.errorMessage}>
               <AlertError>{errorMessage}</AlertError>
             </View>
           )}
@@ -149,12 +149,15 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     paddingBottom: Spacing['5xl'],
   },
-  topRow: {
+  header: {
     marginTop: 15,
     marginBottom: 23,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xl,
+  },
+  errorMessage: {
+    marginTop: Spacing.lg,
   },
   submitButton: {
     marginTop: 15,

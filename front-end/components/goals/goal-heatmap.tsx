@@ -56,7 +56,7 @@ export default function GoalHeatmap({ data, targetPerWeek }: GoalHeatmapProps) {
 function LegendDot({ color, label }: { color: string; label: string }) {
   return (
     <View style={styles.legendItem}>
-      <View style={[styles.legendDot, { backgroundColor: color }]} />
+      <View style={[styles.legendSwatch, { backgroundColor: color }]} />
       <ThemedText variant="caption" style={styles.legendText}>
         {label}
       </ThemedText>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 5,
   },
-  legendDot: {
+  legendSwatch: {
     width: 10,
     height: 10,
     borderRadius: 3,

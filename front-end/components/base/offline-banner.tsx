@@ -23,7 +23,7 @@ export default function OfflineBanner() {
       accessibilityLabel="You are offline"
     >
       <MaterialIcons name="cloud-off" size={16} color={Colors.textPrimary} />
-      <ThemedText variant="caption" weight="600" style={styles.text}>
+      <ThemedText variant="caption" weight="600" style={styles.message}>
         You&apos;re offline. Changes can&apos;t be saved until you reconnect.
       </ThemedText>
     </View>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: Colors.dangerSurface,
   },
-  text: {
+  message: {
     flexShrink: 1,
     color: Colors.textPrimary,
   },

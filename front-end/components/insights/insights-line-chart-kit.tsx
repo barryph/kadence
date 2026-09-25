@@ -76,7 +76,7 @@ export default function InsightsLineChartKit({
   }
 
   return (
-    <View style={styles.wrapper} onLayout={handleLayout}>
+    <View style={styles.chartContainer} onLayout={handleLayout}>
       {chartWidth > 0 ? (
         <LineChart
           data={rows}
@@ -102,7 +102,7 @@ export default function InsightsLineChartKit({
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  chartContainer: {
     width: '100%',
     overflow: 'hidden',
   },

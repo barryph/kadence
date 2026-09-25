@@ -82,13 +82,13 @@ export default function GoalsScreen() {
               </ThemedText>
             </ListItemShell>
           ) : (
-            <View style={{ gap: Spacing.xl }}>
-              <View style={{ flexDirection: 'row', gap: Spacing.lg }}>
+            <View style={styles.goalsBody}>
+              <View style={styles.summaryRow}>
                 <ThemedText
                   variant="eyebrow"
                   weight="400"
                   size="xs"
-                  style={{ color: Colors.textSecondary }}
+                  style={styles.summaryText}
                 >
                   {goals.length} {goals.length !== 1 ? 'Goals' : 'Goal'}
                 </ThemedText>
@@ -96,7 +96,7 @@ export default function GoalsScreen() {
                   variant="eyebrow"
                   weight="400"
                   size="xs"
-                  style={{ color: Colors.textSecondary }}
+                  style={styles.summaryText}
                 >
                   ·
                 </ThemedText>
@@ -104,7 +104,7 @@ export default function GoalsScreen() {
                   variant="eyebrow"
                   weight="400"
                   size="xs"
-                  style={{ color: Colors.textSecondary }}
+                  style={styles.summaryText}
                 >
                   {goalsMetCount} of {goals.length} met this week
                 </ThemedText>
@@ -130,7 +130,7 @@ export default function GoalsScreen() {
                             {goal.activityName}
                           </ThemedText>
 
-                          <View style={styles.itemRight}>
+                          <View style={styles.itemStatus}>
                             {goal.currentWeekCount >= goal.targetPerWeek ? (
                               <ProgressBadge
                                 color={Colors.success}
@@ -177,11 +177,11 @@ export default function GoalsScreen() {
                           style={styles.progressBar}
                         />
 
-                        <View style={styles.bottomRow}>
+                        <View style={styles.statsRow}>
                           <ThemedText
                             variant="caption"
                             size="md"
-                            style={{ color: Colors.accentSoft }}
+                            style={styles.statsLink}
                           >
                             See Stats &rarr;
                           </ThemedText>
@@ -213,6 +213,19 @@ const styles = StyleSheet.create({
   subTitle: {
     marginTop: Spacing.md,
   },
+  goalsBody: {
+    gap: Spacing.xl,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    gap: Spacing.lg,
+  },
+  summaryText: {
+    color: Colors.textSecondary,
+  },
+  statsLink: {
+    color: Colors.accentSoft,
+  },
   list: {
     gap: Spacing.xl,
   },
@@ -229,7 +242,7 @@ const styles = StyleSheet.create({
   itemName: {
     flexShrink: 1,
   },
-  itemRight: {
+  itemStatus: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing['2xl'],
@@ -251,7 +264,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  bottomRow: {
+  statsRow: {
     marginTop: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',

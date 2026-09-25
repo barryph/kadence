@@ -56,7 +56,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
         <ThemedText variant="bodySmall" style={styles.errorMessage}>
           {error.message}
         </ThemedText>
-        <Button onPress={retry} style={styles.errorRetry}>
+        <Button onPress={retry} style={styles.errorRetryButton}>
           Try again
         </Button>
       </View>
@@ -113,22 +113,7 @@ export default function RootLayout() {
   const toastConfig: ToastConfig = {
     // success: (props) => <BaseToast {...props} style={{ background: 'red' }} />,
     success: ({ text1 }) => (
-      <View
-        style={{
-          paddingVertical: 18,
-          paddingHorizontal: 18,
-          minWidth: '95%',
-          borderRadius: 6,
-          overflow: 'hidden',
-          ...Shadows.toast,
-          backgroundColor: Colors.toast,
-          display: 'flex',
-          alignContent: 'center',
-          alignItems: 'center',
-          gap: 11,
-          flexDirection: 'row',
-        }}
-      >
+      <View style={styles.toastContainer}>
         <Ionicons
           name="checkmark-circle-sharp"
           size={24}
@@ -163,6 +148,20 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
+  toastContainer: {
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    minWidth: '95%',
+    borderRadius: 6,
+    overflow: 'hidden',
+    ...Shadows.toast,
+    backgroundColor: Colors.toast,
+    display: 'flex',
+    alignContent: 'center',
+    alignItems: 'center',
+    gap: 11,
+    flexDirection: 'row',
+  },
   errorContainer: {
     flex: 1,
   },
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     opacity: 0.85,
   },
-  errorRetry: {
+  errorRetryButton: {
     marginTop: Spacing.md,
     maxWidth: 220,
   },

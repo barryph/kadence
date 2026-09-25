@@ -50,7 +50,7 @@ function Profile() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={styles.scrollContentGrow}
       >
         <Container style={styles.scrollContent}>
           <View style={styles.detailsContainer}>
@@ -71,7 +71,7 @@ function Profile() {
 
           <View>
             {logoutError ? (
-              <View style={styles.error}>
+              <View style={styles.errorAlert}>
                 <AlertError>{logoutError}</AlertError>
               </View>
             ) : null}
@@ -117,6 +117,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+  scrollContentGrow: {
+    flexGrow: 1,
+  },
   detailsContainer: {
     gap: Spacing['4xl'],
   },
@@ -136,7 +139,7 @@ const styles = StyleSheet.create({
   label: {
     opacity: 0.6,
   },
-  error: {
+  errorAlert: {
     marginTop: Spacing.md,
   },
   logoutButton: {

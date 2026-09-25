@@ -284,19 +284,19 @@ function DashboardContent({ userId }: { userId: string }) {
       <Background />
       <ScrollView>
         <Container style={styles.scrollContent}>
-          <View style={styles.headlineRow}>
+          <View style={styles.titleRow}>
             <ThemedText
               variant="heading"
               font="system"
               style={[
-                styles.headline,
-                !(categories.length > 0) && styles.headlineNoCategories,
+                styles.title,
+                !(categories.length > 0) && styles.titleNoCategories,
               ]}
             >
               Activities Center
             </ThemedText>
 
-            <View style={styles.headlineActions}>
+            <View style={styles.titleActions}>
               <Pressable
                 onPress={() => router.push('/activities/insights')}
                 style={styles.insightsLink}
@@ -322,22 +322,10 @@ function DashboardContent({ userId }: { userId: string }) {
             onItemPress={handleCategoryPress}
           />
 
-          <View
-            style={{
-              marginTop: Spacing.sm,
-              display: 'flex',
-              gap: Spacing.md,
-            }}
-          >
+          <View style={styles.sectionList}>
             {activities.length === 0 && (
-              <ListItemShell style={styles.getStartedPill}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    gap: Spacing.xxs,
-                    alignItems: 'center',
-                  }}
-                >
+              <ListItemShell style={styles.emptyState}>
+                <View style={styles.emptyStateRow}>
                   <Dot />
                   <ThemedText variant="bodyBold">
                     Add your first activity
@@ -351,7 +339,7 @@ function DashboardContent({ userId }: { userId: string }) {
             {activitySections.map((section, sectionIndex) => (
               <View
                 key={section.title}
-                style={sectionIndex > 0 ? styles.sectionGroupSpaced : undefined}
+                style={sectionIndex > 0 ? styles.section : undefined}
               >
                 <ThemedText variant="eyebrow" style={styles.sectionHeader}>
                   {section.title}
@@ -401,7 +389,7 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
     paddingBottom: 100,
   },
-  headlineRow: {
+  titleRow: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -409,30 +397,40 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
     marginBottom: 3,
   },
-  headlineActions: {
+  titleActions: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.lg,
   },
-  headline: {
+  title: {
     color: Colors.textPrimary,
   },
-  headlineNoCategories: {
+  titleNoCategories: {
     marginBottom: 3,
   },
   insightsLink: {},
   insightsLinkText: {},
-  getStartedPill: {
+  emptyState: {
     paddingTop: 14,
     paddingHorizontal: 15,
     paddingBottom: Spacing.xl,
     gap: Spacing.xxs,
   },
+  emptyStateRow: {
+    flexDirection: 'row',
+    gap: Spacing.xxs,
+    alignItems: 'center',
+  },
+  sectionList: {
+    marginTop: Spacing.sm,
+    display: 'flex',
+    gap: Spacing.md,
+  },
   sectionHeader: {
     opacity: 0.6,
     marginBottom: 6,
   },
-  sectionGroupSpaced: {
+  section: {
     marginTop: 14,
   },
   sectionItems: {

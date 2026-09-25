@@ -165,7 +165,7 @@ export default function LoginScreen() {
                 variant="bodySmall"
                 font="system"
                 weight="700"
-                style={styles.linkTextBold}
+                style={styles.linkEmphasis}
               >
                 Forgot Password?
               </ThemedText>
@@ -183,7 +183,7 @@ export default function LoginScreen() {
                 variant="bodySmall"
                 font="system"
                 weight="700"
-                style={styles.linkTextBold}
+                style={styles.linkEmphasis}
               >
                 Sign Up
               </ThemedText>
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   linkText: {
     color: Colors.textSecondary,
   },
-  linkTextBold: {
+  linkEmphasis: {
     color: Colors.accent,
   },
 });

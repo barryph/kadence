@@ -173,7 +173,7 @@ export default function EditActivityPage() {
       : null;
 
   return (
-    <View style={{ flex: 1 }} ref={containerRef}>
+    <View style={styles.container} ref={containerRef}>
       <Background />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -183,7 +183,7 @@ export default function EditActivityPage() {
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <View style={styles.topRow}>
+          <View style={styles.header}>
             <View style={styles.titleRow}>
               <Pressable
                 accessibilityRole="button"
@@ -199,13 +199,13 @@ export default function EditActivityPage() {
               </Pressable>
               <ThemedText variant="title">Edit Activity</ThemedText>
             </View>
-            <View style={styles.settingsWrapper} ref={settingsToggleRef}>
+            <View style={styles.settingsToggle} ref={settingsToggleRef}>
               <Pressable onPress={toggleSettingsModal}>
                 <MaterialCommunityIcons
                   name="dots-vertical"
                   size={24}
                   color={Colors.textPrimary}
-                  style={styles.settingsDots}
+                  style={styles.settingsIcon}
                 />
               </Pressable>
             </View>
@@ -232,42 +232,30 @@ export default function EditActivityPage() {
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: Spacing.lg }}
+                  style={styles.skeletonLabel}
                 />
-                <Skeleton
-                  height={40}
-                  style={{ marginBottom: Spacing['3xl'] }}
-                />
+                <Skeleton height={40} style={styles.skeletonInput} />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: Spacing.lg }}
+                  style={styles.skeletonLabel}
                 />
-                <Skeleton
-                  height={40}
-                  style={{ marginBottom: Spacing['3xl'] }}
-                />
+                <Skeleton height={40} style={styles.skeletonInput} />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: Spacing.lg }}
+                  style={styles.skeletonLabel}
                 />
-                <Skeleton
-                  height={40}
-                  style={{ marginBottom: Spacing['3xl'] }}
-                />
+                <Skeleton height={40} style={styles.skeletonInput} />
 
                 <Skeleton
                   width={200}
                   height={20}
-                  style={{ marginBottom: Spacing.lg }}
+                  style={styles.skeletonLabel}
                 />
-                <Skeleton
-                  height={40}
-                  style={{ marginBottom: Spacing['3xl'] }}
-                />
+                <Skeleton height={40} style={styles.skeletonInput} />
               </>
             ) : (
               <>
@@ -281,7 +269,7 @@ export default function EditActivityPage() {
                 </FormProvider>
 
                 {errorMessage && (
-                  <View style={{ marginTop: Spacing.lg }}>
+                  <View style={styles.errorMessage}>
                     <AlertError>{errorMessage}</AlertError>
                   </View>
                 )}
@@ -342,11 +330,23 @@ export default function EditActivityPage() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   loadError: {
     gap: Spacing.xl,
   },
   retryButton: {
     marginTop: Spacing.xs,
+  },
+  skeletonLabel: {
+    marginBottom: Spacing.lg,
+  },
+  skeletonInput: {
+    marginBottom: Spacing['3xl'],
+  },
+  errorMessage: {
+    marginTop: Spacing.lg,
   },
   flex: {
     flex: 1,
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     zIndex: 0,
     elevation: 0,
   },
-  topRow: {
+  header: {
     zIndex: 1,
     elevation: 1,
     marginTop: Spacing['3xl'],
@@ -375,11 +375,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: Spacing.xl,
   },
-  settingsWrapper: {
+  settingsToggle: {
     zIndex: 10,
     elevation: 10,
   },
-  settingsDots: {
+  settingsIcon: {
     paddingHorizontal: Spacing.md,
   },
   settingsDropdown: {

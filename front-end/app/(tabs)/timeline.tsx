@@ -375,7 +375,7 @@ function TimelineScreen() {
     <View style={styles.container}>
       <Background showRed={false} />
 
-      <View style={[styles.isLoadingOverlay, isLoading && styles.hide]}>
+      <View style={[styles.loadingOverlay, isLoading && styles.overlayHidden]}>
         {!isInitialScrollReady && <Background />}
         <ActivityIndicator color={Colors.textPrimary} />
       </View>
@@ -389,13 +389,13 @@ function TimelineScreen() {
         <Pressable
           onPress={() => fetchMonth(monthInView, 'PREV')}
           disabled={isLoadingTimeline}
-          style={[styles.navArrowButton]}
+          style={[styles.navButton]}
         >
           <AntDesign
             name="left"
             size={14}
             color={Colors.textFaint}
-            style={styles.navArrowButtonIcon}
+            style={styles.navButtonIcon}
           />
         </Pressable>
         <ThemedText variant="eyebrow" size="3xl">
@@ -405,15 +405,15 @@ function TimelineScreen() {
           onPress={() => fetchMonth(monthInView, 'NEXT')}
           disabled={isLoadingTimeline || monthInView === currentMonth}
           style={[
-            styles.navArrowButton,
-            monthInView === currentMonth && styles.navArrowButtonDisabled,
+            styles.navButton,
+            monthInView === currentMonth && styles.navButtonDisabled,
           ]}
         >
           <AntDesign
             name="right"
             size={14}
             color={Colors.textFaint}
-            style={styles.navArrowButtonIcon}
+            style={styles.navButtonIcon}
           />
         </Pressable>
       </View>
@@ -436,20 +436,16 @@ function TimelineScreen() {
         style={styles.filterList}
       />
 
-      <View style={styles.topRow}>
+      <View style={styles.datesHeaderRow}>
         {/* Blank corner cell - top left */}
         <View style={styles.cornerCell}>
-          <ThemedText
-            variant="eyebrow"
-            size="xs"
-            style={{ color: Colors.textSecondary }}
-          >
+          <ThemedText variant="eyebrow" size="xs" style={styles.cornerLabel}>
             Activity
           </ThemedText>
         </View>
 
         {/* Dates header — clipped so overflow is hidden */}
-        <View style={styles.colHeaderClip}>
+        <View style={styles.datesHeaderClip}>
           <Animated.ScrollView
             ref={columnHeaderRef}
             style={[styles.headerRow]}
@@ -462,7 +458,7 @@ function TimelineScreen() {
                   <ThemedText
                     variant="caption"
                     lineHeight={12}
-                    style={{ color: Colors.textFaint }}
+                    style={styles.dateNumber}
                   >
                     {date.day}
                   </ThemedText>
@@ -481,9 +477,9 @@ function TimelineScreen() {
         </View>
       </View>
 
-      <View style={styles.bottomRow}>
+      <View style={styles.gridRow}>
         {/* Sports header — clipped so overflow is hidden */}
-        <View style={styles.rowHeaderClip}>
+        <View style={styles.activityHeaderClip}>
           <Animated.ScrollView
             ref={rowHeaderRef}
             showsVerticalScrollIndicator={false}
@@ -506,7 +502,7 @@ function TimelineScreen() {
                         variant="eyebrow"
                         weight="400"
                         size="xs"
-                        style={{ color: Colors.textPrimary }}
+                        style={styles.dueNowLabel}
                       >
                         Due now
                       </ThemedText>
@@ -515,7 +511,7 @@ function TimelineScreen() {
                         variant="eyebrow"
                         weight="400"
                         size="xs"
-                        style={{ color: Colors.textFaint }}
+                        style={styles.dueLaterLabel}
                       >
                         Due {activity.daysUntil}D
                       </ThemedText>
@@ -605,7 +601,7 @@ function TimelineScreen() {
             <ThemedText
               font="system"
               variant="bodySmall"
-              style={styles.errorTextSmall}
+              style={styles.footerErrorText}
             >
               {loadMoreError}
             </ThemedText>
@@ -614,7 +610,7 @@ function TimelineScreen() {
             <ThemedText
               font="system"
               variant="bodySmall"
-              style={styles.errorTextSmall}
+              style={styles.footerErrorText}
             >
               {toggleError}
             </ThemedText>
@@ -653,7 +649,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  navArrowButton: {
+  navButton: {
     flexGrow: 0,
     color: Colors.textPrimary,
     backgroundColor: 'transparent',
@@ -662,18 +658,18 @@ const styles = StyleSheet.create({
     width: 40,
     height: NAV_ARROW_HEIGHT,
   },
-  navArrowButtonIcon: {
+  navButtonIcon: {
     lineHeight: NAV_ARROW_HEIGHT,
     height: NAV_ARROW_HEIGHT,
     textAlign: 'center',
   },
-  navArrowButtonDisabled: {
+  navButtonDisabled: {
     opacity: 0.3,
   },
-  topRow: {
+  datesHeaderRow: {
     flexDirection: 'row',
   },
-  bottomRow: {
+  gridRow: {
     flexDirection: 'row',
     flex: 1,
   },
@@ -689,14 +685,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
   },
-  colHeaderClip: {
+  cornerLabel: {
+    color: Colors.textSecondary,
+  },
+  datesHeaderClip: {
     flex: 1,
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
     height: ROW_HEIGHT + HEADER_ROW_EXTRA_HEIGHT,
   },
-  rowHeaderClip: {
+  activityHeaderClip: {
     width: LEFT_COLUMN_WIDTH,
     overflow: 'hidden', // Stop overflowing the blank corner, z-index on cornerCell also works
     borderRightWidth: 1,
@@ -720,6 +719,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
+  dateNumber: {
+    color: Colors.textFaint,
+  },
   dateWeekday: {
     marginTop: Spacing.xxs,
     textTransform: 'uppercase',
@@ -737,7 +739,13 @@ const styles = StyleSheet.create({
     // borderLeftColor: Colors.accentGlow,
     // paddingLeft: Spacing.md,
   },
-  isLoadingOverlay: {
+  dueNowLabel: {
+    color: Colors.textPrimary,
+  },
+  dueLaterLabel: {
+    color: Colors.textFaint,
+  },
+  loadingOverlay: {
     position: 'absolute',
     left: 0,
     right: 0,
@@ -748,7 +756,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.scrimStrong,
     zIndex: 999,
   },
-  hide: {
+  overlayHidden: {
     display: 'none',
   },
   activityRow: {
@@ -792,7 +800,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     ...Shadows.overlay,
   },
-  errorTextSmall: {
+  footerErrorText: {
     color: Colors.dangerText,
     textAlign: 'center',
   },

@@ -46,7 +46,7 @@ export default function PrivacyPolicyLink({ style }: PrivacyPolicyLinkProps) {
       }}
       style={({ pressed }) => [styles.link, pressed && styles.pressed, style]}
     >
-      <ThemedText variant="link" weight="600" style={styles.text}>
+      <ThemedText variant="link" weight="600" style={styles.linkLabel}>
         Privacy Policy
       </ThemedText>
     </Pressable>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   pressed: {
     opacity: 0.6,
   },
-  text: {
+  linkLabel: {
     textDecorationLine: 'underline',
   },
 });

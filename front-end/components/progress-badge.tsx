@@ -14,7 +14,7 @@ export default function ProgressBadge({
   children,
 }: IProgressBadgeProps) {
   return (
-    <View style={styles.doneBadge}>
+    <View style={styles.badge}>
       {icon}
       <ThemedText
         variant="caption"
@@ -29,7 +29,7 @@ export default function ProgressBadge({
 }
 
 const styles = StyleSheet.create({
-  doneBadge: {
+  badge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,

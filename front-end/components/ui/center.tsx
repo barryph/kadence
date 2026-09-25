@@ -5,11 +5,11 @@ interface IProps {
 }
 
 export default function Center({ children }: IProps) {
-  return <View style={styles.center}>{children}</View>;
+  return <View style={styles.container}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
-  center: {
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

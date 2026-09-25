@@ -32,7 +32,7 @@ export default function ActivityLastDoneField() {
         }
 
         return (
-          <View style={styles.wrapper}>
+          <View style={styles.container}>
             <Label>When did you last complete this activity?</Label>
 
             <Pressable
@@ -89,7 +89,7 @@ export default function ActivityLastDoneField() {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     marginBottom: Spacing['2xl'],
     width: '100%',
   },

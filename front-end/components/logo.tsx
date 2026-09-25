@@ -7,7 +7,7 @@ export default function Logo() {
   return (
     <ThemedText variant="heading" style={styles.wordmark}>
       Kad
-      <ThemedText variant="heading" style={styles.wordmarkDimmed}>
+      <ThemedText variant="heading" style={styles.wordmarkMuted}>
         ence
       </ThemedText>
     </ThemedText>
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   wordmark: {
     color: Colors.textPrimary,
   },
-  wordmarkDimmed: {
+  wordmarkMuted: {
     color: Colors.textDimmed,
   },
 });

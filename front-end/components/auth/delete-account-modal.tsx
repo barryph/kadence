@@ -73,7 +73,7 @@ export default function DeleteAccountModal({
       </ThemedText>
 
       {errorMessage ? (
-        <View style={{ marginTop: Spacing.lg }}>
+        <View style={styles.errorMessage}>
           <AlertError>{errorMessage}</AlertError>
         </View>
       ) : null}
@@ -106,6 +106,9 @@ const styles = StyleSheet.create({
   },
   message: {
     color: Colors.textSecondary,
+  },
+  errorMessage: {
+    marginTop: Spacing.lg,
   },
   actions: {
     flexDirection: 'row',

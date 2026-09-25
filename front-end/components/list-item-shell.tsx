@@ -6,7 +6,7 @@ interface IProps extends ViewProps {}
 
 export default function ListItemShell({ style, children }: IProps) {
   return (
-    <View style={[styles.activityWrapper, style]}>
+    <View style={[styles.container, style]}>
       {/* <ActivityBackground /> */}
       {children}
     </View>
@@ -14,7 +14,7 @@ export default function ListItemShell({ style, children }: IProps) {
 }
 
 const styles = StyleSheet.create({
-  activityWrapper: {
+  container: {
     width: '100%',
     borderWidth: 1,
     borderStyle: 'solid',

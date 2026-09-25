@@ -65,13 +65,13 @@ export default function DeleteCategoryModal({
       <ThemedText style={styles.message}>
         Deleting is permanent and cannot be undone.
       </ThemedText>
-      <ThemedText style={styles.messageTwo}>
+      <ThemedText style={styles.secondaryMessage}>
         This category will be removed from activities it&apos;s currently
         attached to.
       </ThemedText>
 
       {errorMessage ? (
-        <View style={{ marginTop: Spacing.lg }}>
+        <View style={styles.errorMessage}>
           <AlertError>{errorMessage}</AlertError>
         </View>
       ) : null}
@@ -105,9 +105,12 @@ const styles = StyleSheet.create({
   message: {
     color: Colors.textSecondary,
   },
-  messageTwo: {
+  secondaryMessage: {
     paddingTop: Spacing.sm,
     color: Colors.textSecondary,
+  },
+  errorMessage: {
+    marginTop: Spacing.lg,
   },
   actions: {
     flexDirection: 'row',

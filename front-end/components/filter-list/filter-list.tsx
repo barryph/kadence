@@ -47,7 +47,7 @@ export default function FilterList({
         showsHorizontalScrollIndicator={false}
         style={scrollViewStyle}
       >
-        <View style={styles.pillsRow}>
+        <View style={styles.itemsRow}>
           {items.map((item) => {
             const isActive = selectedIds === item.id;
             return (
@@ -66,7 +66,7 @@ export default function FilterList({
                   variant="bodySmall"
                   weight="600"
                   style={[
-                    styles.pill,
+                    styles.item,
                     isActive && {
                       borderWidth: 1.5,
                       borderColor: `${item.color}88`,
@@ -91,13 +91,13 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     marginBottom: 7,
   },
-  pillsRow: {
+  itemsRow: {
     display: 'flex',
     flexDirection: 'row',
     gap: Spacing.xs,
     paddingBottom: 1,
   },
-  pill: {
+  item: {
     backgroundColor: Colors.surfaceTranslucent,
     color: Colors.textFaint,
     borderWidth: 1,

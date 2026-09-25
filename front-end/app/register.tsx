@@ -191,7 +191,7 @@ export default function RegisterScreen() {
                 variant="bodySmall"
                 font="system"
                 weight="700"
-                style={styles.linkTextBold}
+                style={styles.linkEmphasis}
               >
                 Log In
               </ThemedText>
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   linkText: {
     color: Colors.textSecondary,
   },
-  linkTextBold: {
+  linkEmphasis: {
     color: Colors.accent,
   },
 });

@@ -36,7 +36,7 @@ export default function Background({ showRed = false }: IProps) {
         colors={[withAlpha(Colors.accentGlow, 0.28), 'transparent']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[StyleSheet.absoluteFill, styles.blueGlow]}
+        style={[StyleSheet.absoluteFill, styles.brandGlow]}
       />
 
       {/* Cyan top-right glow */}
@@ -44,7 +44,7 @@ export default function Background({ showRed = false }: IProps) {
         colors={[withAlpha(Colors.cyan, 0.16), 'transparent']}
         start={{ x: 1, y: 0 }}
         end={{ x: 0, y: 1 }}
-        style={[StyleSheet.absoluteFill, styles.cyanGlow]}
+        style={[StyleSheet.absoluteFill, styles.secondaryGlow]}
       />
 
       {/* Red bottom glow */}
@@ -54,7 +54,7 @@ export default function Background({ showRed = false }: IProps) {
       {/*   end={{ x: 1, y: 1 }} */}
       {/*   style={[ */}
       {/*     StyleSheet.absoluteFill, */}
-      {/*     styles.redGlow, */}
+      {/*     styles.dangerGlow, */}
       {/*     !showRed && { opacity: 0 }, */}
       {/*   ]} */}
       {/* /> */}
@@ -63,13 +63,13 @@ export default function Background({ showRed = false }: IProps) {
 }
 
 const styles = StyleSheet.create({
-  blueGlow: {
+  brandGlow: {
     opacity: 0.9,
   },
-  cyanGlow: {
+  secondaryGlow: {
     opacity: 0.8,
   },
-  redGlow: {
+  dangerGlow: {
     opacity: 0.8,
   },
 });

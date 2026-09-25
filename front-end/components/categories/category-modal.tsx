@@ -94,7 +94,7 @@ export default function CategoryModal({
       </FormProvider>
 
       {errorMessage ? (
-        <View style={{ marginTop: Spacing.lg }}>
+        <View style={styles.errorMessage}>
           <AlertError>{errorMessage}</AlertError>
         </View>
       ) : null}
@@ -120,6 +120,9 @@ export default function CategoryModal({
 }
 
 const styles = StyleSheet.create({
+  errorMessage: {
+    marginTop: Spacing.lg,
+  },
   actions: {
     flexDirection: 'row',
     gap: Spacing.xl,

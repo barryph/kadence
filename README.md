@@ -1,5 +1,7 @@
 # Kadence
 
+![Project Screenshot](assets/feature-graphic-short.png)
+
 This is Kadence, personal habit tracker built around recurring activities.
 
 You define what you want to do, how often you want to do it, and the Kadence

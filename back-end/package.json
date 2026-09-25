@@ -28,7 +28,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config jest.unit.config.ts --runInBand",
     "db:down": "pnpm exec knex migrate:down --knexfile knexfile.ts",
     "db:up": "pnpm exec knex migrate:latest --knexfile knexfile.ts",
-    "db:seed": "pnpm exec knex seed:run --knexfile knexfile.ts"
+    "db:seed": "pnpm exec knex seed:run --knexfile knexfile.ts",
+    "db:seed:demo": "node scripts/seed-demo-account.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

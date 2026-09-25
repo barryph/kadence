@@ -305,7 +305,9 @@ function Headline({
   const style: React.CSSProperties = {
     fontSize: unit * 0.092,
     fontWeight: 700,
-    lineHeight: 0.96,
+    // lineHeight: 0.96,
+    marginTop: 3,
+    lineHeight: 1.2,
     letterSpacing: -unit * 0.001,
     color: fg,
   };

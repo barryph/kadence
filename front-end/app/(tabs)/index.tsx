@@ -360,6 +360,7 @@ function DashboardContent({ userId }: { userId: string }) {
                   {section.items.map((activity) => (
                     <ActivityListItem
                       key={activity.id}
+                      testID={`activity-row-${activity.id}`}
                       activity={activity}
                       onClick={handleActivityClick}
                       onEdit={handleEdit}
@@ -374,6 +375,7 @@ function DashboardContent({ userId }: { userId: string }) {
       </ScrollView>
 
       <FloatingActionButton
+        testID="add-activity-button"
         label="Add Activity"
         onPress={() => router.push('/activities/create')}
       />

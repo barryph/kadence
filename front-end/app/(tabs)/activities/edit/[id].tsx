@@ -287,6 +287,7 @@ export default function EditActivityPage() {
                 )}
 
                 <Button
+                  testID="edit-activity-submit-button"
                   isLoading={isSubmitting}
                   style={styles.submitButton}
                   onPress={form.handleSubmit(handleSubmit)}

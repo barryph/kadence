@@ -53,6 +53,7 @@ export default function ActivityGoalField() {
           <View style={styles.wrapper}>
             <Label>How many times per week?</Label>
             <Pressable
+              testID="activity-goal-select"
               onPress={() => sheetRef.current?.present()}
               style={styles.select}
               accessibilityRole="button"
@@ -90,6 +91,7 @@ export default function ActivityGoalField() {
                   return (
                     <Pressable
                       key={String(option.value)}
+                      testID={`activity-goal-option-${option.value ?? 'none'}`}
                       style={styles.sheetItem}
                       onPress={() => selectOption(option)}
                       accessibilityRole="button"

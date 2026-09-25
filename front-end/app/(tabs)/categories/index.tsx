@@ -276,6 +276,7 @@ export default function Categories() {
       </ScrollView>
 
       <FloatingActionButton
+        testID="create-category-button"
         label="Create Category"
         onPress={() => setShowCreateCategoryModal(true)}
       />

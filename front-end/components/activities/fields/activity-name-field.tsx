@@ -11,6 +11,7 @@ export default function ActivityNameField() {
       name="name"
       render={({ field, fieldState }) => (
         <Input
+          testID="activity-name-input"
           label="Name"
           placeholder="Squat"
           value={field.value}

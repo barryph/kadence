@@ -52,6 +52,7 @@ export default function ActivityCategoryField({ categories }: Props) {
           <View style={styles.wrapper}>
             <Label>Category</Label>
             <Pressable
+              testID="activity-category-select"
               onPress={() => sheetRef.current?.present()}
               style={styles.select}
               accessibilityRole="button"
@@ -119,6 +120,7 @@ export default function ActivityCategoryField({ categories }: Props) {
                     return (
                       <Pressable
                         key={String(category.id ?? category.name)}
+                        testID={`activity-category-option-${category.id ?? category.name}`}
                         style={styles.sheetItem}
                         onPress={() => selectCategory(category)}
                         accessibilityRole="button"
